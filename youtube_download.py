@@ -34,7 +34,7 @@ class YouTubeDownloader:
 
     def __init__(self):
         print("Initialized")
-        self.SAVE_PATH = str(os.getcwd()) + "/videos"
+        #self.SAVE_PATH = str(os.getcwd()) + "/videos"
         #self.num_cores = multiprocessing.cpu_count()
         self.num_cores = 2
 
@@ -60,6 +60,17 @@ class YouTubeDownloader:
         self.link.append(url)
         self.link = list(dict.fromkeys(self.link))
 
+    # This will make a directory for the videos being Downloaded
+    def make_channel_directory(self):
+        self.SAVE_PATH = str(os.getcwd())+"/"+str(self.author_clean)
+        try:
+            # Create target Directory
+            os.mkdir(self.SAVE_PATH)
+            print("Directory ", self.SAVE_PATH, " Created ")
+        except FileExistsError:
+            print("Directory ", self.SAVE_PATH, " already exists")
+
+    # This class uses ffmpeg to merge the hd video and hd audio together
     def merge_video_audio(self, vid_type, aud_type, output_type=".webm"):
         print("vid type: ", vid_type)
         if vid_type == ".webm":
@@ -68,7 +79,8 @@ class YouTubeDownloader:
         else:
             cmd = f'ffmpeg -y -i {str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)} -i {str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)} -c:v libx264 -metadata title="{self.title_clean}" -metadata description="Duration {self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} {str(self.SAVE_PATH) + "/" + self.title_clean + str(output_type)}'
         print("CMD: ", cmd)
-        subprocess.call(cmd, shell=True)
+        muxing_process = subprocess.Popen(cmd, shell=True)
+        muxing_process.wait()
         if os.path.isfile(str(self.SAVE_PATH) + "/" + str(self.title_clean) + str(vid_type)):
             print('Merging Done')
         else:
@@ -157,6 +169,8 @@ class YouTubeDownloader:
                     attempts += 1
                     print("Connection Error: Attempt ", attempts)  # to handle exception
 
+            # Create Directory for Videos about to be downloaded
+            self.make_channel_directory()
             # Filters out all the files with "mp4" extension and media with audio and video combined.
             # Progressive - Audio and Video merged vs Adaptive - Audio and Video Separate
             video_type = ".webm"
@@ -564,14 +578,15 @@ youtube_connector.get_channel_videos('NebzAdlay')
 
 youtube_connector.append_link('https://www.youtube.com/watch?v=eGxhay61KXY')
 '''
-
+'''
 start = time.process_time()
-youtube_connector.open_file()
+#youtube_connector.open_file()
 
-#youtube_connector.append_link('https://www.youtube.com/watch?v=Xq-knHXSKYY')
+youtube_connector.append_link('https://www.youtube.com/watch?v=Xq-knHXSKYY')
+# youtube_connector.get_channel_videos('UCXcnHuosOLaKOGU0qQoYzfA')
 print("Youtube Links: ", youtube_connector.get_link())
 print("Length Youtube Links: ", len(youtube_connector.get_link()))
 #youtube_connector.download_hd_videos_parallel()
 youtube_connector.download_hd_videos()
 print("Executed Seconds: ", (time.process_time() - start))
-#youtube_connector.download_audio()
+#youtube_connector.download_audio()'''
