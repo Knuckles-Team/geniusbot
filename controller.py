@@ -1,4 +1,4 @@
-from genius_bot import App
+from genius_bot_v2 import App
 from youtube_download import YouTubeDownloader
 import tkinter as tk
 import threading

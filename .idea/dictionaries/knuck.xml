@@ -2,6 +2,7 @@
   <dictionary name="knuck">
     <words>
       <w>muxing</w>
+      <w>nosync</w>
     </words>
   </dictionary>
 </component>
