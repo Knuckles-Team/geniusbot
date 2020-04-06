@@ -33,7 +33,7 @@ class YouTubeDownloader:
     author_clean = ""
 
     def __init__(self):
-        print("Initialized")
+        #print("Initialized")
         #self.SAVE_PATH = str(os.getcwd()) + "/videos"
         #self.num_cores = multiprocessing.cpu_count()
         self.num_cores = 2
@@ -54,6 +54,11 @@ class YouTubeDownloader:
     def reset_links(self):
         print("Links Reset")
         self.link = []
+
+    def extend_link(self, urls):
+        print("URL Extended: ", urls)
+        self.link.extend(urls)
+        self.link = list(dict.fromkeys(self.link))
 
     def append_link(self, url):
         print("URL Appended: ", url)
