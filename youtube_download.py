@@ -1,18 +1,13 @@
 from pytube import YouTube
 import os
 import urllib.request
-import json
-import shutil
 import requests
 import subprocess
 import re
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC, COMM
-from mutagen.flac import Picture
-import multiprocessing
 from joblib import Parallel, delayed
 from tqdm import tqdm
-import time
 import platform
 
 class YouTubeDownloader:
@@ -23,9 +18,6 @@ class YouTubeDownloader:
     album_art_dir = ""
     # Link of the video to be downloaded stored in this file path
     link = []
-    '''link = ["https://www.youtube.com/watch?v=xWOoBJUqlbI",
-             "https://www.youtube.com/watch?v=xWOoBJUqlbI",
-             "https://www.youtube.com/watch?v=xWOoBJUqlbI"]'''
     # Create empty YouTube object in case failure of try statement
     yt = None
     title_clean = ""
@@ -33,9 +25,6 @@ class YouTubeDownloader:
     author_clean = ""
 
     def __init__(self):
-        #print("Initialized")
-        #self.SAVE_PATH = str(os.getcwd()) + "/videos"
-        #self.num_cores = multiprocessing.cpu_count()
         self.num_cores = 2
 
     def open_file(self):
@@ -119,20 +108,12 @@ class YouTubeDownloader:
             music_dir = str(self.SAVE_PATH) + "\\" + str(self.title_clean) + ".mp3"
         if os.path.isfile(music_dir):
             print('Merging Done Adding ID3 Tag Info')
-            '''
-            self.yt.title
-            self.yt.description
-            self.yt.length
-            self.yt.views
-            self.yt.thumbnail_url'''
             audio_file = EasyID3(str(self.SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
             audio_file['artist'] = self.yt.author
             audio_file['title'] = self.yt.title
             audio_file.save()
             audio_file = ID3(str(self.SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
             print("Thumbnail URL: ", self.album_art_dir)
-            #album_art = urllib.request.urlopen(self.yt.thumbnail_url)
-
             with open(self.album_art_dir, 'rb') as album_art:
                 print("Album Art: ", album_art)
                 '''if album_art.endswith('png'):
@@ -145,26 +126,6 @@ class YouTubeDownloader:
                                           data=album_art.read())
                 audio_file['COMM'] = COMM(encoding=3, text=self.yt.description)
                 audio_file.save()
-
-            '''try:
-                audio_file = EasyID3(str(self.SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
-                audio_file['artist'] = self.yt.author
-                audio_file['title'] = self.yt.title
-                audio_file['comments'] = self.yt.description
-                audio_file.save()
-                audio = ID3(str(self.SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
-                album_art = urllib.urlopen(self.yt.thumbnail_url)
-                if album_art.endswith('png'):
-                    mime = 'image/png'
-                else:
-                    mime = 'image/jpeg'
-                audio['APIC'] = APIC(encoding=3,
-                                     mime=mime,
-                                     type=3, desc=u'Front Cover',
-                                     data=album_art.read())
-                audio.save()
-            except:
-                print("Error encountered")'''
         else:
             return -1
 
@@ -211,10 +172,6 @@ class YouTubeDownloader:
                 "bitrate").last()
             mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True).order_by(
                 "bitrate").last()
-            # print("WEBM Audio: ", webm_audio)
-            # print("MP4 Audio: ", mp4_audio)
-            # print("Streams: ", self.yt.streams)
-            # This version downloads the 720p Video with Audio
             save_attempts_video = 0
             save_attempts_video_mp4 = 0
             # Try 3 times to pull a video
@@ -228,7 +185,6 @@ class YouTubeDownloader:
                 except:
                     save_attempts_video += 1
                     print("Some WEBM Video Error!")
-
             while save_attempts_video_mp4 < 3:
                 # downloading the video
                 try:
@@ -292,7 +248,6 @@ class YouTubeDownloader:
                     # object creation using YouTube which was imported in the beginning
                     print("Downloading Link: ", i)
                     self.yt = YouTube(i)
-                    #print(self.yt.streams)
                     if self.yt.title == "YouTube":
                         print("Title is YouTube, retrying")
                     else:
@@ -309,7 +264,6 @@ class YouTubeDownloader:
             self.make_channel_directory()
             # Filters out all the files with "mp4" extension and media with audio and video combined.
             # Progressive - Audio and Video merged vs Adaptive - Audio and Video Separate
-            mp4files = self.yt.streams.filter(progressive=True, file_extension='mp4')
 
             # This version downloads the 720p Video with Audio
             d_video = self.yt.streams.get_by_itag('22')
@@ -525,10 +479,6 @@ class YouTubeDownloader:
                 "bitrate").last()
         mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True).order_by(
                 "bitrate").last()
-        # print("WEBM Audio: ", webm_audio)
-        # print("MP4 Audio: ", mp4_audio)
-        # print("Streams: ", self.yt.streams)
-        # This version downloads the 720p Video with Audio
         save_attempts_video = 0
         save_attempts_video_mp4 = 0
         # Try 3 times to pull a video
@@ -594,53 +544,3 @@ class YouTubeDownloader:
             else:
                 print("Could not Merge Two Source Files with FFMpeg")
         print('Video Downloaded: ', self.yt.title)
-
-
-
-#youtube_connector = YouTubeDownloader()
-'''
-# Austin Steinbart
-youtube_connector.get_channel_videos('UC3SB8FR3144M3DKCZPBXcHg')
-
-# Majestic 12
-youtube_connector.get_channel_videos('UCgGC-Vd31ZdzIfmujDNwHMw')
-
-# Cringe Panda
-youtube_connector.get_channel_videos('UC4tdmudt4NIR0w9wlVr-tew')
-
-# Joe M
-youtube_connector.get_channel_videos('UCDFe_yKnRf4XM7W_sWbcxtw')
-
-# Warcastles
-youtube_connector.get_channel_videos('UCFCcG0xBhCdkSg_8VrBzgvQ')
-
-# Tom Fitton
-youtube_connector.get_channel_videos('JudicialWatch', 20)
-
-# LockpickingLawyer
-youtube_connector.get_channel_videos('markyv69')
-
-# SelfSufficientMe
-youtube_connector.get_channel_videos('UCm9K6rby98W8JigLoZOh6FQ')
-
-#Lewis Spears
-youtube_connector.get_channel_videos('NebzAdlay')
-
-# youtube_connector.get_channel_videos('UCXcnHuosOLaKOGU0qQoYzfA')
-
-youtube_connector.append_link('https://www.youtube.com/watch?v=eGxhay61KXY')
-'''
-
-'''start = time.process_time()
-print("Executed Seconds: ", (time.process_time() - start))
-#youtube_connector.open_file()
-
-youtube_connector = YouTubeDownloader()
-youtube_connector.append_link('https://www.youtube.com/watch?v=0MQ4G821kcw')
-# youtube_connector.get_channel_videos('UCXcnHuosOLaKOGU0qQoYzfA')
-print("Youtube Links: ", youtube_connector.get_link())
-print("Length Youtube Links: ", len(youtube_connector.get_link()))
-#youtube_connector.download_hd_videos_parallel()
-youtube_connector.download_hd_videos()
-print("Executed Seconds: ", (time.process_time() - start))
-#youtube_connector.download_audio()'''

@@ -1,5 +1,4 @@
 import time
-import threading
 from tkinter.filedialog import askopenfilename
 from tkthread import tk, TkThread
 from tkinter import ttk
@@ -14,6 +13,7 @@ from matplotlib.figure import Figure
 import numpy as np
 import queue
 import re
+
 
 class GeniusBot:
     progress_bar = None
@@ -66,7 +66,6 @@ class GeniusBot:
 
         # Buttons
         self.add_url_button = ttk.Button(self.middle_button_frame, text="Add", command=self.add_url)
-        #tk.Grid.rowconfigure(self.add_url_button, 0, minsize=1, weight=1)
         self.add_url_button.grid(column=0, row=0, sticky='NSEW', padx=15, pady=10)
         self.remove_url_button = ttk.Button(self.middle_button_frame, text="Remove", command=self.remove_url)
         self.remove_url_button.grid(column=1, row=0, sticky='NSEW', padx=15, pady=10)
@@ -109,8 +108,6 @@ class GeniusBot:
         tk.Grid.columnconfigure(self.url_entry, 0, weight=1)
         self.refresh_list()
         self.url_entry.grid(column=0, row=2, columnspan=3, sticky='NSEW')
-        #self.url_entry.pack(fill=tk.BOTH, expand=tk.YES)
-        #self.url_listbox.pack(fill=tk.BOTH, expand=tk.YES)
 
         # Progress Bar
         self.progress_bar = ttk.Progressbar(
@@ -162,10 +159,8 @@ class GeniusBot:
         self.refresh_list()
 
     def download_video_threaded(self, tkt_wrap):
-        #self.download_button_video.grid_forget()
         self.download_button_video["state"] = "disabled"
         self.download_button_audio["state"] = "disabled"
-        #self.download_button_audio.grid_forget()
         self.value = 0
         th = threading.current_thread()
         self.url_list = list(filter(None, self.url_list))
@@ -192,25 +187,6 @@ class GeniusBot:
             i += 1
         self.download_button_video["state"] = "enabled"
         self.download_button_audio["state"] = "enabled"
-        '''th = threading.current_thread()
-        print("URL List")
-        self.youtube_downloader.extend_link(self.url_list)
-        self.youtube_downloader.download_hd_videos()'''
-        '''self.max_value = len(self.url_list)
-        self.progress_bar['maximum'] = self.max_value
-        for i in range(self.max_value):
-            txt = 'Progress: %02i' % i
-            print(th, txt)  # send to terminal
-            self.value = i + 1
-            self.percentage_text.set(f"{self.value}/{self.max_value} | {(self.value / (self.max_value)) * 100}%")
-            self.progress_bar['value'] = i+1
-            print("Value: ", self.value)
-            print("Max Value: ", self.max_value)
-            #tkt_wrap(entry.delete, '0', 'end')
-            #tkt_wrap(entry.set(txt))
-
-            time.sleep(3)
-            time.sleep(0.125)'''
 
     def download_audio_threaded(self, tkt_wrap):
         self.download_button_video["state"] = "disabled"
@@ -254,7 +230,4 @@ root.title("Genius Web Archiver")
 root.minsize(500, 700)
 tkt = TkThread(root)  # make the thread-safe callable
 main_ui = GeniusBot(root, tkt)
-#main_ui.test()
-
-
 root.mainloop()
