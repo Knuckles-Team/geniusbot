@@ -10,9 +10,12 @@ from joblib import Parallel, delayed
 from tqdm import tqdm
 import platform
 
+
 class YouTubeDownloader:
     # Save Location
     SAVE_PATH = None
+    OS_SAVE_PATH = None
+    CHANNEL_SAVE_PATH = None
     num_cores = None
     inputs = None
     album_art_dir = ""
@@ -26,6 +29,8 @@ class YouTubeDownloader:
 
     def __init__(self):
         self.num_cores = 2
+        self.set_save_path(os.getcwd())
+        print("INIT CWD: ", self.SAVE_PATH)
 
     def open_file(self):
         youtube_urls = open('links_file.txt', 'r')
@@ -39,6 +44,23 @@ class YouTubeDownloader:
     def get_link(self):
         self.link = list(dict.fromkeys(self.link))
         return self.link
+
+    def get_save_path(self):
+        return self.SAVE_PATH
+
+    def set_save_path(self, save_path):
+        self.SAVE_PATH = save_path
+        self.SAVE_PATH = self.SAVE_PATH.replace(os.sep, '/')
+        self.set_os_save_path()
+
+    def set_os_save_path(self):
+        self.OS_SAVE_PATH = self.SAVE_PATH.replace('/', os.sep)
+        print("OS PATH: ",  self.OS_SAVE_PATH)
+
+    def set_channel_save_path(self, channel):
+        self.CHANNEL_SAVE_PATH = str(self.SAVE_PATH) + '/' + str(channel)
+        print("CHANNEL_SAVE_PATH: ",  self.CHANNEL_SAVE_PATH)
+        self.CHANNEL_SAVE_PATH = self.CHANNEL_SAVE_PATH.replace('/', os.sep)
 
     def reset_links(self):
         print("Links Reset")
@@ -56,23 +78,31 @@ class YouTubeDownloader:
 
     # This will make a directory for the videos being Downloaded
     def make_channel_directory(self):
-        if platform.system() == "Linux":
-            self.SAVE_PATH = f'{str(os.getcwd())}/{str(self.author_clean)}'
+        self.set_channel_save_path(self.author_clean)
+        '''if platform.system() == "Linux":
+            self.SAVE_PATH = f'{str(self.SAVE_PATH)}/{str(self.author_clean)}'
         else:
-            self.SAVE_PATH = f'{str(os.getcwd())}\\{str(self.author_clean)}'
-        print("Directory to be created: ", self.SAVE_PATH)
+            self.SAVE_PATH = f'{str(self.SAVE_PATH)}\\{str(self.author_clean)}'''
+        print("Directory to be created: ", self.CHANNEL_SAVE_PATH)
         if self.author_clean != "":
             try:
                 # Create target Directory
-                os.mkdir(self.SAVE_PATH)
-                print("Directory ", self.SAVE_PATH, " Created ")
+                os.mkdir(self.CHANNEL_SAVE_PATH)
+                print("Directory ", self.CHANNEL_SAVE_PATH, " Created ")
             except FileExistsError:
-                print("Directory ", self.SAVE_PATH, " already exists")
+                print("Directory ", self.CHANNEL_SAVE_PATH, " already exists")
 
     # This class uses ffmpeg to merge the hd video and hd audio together
     def merge_video_audio(self, vid_type, aud_type, output_type=".webm"):
         print("vid type: ", vid_type)
-        if platform.system() == "Linux":
+        if vid_type == ".webm":
+            # This is for future development to get adaptive files and merge them for higher quality backups
+            cmd = f'ffmpeg -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v copy -c:a copy -metadata title="{self.title_clean}" -metadata description="Duration{self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + str(output_type)}"'
+            cmd = cmd.replace('/', os.sep)
+        else:
+            cmd = f'ffmpeg -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v libx264 -metadata title="{self.title_clean}" -metadata description="Duration {self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + str(output_type)}"'
+            cmd = cmd.replace('/', os.sep)
+        '''if platform.system() == "Linux":
             if vid_type == ".webm":
                 # This is for future development to get adaptive files and merge them for higher quality backups
                 cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v copy -c:a copy -metadata title="{self.title_clean}" -metadata description="Duration{self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.SAVE_PATH) + "/" + self.title_clean + str(output_type)}"'
@@ -84,35 +114,41 @@ class YouTubeDownloader:
                 cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH)}\\{str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.SAVE_PATH)}\\{str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v copy -c:a copy -metadata title="{self.title_clean}" -metadata description="Duration{self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.SAVE_PATH)}\\{self.title_clean + str(output_type)}"'
             else:
                 cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH)}\\{str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.SAVE_PATH)}\\{str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v libx264 -metadata title="{self.title_clean}" -metadata description="Duration {self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.SAVE_PATH)}\\{self.title_clean + str(output_type)}"'
+        '''
         print("CMD: ", cmd)
         muxing_process = subprocess.Popen(cmd, shell=True)
         muxing_process.wait()
-        if os.path.isfile(str(self.SAVE_PATH) + "/" + str(self.title_clean) + str(vid_type)):
+        temporary_check = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(vid_type)
+        temporary_check = temporary_check.replace('/', os.sep)
+        if os.path.isfile(temporary_check):
             print('Merging Done')
         else:
             return -1
 
     def convert_mp3(self, audio_type):
         # This is for future development to get adaptive files and merge them for higher quality backups
-        if platform.system() == "Linux":
+        cmd = f'ffmpeg -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
+        cmd = cmd.replace('/', os.sep)
+        '''if platform.system() == "Linux":
             cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
         else:
-            cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH)}\\{str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.SAVE_PATH)}\\{self.title_clean + ".mp3"}"'
+            cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH)}\\{str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.SAVE_PATH)}\\{self.title_clean + ".mp3"}"'''
         print("CMD: ", cmd)
         muxing_audio = subprocess.Popen(cmd, shell=True)
         muxing_audio.wait()
         print("Waiting for Command to Finish")
-        if platform.system() == "Linux":
-            music_dir = str(self.SAVE_PATH) + "/" + str(self.title_clean) + ".mp3"
+        music_dir = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + ".mp3"
+        '''if platform.system() == "Linux":
+            music_dir = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + ".mp3"
         else:
-            music_dir = str(self.SAVE_PATH) + "\\" + str(self.title_clean) + ".mp3"
+            music_dir = str(self.SAVE_PATH) + "\\" + str(self.title_clean) + ".mp3"'''
         if os.path.isfile(music_dir):
             print('Merging Done Adding ID3 Tag Info')
-            audio_file = EasyID3(str(self.SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
+            audio_file = EasyID3(str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
             audio_file['artist'] = self.yt.author
             audio_file['title'] = self.yt.title
             audio_file.save()
-            audio_file = ID3(str(self.SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
+            audio_file = ID3(str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + ".mp3")
             print("Thumbnail URL: ", self.album_art_dir)
             with open(self.album_art_dir, 'rb') as album_art:
                 print("Album Art: ", album_art)
@@ -179,7 +215,7 @@ class YouTubeDownloader:
                 # downloading the video
                 try:
                     print("Downloading Video")
-                    webm_video.download(output_path=self.SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
+                    webm_video.download(output_path=self.CHANNEL_SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
                     save_attempts_video_mp4 = 3
                     break
                 except:
@@ -189,7 +225,7 @@ class YouTubeDownloader:
                 # downloading the video
                 try:
                     print("Downloading Video")
-                    mp4_video.download(output_path=self.SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
+                    mp4_video.download(output_path=self.CHANNEL_SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
                     video_type = ".mp4"
                     break
                 except:
@@ -201,7 +237,7 @@ class YouTubeDownloader:
             while save_attempts_audio < 3:
                 try:
                     print("Downloading Audio")
-                    webm_audio.download(output_path=self.SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
+                    webm_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
                     save_attempts_audio_mp4 = 3
                     break
                 except:
@@ -211,7 +247,7 @@ class YouTubeDownloader:
             while save_attempts_audio_mp4 < 3:
                 try:
                     print("Downloading Audio")
-                    mp4_audio.download(output_path=self.SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
+                    mp4_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
                     audio_type = ".mp4"
                     break
                 except:
@@ -224,12 +260,16 @@ class YouTubeDownloader:
                 result = self.merge_video_audio(video_type, audio_type, video_type)
                 if result != -1:
                     try:
-                        os.remove(str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(video_type))
+                        old_video_file = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(video_type)
+                        old_video_file = old_video_file.replace('/', os.sep)
+                        os.remove(old_video_file)
                         print("Removed Video")
                     except:
                         print("Could not Remove Source Video")
                     try:
-                        os.remove(str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(audio_type))
+                        old_audio_file = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(audio_type)
+                        old_audio_file = old_audio_file.replace('/', os.sep)
+                        os.remove(old_audio_file)
                         print("Removed Audio")
                     except:
                         print("Could not Remove Source Audio")
@@ -310,11 +350,13 @@ class YouTubeDownloader:
                     print("Connection Error: Attempt ", attempts)  # to handle exception
 
             self.make_channel_directory()
-
+            self.album_art_dir = str(self.CHANNEL_SAVE_PATH) + "/album_art.jpg"
+            self.album_art_dir = self.album_art_dir.replace('/', os.sep)
+            '''
             if platform.system() == "Linux":
-                self.album_art_dir = str(self.SAVE_PATH) + "/album_art.jpg"
+                self.album_art_dir = str(self.CHANNEL_SAVE_PATH) + "/album_art.jpg"
             else:
-                self.album_art_dir = str(self.SAVE_PATH) + "\\album_art.jpg"
+                self.album_art_dir = str(self.SAVE_PATH) + "\\album_art.jpg"'''
 
             urllib.request.urlretrieve(self.yt.thumbnail_url, self.album_art_dir)
             # Filters out all the files with "mp4" extension and media with audio and video combined.
@@ -336,7 +378,7 @@ class YouTubeDownloader:
                     # downloading the video
                     print("Saving Audio")
                     print("Audio Type: ", d_video.parse_codecs())
-                    d_video.download(output_path=self.SAVE_PATH, filename=self.title_clean)
+                    d_video.download(output_path=self.CHANNEL_SAVE_PATH, filename=self.title_clean)
                     break
                 except:
                     save_attempts += 1
@@ -354,7 +396,7 @@ class YouTubeDownloader:
             while save_attempts_audio < 3:
                 try:
                     print("Downloading Audio")
-                    webm_audio.download(output_path=self.SAVE_PATH, filename=self.title_clean)
+                    webm_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename=self.title_clean)
                     audio_type = ".webm"
                     save_attempts_audio_mp4 = 3
                     break
@@ -365,7 +407,7 @@ class YouTubeDownloader:
             while save_attempts_audio_mp4 < 3:
                 try:
                     print("Downloading Audio")
-                    mp4_audio.download(output_path=self.SAVE_PATH, filename=self.title_clean)
+                    mp4_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename=self.title_clean)
                     audio_type = ".mp4"
                     break
                 except:
@@ -377,12 +419,19 @@ class YouTubeDownloader:
                 result = self.convert_mp3(audio_type)
                 if result != -1:
                     try:
-                        if platform.system() == "Linux":
+
+                        old_audio_file = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)
+                        old_audio_file = old_audio_file.replace('/', os.sep)
+                        old_audio_art = str(self.CHANNEL_SAVE_PATH) + "/album_art.jpg"
+                        old_audio_art = old_audio_art.replace('/', os.sep)
+                        os.remove(old_audio_file)
+                        os.remove(old_audio_art)
+                        '''if platform.system() == "Linux":
                             os.remove(str(self.SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type))
                             os.remove(str(self.SAVE_PATH) + "/album_art.jpg")
                         else:
                             os.remove(str(self.SAVE_PATH) + "\\" + str(self.title_clean) + str(audio_type))
-                            os.remove(str(self.SAVE_PATH) + "\\album_art.jpg")
+                            os.remove(str(self.SAVE_PATH) + "\\album_art.jpg")'''
                         print("Removed Audio")
                     except:
                         print("Could not Remove Source Audio")
@@ -415,6 +464,7 @@ class YouTubeDownloader:
                     x += 1
             else:
                 url = f"https://www.youtube.com/channel/{channel}/videos"
+                print("URL: ", url)
                 page = requests.get(url).content
                 data = str(page).split(' ')
                 item = 'href="/watch?'
@@ -486,7 +536,7 @@ class YouTubeDownloader:
             # downloading the video
             try:
                 print("Downloading Video")
-                webm_video.download(output_path=self.SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
+                webm_video.download(output_path=self.CHANNEL_SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
                 save_attempts_video_mp4 = 3
                 break
             except:
@@ -497,7 +547,7 @@ class YouTubeDownloader:
             # downloading the video
             try:
                 print("Downloading Video")
-                mp4_video.download(output_path=self.SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
+                mp4_video.download(output_path=self.CHANNEL_SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
                 video_type = ".mp4"
                 break
             except:
@@ -509,7 +559,7 @@ class YouTubeDownloader:
         while save_attempts_audio < 3:
             try:
                 print("Downloading Audio")
-                webm_audio.download(output_path=self.SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
+                webm_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
                 save_attempts_audio_mp4 = 3
                 break
             except:
@@ -519,7 +569,7 @@ class YouTubeDownloader:
         while save_attempts_audio_mp4 < 3:
             try:
                 print("Downloading Audio")
-                mp4_audio.download(output_path=self.SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
+                mp4_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
                 audio_type = ".mp4"
                 break
             except:
@@ -532,12 +582,12 @@ class YouTubeDownloader:
             result = self.merge_video_audio(video_type, audio_type)
             if result != -1:
                 try:
-                    os.remove(str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(video_type))
+                    os.remove(str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(video_type))
                     print("Removed Video")
                 except:
                     print("Could not Remove Source Video")
                 try:
-                    os.remove(str(self.SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(audio_type))
+                    os.remove(str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(audio_type))
                     print("Removed Audio")
                 except:
                     print("Could not Remove Source Audio")
