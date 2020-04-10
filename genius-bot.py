@@ -184,14 +184,14 @@ class GeniusBot:
         parse_channel_addition=""
         parse_channel_addition = self.channel_entry.get("1.0", tk.END)
         print("Parsed Addition: ", parse_channel_addition)
-        if re.sub(r'[^A-Za-z0-9_./:?!=]', '', parse_channel_addition) != "":
+        if re.sub(r'[^A-Za-z0-9_./:&?!=]', '', parse_channel_addition) != "":
             parse_channel_addition = parse_channel_addition.rstrip()
             self.youtube_downloader.get_channel_videos(parse_channel_addition)
             parse_addition_array = self.youtube_downloader.get_link()
             for url in parse_addition_array:
-                if re.sub(r'[^A-Za-z0-9_./:?!=]', '', url) != "":
+                if re.sub(r'[^A-Za-z0-9_./:&?!=]', '', url) != "":
                     self.status.set(f'Added URLs to Queue')
-                    temp = re.sub(r'[^A-Za-z0-9_./:?!=]', '', url)
+                    temp = re.sub(r'[^A-Za-z0-9_./:&?!=]', '', url)
                     print("Appended: ", temp)
                     self.url_list.append(temp)
                 else:
@@ -205,12 +205,12 @@ class GeniusBot:
             self.status.set(f'Queued {self.max_value} videos')
         # Get Videos
         parse_addition = self.url_entry.get("1.0", tk.END)
-        if re.sub(r'[^A-Za-z0-9_./:?!=]', '', parse_addition) != "":
+        if re.sub(r'[^A-Za-z0-9_./:&?!=]', '', parse_addition) != "":
             parse_addition_array = parse_addition.splitlines()
             for url in parse_addition_array:
-                if re.sub(r'[^A-Za-z0-9_./:?!=]', '', url) != "":
+                if re.sub(r'[^A-Za-z0-9_./:&?!=]', '', url) != "":
                     self.status.set(f'Added URLs to Queue')
-                    temp = re.sub(r'[^A-Za-z0-9_./:?!=]', '', url)
+                    temp = re.sub(r'[^A-Za-z0-9_./:&?!=]', '', url)
                     self.url_list.append(temp)
                 else:
                     print("Bad URL: ", url)
