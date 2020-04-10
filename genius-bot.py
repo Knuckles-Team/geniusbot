@@ -198,7 +198,7 @@ class GeniusBot:
                     print("Bad URL: ", url)
                     self.status.set(f'Paste Some YouTube Links First! (CTRL+V) {url}')
             self.url_list = list(dict.fromkeys(self.url_list))
-            self.url_entry.delete("1.0", tk.END)
+            self.channel_entry.delete("1.0", tk.END)
             self.refresh_list()
             self.max_value = len(self.url_list)
             self.percentage_text.set(f"{self.value}/{self.max_value} | {(self.value / self.max_value) * 100}%")
