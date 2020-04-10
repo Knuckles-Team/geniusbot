@@ -188,6 +188,7 @@ class GeniusBot:
             parse_channel_addition = parse_channel_addition.rstrip()
             self.youtube_downloader.get_channel_videos(parse_channel_addition)
             parse_addition_array = self.youtube_downloader.get_link()
+            self.youtube_downloader.reset_links()
             for url in parse_addition_array:
                 if re.sub(r'[^A-Za-z0-9_./:&?!=]', '', url) != "":
                     self.status.set(f'Added URLs to Queue')
