@@ -6,7 +6,7 @@ import tkinter as tk
 import threading
 import time
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-from youtube_download import YouTubeDownloader
+from src.youtube_download import YouTubeDownloader
 # Implement the default Matplotlib key bindings.
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure

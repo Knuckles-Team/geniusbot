@@ -26,11 +26,13 @@ class YouTubeDownloader:
     title_clean = ""
     description_clean = ""
     author_clean = ""
+    ffmpeg = ""
 
     def __init__(self):
         self.num_cores = 2
         self.set_save_path(os.getcwd())
         print("INIT CWD: ", self.SAVE_PATH)
+        self.import_ffmpeg()
 
     def open_file(self):
         youtube_urls = open('links_file.txt', 'r')
@@ -66,6 +68,29 @@ class YouTubeDownloader:
         print("Links Reset")
         self.link = []
 
+    def import_ffmpeg(self):
+        if platform.system() == "Windows":
+            self.ffmpeg = str(os.path.abspath(os.pardir)) + "/lib/ffmpeg/bin/ffmpeg.exe"
+            self.ffmpeg = self.ffmpeg.replace('/', os.sep)
+            print("FFMPEG Location on Local", self.ffmpeg)
+            if os.path.isfile(self.ffmpeg):
+                print("Found!!!!")
+                self.packaged_ffmpeg = self.ffmpeg
+        else:
+            self.packaged_ffmpeg = "ffmpeg"
+
+
+    def install_ffmpeg(self):
+        print("Install FFMPEG CMD")
+        cmd = f'sudo apt-get install ffmpeg -y'
+        #cmd = cmd.replace('/', os.sep)
+        print("CMD: ", cmd)
+        muxing_process = subprocess.Popen(cmd, shell=True)
+        muxing_process.wait()
+
+    def install_tcl_thread(self):
+        print("Install thread by running command")
+
     def extend_link(self, urls):
         print("URL Extended: ", urls)
         self.link.extend(urls)
@@ -97,10 +122,10 @@ class YouTubeDownloader:
         print("vid type: ", vid_type)
         if vid_type == ".webm":
             # This is for future development to get adaptive files and merge them for higher quality backups
-            cmd = f'ffmpeg -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v copy -c:a copy -metadata title="{self.title_clean}" -metadata description="Duration{self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + str(output_type)}"'
+            cmd = f'{self.packaged_ffmpeg} -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v copy -c:a copy -metadata title="{self.title_clean}" -metadata description="Duration{self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + str(output_type)}"'
             cmd = cmd.replace('/', os.sep)
         else:
-            cmd = f'ffmpeg -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v libx264 -metadata title="{self.title_clean}" -metadata description="Duration {self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + str(output_type)}"'
+            cmd = f'{self.packaged_ffmpeg} -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_video_dl" + str(vid_type)}" -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(aud_type)}" -c:v libx264 -metadata title="{self.title_clean}" -metadata description="Duration {self.yt.length} Views {self.yt.views} Description {self.description_clean}" -metadata language={"English"} "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + str(output_type)}"'
             cmd = cmd.replace('/', os.sep)
         '''if platform.system() == "Linux":
             if vid_type == ".webm":
@@ -127,7 +152,7 @@ class YouTubeDownloader:
 
     def convert_mp3(self, audio_type):
         # This is for future development to get adaptive files and merge them for higher quality backups
-        cmd = f'ffmpeg -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
+        cmd = f'{self.packaged_ffmpeg} -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
         cmd = cmd.replace('/', os.sep)
         '''if platform.system() == "Linux":
             cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
