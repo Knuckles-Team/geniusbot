@@ -1,27 +1,8 @@
+# Implement the default Matplotlib key bindings.
+import time
+
 from genius_bot_v2 import App
 from youtube_download import YouTubeDownloader
-import tkinter as tk
-import threading
-import time
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk)
-# Implement the default Matplotlib key bindings.
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
-import os
-import urllib.request
-import json
-import shutil
-import requests
-import subprocess
-import re
-from mutagen.easyid3 import EasyID3
-from mutagen.id3 import ID3, APIC, COMM
-from mutagen.flac import Picture
-import multiprocessing
-from joblib import Parallel, delayed
-from tqdm import tqdm
-import time
 
 
 class Controller:

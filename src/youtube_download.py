@@ -1,14 +1,17 @@
-from pytube import YouTube
 import os
-import urllib.request
-import requests
-import subprocess
+import platform
 import re
+import subprocess
+import urllib.request
+#importing module
+import logging
+
+import requests
+#from joblib import Parallel, delayed
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC, COMM
-from joblib import Parallel, delayed
-from tqdm import tqdm
-import platform
+from pytube import YouTube
+#from tqdm import tqdm
 
 
 class YouTubeDownloader:
@@ -27,21 +30,45 @@ class YouTubeDownloader:
     description_clean = ""
     author_clean = ""
     ffmpeg = ""
+    logger = None
+    logging_file = ""
 
     def __init__(self):
+        #Create and configure logger
+        self.logging_file = f"{os.pardir}/logs/usage_history.log"
+        if os.path.isfile(self.logging_file):
+            print("Usage File: ",  self.logging_file)
+        else:
+            self.logging_file = f"{os.curdir}/logs/usage_history.log"
+            print("Usage File: ",  self.logging_file)
+        logging.basicConfig(filename=self.logging_file, format='%(asctime)s %(message)s', filemode='w')
+        #Creating an object
+        self.logger=logging.getLogger()
+        #Setting the threshold of logger to DEBUG
+        self.logger.setLevel(logging.DEBUG)
+        #Test messages
+        self.logger.debug("Debug: Initialized")
+        self.logger.info("Info: Initialized")
+        self.logger.warning("Warning: Initialized")
+        self.logger.error("Error: Initialized")
+        self.logger.critical("Critical: Initialized")
         self.num_cores = 2
         self.set_save_path(os.getcwd())
         print("INIT CWD: ", self.SAVE_PATH)
         self.import_ffmpeg()
 
+
     def open_file(self):
         youtube_urls = open('links_file.txt', 'r')
         print("youtube_urls", youtube_urls)
+        #self.logger.info(str("YouTube URLs: ")+youtube_urls)
+        self.logger.info(str("Length of Links Before Open File: ")+str(len(self.link)))
         print("Length of Links Before Open File: ", len(self.link))
         for url in youtube_urls:
             self.link.append(url)
         self.link = list(dict.fromkeys(self.link))
         print("Length of Links After Open File: ", len(self.link))
+        self.logger.info(str("Length of Links After Open File: ")+str(len(self.link)))
 
     def get_link(self):
         self.link = list(dict.fromkeys(self.link))
@@ -54,6 +81,7 @@ class YouTubeDownloader:
         self.SAVE_PATH = save_path
         self.SAVE_PATH = self.SAVE_PATH.replace(os.sep, '/')
         self.set_os_save_path()
+        self.logger.info(str("Save Path Changed to: ")+str(self.set_os_save_path))
 
     def set_os_save_path(self):
         self.OS_SAVE_PATH = self.SAVE_PATH.replace('/', os.sep)
@@ -66,6 +94,7 @@ class YouTubeDownloader:
 
     def reset_links(self):
         print("Links Reset")
+        self.logger.info("Links Reset")
         self.link = []
 
     def import_ffmpeg(self):
@@ -75,7 +104,18 @@ class YouTubeDownloader:
             print("FFMPEG Location on Local", self.ffmpeg)
             if os.path.isfile(self.ffmpeg):
                 print("Found!!!!")
+                self.logger.info(f'Found ffmpeg at: {self.ffmpeg}')
                 self.packaged_ffmpeg = self.ffmpeg
+            else:
+                self.ffmpeg = f"{os.curdir}/lib/ffmpeg/bin/ffmpeg.exe"
+                if os.path.isfile(self.ffmpeg):
+                    print("Found!!!!")
+                    self.packaged_ffmpeg = self.ffmpeg
+                    self.logger.info(f'Found ffmpeg at: {self.ffmpeg}')
+                else:
+                    print("Could not find ffmpeg on windows, defaulting to pre-installed ffmpeg")
+                    self.logger.info(f'Could not find ffmpeg at: {self.ffmpeg}\nUsing Pre-built ffmpeg instead')
+                    self.packaged_ffmpeg = "ffmpeg"
         else:
             self.packaged_ffmpeg = "ffmpeg"
 
@@ -113,9 +153,11 @@ class YouTubeDownloader:
             try:
                 # Create target Directory
                 os.mkdir(self.CHANNEL_SAVE_PATH)
-                print("Directory ", self.CHANNEL_SAVE_PATH, " Created ")
+                print("Directory ", self.CHANNEL_SAVE_PATH, " created ")
+                self.logger.info(f'Directory {self.CHANNEL_SAVE_PATH} created')
             except FileExistsError:
                 print("Directory ", self.CHANNEL_SAVE_PATH, " already exists")
+                self.logger.info(f'Directory {self.CHANNEL_SAVE_PATH} already exists')
 
     # This class uses ffmpeg to merge the hd video and hd audio together
     def merge_video_audio(self, vid_type, aud_type, output_type=".webm"):
@@ -211,6 +253,7 @@ class YouTubeDownloader:
                         self.title_clean = re.sub(r'[^A-Za-z0-9_]', '', self.yt.title.replace(" ", "_"))
                         self.description_clean = re.sub(r'[^A-Za-z0-9_ ]', '', self.yt.description.replace("\n", ""))
                         self.author_clean = re.sub(r'[^A-Za-z0-9_ ]', '', self.yt.author.replace("\n", ""))
+                        print("Clean Author: ", self.author_clean)
                         print("Clean Title ", self.title_clean)
                         break
                 except:
@@ -223,16 +266,55 @@ class YouTubeDownloader:
             # Progressive - Audio and Video merged vs Adaptive - Audio and Video Separate
             video_type = ".webm"
             audio_type = ".webm"
-            webm_video = self.yt.streams.filter(progressive=False, file_extension='webm', only_video=True)
+            webm_video = None
+            mp4_video = None
+            webm_audio = None
+            mp4_audio = None
+            try:
+                webm_video = self.yt.streams.filter(progressive=False, file_extension='webm', only_video=True)
+            except AttributeError as e:
+                print("Error in Reading YouTube Stream, retrying....")
+                try:
+                    webm_video = self.yt.streams.filter(progressive=False, file_extension='webm', only_video=True)
+                except AttributeError as e:
+                    print("Error in Reading YouTube Stream")
+            try:
+                mp4_video = self.yt.streams.filter(progressive=False, file_extension='mp4', only_video=True)
+            except AttributeError as e:
+                print("Error in Reading YouTube Stream, retrying....")
+                try:
+                    mp4_video = self.yt.streams.filter(progressive=False, file_extension='mp4', only_video=True)
+                except AttributeError as e:
+                    print("Error in Reading YouTube Stream")
+            try:
+                webm_audio = self.yt.streams.filter(progressive=False, file_extension='webm', only_audio=True)
+            except AttributeError as e:
+                print("Error in Reading YouTube Stream, retrying....")
+                try:
+                    webm_audio = self.yt.streams.filter(progressive=False, file_extension='webm', only_audio=True)
+                except AttributeError as e:
+                    print("Error in Reading YouTube Stream")
+            try:
+                mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True)
+            except AttributeError as e:
+                print("Error in Reading YouTube Stream, retrying....")
+                try:
+                    mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True)
+                except AttributeError as e:
+                    print("Error in Reading YouTube Stream")
             if webm_video:
-                print("Enetered Video")
+                print("Entered Webm Video")
                 webm_video = webm_video.order_by("resolution").last()
-            mp4_video = self.yt.streams.filter(progressive=False, file_extension='mp4', only_video=True).order_by(
-                "resolution").last()
-            webm_audio = self.yt.streams.filter(progressive=False, file_extension='webm', only_audio=True).order_by(
-                "bitrate").last()
-            mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True).order_by(
-                "bitrate").last()
+            if mp4_video:
+                print("Entered mp4 Video")
+                mp4_video = mp4_video.order_by("resolution").last()
+            if webm_audio:
+                print("Entered Webm Audio")
+                webm_audio = webm_audio.order_by("bitrate").last()
+            if mp4_audio:
+                print("Entered mp4 Audio")
+                mp4_audio = mp4_audio.order_by("bitrate").last()
+
             save_attempts_video = 0
             save_attempts_video_mp4 = 0
             # Try 3 times to pull a video
@@ -511,7 +593,7 @@ class YouTubeDownloader:
                 else:
                     print("Could not find User or Channel")
             attempts += 1
-
+'''
     def download_hd_videos_parallel(self):
         link_list = self.get_link()
         # Clean Duplicates First
@@ -619,3 +701,4 @@ class YouTubeDownloader:
             else:
                 print("Could not Merge Two Source Files with FFMpeg")
         print('Video Downloaded: ', self.yt.title)
+'''

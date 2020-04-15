@@ -1,20 +1,21 @@
-import time
-from tkinter.filedialog import askopenfilename, askdirectory
-from tkthread import tk, TkThread
-from tkinter import ttk
-import tkinter as tk
+#from tkinter.filedialog import askopenfilename, askdirectory
 import threading
-import time
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+import tkinter as tk
+from tkinter import ttk, filedialog
+
+import tkthread as tkt  # TkThread
+
+# from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from src.youtube_download import YouTubeDownloader
+
 # Implement the default Matplotlib key bindings.
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
-import numpy as np
-import queue
+'''from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure'''
+#import queue
 import re
 import os
-
+import requests
+from PIL import ImageTk, Image
 
 class GeniusBot:
     hex_color_background = '#3E4A57'
@@ -27,11 +28,43 @@ class GeniusBot:
     root = None
     youtube_downloader = None
     save_location = os.getcwd()
+    style = None
 
     def __init__(self, root_main, tkt_main):
         self.youtube_downloader = YouTubeDownloader()
         self.root = root_main
         self.tkt = tkt_main
+        self.iconpath = f'{os.pardir}/img/geniusbot.ico'
+        if os.path.isfile(self.iconpath):
+            print("File Found")
+        else:
+            self.iconpath = f'{os.pardir}/GeniusBot/img/geniusbot.ico'
+        print(self.iconpath)
+        self.root.iconbitmap(self.iconpath)
+        self.style = ttk.Style()
+        self.style.theme_create("GeniusBot", parent="alt", settings={
+            "TNotebook": {"configure": {"tabmargins": [1, 5, 1, 0]}, "background": "white"},
+            "TNotebook.Tab": {
+                "configure": {"padding": [5, 1], "background": "black"},
+                "map": {"background": [("selected", "black")],
+                        "expand": [("selected", [1, 1, 1, 0])]}}})
+        self.style.configure("TFrame", forground="black", background="#081e2a")
+        self.style.configure("TButton", foreground="#081e2a", background="#081e2a")
+        self.style.configure("Run.TButton", foreground="green", background="green")
+        self.style.configure("Pause.TButton", foreground="orange", background="orange")
+        self.style.configure("Stop.TButton", foreground="red", background="red")
+        self.style.configure("TLabel", foreground="black", background="#081e2a")
+        self.style.configure("Status.TLabel", foreground="white", background="#081e2a")
+        self.style.configure("Title.TLabel", foreground="white", background="#081e2a", font=('Arial', 52, 'bold'), anchor="center")
+        self.style.configure("SecondTitle.TLabel", font=('Arial', 14), anchor="center", foreground="white")
+        self.style.configure("Version.TLabel", font=('Arial', 14), anchor="center", foreground="#0099d8")
+        self.style.configure('.', font=('Arial', 12), foreground="white")
+        self.style.configure("Notes.TLabel", font=('Arial', 10), anchor="center", foreground="white")
+        self.style.configure("TMenubutton", font=('Arial', 10), anchor="center", foreground="black")
+        self.style.configure("File.TLabel", background="#081e2a", foreground="white", borderwidth=5, relief="ridge")
+        self.style.configure("Top.TFrame", background="#081e2a")
+        self.style.configure("TNotebook", background="#081e2a", borderwidth=0)
+        self.style.configure("TNotebook.Tab", background="green", foreground="black", lightcolor="grey", borderwidth=2)
         # Frame UI
         tk.Grid.rowconfigure(self.root, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.root, 0, minsize=1, weight=1)
@@ -45,7 +78,7 @@ class GeniusBot:
         tk.Grid.columnconfigure(self.main_frame, 0, minsize=1, weight=1)
         self.title = tk.StringVar()
         self.title.set("Genius - Web Archive")
-        self.title_label = tk.Label(self.main_frame, textvariable=self.title)
+        self.title_label = ttk.Label(self.main_frame, textvariable=self.title, style="Title.TLabel")
         self.top_frame = ttk.Frame(self.main_frame)
         tk.Grid.rowconfigure(self.top_frame, 0, minsize=1, weight=0)
         tk.Grid.rowconfigure(self.top_frame, 1, minsize=1, weight=0)
@@ -101,11 +134,11 @@ class GeniusBot:
         self.queue_title_label = tk.Label(self.middle_frame, textvariable=self.queue_title)
         self.queue_title_label.grid(column=0, row=0, columnspan=3)
         self.youutube_links_text = tk.StringVar()
-        self.youutube_links_text.set("Enter YouTube Link(s) ⮟")
+        self.youutube_links_text.set(r'Enter YouTube Link(s) ⮟')
         self.youutube_links_label = tk.Label(self.top_frame, textvariable=self.youutube_links_text)
         self.youutube_links_label.grid(column=0, row=0, columnspan=2, sticky='W')
         self.youutube_channels_text = tk.StringVar()
-        self.youutube_channels_text.set("Enter YouTube Channel or User ⮞")
+        self.youutube_channels_text.set(r'Enter YouTube Channel or User ⮞')
         self.youutube_channels_label = tk.Label(self.top_frame, textvariable=self.youutube_channels_text)
         self.youutube_channels_label.grid(column=0, row=4, columnspan=2, sticky='W')
         self.percentage_text = tk.StringVar()
@@ -139,7 +172,6 @@ class GeniusBot:
         )
         self.progress_bar.grid(column=0, row=1, padx=15, pady=10, columnspan=3, sticky='NSEW')
 
-
     def run(self, func, name=None):
         threading.Thread(target=func, name=name).start()
 
@@ -154,7 +186,7 @@ class GeniusBot:
         self.youtube_downloader.set_save_path(self.save_location)
 
     def open_file(self):
-        name = askopenfilename(initialdir=os.getcwd(),
+        name = tk.filedialog.askopenfilename(initialdir=os.getcwd(),
                                filetypes=(("Text File", "*.txt"), ("All Files", "*.*")),
                                title="Choose a file."
                                )
@@ -232,7 +264,10 @@ class GeniusBot:
             self.url_list.remove(self.url_listbox.get(self.url_listbox.curselection()))
             self.refresh_list()
             self.max_value = len(self.url_list)
-            self.percentage_text.set(f"{self.value}/{self.max_value} | {(self.value / self.max_value) * 100}%")
+            if self.max_value == 0:
+                self.percentage_text.set(f"{self.value}/{self.max_value} | {(0) * 100}%")
+            else:
+                self.percentage_text.set(f"{self.value}/{self.max_value} | {(self.value / self.max_value) * 100}%")
             self.status.set(f'Queued {self.max_value} videos')
         else:
             print("Click on a link to remove")
@@ -243,9 +278,13 @@ class GeniusBot:
         self.url_list = list(dict.fromkeys(self.url_list))
         self.max_value = len(self.url_list)
         if self.max_value > 0:
-            self.status.set(f'Downloading {len(self.url_list)} URLs')
+            self.status.set(f'Downloading {len(self.url_list)} URL(s)')
             self.download_button_video["state"] = "disabled"
             self.download_button_audio["state"] = "disabled"
+            self.add_url_button["state"] = "disabled"
+            self.remove_url_button["state"] = "disabled"
+            self.openfile_button["state"] = "disabled"
+            self.save_location_button["state"] = "disabled"
             self.value = 0
             th = threading.current_thread()
             self.progress_bar['maximum'] = self.max_value
@@ -270,6 +309,10 @@ class GeniusBot:
                 i += 1
             self.download_button_video["state"] = "enabled"
             self.download_button_audio["state"] = "enabled"
+            self.add_url_button["state"] = "enabled"
+            self.remove_url_button["state"] = "enabled"
+            self.openfile_button["state"] = "enabled"
+            self.save_location_button["state"] = "enabled"
             self.status.set(f'Downloaded {self.value} video(s)!')
         else:
             print("No Videos Added")
@@ -280,12 +323,15 @@ class GeniusBot:
         self.url_list = list(dict.fromkeys(self.url_list))
         self.max_value = len(self.url_list)
         if self.max_value > 0:
-            self.status.set(f'Downloading {len(self.url_list)} URLs')
+            self.status.set(f'Downloading {len(self.url_list)} URL(s)')
             self.download_button_video["state"] = "disabled"
             self.download_button_audio["state"] = "disabled"
+            self.add_url_button["state"] = "disabled"
+            self.remove_url_button["state"] = "disabled"
+            self.openfile_button["state"] = "disabled"
+            self.save_location_button["state"] = "disabled"
             self.value = 0
             th = threading.current_thread()
-
             self.progress_bar['maximum'] = self.max_value
             self.progress_bar['value'] = 0
             self.percentage_text.set(f"{self.value}/{self.max_value} | {(self.value / self.max_value) * 100}%")
@@ -307,6 +353,10 @@ class GeniusBot:
                 i += 1
             self.download_button_video["state"] = "enabled"
             self.download_button_audio["state"] = "enabled"
+            self.add_url_button["state"] = "enabled"
+            self.remove_url_button["state"] = "enabled"
+            self.openfile_button["state"] = "enabled"
+            self.save_location_button["state"] = "enabled"
             self.status.set(f'Downloaded {self.value} audio!')
         else:
             print("No Videos Added")
@@ -323,6 +373,6 @@ root = tk.Tk()
 root.title("Genius Web Archiver")
 root.geometry("500x700")
 root.minsize(500, 700)
-tkt = TkThread(root)  # make the thread-safe callable
-main_ui = GeniusBot(root, tkt)
+tkthread = tkt.TkThread(root)  # make the thread-safe callable
+main_ui = GeniusBot(root, tkthread)
 root.mainloop()
