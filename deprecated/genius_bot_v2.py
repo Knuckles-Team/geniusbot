@@ -1,13 +1,9 @@
-from tkinter import ttk
-import tkinter as tk
+# Implement the default Matplotlib key bindings.
+import queue
 import threading
 import time
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-# Implement the default Matplotlib key bindings.
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
-import numpy as np
-import queue
+import tkinter as tk
+from tkinter import ttk
 
 
 class GeniusBot:

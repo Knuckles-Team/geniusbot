@@ -1,0 +1,20 @@
+Metadata-Version: 1.2
+Name: tangled-up-in-unicode
+Version: 0.0.4
+Summary: Access to the Unicode Character Database (UCD)
+Home-page: https://github.com/dylan-profiler/tangled-up-in-unicode
+License: BSD 4-Clause
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Database
+Classifier: Topic :: Scientific/Engineering :: Information Analysis
+Classifier: Topic :: Text Processing
+Classifier: Topic :: Text Processing :: General
+Classifier: Topic :: Utilities
+Requires-Python: >=3.5

@@ -1,0 +1,28 @@
+Metadata-Version: 1.2
+Name: cx-Freeze
+Version: 6.1
+Summary: create standalone executables from Python scripts
+Home-page: https://anthony-tuininga.github.io/cx_Freeze
+Maintainer: Anthony Tuininga
+Maintainer-email: anthony.tuininga@gmail.com
+License: Python Software Foundation License
+Description: create standalone executables from Python scripts
+Keywords: freeze
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Python Software Foundation License
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: C
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: System :: Software Distribution
+Classifier: Topic :: Utilities

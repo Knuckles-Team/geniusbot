@@ -1,11 +1,10 @@
-import tkinter as tk
 import threading
-import time
+import tkinter as tk
+
+import numpy as np
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 # Implement the default Matplotlib key bindings.
-from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
-import numpy as np
 
 
 class App(threading.Thread):
