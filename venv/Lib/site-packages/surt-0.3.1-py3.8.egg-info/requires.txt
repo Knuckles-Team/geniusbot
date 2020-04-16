@@ -1,0 +1,2 @@
+six
+tldextract>=2.0

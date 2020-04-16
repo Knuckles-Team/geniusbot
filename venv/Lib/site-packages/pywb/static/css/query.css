@@ -1,0 +1,20 @@
+.auto-overflow {
+	overflow-y: auto;
+}
+
+.q-display {
+	height: 80% !important;
+}
+
+.q-row {
+	height: 90% !important;
+}
+
+.list-group-item.list-group-item-action.active {
+	background-color: transparent;
+	color: #007bff;
+}
+
+.long-text {
+	word-wrap: break-word;
+}
