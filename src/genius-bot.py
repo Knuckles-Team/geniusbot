@@ -1,7 +1,7 @@
 #from tkinter.filedialog import askopenfilename, askdirectory
 import threading
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, font
 
 import tkthread as tkt  # TkThread
 
@@ -14,6 +14,7 @@ from matplotlib.figure import Figure'''
 #import queue
 import re
 import os
+import pyglet
 import requests
 from PIL import ImageTk, Image
 
@@ -29,11 +30,34 @@ class GeniusBot:
     youtube_downloader = None
     save_location = os.getcwd()
     style = None
+    font = None
+    tabControl = None
 
     def __init__(self, root_main, tkt_main):
-        self.youtube_downloader = YouTubeDownloader()
         self.root = root_main
         self.tkt = tkt_main
+        self.init_font()
+        self.init_icon()
+        #self.root.geometry("500x700")
+        #self.root.minsize(500, 700)
+        self.init_main_frame()
+        self.init_styles()
+        self.init_youtube_frame()
+        self.youtube_downloader = YouTubeDownloader()
+
+    def init_font(self):
+        self.fontpath = f'{os.pardir}/fonts/OpenSans/OpenSans-Regular.ttf'
+        if os.path.isfile(self.fontpath):
+            pyglet.font.add_file(self.fontpath)
+            action_man = pyglet.font.load('OpenSans')
+            self.font = tk.font.Font(family="OpenSans", size=10)
+            #self.font = tk.font.Font(family="Times New Roman", size=12)
+            print("Using Open_Sans")
+        else:
+            print("Using Times new Roman")
+            self.font = tk.font.Font(family="Times New Roman", size=10)
+
+    def init_icon(self):
         self.iconpath = f'{os.pardir}/img/geniusbot.ico'
         if os.path.isfile(self.iconpath):
             print("File Found")
@@ -41,6 +65,8 @@ class GeniusBot:
             self.iconpath = f'{os.pardir}/GeniusBot/img/geniusbot.ico'
         print(self.iconpath)
         self.root.iconbitmap(self.iconpath)
+
+    def init_styles(self):
         self.style = ttk.Style()
         self.style.theme_create("GeniusBot", parent="alt", settings={
             "TNotebook": {"configure": {"tabmargins": [1, 5, 1, 0]}, "background": "white"},
@@ -48,23 +74,25 @@ class GeniusBot:
                 "configure": {"padding": [5, 1], "background": "black"},
                 "map": {"background": [("selected", "black")],
                         "expand": [("selected", [1, 1, 1, 0])]}}})
-        self.style.configure("TFrame", forground="black", background="#081e2a")
-        self.style.configure("TButton", foreground="#081e2a", background="#081e2a")
-        self.style.configure("Run.TButton", foreground="green", background="green")
-        self.style.configure("Pause.TButton", foreground="orange", background="orange")
-        self.style.configure("Stop.TButton", foreground="red", background="red")
-        self.style.configure("TLabel", foreground="black", background="#081e2a")
-        self.style.configure("Status.TLabel", foreground="white", background="#081e2a")
-        self.style.configure("Title.TLabel", foreground="white", background="#081e2a", font=('Arial', 52, 'bold'), anchor="center")
+        self.style.configure("TFrame", forground="black", font=self.font, background=self.hex_color_background)
+        self.style.configure("TButton", foreground="#081e2a", font=self.font, background=self.hex_color_background)
+        self.style.configure("Add.TButton", foreground="green", font=self.font, background="green")
+        self.style.configure("Open.TButton", foreground="orange", font=self.font, background="orange")
+        self.style.configure("Remove.TButton", foreground="red", font=self.font, background="red")
+        self.style.configure("TLabel", foreground="black", font=self.font, background=self.hex_color_background)
+        self.style.configure("Status.TLabel", foreground="white", font=self.font, background=self.hex_color_background)
+        self.style.configure("Title.TLabel", foreground="white", background=self.hex_color_background, font=("OpenSans", 21), anchor="center")
         self.style.configure("SecondTitle.TLabel", font=('Arial', 14), anchor="center", foreground="white")
         self.style.configure("Version.TLabel", font=('Arial', 14), anchor="center", foreground="#0099d8")
         self.style.configure('.', font=('Arial', 12), foreground="white")
-        self.style.configure("Notes.TLabel", font=('Arial', 10), anchor="center", foreground="white")
-        self.style.configure("TMenubutton", font=('Arial', 10), anchor="center", foreground="black")
-        self.style.configure("File.TLabel", background="#081e2a", foreground="white", borderwidth=5, relief="ridge")
-        self.style.configure("Top.TFrame", background="#081e2a")
-        self.style.configure("TNotebook", background="#081e2a", borderwidth=0)
-        self.style.configure("TNotebook.Tab", background="green", foreground="black", lightcolor="grey", borderwidth=2)
+        self.style.configure("Notes.TLabel", font=self.font, anchor="center", foreground="white")
+        self.style.configure("TMenubutton", font=self.font, anchor="center", foreground="black")
+        self.style.configure("File.TLabel", background=self.hex_color_background, foreground="white", font=self.font, borderwidth=5, relief="ridge")
+        self.style.configure("Top.TFrame", background=self.hex_color_background, font=self.font)
+        self.style.configure("TNotebook", background=self.hex_color_background, borderwidth=0)
+        self.style.configure("TNotebook.Tab", background=self.hex_color_background, foreground="black", lightcolor="grey", borderwidth=2)
+
+    def init_main_frame(self):
         # Frame UI
         tk.Grid.rowconfigure(self.root, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.root, 0, minsize=1, weight=1)
@@ -78,76 +106,93 @@ class GeniusBot:
         tk.Grid.columnconfigure(self.main_frame, 0, minsize=1, weight=1)
         self.title = tk.StringVar()
         self.title.set("Genius - Web Archive")
-        self.title_label = ttk.Label(self.main_frame, textvariable=self.title, style="Title.TLabel")
-        self.top_frame = ttk.Frame(self.main_frame)
+        self.title_frame = ttk.Frame(self.main_frame)
+        self.title_label = ttk.Label(self.title_frame, textvariable=self.title, style="Title.TLabel")
+        self.youtube_archive_frame = tk.Frame(self.tabControl)
+        self.top_frame = ttk.Frame(self.youtube_archive_frame)
+
+        self.tabControl = ttk.Notebook(self.main_frame)
+        self.home_tab = tk.Frame(self.tabControl)
+
+        self.web_archive = tk.Frame(self.tabControl)
+        self.report_merger_tab = tk.Frame(self.tabControl)
+        self.tabControl.add(self.home_tab, text="Home")
+        self.tabControl.add(self.youtube_archive_frame, text="YouTube Archive")
+        self.tabControl.add(self.web_archive, text="Web Archive")
+        self.tabControl.add(self.report_merger_tab, text="Join Reports")
+        self.tabControl.grid(column=0, row=1, sticky='NSEW')
+        #self.tabControl.pack(expand=1, fill="both")
         tk.Grid.rowconfigure(self.top_frame, 0, minsize=1, weight=0)
         tk.Grid.rowconfigure(self.top_frame, 1, minsize=1, weight=0)
         tk.Grid.rowconfigure(self.top_frame, 2, minsize=1, weight=0)
         tk.Grid.columnconfigure(self.top_frame, 0, minsize=1, weight=1)
-        self.middle_button_frame = ttk.Frame(self.main_frame)
+        self.middle_button_frame = ttk.Frame(self.youtube_archive_frame)
         tk.Grid.rowconfigure(self.middle_button_frame, 0, minsize=1, weight=0)
         tk.Grid.columnconfigure(self.middle_button_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.middle_button_frame, 1, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.middle_button_frame, 2, minsize=1, weight=1)
-        self.middle_frame = ttk.Frame(self.main_frame)
+        tk.Grid.columnconfigure(self.middle_button_frame, 3, minsize=1, weight=1)
+        self.middle_frame = ttk.Frame(self.youtube_archive_frame)
         tk.Grid.rowconfigure(self.middle_frame, 0, minsize=1, weight=0)
         tk.Grid.rowconfigure(self.middle_frame, 1, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.middle_frame, 0, minsize=1, weight=1)
-        self.bottom_frame = ttk.Frame(self.main_frame)
+        self.bottom_frame = ttk.Frame(self.youtube_archive_frame)
         tk.Grid.rowconfigure(self.bottom_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.bottom_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.bottom_frame, 1, minsize=1, weight=1)
         self.notification_frame = ttk.Frame(self.main_frame)
         tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
-
         self.main_frame.grid(row=0, column=0, sticky='NSEW')
-        self.title_label.grid(column=0, row=0, sticky='NSEW', columnspan=1, padx=10, pady=10)
+        self.title_frame.grid(row=0, column=0, sticky='NSEW')
         self.top_frame.grid(row=1, column=0, sticky='NSEW')
         self.middle_button_frame.grid(row=2, column=0, sticky='NSEW')
         self.middle_frame.grid(row=3, column=0, sticky='NSEW')
         self.bottom_frame.grid(row=4, column=0, sticky='NSEW')
         self.notification_frame.grid(row=5, column=0, sticky='NSEW')
 
+        self.title_label.grid(column=0, row=0, sticky='NSEW', columnspan=1, padx=10, pady=10)
+
+    def init_youtube_frame(self):
         # Buttons
-        self.add_url_button = ttk.Button(self.middle_button_frame, text="Add", command=self.add_url)
-        self.add_url_button.grid(column=0, row=1, sticky='NSEW', padx=15, pady=10)
-        self.remove_url_button = ttk.Button(self.middle_button_frame, text="Remove", command=self.remove_url)
-        self.remove_url_button.grid(column=1, row=1, sticky='NSEW', padx=15, pady=10)
-        self.openfile_button = ttk.Button(self.middle_button_frame, text="Open File", command=self.open_file)
-        self.openfile_button.grid(column=2, row=1, sticky='NSEW', padx=15, pady=10)
-        self.save_location_button = ttk.Button(self.middle_button_frame, text="Browse Save Location", command=self.choose_save_location)
-        self.save_location_button.grid(column=3, row=1, sticky='NSEW', padx=15, pady=10)
+        self.add_url_button = ttk.Button(self.middle_button_frame, text="Add", style='Add.TButton', width=12, command=self.add_url)
+        self.add_url_button.grid(column=0, row=1, sticky='NSEW', padx=5, pady=10)
+        self.remove_url_button = ttk.Button(self.middle_button_frame, text="Remove", style='Remove.TButton', width=12, command=self.remove_url)
+        self.remove_url_button.grid(column=1, row=1, sticky='NSEW', padx=5, pady=10)
+        self.openfile_button = ttk.Button(self.middle_button_frame, text="Open File", style='Open.TButton', width=12, command=self.open_file)
+        self.openfile_button.grid(column=2, row=1, sticky='NSEW', padx=5, pady=10)
+        self.save_location_button = ttk.Button(self.middle_button_frame, text="Set Save Location", width=18, command=self.choose_save_location)
+        self.save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
         self.download_button_video = ttk.Button(self.bottom_frame, text="Download Video", command=self.download_videos)
-        self.download_button_video.grid(column=0, row=3, sticky='NSEW', padx=15, pady=10)
+        self.download_button_video.grid(column=0, row=3, sticky='NSEW', padx=5, pady=10)
         self.download_button_audio = ttk.Button(self.bottom_frame, text="Download Audio", command=self.download_audios)
         self.download_button_audio.grid(column=1, row=3, sticky='NSEW', padx=15, pady=10)
 
         # Labels
         self.status = tk.StringVar()
         self.status.set("Welcome - Please begin by entering YouTube URLs")
-        self.status_label = tk.Label(self.notification_frame, bd=1, textvariable=self.status, anchor='w', relief=tk.SUNKEN)
+        self.status_label = tk.Label(self.notification_frame, bg=self.hex_color_background, fg="white", bd=1, textvariable=self.status, anchor='w', relief=tk.SUNKEN)
         self.status_label.grid(column=0, row=0, sticky='NSEW', columnspan=1)
         #self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
         self.queue_title = tk.StringVar()
         self.queue_title.set("Download Queue")
-        self.queue_title_label = tk.Label(self.middle_frame, textvariable=self.queue_title)
+        self.queue_title_label = ttk.Label(self.middle_frame, textvariable=self.queue_title, style="Notes.TLabel")
         self.queue_title_label.grid(column=0, row=0, columnspan=3)
         self.youutube_links_text = tk.StringVar()
         self.youutube_links_text.set(r'Enter YouTube Link(s) ⮟')
-        self.youutube_links_label = tk.Label(self.top_frame, textvariable=self.youutube_links_text)
+        self.youutube_links_label = ttk.Label(self.top_frame, textvariable=self.youutube_links_text, style="Notes.TLabel")
         self.youutube_links_label.grid(column=0, row=0, columnspan=2, sticky='W')
         self.youutube_channels_text = tk.StringVar()
         self.youutube_channels_text.set(r'Enter YouTube Channel or User ⮞')
-        self.youutube_channels_label = tk.Label(self.top_frame, textvariable=self.youutube_channels_text)
+        self.youutube_channels_label = ttk.Label(self.top_frame, textvariable=self.youutube_channels_text, style="Notes.TLabel")
         self.youutube_channels_label.grid(column=0, row=4, columnspan=2, sticky='W')
         self.percentage_text = tk.StringVar()
         self.percentage_text.set(f"{self.value}/{self.max_value} | {(self.value/(self.max_value+1))*100}%")
-        self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.percentage_text)
+        self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.percentage_text, style="Notes.TLabel")
         self.percentage_label.grid(column=0, row=2, columnspan=2)
         self.percentage_title = tk.StringVar()
         self.percentage_title.set("Percentage")
-        self.percentage_title_label = tk.Label(self.bottom_frame, textvariable=self.percentage_title)
+        self.percentage_title_label = ttk.Label(self.bottom_frame, textvariable=self.percentage_title, style="Notes.TLabel")
         self.percentage_title_label.grid(column=0, row=0, columnspan=2)
 
         # ListBox
@@ -157,7 +202,7 @@ class GeniusBot:
 
         # Entries
         self.url_entry = tk.Text(self.top_frame, height=9)
-        self.channel_entry = tk.Text(self.top_frame, height=1, width=39)
+        self.channel_entry = tk.Text(self.top_frame, height=1, width=33)
         #tk.Grid.columnconfigure(self.url_entry, 0, weight=1)
         self.channel_entry.bind("<Tab>", self.focus_next_widget)
         self.channel_entry.grid(column=1, row=4, columnspan=2, stick='NSEW')
@@ -372,7 +417,9 @@ class GeniusBot:
 root = tk.Tk()
 root.title("Genius Web Archiver")
 root.geometry("500x700")
-root.minsize(500, 700)
+#root.resizable(width="false", height="false")
+root.minsize(width=500, height=700)
+root.maxsize(width=600, height=800)
 tkthread = tkt.TkThread(root)  # make the thread-safe callable
 main_ui = GeniusBot(root, tkthread)
 root.mainloop()
