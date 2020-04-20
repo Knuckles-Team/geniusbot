@@ -48,12 +48,19 @@ class WebPageArchive:
         f = open('test.html', 'wb')
         f.write(webContent)
 
+    def screenshot(self, url, savepath):
+        self.driver.fullscreen_window()
+        url = url
+        #the element with longest height on page
+        self.driver.get(url)
+        self.driver.save_screenshot(f"{savepath}/screenshot-regular.png")
+
+
     def fullpage_screenshot(self, url, savepath):
         self.driver.fullscreen_window()
         url = url
         #the element with longest height on page
         self.driver.get(url)
-        self.driver.save_screenshot("screenshot-thumbnail.png")
         img_url=self.screenshotter.full_Screenshot(self.driver, save_path=savepath, image_name='screenshot-full.png')
         print(img_url)
 
@@ -62,6 +69,6 @@ class WebPageArchive:
         self.driver.quit()
 
 test = WebPageArchive()
-test.fullpage_screenshot('https://prepareforchange.net/2020/03/27/benjamin-fulford-cobra-return-critical-corona-virus-and-war-updates/', r'.')
+test.fullpage_screenshot('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/', r'.')
 test.quit_driver()
 #test.test_fullpage_screenshot()
