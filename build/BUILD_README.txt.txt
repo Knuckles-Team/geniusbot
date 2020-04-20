@@ -1,3 +1,10 @@
+# Build from build folder: 
+..\venv\Scripts\python .\setup.py build
+
+# Build Dist from folder:
+..\venv\Scripts\python .\setup.py bdist --format=msi
+
+# Build from root dir
 .\venv\Scripts\python setup.py build
 
 .\venv\Scripts\python setup.py bdist --format=msi
