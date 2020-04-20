@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "GeniusBot"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.01"
 #define MyAppPublisher "MajesticMajesty"
 #define MyAppURL "http://www.git.com/"
 #define MyAppExeName "GeniusBot.exe"
