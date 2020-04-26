@@ -4,7 +4,7 @@ import urllib.request
 import time
 import os
 
-from Screenshot import Screenshot_Clipping
+from Screenshot import Screenshot_Clipping #https://github.com/PyWizards/Selenium_Screenshot
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
