@@ -68,11 +68,19 @@ class GeniusBot:
     def init_icon(self):
         self.iconpath = f'{os.pardir}/img/geniusbot.ico'
         if os.path.isfile(self.iconpath):
-            print("File Found")
+            print("Icon Found")
         else:
-            self.iconpath = f'{os.pardir}/GeniusBot/img/geniusbot.ico'
+            self.iconpath = f'{os.curdir}/img/geniusbot.ico'
         print(self.iconpath)
-        self.root.iconbitmap(self.iconpath)
+        #self.root.wm_iconbitmap(os.path.abspath(self.iconpath))
+        try:
+            self.root.iconbitmap(os.path.abspath(self.iconpath))
+        except tk.TclError:
+            print("Icon not found")
+            try:
+                self.root.wm_iconbitmap(os.path.abspath(self.iconpath))
+            except tk.TclError:
+                print("Icon not found")
 
     def init_styles(self):
         self.style = ttk.Style()
