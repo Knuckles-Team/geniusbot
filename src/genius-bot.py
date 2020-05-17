@@ -8,6 +8,7 @@ import tkthread as tkt  # TkThread
 # from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from youtube_download import YouTubeDownloader
 from webpage_archive import WebPageArchive
+from version_info import geniusbot_version
 
 # Implement the default Matplotlib key bindings.
 '''from matplotlib.backend_bases import key_press_handler
@@ -35,7 +36,7 @@ class GeniusBot:
     style = None
     font = None
     tabControl = None
-    version = "1.02"
+    version = geniusbot_version
 
     def __init__(self, root_main, tkt_main):
         self.root = root_main
@@ -389,6 +390,11 @@ class GeniusBot:
                                                    variable=self.web_config_compress_value, onvalue=1, offvalue=0,
                                                    style="TCheckbutton")
         self.web_config_compress.grid(column=0, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_config_twitter_value = tk.IntVar()
+        self.web_config_twitter = ttk.Checkbutton(self.web_archive_config_frame, text="Twitter to CSV",
+                                                   variable=self.web_config_twitter_value, onvalue=1, offvalue=0,
+                                                   style="TCheckbutton")
+        self.web_config_twitter.grid(column=0, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_links_text = tk.StringVar()
         self.web_links_text.set(r'Enter Web Link(s) ⮟')
         self.web_links_label = ttk.Label(self.top_web_frame, textvariable=self.web_links_text, style="Notes.TLabel")
@@ -633,15 +639,12 @@ class GeniusBot:
         self.progress_bar_max_value_youtube = len(self.url_list_youtube)
         if self.progress_bar_max_value_youtube > 0:
             self.status.set(f'Downloading {len(self.url_list_youtube)} URL(s)')
-            # self.tabControl.tab(2, state="disabled")
-            # self.tabControl.tab(3, state="disabled")
-            self.download_button_video["state"] = "disabled"
+            self.download_button["state"] = "disabled"
             self.add_url_button["state"] = "disabled"
             self.remove_url_button["state"] = "disabled"
             self.openfile_button["state"] = "disabled"
             self.save_location_button["state"] = "disabled"
             self.progress_bar_value_youtube = 0
-            th = threading.current_thread()
             self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
             self.progress_bar_youtube['value'] = 0
             self.percentage_text.set(
@@ -652,22 +655,18 @@ class GeniusBot:
                 print("Links Sent: ", self.youtube_downloader.get_link())
                 self.youtube_downloader.download_hd_videos()
                 self.youtube_downloader.reset_links()
-                txt = 'Progress: %02i' % (i + 1)
-                print(th, txt)  # send to terminal
                 self.progress_bar_value_youtube = i + 1
                 self.percentage_text.set(
                     f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
                 self.progress_bar_youtube['value'] = i + 1
                 print("Value: ", self.progress_bar_value_youtube)
                 print("Max Value: ", self.progress_bar_max_value_youtube)
-                # tkt_wrap(entry.delete, '0', 'end')
-                # tkt_wrap(entry.set(txt))
                 self.status.set(
                     f'Completed {self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube}')
                 i += 1
             self.tabControl.tab(2, state="normal")
             self.tabControl.tab(3, state="normal")
-            self.download_button_video["state"] = "enabled"
+            self.download_button["state"] = "enabled"
             self.add_url_button["state"] = "enabled"
             self.remove_url_button["state"] = "enabled"
             self.openfile_button["state"] = "enabled"
@@ -691,7 +690,6 @@ class GeniusBot:
             self.openfile_button["state"] = "disabled"
             self.save_location_button["state"] = "disabled"
             self.progress_bar_value_youtube = 0
-            th = threading.current_thread()
             self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
             self.progress_bar_youtube['value'] = 0
             self.percentage_text.set(
@@ -702,16 +700,12 @@ class GeniusBot:
                 print("Links Sent: ", self.youtube_downloader.get_link())
                 self.youtube_downloader.download_videos(quality)
                 self.youtube_downloader.reset_links()
-                txt = 'Progress: %02i' % (i + 1)
-                print(th, txt)  # send to terminal
                 self.progress_bar_value_youtube = i + 1
                 self.percentage_text.set(
                     f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
                 self.progress_bar_youtube['value'] = i + 1
                 print("Value: ", self.progress_bar_value_youtube)
                 print("Max Value: ", self.progress_bar_max_value_youtube)
-                # tkt_wrap(entry.delete, '0', 'end')
-                # tkt_wrap(entry.set(txt))
                 self.status.set(f'Completed {self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube}')
                 i += 1
             self.tabControl.tab(2, state="normal")
@@ -738,7 +732,6 @@ class GeniusBot:
             self.openfile_button["state"] = "disabled"
             self.save_location_button["state"] = "disabled"
             self.progress_bar_value_youtube = 0
-            th = threading.current_thread()
             self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
             self.progress_bar_youtube['value'] = 0
             self.percentage_text.set(
@@ -748,16 +741,12 @@ class GeniusBot:
                 self.youtube_downloader.append_link(url)
                 self.youtube_downloader.download_audio(quality=quality)
                 self.youtube_downloader.reset_links()
-                txt = 'Progress: %02i' % i
-                print(th, txt)  # send to terminal
                 self.progress_bar_value_youtube = i + 1
                 self.percentage_text.set(
                     f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
                 self.progress_bar_youtube['value'] = i + 1
                 print("Value: ", self.progress_bar_value_youtube)
                 print("Max Value: ", self.progress_bar_max_value_youtube)
-                # tkt_wrap(entry.delete, '0', 'end')
-                # tkt_wrap(entry.set(txt))
                 self.status.set(f'Completed {self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube}')
                 i += 1
             self.download_button["state"] = "enabled"

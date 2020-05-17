@@ -25,6 +25,9 @@ class WebPageArchive:
     #screenshotter = None
     DEFAULT_IMAGE_FORMAT = 'JPEG'
     DEFAULT_IMAGE_QUALITY = 80
+    urls = []
+    twitter_urls = []
+    twitter_df = None
 
     HIDDEN_SCROLL_BAR = 'hidden'
     DEFAULT_SCROLL_BAR = 'visible'
@@ -48,8 +51,8 @@ class WebPageArchive:
         self.driver = webdriver.Chrome(self.driver_path, desired_capabilities=self.capabilities)
         self.driver.fullscreen_window()
 
-    def twitter_archiver(self, search, filename="twitter_export", filetype='csv', screenshot=False, pages=None):
-        df = pd.DataFrame()
+    def twitter_archiver(self, search, export=True, filename="twitter_export", filetype='csv', screenshot=False, pages=None):
+        self.twitter_df = pd.DataFrame()
         counter = 0
         if screenshot:
             self.launch_browser()
@@ -57,32 +60,36 @@ class WebPageArchive:
             for tweet in get_tweets(search, pages=pages):
                 df_tmp = pd.DataFrame.from_dict(tweet)
                 if screenshot:
+                    self.twitter_urls.append(f"https://twitter.com{tweet['tweetUrl']}")
                     print("URL: ", f"https://twitter.com{tweet['tweetUrl']}")
                     self.screenshot(f"https://twitter.com{tweet['tweetUrl']}", filename=f'{filename}_{counter}')
                 #df_tmp = df_tmp.T
                 print(df_tmp)
-                df = df.append(df_tmp, ignore_index=True)
+                self.twitter_df = self.twitter_df.append(df_tmp, ignore_index=True)
                 #print(tweet['text'])
                 counter += 1
         else:
             for tweet in get_tweets(search):
                 df_tmp = pd.DataFrame.from_dict(tweet)
                 if screenshot:
+                    self.twitter_urls.append(f"https://twitter.com{tweet['tweetUrl']}")
                     self.screenshot(f"https://twitter.com{tweet['tweetUrl']}", filename=f'{filename}_{counter}')
                 #df_tmp = df_tmp.T
                 print(df_tmp)
-                df = df.append(df_tmp, ignore_index=True)
+                self.twitter_df = self.twitter_df.append(df_tmp, ignore_index=True)
                 #print(tweet['text'])
                 counter += 1
         if screenshot:
             self.quit_driver()
-        df = df.drop_duplicates(['tweetId'], keep='last')
-        df.to_csv(f"./{filename}.{filetype}", index=False)
+        self.twitter_df = self.twitter_df.drop_duplicates(['tweetId'], keep='last')
+        if export:
+            self.twitter_df.to_csv(f"./{filename}.{filetype}", index=False)
 
     def read_url(self, url):
         #url = 'https://prepareforchange.net/2020/03/27/benjamin-fulford-cobra-return-critical-corona-virus-and-war-updates/'
         self.driver.fullscreen_window()
         self.driver.get(url)
+        self.driver.execute_script('return document.readyState;')
 
     def screenshot(self, url, filename=None, filetype="png"):
         self.read_url(url)
@@ -110,14 +117,6 @@ class WebPageArchive:
         self.driver.quit()
 
     def save_webpage(self, file_name, hide_scrollbar=True, **kwargs):
-        """
-        :param driver: selenium driver object
-        :param file_name:
-        :param hide_scrollbar:
-        :param kwargs: keywords parameters to pillow save function
-        :type file_name: str
-        :return: name of file
-        """
         # define necessary image properties
         image_options = dict()
         image_options['format'] = kwargs.get('format') or self.DEFAULT_IMAGE_FORMAT
@@ -204,9 +203,10 @@ class WebPageArchive:
         old_height = self.driver.get_window_size()['height']
         self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
 
-
+'''
 test = WebPageArchive()
-test.twitter_archiver("realdonaldtrump", filename="twitter_export", filetype="csv", screenshot=True, pages=1)
+test.twitter_archiver("realdonaldtrump", export=True, filename="twitter_export", filetype="csv", screenshot=True, pages=1)
+'''
 #test.twitter_archiver("realdonaldtrump", filename="twitter_export", filetype="csv", screenshot=False, pages=1)
 '''
 test = WebPageArchive()
