@@ -6,7 +6,8 @@ from tkinter import ttk, filedialog, font
 import tkthread as tkt  # TkThread
 
 # from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-from src.youtube_download import YouTubeDownloader
+from youtube_download import YouTubeDownloader
+from webpage_archive import WebPageArchive
 
 # Implement the default Matplotlib key bindings.
 '''from matplotlib.backend_bases import key_press_handler
@@ -29,6 +30,7 @@ class GeniusBot:
     url_list_youtube = []
     root = None
     youtube_downloader = None
+    web_archiver = None
     save_location = os.getcwd()
     style = None
     font = None
@@ -46,6 +48,7 @@ class GeniusBot:
         self.init_main_frame()
         # self.init_youtube_frame()
         self.youtube_downloader = YouTubeDownloader()
+        self.web_archiver = WebPageArchive()
 
     def init_font(self):
         self.fontpath = f'{os.pardir}/fonts/OpenSans/OpenSans-Regular.ttf'
@@ -176,7 +179,8 @@ class GeniusBot:
             2. Web Archive\n
             2. Report Merger\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
             """)
-        self.home_title_label = ttk.Label(self.top_frame_home, textvariable=self.home_title, anchor='w', style="Notes.TLabel")
+        self.home_title_label = ttk.Label(self.top_frame_home, textvariable=self.home_title, anchor='w', style="Notes"
+                                                                                                               ".TLabel")
         self.top_frame_home.grid(row=1, column=0, sticky='NSEW')
         self.home_title_label.grid(column=0, row=0, columnspan=3)
 
@@ -207,8 +211,9 @@ class GeniusBot:
         tk.Grid.columnconfigure(self.middle_frame, 0, minsize=1, weight=1)
         self.bottom_frame = ttk.Frame(self.youtube_archive_frame)
         tk.Grid.rowconfigure(self.bottom_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.bottom_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.bottom_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.bottom_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.bottom_frame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.bottom_frame, 2, minsize=1, weight=1)
 
         tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
@@ -224,11 +229,28 @@ class GeniusBot:
         self.openfile_button.grid(column=2, row=1, sticky='NSEW', padx=5, pady=10)
         self.save_location_button = ttk.Button(self.middle_button_frame, text="Save Location", width=18,
                                                command=self.choose_save_location)
+
         self.save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
-        self.download_button_video = ttk.Button(self.bottom_frame, text="Download Video", command=self.download_videos)
-        self.download_button_video.grid(column=0, row=3, sticky='NSEW', padx=5, pady=10)
-        self.download_button_audio = ttk.Button(self.bottom_frame, text="Download Audio", command=self.download_audios)
-        self.download_button_audio.grid(column=1, row=3, sticky='NSEW', padx=15, pady=10)
+
+        self.file_type = tk.StringVar()
+        self.file_type.set("Video")
+        self.file_type_menu = tk.OptionMenu(self.bottom_frame, self.file_type, "Video", "Audio", command=self.set_file_type)
+        self.video_quality_type = tk.StringVar()
+        self.video_quality_type.set("Highest")
+        self.video_quality_type_menu = tk.OptionMenu(self.bottom_frame, self.video_quality_type, "Highest", "720p", "Lowest")
+        self.audio_quality_type = tk.StringVar()
+        self.audio_quality_type.set("320kbps")
+        self.audio_quality_type_menu = tk.OptionMenu(self.bottom_frame, self.audio_quality_type, "320kbps", "256kbps", "128kbps")
+
+        self.file_type_menu.grid(column=0, row=3, sticky='NSEW', padx=5, pady=10)
+        self.video_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
+        #self.audio_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
+        #self.audio_quality_type_menu.grid_forget()
+        #self.download_button_video = ttk.Button(self.bottom_frame, text="Download Video", command=lambda: self.run(lambda: self.download_video(), name='NoSync'))
+        #self.download_button_video.grid(column=0, row=3, sticky='NSEW', padx=5, pady=10)
+        self.download_button = ttk.Button(self.bottom_frame, text="Download",
+                                                command=lambda: self.run(lambda: self.youtube_download(), name='NoSync'))
+        self.download_button.grid(column=2, row=3, sticky='NSEW', padx=15, pady=10)
 
         # Labels
         # self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
@@ -250,12 +272,12 @@ class GeniusBot:
         self.percentage_text.set(
             f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / (self.progress_bar_max_value_youtube + 1)) * 100}%")
         self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.percentage_text, style="Notes.TLabel")
-        self.percentage_label.grid(column=0, row=2, columnspan=2)
+        self.percentage_label.grid(column=0, row=2, columnspan=3)
         self.percentage_title = tk.StringVar()
         self.percentage_title.set("Percentage")
         self.percentage_title_label = ttk.Label(self.bottom_frame, textvariable=self.percentage_title,
                                                 style="Notes.TLabel")
-        self.percentage_title_label.grid(column=0, row=0, columnspan=2)
+        self.percentage_title_label.grid(column=0, row=0, columnspan=3)
 
         # ListBox
         self.url_listbox = tk.Listbox(self.middle_frame, height=12, selectmode='multiple', exportselection=0)
@@ -336,7 +358,7 @@ class GeniusBot:
         self.web_save_location_button = ttk.Button(self.middle_web_button_frame, text="Save Location", width=15,
                                                    command=self.choose_save_location)
         self.web_save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_download_button = ttk.Button(self.bottom_web_frame, text="Begin Archive", command=self.download_videos)
+        self.web_download_button = ttk.Button(self.bottom_web_frame, text="Begin Archive", command=lambda: self.run(lambda: self.archive_sites(), name='NoSync'))
         self.web_download_button.grid(column=0, row=3, columnspan=2, sticky='NSEW', padx=15, pady=10)
 
         # Labels
@@ -364,8 +386,8 @@ class GeniusBot:
         self.web_config_htmldl.grid(column=0, row=2, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_config_compress_value = tk.IntVar()
         self.web_config_compress = ttk.Checkbutton(self.web_archive_config_frame, text="Compress/Zip",
-                                                 variable=self.web_config_compress_value, onvalue=1, offvalue=0,
-                                                 style="TCheckbutton")
+                                                   variable=self.web_config_compress_value, onvalue=1, offvalue=0,
+                                                   style="TCheckbutton")
         self.web_config_compress.grid(column=0, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_links_text = tk.StringVar()
         self.web_links_text.set(r'Enter Web Link(s) ⮟')
@@ -410,6 +432,23 @@ class GeniusBot:
 
     def run(self, func, name=None):
         threading.Thread(target=func, name=name).start()
+
+    def youtube_download(self):
+        if self.file_type.get() == "Video":
+            self.download_video(quality=self.video_quality_type.get())
+        elif self.file_type.get() == "Audio":
+            audio_quality = self.audio_quality_type.get()
+            audio_quality = re.sub("[^0-9]", "", audio_quality)
+            print("Audio Quality: ", audio_quality)
+            self.download_audio(quality=audio_quality)
+
+    def set_file_type(self, value):
+        if self.file_type.get() == "Video":
+            self.audio_quality_type_menu.grid_forget()
+            self.video_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
+        elif self.file_type.get() == "Audio":
+            self.video_quality_type_menu.grid_forget()
+            self.audio_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
 
     # This class handles [TAB] Key to move to next Widget
     def focus_next_widget(self, event):
@@ -518,57 +557,6 @@ class GeniusBot:
             print("Click on a link to remove")
             self.status.set(f'Click on a URL to remove')
 
-    def download_video_threaded(self, tkt_wrap):
-        self.url_list_youtube = list(filter(None, self.url_list_youtube))
-        self.url_list_youtube = list(dict.fromkeys(self.url_list_youtube))
-        self.progress_bar_max_value_youtube = len(self.url_list_youtube)
-        if self.progress_bar_max_value_youtube > 0:
-            self.status.set(f'Downloading {len(self.url_list_youtube)} URL(s)')
-            # self.tabControl.tab(2, state="disabled")
-            # self.tabControl.tab(3, state="disabled")
-            self.download_button_video["state"] = "disabled"
-            self.download_button_audio["state"] = "disabled"
-            self.add_url_button["state"] = "disabled"
-            self.remove_url_button["state"] = "disabled"
-            self.openfile_button["state"] = "disabled"
-            self.save_location_button["state"] = "disabled"
-            self.progress_bar_value_youtube = 0
-            th = threading.current_thread()
-            self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
-            self.progress_bar_youtube['value'] = 0
-            self.percentage_text.set(
-                f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
-            i = 0
-            for url in self.url_list_youtube:
-                self.youtube_downloader.append_link(url)
-                print("Links Sent: ", self.youtube_downloader.get_link())
-                self.youtube_downloader.download_hd_videos()
-                self.youtube_downloader.reset_links()
-                txt = 'Progress: %02i' % (i + 1)
-                print(th, txt)  # send to terminal
-                self.progress_bar_value_youtube = i + 1
-                self.percentage_text.set(
-                    f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
-                self.progress_bar_youtube['value'] = i + 1
-                print("Value: ", self.progress_bar_value_youtube)
-                print("Max Value: ", self.progress_bar_max_value_youtube)
-                # tkt_wrap(entry.delete, '0', 'end')
-                # tkt_wrap(entry.set(txt))
-                self.status.set(f'Completed {self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube}')
-                i += 1
-            self.tabControl.tab(2, state="normal")
-            self.tabControl.tab(3, state="normal")
-            self.download_button_video["state"] = "enabled"
-            self.download_button_audio["state"] = "enabled"
-            self.add_url_button["state"] = "enabled"
-            self.remove_url_button["state"] = "enabled"
-            self.openfile_button["state"] = "enabled"
-            self.save_location_button["state"] = "enabled"
-            self.status.set(f'Downloaded {self.progress_bar_value_youtube} video(s)!')
-        else:
-            print("No Videos Added")
-            self.status.set(f'Add Some Videos First!')
-
     def add_webarchive_url(self):
         # Get Channel
         parse_channel_addition = ""
@@ -639,14 +627,15 @@ class GeniusBot:
             print("Click on a link to remove")
             self.status.set(f'Click on a URL to remove')
 
-    def download_audio_threaded(self, tkt_wrap):
+    def archive_sites(self):
         self.url_list_youtube = list(filter(None, self.url_list_youtube))
         self.url_list_youtube = list(dict.fromkeys(self.url_list_youtube))
         self.progress_bar_max_value_youtube = len(self.url_list_youtube)
         if self.progress_bar_max_value_youtube > 0:
             self.status.set(f'Downloading {len(self.url_list_youtube)} URL(s)')
+            # self.tabControl.tab(2, state="disabled")
+            # self.tabControl.tab(3, state="disabled")
             self.download_button_video["state"] = "disabled"
-            self.download_button_audio["state"] = "disabled"
             self.add_url_button["state"] = "disabled"
             self.remove_url_button["state"] = "disabled"
             self.openfile_button["state"] = "disabled"
@@ -660,7 +649,104 @@ class GeniusBot:
             i = 0
             for url in self.url_list_youtube:
                 self.youtube_downloader.append_link(url)
-                self.youtube_downloader.download_audio()
+                print("Links Sent: ", self.youtube_downloader.get_link())
+                self.youtube_downloader.download_hd_videos()
+                self.youtube_downloader.reset_links()
+                txt = 'Progress: %02i' % (i + 1)
+                print(th, txt)  # send to terminal
+                self.progress_bar_value_youtube = i + 1
+                self.percentage_text.set(
+                    f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+                self.progress_bar_youtube['value'] = i + 1
+                print("Value: ", self.progress_bar_value_youtube)
+                print("Max Value: ", self.progress_bar_max_value_youtube)
+                # tkt_wrap(entry.delete, '0', 'end')
+                # tkt_wrap(entry.set(txt))
+                self.status.set(
+                    f'Completed {self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube}')
+                i += 1
+            self.tabControl.tab(2, state="normal")
+            self.tabControl.tab(3, state="normal")
+            self.download_button_video["state"] = "enabled"
+            self.add_url_button["state"] = "enabled"
+            self.remove_url_button["state"] = "enabled"
+            self.openfile_button["state"] = "enabled"
+            self.save_location_button["state"] = "enabled"
+            self.status.set(f'Downloaded {self.progress_bar_value_youtube} website screenshot(s)!')
+        else:
+            print("No Website Links Added")
+            self.status.set(f'Add Some Website Links First!')
+
+    def download_video(self, quality):
+        self.url_list_youtube = list(filter(None, self.url_list_youtube))
+        self.url_list_youtube = list(dict.fromkeys(self.url_list_youtube))
+        self.progress_bar_max_value_youtube = len(self.url_list_youtube)
+        if self.progress_bar_max_value_youtube > 0:
+            self.status.set(f'Downloading {len(self.url_list_youtube)} URL(s)')
+            # self.tabControl.tab(2, state="disabled")
+            # self.tabControl.tab(3, state="disabled")
+            self.download_button["state"] = "disabled"
+            self.add_url_button["state"] = "disabled"
+            self.remove_url_button["state"] = "disabled"
+            self.openfile_button["state"] = "disabled"
+            self.save_location_button["state"] = "disabled"
+            self.progress_bar_value_youtube = 0
+            th = threading.current_thread()
+            self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
+            self.progress_bar_youtube['value'] = 0
+            self.percentage_text.set(
+                f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+            i = 0
+            for url in self.url_list_youtube:
+                self.youtube_downloader.append_link(url)
+                print("Links Sent: ", self.youtube_downloader.get_link())
+                self.youtube_downloader.download_videos(quality)
+                self.youtube_downloader.reset_links()
+                txt = 'Progress: %02i' % (i + 1)
+                print(th, txt)  # send to terminal
+                self.progress_bar_value_youtube = i + 1
+                self.percentage_text.set(
+                    f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+                self.progress_bar_youtube['value'] = i + 1
+                print("Value: ", self.progress_bar_value_youtube)
+                print("Max Value: ", self.progress_bar_max_value_youtube)
+                # tkt_wrap(entry.delete, '0', 'end')
+                # tkt_wrap(entry.set(txt))
+                self.status.set(f'Completed {self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube}')
+                i += 1
+            self.tabControl.tab(2, state="normal")
+            self.tabControl.tab(3, state="normal")
+            self.download_button["state"] = "enabled"
+            self.add_url_button["state"] = "enabled"
+            self.remove_url_button["state"] = "enabled"
+            self.openfile_button["state"] = "enabled"
+            self.save_location_button["state"] = "enabled"
+            self.status.set(f'Downloaded {self.progress_bar_value_youtube} video(s)!')
+        else:
+            print("No Videos Added")
+            self.status.set(f'Add Some Videos First!')
+
+    def download_audio(self, quality):
+        self.url_list_youtube = list(filter(None, self.url_list_youtube))
+        self.url_list_youtube = list(dict.fromkeys(self.url_list_youtube))
+        self.progress_bar_max_value_youtube = len(self.url_list_youtube)
+        if self.progress_bar_max_value_youtube > 0:
+            self.status.set(f'Downloading {len(self.url_list_youtube)} URL(s)')
+            self.download_button["state"] = "disabled"
+            self.add_url_button["state"] = "disabled"
+            self.remove_url_button["state"] = "disabled"
+            self.openfile_button["state"] = "disabled"
+            self.save_location_button["state"] = "disabled"
+            self.progress_bar_value_youtube = 0
+            th = threading.current_thread()
+            self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
+            self.progress_bar_youtube['value'] = 0
+            self.percentage_text.set(
+                f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+            i = 0
+            for url in self.url_list_youtube:
+                self.youtube_downloader.append_link(url)
+                self.youtube_downloader.download_audio(quality=quality)
                 self.youtube_downloader.reset_links()
                 txt = 'Progress: %02i' % i
                 print(th, txt)  # send to terminal
@@ -674,8 +760,7 @@ class GeniusBot:
                 # tkt_wrap(entry.set(txt))
                 self.status.set(f'Completed {self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube}')
                 i += 1
-            self.download_button_video["state"] = "enabled"
-            self.download_button_audio["state"] = "enabled"
+            self.download_button["state"] = "enabled"
             self.add_url_button["state"] = "enabled"
             self.remove_url_button["state"] = "enabled"
             self.openfile_button["state"] = "enabled"
@@ -684,12 +769,6 @@ class GeniusBot:
         else:
             print("No Videos Added")
             self.status.set(f'Add Some Videos First!')
-
-    def download_videos(self):
-        self.run(lambda: self.download_video_threaded(self.tkt.nosync), name='NoSync')
-
-    def download_audios(self):
-        self.run(lambda: self.download_audio_threaded(self.tkt.nosync), name='NoSync')
 
 
 root = tk.Tk()

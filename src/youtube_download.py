@@ -192,9 +192,10 @@ class YouTubeDownloader:
         else:
             return -1
 
-    def convert_mp3(self, audio_type):
+    # quality accepts an integer in a string
+    def convert_mp3(self, audio_type, quality="320"):
         # This is for future development to get adaptive files and merge them for higher quality backups
-        cmd = f'{self.packaged_ffmpeg} -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
+        cmd = f'{self.packaged_ffmpeg} -y -i "{str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a {quality}K -vn "{str(self.CHANNEL_SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
         cmd = cmd.replace('/', os.sep)
         '''if platform.system() == "Linux":
             cmd = f'ffmpeg -y -i "{str(self.SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)}" -b:a 320K -vn "{str(self.SAVE_PATH) + "/" + self.title_clean + ".mp3"}"'
@@ -232,8 +233,10 @@ class YouTubeDownloader:
         else:
             return -1
 
-    def download_hd_videos(self):
+    # quality accepts "highest", "720p", "lowest"
+    def download_videos(self, quality="highest"):
         # Clean Duplicates First
+        quality = quality.lower()
         self.link = list(dict.fromkeys(self.link))
         # Iterate over all the links
         for i in self.link:
@@ -262,6 +265,29 @@ class YouTubeDownloader:
 
             # Create Directory for Videos about to be downloaded
             self.make_channel_directory()
+
+            if quality == "720p":
+                standard_hd_video = self.yt.streams.get_by_itag(22)
+                print("D_Video ", standard_hd_video)
+                if standard_hd_video:
+                    print("Good Video")
+                else:
+                    # This version downloads the 360p Video with Audio
+                    standard_hd_video = self.yt.streams.get_by_itag(18)
+                save_attempts = 0
+                # Try 3 times to pull a video
+                while save_attempts < 3:
+                    try:
+                        # downloading the video
+                        print("Saving Video")
+                        standard_hd_video.download(self.CHANNEL_SAVE_PATH)
+                        break
+                    except:
+                        save_attempts += 1
+                        print("Some Error!")
+                print('Task Completed!')
+                return
+
             # Filters out all the files with "mp4" extension and media with audio and video combined.
             # Progressive - Audio and Video merged vs Adaptive - Audio and Video Separate
             video_type = ".webm"
@@ -302,18 +328,33 @@ class YouTubeDownloader:
                     mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True)
                 except AttributeError as e:
                     print("Error in Reading YouTube Stream")
-            if webm_video:
-                print("Entered Webm Video")
-                webm_video = webm_video.order_by("resolution").last()
-            if mp4_video:
-                print("Entered mp4 Video")
-                mp4_video = mp4_video.order_by("resolution").last()
-            if webm_audio:
-                print("Entered Webm Audio")
-                webm_audio = webm_audio.order_by("bitrate").last()
-            if mp4_audio:
-                print("Entered mp4 Audio")
-                mp4_audio = mp4_audio.order_by("bitrate").last()
+
+            if quality == "highest":
+                if webm_video:
+                    print("Entered Webm Video")
+                    webm_video = webm_video.order_by("resolution").last()
+                if mp4_video:
+                    print("Entered mp4 Video")
+                    mp4_video = mp4_video.order_by("resolution").last()
+                if webm_audio:
+                    print("Entered Webm Audio")
+                    webm_audio = webm_audio.order_by("bitrate").last()
+                if mp4_audio:
+                    print("Entered mp4 Audio")
+                    mp4_audio = mp4_audio.order_by("bitrate").last()
+            elif quality == "lowest":
+                if webm_video:
+                    print("Entered Webm Video")
+                    webm_video = webm_video.order_by("resolution").first()
+                if mp4_video:
+                    print("Entered mp4 Video")
+                    mp4_video = mp4_video.order_by("resolution").first()
+                if webm_audio:
+                    print("Entered Webm Audio")
+                    webm_audio = webm_audio.order_by("bitrate").first()
+                if mp4_audio:
+                    print("Entered mp4 Audio")
+                    mp4_audio = mp4_audio.order_by("bitrate").first()
 
             save_attempts_video = 0
             save_attempts_video_mp4 = 0
@@ -384,8 +425,8 @@ class YouTubeDownloader:
                     print("Could not Merge Two Source Files with FFMpeg")
             self.author_clean=""
         print('Video Downloaded!')
-
-    def download_videos(self):
+    '''
+    def download_videos_720p(self):
         # Iterate over all the links
         for i in self.link:
             attempts = 0
@@ -432,8 +473,8 @@ class YouTubeDownloader:
                     save_attempts += 1
                     print("Some Error!")
         print('Task Completed!')
-
-    def download_audio(self):
+    '''
+    def download_audio(self, quality="320"):
         # Iterate over all the links
         for i in self.link:
             attempts = 0
@@ -523,10 +564,9 @@ class YouTubeDownloader:
             if save_attempts_audio >= 3 and save_attempts_audio_mp4 >= 3:
                 print("Failed to download Video or Audio or Both")
             else:
-                result = self.convert_mp3(audio_type)
+                result = self.convert_mp3(audio_type, quality)
                 if result != -1:
                     try:
-
                         old_audio_file = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type)
                         old_audio_file = old_audio_file.replace('/', os.sep)
                         old_audio_art = str(self.CHANNEL_SAVE_PATH) + "/album_art.jpg"

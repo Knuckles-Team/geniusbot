@@ -26,8 +26,8 @@ os.environ['TCL_LIBRARY'] = os.path.join(python_install_dir, 'tcl', 'tcl8.6')
 os.environ['TK_LIBRARY'] = os.path.join(python_install_dir, 'tcl', 'tk8.6')
 includefiles = [src_dir, lib_dir, img_dir, logs_dir, fonts_dir, os.path.join(python_install_dir, 'DLLs', 'tk86t.dll'),
             os.path.join(python_install_dir, 'DLLs', 'tcl86t.dll')]#'tcl86t.dll', 'tk86t.dll']
-includes = ['os','sys','ctypes', 'pathlib', 'logging', 'urllib.request', 'Screenshot', 'pywb', 'json', 'joblib', 'pyglet', 'pytube', 'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread', 'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time']
-packages = ['os','sys','ctypes', 'pathlib', 'logging', 'urllib.request', 'Screenshot', 'pywb', 'json', 'joblib', 'pyglet', 'pytube', 'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread', 'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time']
+includes = ['os','sys','ctypes', 'pathlib', 'logging', 'urllib.request', 'pywb', 'json', 'joblib', 'pyglet', 'pytube', 'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread', 'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time']
+packages = ['os','sys','ctypes', 'pathlib', 'logging', 'urllib.request', 'pywb', 'json', 'joblib', 'pyglet', 'pytube', 'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread', 'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time']
 excludes = ['PyQt4', 'PyQt5', 'Tkinter', 'sqlalchemy', 'cryptography',  'pypyodbc', 'appdirs', 'packaging', 'cx_oracle', 'pyhive', 'spaCy']
 build_exe_options = {
     'packages': packages,
