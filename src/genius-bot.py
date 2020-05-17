@@ -141,7 +141,7 @@ class GeniusBot:
         # self.home_tab = tk.Frame(self.tabControl)
         # self.web_archive = tk.Frame(self.tabControl)
         self.report_merger_tab = tk.Frame(self.tabControl)
-        self.ftp_interface_tab = tk.Frame(self.tabControl)
+        self.analytical_profiler = tk.Frame(self.tabControl)
         self.title_frame.grid(row=0, column=0, sticky='NSEW')
         self.notification_frame.grid(row=5, column=0, sticky='NSEW')
         # Sets up Status Bar
@@ -157,7 +157,7 @@ class GeniusBot:
         self.tabControl.add(self.youtube_archive_frame, text="YouTube Archive")
         self.tabControl.add(self.web_archive_frame, text="Web Archive")
         self.tabControl.add(self.report_merger_tab, text="Report Merger")
-        self.tabControl.add(self.ftp_interface_tab, text="FTP Interface")
+        self.tabControl.add(self.analytical_profiler, text="Analytical Profiler")
         self.tabControl.grid(column=0, row=1, sticky='NSEW')
 
     def init_home_frame(self):
@@ -764,9 +764,7 @@ root = tk.Tk()
 root.minsize(width=500, height=700)
 root.title("GeniusBot")
 root.geometry("500x700")
-# root.resizable(width="false", height="false")
-
-# root.minsize(500, 700)
+root.minsize(500, 700)
 # root.maxsize(width=600, height=800)
 tkthread = tkt.TkThread(root)  # make the thread-safe callable
 main_ui = GeniusBot(root, tkthread)
