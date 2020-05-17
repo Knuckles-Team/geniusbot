@@ -6,3 +6,4 @@ selenium
 mutagen
 tkthread
 pillow
+twitter_scraper

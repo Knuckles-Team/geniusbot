@@ -5,10 +5,12 @@ import time
 import os
 import math
 import re
+import pandas as pd
 
 from io import BytesIO
 
 from PIL import Image
+from twitter_scraper import get_tweets
 #from Screenshot import Screenshot_Clipping #https://github.com/PyWizards/Selenium_Screenshot
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -46,15 +48,36 @@ class WebPageArchive:
         self.driver = webdriver.Chrome(self.driver_path, desired_capabilities=self.capabilities)
         self.driver.fullscreen_window()
 
-    def archive(self):
-        driver = webdriver.Firefox()
-        # driver = webdriver.Chrome('./chromedriver')
-        driver.fullscreen_window()
-        driver.get('http://www.google.com/')
-        save_me = ActionChains(driver).key_down(Keys.CONTROL).key_down('s').key_up(Keys.CONTROL).key_up('s')
-        print("Saved Button Found")
-        save_me.perform()
-        print("Saved Button Clicked")
+    def twitter_archiver(self, search, filename="twitter_export", filetype='csv', screenshot=False, pages=None):
+        df = pd.DataFrame()
+        counter = 0
+        if screenshot:
+            self.launch_browser()
+        if pages:
+            for tweet in get_tweets(search, pages=pages):
+                df_tmp = pd.DataFrame.from_dict(tweet)
+                if screenshot:
+                    print("URL: ", f"https://twitter.com{tweet['tweetUrl']}")
+                    self.screenshot(f"https://twitter.com{tweet['tweetUrl']}", filename=f'{filename}_{counter}')
+                #df_tmp = df_tmp.T
+                print(df_tmp)
+                df = df.append(df_tmp, ignore_index=True)
+                #print(tweet['text'])
+                counter += 1
+        else:
+            for tweet in get_tweets(search):
+                df_tmp = pd.DataFrame.from_dict(tweet)
+                if screenshot:
+                    self.screenshot(f"https://twitter.com{tweet['tweetUrl']}", filename=f'{filename}_{counter}')
+                #df_tmp = df_tmp.T
+                print(df_tmp)
+                df = df.append(df_tmp, ignore_index=True)
+                #print(tweet['text'])
+                counter += 1
+        if screenshot:
+            self.quit_driver()
+        df = df.drop_duplicates(['tweetId'], keep='last')
+        df.to_csv(f"./{filename}.{filetype}", index=False)
 
     def read_url(self, url):
         #url = 'https://prepareforchange.net/2020/03/27/benjamin-fulford-cobra-return-critical-corona-virus-and-war-updates/'
@@ -182,6 +205,9 @@ class WebPageArchive:
         self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
 
 
+test = WebPageArchive()
+test.twitter_archiver("realdonaldtrump", filename="twitter_export", filetype="csv", screenshot=True, pages=1)
+#test.twitter_archiver("realdonaldtrump", filename="twitter_export", filetype="csv", screenshot=False, pages=1)
 '''
 test = WebPageArchive()
 test.launch_browser()
