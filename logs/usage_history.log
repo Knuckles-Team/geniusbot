@@ -1,7 +1,7 @@
-2020-05-17 12:43:01,890 Debug: Initialized
-2020-05-17 12:43:01,890 Info: Initialized
-2020-05-17 12:43:01,890 Warning: Initialized
-2020-05-17 12:43:01,890 Error: Initialized
-2020-05-17 12:43:01,890 Critical: Initialized
-2020-05-17 12:43:01,890 Save Path Changed to: <bound method YouTubeDownloader.set_os_save_path of <youtube_download.YouTubeDownloader object at 0x00000208CF84A6D0>>
-2020-05-17 12:43:01,905 Found ffmpeg at: C:\Users\knuck\Documents\Python\GeniusBot\lib\ffmpeg\bin\ffmpeg.exe
+2020-05-17 15:29:37,426 Debug: Initialized
+2020-05-17 15:29:37,426 Info: Initialized
+2020-05-17 15:29:37,426 Warning: Initialized
+2020-05-17 15:29:37,426 Error: Initialized
+2020-05-17 15:29:37,426 Critical: Initialized
+2020-05-17 15:29:37,426 Save Path Changed to: <bound method YouTubeDownloader.set_os_save_path of <youtube_download.YouTubeDownloader object at 0x000001C3720D9A00>>
+2020-05-17 15:29:37,426 Found ffmpeg at: C:\Users\knuck\Documents\Python\GeniusBot\lib\ffmpeg\bin\ffmpeg.exe
