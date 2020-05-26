@@ -10,19 +10,28 @@ import pandas as pd
 from io import BytesIO
 
 from PIL import Image
+
 from twitter_scraper import get_tweets
-#from Screenshot import Screenshot_Clipping #https://github.com/PyWizards/Selenium_Screenshot
+# from Screenshot import Screenshot_Clipping #https://github.com/PyWizards/Selenium_Screenshot
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
 
 class WebPageArchive:
+    SAVE_PATH = None
+    OS_SAVE_PATH = None
     driver = None
     driver_path = None
     capabilities = None
-    #screenshotter = None
+    chrome_options = webdriver.ChromeOptions()
+    # screenshotter = None
     DEFAULT_IMAGE_FORMAT = 'JPEG'
     DEFAULT_IMAGE_QUALITY = 80
     urls = []
@@ -35,23 +44,48 @@ class WebPageArchive:
     def __init__(self):
         print("test")
         self.capabilities = {
-           'self.browserName': 'chrome',
-           'chromeOptions':  {
-           'useAutomationExtension': False,
-           'forceDevToolsScreenshot': True,
-           'args': ['--start-maximized', '--disable-infobars', '--headless', '--disable-gpu']
-           }
+            'self.browserName': 'chrome',
+            'chromeOptions': {
+                'useAutomationExtension': False,
+                'forceDevToolsScreenshot': True,
+                'args': ['--start-maximized',
+                         '--disable-infobars',
+                         '--headless',
+                         '--disable-gpu',
+                         '--disable-notifications',
+                         '--disable-extensions']
+            }
         }
-        #self.screenshotter = Screenshot_Clipping.Screenshot()
+
+        # Pass the argument 1 to allow and 2 to block
+        self.chrome_options.add_experimental_option("prefs", {
+            "profile.default_content_setting_values.notifications": 2
+        })
+        # self.screenshotter = Screenshot_Clipping.Screenshot()
         self.driver_path = f'{os.pardir}/lib/chromedriver80.exe'
-        #driver_path = '.\chromedriver80.exe'
+        # driver_path = '.\chromedriver80.exe'
         print("Driver Path: ", self.driver_path)
 
     def launch_browser(self):
-        self.driver = webdriver.Chrome(self.driver_path, desired_capabilities=self.capabilities)
+        self.driver = webdriver.Chrome(executable_path=self.driver_path,
+                                       desired_capabilities=self.capabilities,
+                                       chrome_options=self.chrome_options)
         self.driver.fullscreen_window()
 
-    def twitter_archiver(self, search, export=True, filename="twitter_export", filetype='csv', screenshot=False, pages=None):
+    def append_link(self, url):
+        print("URL Appended: ", url)
+        self.urls.append(url)
+        self.urls = list(dict.fromkeys(self.urls))
+
+    def get_links(self):
+        return self.urls
+
+    def reset_links(self):
+        print("Links Reset")
+        self.urls = []
+
+    def twitter_archiver(self, search, export=True, filename="twitter_export", filetype='csv', screenshot=False,
+                         pages=None):
         self.twitter_df = pd.DataFrame()
         counter = 0
         if screenshot:
@@ -63,10 +97,10 @@ class WebPageArchive:
                     self.twitter_urls.append(f"https://twitter.com{tweet['tweetUrl']}")
                     print("URL: ", f"https://twitter.com{tweet['tweetUrl']}")
                     self.screenshot(f"https://twitter.com{tweet['tweetUrl']}", filename=f'{filename}_{counter}')
-                #df_tmp = df_tmp.T
+                # df_tmp = df_tmp.T
                 print(df_tmp)
                 self.twitter_df = self.twitter_df.append(df_tmp, ignore_index=True)
-                #print(tweet['text'])
+                # print(tweet['text'])
                 counter += 1
         else:
             for tweet in get_tweets(search):
@@ -74,10 +108,10 @@ class WebPageArchive:
                 if screenshot:
                     self.twitter_urls.append(f"https://twitter.com{tweet['tweetUrl']}")
                     self.screenshot(f"https://twitter.com{tweet['tweetUrl']}", filename=f'{filename}_{counter}')
-                #df_tmp = df_tmp.T
+                # df_tmp = df_tmp.T
                 print(df_tmp)
                 self.twitter_df = self.twitter_df.append(df_tmp, ignore_index=True)
-                #print(tweet['text'])
+                # print(tweet['text'])
                 counter += 1
         if screenshot:
             self.quit_driver()
@@ -86,12 +120,20 @@ class WebPageArchive:
             self.twitter_df.to_csv(f"./{filename}.{filetype}", index=False)
 
     def read_url(self, url):
-        #url = 'https://prepareforchange.net/2020/03/27/benjamin-fulford-cobra-return-critical-corona-virus-and-war-updates/'
+        # url = 'https://prepareforchange.net/2020/03/27/benjamin-fulford-cobra-return-critical-corona-virus-and-war-updates/'
         self.driver.fullscreen_window()
         self.driver.get(url)
         self.driver.execute_script('return document.readyState;')
+        try:
+            WebDriverWait(self.driver, 3).until(EC.alert_is_present(),
+                                                'Timed out waiting for any notification alerts')
+            alert = self.driver.switch_to.alert
+            alert.accept()
+            print("alert accepted")
+        except TimeoutException:
+            print("no alert")
 
-    def screenshot(self, url, filename=None, filetype="png"):
+    def screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url)
         if filename:
             title = re.sub('[\\/:"*?<>|]', '', filename)
@@ -102,18 +144,27 @@ class WebPageArchive:
             print("Title: ", title)
             self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
 
-    def fullpage_screenshot(self, url, filename=None, filetype="png"):
+    def fullpage_screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url)
         if filename:
-            title = re.sub('[\\/:"*?<>|]', '', filename)
-            self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
+            title = re.sub('[\\/:"*?<>|.,]', '', filename)
+            self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True, format=filetype, quality=quality)
         else:
-            title = re.sub('[\\/:"*?<>|]', '', self.driver.title)
+            title = re.sub('[\\/:"*?<>|.,]', '', self.driver.title)
             title = title.replace(" ", "_")
             print("Title: ", title)
-            self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
+            self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True, format=filetype, quality=quality)
+
+    def set_save_path(self, save_path):
+        self.SAVE_PATH = save_path
+        self.SAVE_PATH = self.SAVE_PATH.replace(os.sep, '/')
+        self.set_os_save_path()
+
+    def set_os_save_path(self):
+        self.OS_SAVE_PATH = self.SAVE_PATH.replace('/', os.sep)
 
     def quit_driver(self):
+        print("Chrome Driver Closed")
         self.driver.quit()
 
     def save_webpage(self, file_name, hide_scrollbar=True, **kwargs):
@@ -123,14 +174,14 @@ class WebPageArchive:
         image_options['quality'] = kwargs.get('quality') or self.DEFAULT_IMAGE_QUALITY
 
         device_pixel_ratio = self.get_device_pixel_ratio()
-        #print("Pixel Ratio: ", device_pixel_ratio)
+        # print("Pixel Ratio: ", device_pixel_ratio)
         # if device_pixel_ratio > 1:
         #     resize_window(driver, device_pixel_ratio)
 
         initial_offset = self.get_y_offset()
         inner_height = self.get_inner_height()
         scroll_height = self.get_scroll_height()
-        #print("Scroll Height: ", scroll_height)
+        # print("Scroll Height: ", scroll_height)
         actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
 
         if hide_scrollbar:
@@ -138,8 +189,9 @@ class WebPageArchive:
 
         slices = self.make_screen_slices(inner_height, scroll_height)
 
-        self.glue_slices_into_image(slices, file_name, image_options, actual_page_size, device_pixel_ratio, inner_height,
-                               scroll_height)
+        self.glue_slices_into_image(slices, file_name, image_options, actual_page_size, device_pixel_ratio,
+                                    inner_height,
+                                    scroll_height)
 
         # state of driver after script should to be the same as before
         if hide_scrollbar:
@@ -154,7 +206,8 @@ class WebPageArchive:
         y_offset_js = 'return window.pageYOffset;'
         return self.driver.execute_script(y_offset_js)
 
-    def glue_slices_into_image(self, slices, file_name, image_options, actual_page_size, device_pixel_ratio, inner_height, scroll_height):
+    def glue_slices_into_image(self, slices, file_name, image_options, actual_page_size, device_pixel_ratio,
+                               inner_height, scroll_height):
         '''stitched_image = Image.new('RGB', (slices[0].size[0], actual_page_size))
         x_offset = 0
         y_offset = 0
@@ -168,7 +221,7 @@ class WebPageArchive:
             image_file.paste(img, (0, math.ceil(i * inner_height * device_pixel_ratio)))
         else:
             image_file.paste(slices[-1], (0, math.ceil((scroll_height - inner_height) * device_pixel_ratio)))
-        image_file.save(file_name, **image_options)
+        image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
 
     def make_screen_slices(self, inner_height, scroll_height):
         slices = []
@@ -203,17 +256,18 @@ class WebPageArchive:
         old_height = self.driver.get_window_size()['height']
         self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
 
+
 '''
 test = WebPageArchive()
 test.twitter_archiver("realdonaldtrump", export=True, filename="twitter_export", filetype="csv", screenshot=True, pages=1)
 '''
-#test.twitter_archiver("realdonaldtrump", filename="twitter_export", filetype="csv", screenshot=False, pages=1)
+# test.twitter_archiver("realdonaldtrump", filename="twitter_export", filetype="csv", screenshot=False, pages=1)
 '''
 test = WebPageArchive()
 test.launch_browser()
 test.fullpage_screenshot('https://www.geeksforgeeks.org/how-to-get-title-of-a-webpage-using-selenium-in-python/')
 test.quit_driver()
 '''
-#test.read_url('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/')
-#test.save_webpage('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/', 'TEST_Q')
-#test.test_fullpage_screenshot()
+# test.read_url('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/')
+# test.save_webpage('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/', 'TEST_Q')
+# test.test_fullpage_screenshot()
