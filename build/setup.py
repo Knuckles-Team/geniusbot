@@ -1,16 +1,13 @@
 import os
 import sys
 
-from version_info import geniusbot_version
+
 from pathlib import Path
 from cx_Freeze import setup, Executable
 
 # https://stackoverflow.com/questions/35533803/keyerror-tcl-library-when-i-use-cx-freeze
 # https://gist.github.com/nicoddemus/ca0acd93a20acbc42d1d
 
-company_name = 'WebArchive'
-product_name = 'GeniusBot'
-version = geniusbot_version
 parent_dir = Path(__file__).resolve().parents[1]
 python_install_dir = os.path.dirname(os.path.dirname(os.__file__))
 # parent_dir = str(os.getos.pardir) + "/"
@@ -20,6 +17,14 @@ img_dir = str(parent_dir) + "/img/"
 lib_dir = str(parent_dir) + "/lib/"
 logs_dir = str(parent_dir) + "/logs/"
 fonts_dir = str(parent_dir) + "/fonts/"
+sys.path.append(parent_dir)
+sys.path.append(src_dir)
+
+from version_info import geniusbot_version
+
+company_name = 'WebArchive'
+product_name = 'GeniusBot'
+version = geniusbot_version
 
 base = None
 if sys.platform == "win32":

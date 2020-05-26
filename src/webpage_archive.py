@@ -61,6 +61,7 @@ class WebPageArchive:
         self.chrome_options.add_experimental_option("prefs", {
             "profile.default_content_setting_values.notifications": 2
         })
+        self.chrome_options.add_extension('../lib/uBlock-Origin_v1.26.0.crx.crx')
         # self.screenshotter = Screenshot_Clipping.Screenshot()
         self.driver_path = f'{os.pardir}/lib/chromedriver80.exe'
         # driver_path = '.\chromedriver80.exe'
