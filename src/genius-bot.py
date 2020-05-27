@@ -283,10 +283,10 @@ class GeniusBot:
         self.youutube_channels_label = ttk.Label(self.top_frame, textvariable=self.youutube_channels_text,
                                                  style="Notes.TLabel")
         self.youutube_channels_label.grid(column=0, row=4, columnspan=2, sticky='W')
-        self.percentage_text = tk.StringVar()
-        self.percentage_text.set(
+        self.youtube_percentage_text = tk.StringVar()
+        self.youtube_percentage_text.set(
             f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / (self.progress_bar_max_value_youtube + 1)) * 100}%")
-        self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.percentage_text, style="Notes.TLabel")
+        self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.youtube_percentage_text, style="Notes.TLabel")
         self.percentage_label.grid(column=0, row=2, columnspan=3)
         self.percentage_title = tk.StringVar()
         self.percentage_title.set("Percentage")
@@ -540,7 +540,7 @@ class GeniusBot:
                 self.url_list_youtube.append(url)
             self.refresh_youtube_list()
             self.progress_bar_max_value_youtube = len(self.url_list_youtube)
-            self.percentage_text.set(
+            self.youtube_percentage_text.set(
                 f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
             self.status.set(f'Queued {self.progress_bar_max_value_youtube} videos from file: {name}')
         except:
@@ -576,7 +576,7 @@ class GeniusBot:
             self.channel_entry.delete("1.0", tk.END)
             self.refresh_youtube_list()
             self.progress_bar_max_value_youtube = len(self.url_list_youtube)
-            self.percentage_text.set(
+            self.youtube_percentage_text.set(
                 f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
             self.status.set(f'Queued {self.progress_bar_max_value_youtube} videos')
         # Get Videos
@@ -595,7 +595,7 @@ class GeniusBot:
             self.url_entry.delete("1.0", tk.END)
             self.refresh_youtube_list()
             self.progress_bar_max_value_youtube = len(self.url_list_youtube)
-            self.percentage_text.set(
+            self.youtube_percentage_text.set(
                 f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
             self.status.set(f'Queued {self.progress_bar_max_value_youtube} videos')
 
@@ -609,12 +609,12 @@ class GeniusBot:
             self.refresh_youtube_list()
             self.progress_bar_max_value_youtube = len(self.url_list_youtube)
             if self.progress_bar_max_value_youtube == 0:
-                self.percentage_text.set(
+                self.youtube_percentage_text.set(
                     f"{self.progress_bar_max_value_youtube}/{self.progress_bar_max_value_youtube} | {(0) * 100}%")
                 self.progress_bar_youtube['value'] = 0
                 self.progress_bar_value_youtube = 0
             else:
-                self.percentage_text.set(
+                self.youtube_percentage_text.set(
                     f"{self.progress_bar_max_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
                 self.progress_bar_youtube['value'] = self.progress_bar_max_value_youtube
                 self.progress_bar_value_youtube = self.progress_bar_max_value_youtube
@@ -693,7 +693,7 @@ class GeniusBot:
                 self.progress_bar_webarchive['value'] = 0
                 self.progress_bar_value_webarchive = 0
             else:
-                self.percentage_text.set(
+                self.web_percentage_text.set(
                     f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
                 self.progress_bar_webarchive['value'] = self.progress_bar_max_value_webarchive
                 self.progress_bar_value_webarchive = self.progress_bar_max_value_webarchive
@@ -778,7 +778,7 @@ class GeniusBot:
             self.progress_bar_value_youtube = 0
             self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
             self.progress_bar_youtube['value'] = 0
-            self.percentage_text.set(
+            self.youtube_percentage_text.set(
                 f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
             i = 0
             for url in self.url_list_youtube:
@@ -787,7 +787,7 @@ class GeniusBot:
                 self.youtube_downloader.download_videos(quality)
                 self.youtube_downloader.reset_links()
                 self.progress_bar_value_youtube = i + 1
-                self.percentage_text.set(
+                self.youtube_percentage_text.set(
                     f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
                 self.progress_bar_youtube['value'] = i + 1
                 print("Value: ", self.progress_bar_value_youtube)
@@ -820,7 +820,7 @@ class GeniusBot:
             self.progress_bar_value_youtube = 0
             self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
             self.progress_bar_youtube['value'] = 0
-            self.percentage_text.set(
+            self.youtube_percentage_text.set(
                 f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
             i = 0
             for url in self.url_list_youtube:
@@ -828,7 +828,7 @@ class GeniusBot:
                 self.youtube_downloader.download_audio(quality=quality)
                 self.youtube_downloader.reset_links()
                 self.progress_bar_value_youtube = i + 1
-                self.percentage_text.set(
+                self.youtube_percentage_text.set(
                     f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
                 self.progress_bar_youtube['value'] = i + 1
                 print("Value: ", self.progress_bar_value_youtube)
