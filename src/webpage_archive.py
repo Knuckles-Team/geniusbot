@@ -142,6 +142,7 @@ class WebPageArchive:
             print("no alert")
         # Tries to remove any persistent scrolling headers
         try:
+            # Removes Any Fixed Elements
             self.driver.execute_script("""(function () { 
               var i, elements = document.querySelectorAll('body *');
             
@@ -151,7 +152,7 @@ class WebPageArchive:
                 }
               }
             })();""")
-            
+
             '''self.driver.execute_script(
                 'javascript:(function(){x=document.querySelectorAll("*");for(i=0;i<x.length;i++){elementStyle=getComputedStyle(x[i]);if(elementStyle.position=="fixed"||elementStyle.position=="sticky"){x[i].style.position="absolute";}}}())')
 
@@ -258,6 +259,19 @@ class WebPageArchive:
         slices = []
         for offset in range(0, scroll_height + 1, inner_height):
             self.scroll_to(offset)
+            try:
+                # Removes Any Fixed Elements
+                self.driver.execute_script("""(function () { 
+                  var i, elements = document.querySelectorAll('body *');
+
+                  for (i = 0; i < elements.length; i++) {
+                    if (getComputedStyle(elements[i]).position === 'fixed') {
+                      elements[i].parentNode.removeChild(elements[i]);
+                    }
+                  }
+                })();""")
+            except Exception as e:
+                print(e)
             img = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
             slices.append(img)
         return slices
