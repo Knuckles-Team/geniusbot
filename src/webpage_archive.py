@@ -37,12 +37,17 @@ class WebPageArchive:
     urls = []
     twitter_urls = []
     twitter_df = None
-
+    log = None
     HIDDEN_SCROLL_BAR = 'hidden'
     DEFAULT_SCROLL_BAR = 'visible'
 
-    def __init__(self):
+    def __init__(self, logger=None):
         print("test")
+        if logger:
+            self.log = logger
+        else:
+            self.log = None # Replace with log call in logger class
+        self.log.info("Initializing Web Archive Complete!")
         self.capabilities = {
             'self.browserName': 'chrome',
             'chromeOptions': {
@@ -61,6 +66,7 @@ class WebPageArchive:
         self.chrome_options.add_experimental_option("prefs", {
             "profile.default_content_setting_values.notifications": 2
         })
+        # Add Ublock Origin to Chrome
         self.chrome_options.add_extension('../lib/uBlock-Origin_v1.26.0.crx.crx')
         # self.screenshotter = Screenshot_Clipping.Screenshot()
         self.driver_path = f'{os.pardir}/lib/chromedriver80.exe'
@@ -125,6 +131,7 @@ class WebPageArchive:
         self.driver.fullscreen_window()
         self.driver.get(url)
         self.driver.execute_script('return document.readyState;')
+        # Tries to Remove any alerts that may appear on the page
         try:
             WebDriverWait(self.driver, 3).until(EC.alert_is_present(),
                                                 'Timed out waiting for any notification alerts')
@@ -133,6 +140,29 @@ class WebPageArchive:
             print("alert accepted")
         except TimeoutException:
             print("no alert")
+        # Tries to remove any persistent scrolling headers
+        try:
+            self.driver.execute_script("""(function () { 
+              var i, elements = document.querySelectorAll('body *');
+            
+              for (i = 0; i < elements.length; i++) {
+                if (getComputedStyle(elements[i]).position === 'fixed') {
+                  elements[i].parentNode.removeChild(elements[i]);
+                }
+              }
+            })();""")
+            
+            '''self.driver.execute_script(
+                'javascript:(function(){x=document.querySelectorAll("*");for(i=0;i<x.length;i++){elementStyle=getComputedStyle(x[i]);if(elementStyle.position=="fixed"||elementStyle.position=="sticky"){x[i].style.position="absolute";}}}())')
+
+            fixed_nav = self.driver.execute_script("document.getElementsByClassName('residential-header sticky-header fixed')[0].classList.remove('fixed');")
+            self.driver.execute_script("arguments[0].setAttribute('style', 'position: absolute; top: 0px;')", fixed_nav)
+            topnav = self.driver.find_element_by_id("topnav")
+            self.driver.execute_script("arguments[0].setAttribute('style', 'position: absolute; top: 0px;')", topnav)
+            self.driver.execute_script("document.getElementById('topnav').setAttribute('style', 'position: absolute; top: 0px;');")'''
+            print("ABLE TO REMOVE HEADER TOP BAR")
+        except Exception as e:
+            print(e)
 
     def screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url)

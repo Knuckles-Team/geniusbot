@@ -1,0 +1,11 @@
+2020-05-26 23:44:20,502:ERROR:STDERR:Exception ignored in:
+2020-05-26 23:44:20,505:ERROR:STDERR:<log.StreamToLogger object at 0x000001B8AAC7EA90>
+2020-05-26 23:44:20,505:ERROR:STDERR:AttributeError
+2020-05-26 23:44:20,505:ERROR:STDERR::
+2020-05-26 23:44:20,505:ERROR:STDERR:'StreamToLogger' object has no attribute 'flush'
+2020-05-26 23:44:20,506:ERROR:STDERR:Exception ignored in sys.unraisablehook
+2020-05-26 23:44:20,506:ERROR:STDERR::
+2020-05-26 23:44:20,506:ERROR:STDERR:<built-in function unraisablehook>
+2020-05-26 23:44:20,506:ERROR:STDERR:AttributeError
+2020-05-26 23:44:20,506:ERROR:STDERR::
+2020-05-26 23:44:20,506:ERROR:STDERR:'StreamToLogger' object has no attribute 'flush'

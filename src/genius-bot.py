@@ -9,6 +9,7 @@ import tkthread as tkt  # TkThread
 from youtube_download import YouTubeDownloader
 from webpage_archive import WebPageArchive
 from version_info import geniusbot_version
+from log import Log
 
 # Implement the default Matplotlib key bindings.
 '''from matplotlib.backend_bases import key_press_handler
@@ -41,8 +42,10 @@ class GeniusBot:
     font = None
     tabControl = None
     version = geniusbot_version
+    log = None
 
     def __init__(self, root_main, tkt_main):
+        self.log = Log()
         self.root = root_main
         self.tkt = tkt_main
         self.init_font()
@@ -51,9 +54,10 @@ class GeniusBot:
         # self.root.minsize(500, 700)
         self.init_styles()
         self.init_main_frame()
-        # self.init_youtube_frame()
-        self.youtube_downloader = YouTubeDownloader()
-        self.web_archiver = WebPageArchive()
+        self.log.info("Initializing GeniusBot Complete!")
+        self.youtube_downloader = YouTubeDownloader(self.log)
+        self.web_archiver = WebPageArchive(self.log)
+
 
     def init_font(self):
         self.fontpath = f'{os.pardir}/fonts/OpenSans/OpenSans-Regular.ttf'
@@ -224,6 +228,7 @@ class GeniusBot:
 
         tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
+
         # Buttons
         self.add_url_button = ttk.Button(self.middle_button_frame, text="Add", style='Add.TButton', width=12,
                                          command=self.add_youtube_url)

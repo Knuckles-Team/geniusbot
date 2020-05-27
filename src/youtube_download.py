@@ -30,28 +30,18 @@ class YouTubeDownloader:
     description_clean = ""
     author_clean = ""
     ffmpeg = ""
-    logger = None
+    log = None
     logging_file = ""
 
-    def __init__(self):
+    def __init__(self, logger=None):
         #Create and configure logger
-        self.logging_file = f"{os.pardir}/logs/usage_history.log"
-        if os.path.isfile(self.logging_file):
-            print("Usage File: ", self.logging_file)
+        if logger:
+            self.log = logger
         else:
-            self.logging_file = f"{os.curdir}/logs/usage_history.log"
-            print("Usage File: ", self.logging_file)
-        logging.basicConfig(filename=self.logging_file, format='%(asctime)s %(message)s', filemode='w')
-        # Creating an object
-        self.logger = logging.getLogger()
-        # Setting the threshold of logger to DEBUG
-        self.logger.setLevel(logging.DEBUG)
-        # Test messages
-        self.logger.debug("Debug: Initialized")
-        self.logger.info("Info: Initialized")
-        self.logger.warning("Warning: Initialized")
-        self.logger.error("Error: Initialized")
-        self.logger.critical("Critical: Initialized")
+            self.log = None
+            #self.log = Log()
+
+        self.log.info("YouTube Download: Initialized")
         self.num_cores = 2
         self.set_save_path(os.getcwd())
         print("INIT CWD: ", self.SAVE_PATH)
@@ -61,14 +51,14 @@ class YouTubeDownloader:
     def open_file(self):
         youtube_urls = open('links_file.txt', 'r')
         print("youtube_urls", youtube_urls)
-        #self.logger.info(str("YouTube URLs: ")+youtube_urls)
-        self.logger.info(str("Length of Links Before Open File: ")+str(len(self.link)))
+        #self.log.info(str("YouTube URLs: ")+youtube_urls)
+        self.log.info(str("Length of Links Before Open File: ")+str(len(self.link)))
         print("Length of Links Before Open File: ", len(self.link))
         for url in youtube_urls:
             self.link.append(url)
         self.link = list(dict.fromkeys(self.link))
         print("Length of Links After Open File: ", len(self.link))
-        self.logger.info(str("Length of Links After Open File: ")+str(len(self.link)))
+        self.log.info(str("Length of Links After Open File: ")+str(len(self.link)))
 
     def get_link(self):
         self.link = list(dict.fromkeys(self.link))
@@ -81,7 +71,7 @@ class YouTubeDownloader:
         self.SAVE_PATH = save_path
         self.SAVE_PATH = self.SAVE_PATH.replace(os.sep, '/')
         self.set_os_save_path()
-        self.logger.info(str("Save Path Changed to: ")+str(self.set_os_save_path))
+        self.log.info(str("Save Path Changed to: ")+str(self.set_os_save_path))
 
     def set_os_save_path(self):
         self.OS_SAVE_PATH = self.SAVE_PATH.replace('/', os.sep)
@@ -94,7 +84,7 @@ class YouTubeDownloader:
 
     def reset_links(self):
         print("Links Reset")
-        self.logger.info("Links Reset")
+        self.log.info("Links Reset")
         self.link = []
 
     def import_ffmpeg(self):
@@ -104,17 +94,17 @@ class YouTubeDownloader:
             print("FFMPEG Location on Local", self.ffmpeg)
             if os.path.isfile(self.ffmpeg):
                 print("Found!!!!")
-                self.logger.info(f'Found ffmpeg at: {self.ffmpeg}')
+                self.log.info(f'Found ffmpeg at: {self.ffmpeg}')
                 self.packaged_ffmpeg = self.ffmpeg
             else:
                 self.ffmpeg = f"{os.curdir}/lib/ffmpeg/bin/ffmpeg.exe"
                 if os.path.isfile(self.ffmpeg):
                     print("Found!!!!")
                     self.packaged_ffmpeg = self.ffmpeg
-                    self.logger.info(f'Found ffmpeg at: {self.ffmpeg}')
+                    self.log.info(f'Found ffmpeg at: {self.ffmpeg}')
                 else:
                     print("Could not find ffmpeg on windows, defaulting to pre-installed ffmpeg")
-                    self.logger.info(f'Could not find ffmpeg at: {self.ffmpeg}\nUsing Pre-built ffmpeg instead')
+                    self.log.info(f'Could not find ffmpeg at: {self.ffmpeg}\nUsing Pre-built ffmpeg instead')
                     self.packaged_ffmpeg = "ffmpeg"
         else:
             self.packaged_ffmpeg = "ffmpeg"
@@ -154,10 +144,10 @@ class YouTubeDownloader:
                 # Create target Directory
                 os.mkdir(self.CHANNEL_SAVE_PATH)
                 print("Directory ", self.CHANNEL_SAVE_PATH, " created ")
-                self.logger.info(f'Directory {self.CHANNEL_SAVE_PATH} created')
+                self.log.info(f'Directory {self.CHANNEL_SAVE_PATH} created')
             except FileExistsError:
                 print("Directory ", self.CHANNEL_SAVE_PATH, " already exists")
-                self.logger.info(f'Directory {self.CHANNEL_SAVE_PATH} already exists')
+                self.log.info(f'Directory {self.CHANNEL_SAVE_PATH} already exists')
 
     # This class uses ffmpeg to merge the hd video and hd audio together
     def merge_video_audio(self, vid_type, aud_type, output_type=".webm"):

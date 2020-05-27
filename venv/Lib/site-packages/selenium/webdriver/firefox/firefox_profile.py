@@ -205,7 +205,7 @@ class FirefoxProfile(object):
             self.set_preference("network.proxy.autoconfig_url", proxy.proxy_autoconfig_url)
 
     def _set_manual_proxy_preference(self, key, setting):
-        if setting is None or setting is '':
+        if setting is None or setting == '':
             return
 
         host_details = setting.split(":")
