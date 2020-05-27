@@ -1,11 +1,11 @@
-2020-05-27 00:32:07,530:ERROR:STDERR:Exception ignored in:
-2020-05-27 00:32:07,535:ERROR:STDERR:<log.StreamToLogger object at 0x0000029716B8CF40>
-2020-05-27 00:32:07,537:ERROR:STDERR:AttributeError
-2020-05-27 00:32:07,537:ERROR:STDERR::
-2020-05-27 00:32:07,537:ERROR:STDERR:'StreamToLogger' object has no attribute 'flush'
-2020-05-27 00:32:07,538:ERROR:STDERR:Exception ignored in sys.unraisablehook
-2020-05-27 00:32:07,538:ERROR:STDERR::
-2020-05-27 00:32:07,539:ERROR:STDERR:<built-in function unraisablehook>
-2020-05-27 00:32:07,539:ERROR:STDERR:AttributeError
-2020-05-27 00:32:07,539:ERROR:STDERR::
-2020-05-27 00:32:07,540:ERROR:STDERR:'StreamToLogger' object has no attribute 'flush'
+2020-05-27 00:40:26,225:ERROR:STDERR:Exception ignored in:
+2020-05-27 00:40:26,226:ERROR:STDERR:<log.StreamToLogger object at 0x0000019E1206FAF0>
+2020-05-27 00:40:26,226:ERROR:STDERR:AttributeError
+2020-05-27 00:40:26,226:ERROR:STDERR::
+2020-05-27 00:40:26,226:ERROR:STDERR:'StreamToLogger' object has no attribute 'flush'
+2020-05-27 00:40:26,226:ERROR:STDERR:Exception ignored in sys.unraisablehook
+2020-05-27 00:40:26,226:ERROR:STDERR::
+2020-05-27 00:40:26,227:ERROR:STDERR:<built-in function unraisablehook>
+2020-05-27 00:40:26,227:ERROR:STDERR:AttributeError
+2020-05-27 00:40:26,227:ERROR:STDERR::
+2020-05-27 00:40:26,227:ERROR:STDERR:'StreamToLogger' object has no attribute 'flush'

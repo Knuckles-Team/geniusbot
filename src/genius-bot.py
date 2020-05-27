@@ -845,6 +845,20 @@ class GeniusBot:
             print("No Videos Added")
             self.status.set(f'Add Some Videos First!')
 
+# Use this classing system to create YouTube classes and Web Archive Classes.
+#Usage: self.window = Frame1(self)
+#        self.window.grid(row=0, column=10, rowspan=2)
+class Frame1(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent, bg="red")
+        self.parent = parent
+        self.widgets()
+
+    def widgets(self):
+        self.text = tk.Text(self)
+        self.text.insert(tk.INSERT, "Hello World\t")
+        self.text.insert(tk.END, "This is the first frame")
+        self.text.grid(row=0, column=0, padx=20, pady=20) # margins
 
 root = tk.Tk()
 root.minsize(width=500, height=700)
