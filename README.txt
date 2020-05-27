@@ -20,3 +20,40 @@ options = webdriver.ChromeOptions()
 options.add_extension('./exampleOfExtensionDownloadedToFolder.crx')
 driver = webdriver.Chrome(chrome_options=options) 
 driver.get('http://www.google.com')
+
+Install Requirements:
+Navigate to root folder and run: pip install -r requirements.txt
+
+Run:
+In PyCharm, or IDE of choice, run Smartbot.py to open the GUI.
+
+To update pip:
+pip install --upgrade pip
+
+To update all python packages in venv:
+../venv/Scripts/python.exe -m pip freeze | %{$_.split('==')[0]} | %{../venv/Scripts/python.exe -m pip install --upgrade $_}
+
+To update all python packages:
+pip freeze | %{$_.split('==')[0]} | %{pip install --upgrade $_}
+
+To generate requirements file from venv:
+../venv/Scripts/python.exe -m pip freeze > requirements.txt
+
+To generate requirements file:
+pip freeze > requirements.txt
+
+To install requirements file into venv:
+../venv/Scripts/python.exe -m pip install -r requirements.txt
+
+To install requirements file:
+pip install -r requirements.txt
+
+IMPLEMENTING TKThread Library Requires This for CX_Freeze compilation.
+To fix TkThread (Thread) not found issue. Copy Tkthread folder into 'venv>tcl>tcl8.6' as well as 'venv>tcl'
+
+Install Microsoft Visual Studio C++ Distributable to install packages like PyHive!
+
+IMPLEMENTED SQLAlchemy Library Requires manual copy from Python install directory. (Issue lies that SQLAlchemy always installs to Python install dir, instead of venv)
+
+For Full Page Screenshots to Remove any Headers on Website that are fixed use this JQuery:
+https://alisdair.mcdiarmid.org/kill-sticky-headers/
