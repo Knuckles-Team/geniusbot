@@ -69,15 +69,16 @@ class WebPageArchive:
         # Add Ublock Origin to Chrome
         self.chrome_options.add_extension('../lib/uBlock-Origin_v1.26.0.crx.crx')
         # self.screenshotter = Screenshot_Clipping.Screenshot()
-        self.driver_path = f'{os.pardir}/lib/chromedriver80.exe'
+        self.driver_path = f'{os.pardir}/lib/chromedriver83.exe'
         # driver_path = '.\chromedriver80.exe'
         print("Driver Path: ", self.driver_path)
+        #self.launch_browser()
 
     def launch_browser(self):
         self.driver = webdriver.Chrome(executable_path=self.driver_path,
                                        desired_capabilities=self.capabilities,
                                        chrome_options=self.chrome_options)
-        self.driver.fullscreen_window()
+        #self.driver.fullscreen_window()
 
     def append_link(self, url):
         print("URL Appended: ", url)
