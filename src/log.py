@@ -22,6 +22,9 @@ class Log:
             #print("Log File: ", self.logging_file)
         logging.basicConfig(filename=self.logging_file, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
                             filemode='w', level=logging.DEBUG)
+
+    # Kick Off Log Initializing
+    def init_logging(self):
         # Creating an object
         self.logger = logging.getLogger()
         # Setting the threshold of logger to DEBUG
@@ -33,16 +36,19 @@ class Log:
         self.logger.error("Error: Initialized")
         self.logger.critical("Critical: Initialized")
         self.logger.info("Logging Module: Initializing")
+        print("Logging Initialized Successfully")
+
+    def log_stdout(self):
         stdout_logger = logging.getLogger('STDOUT')
         sl = StreamToLogger(stdout_logger, logging.INFO)
         sys.stdout = sl
+        self.logger.debug(sys.stdout)
 
+    def log_stderr(self):
         stderr_logger = logging.getLogger('STDERR')
         sl = StreamToLogger(stderr_logger, logging.ERROR)
         sys.stderr = sl
-        self.logger.debug(sys.stdout)
         self.logger.warning(sys.stderr)
-        print("Logging Initialized Successfully")
 
     # Write msg to Log as Debug Line
     def debug(self, msg):

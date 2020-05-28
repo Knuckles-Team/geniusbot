@@ -27,16 +27,11 @@ class GeniusBot:
     progress_bar_youtube = None
     progress_bar_value_youtube = 0
     progress_bar_max_value_youtube = 0
-    progress_bar_webarchive = None
-    progress_bar_value_webarchive = 0
-    progress_bar_max_value_webarchive = 0
     # w_text = None
     tkt = None
     url_list_youtube = []
-    url_list_webarchive = []
     root = None
     youtube_downloader = None
-    web_archiver = None
     save_location = os.getcwd()
     style = None
     font = None
@@ -46,6 +41,10 @@ class GeniusBot:
 
     def __init__(self, root_main, tkt_main):
         self.log = Log()
+        self.log.init_logging()
+        # Always uncomment these logs for a build.
+        #self.log.log_stdout()
+        #self.log.log_stderr()
         self.root = root_main
         self.tkt = tkt_main
         self.init_font()
@@ -56,8 +55,6 @@ class GeniusBot:
         self.init_main_frame()
         self.log.info("Initializing GeniusBot Complete!")
         self.youtube_downloader = YouTubeDownloader(self.log)
-        self.web_archiver = WebPageArchive(self.log)
-
 
     def init_font(self):
         self.fontpath = f'{os.pardir}/fonts/OpenSans/OpenSans-Regular.ttf'
@@ -160,10 +157,14 @@ class GeniusBot:
         self.status_label.grid(column=0, row=0, sticky='NSEW', columnspan=1)
         self.init_home_frame()
         self.init_youtube_frame()
-        self.init_web_archive_frame()
+        '''self.web_archive_frame = tk.Frame(self.tabControl)
+        tk.Grid.rowconfigure(self.web_archive_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.web_archive_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.web_archive_frame, 1, minsize=1, weight=1)'''
         self.tabControl.add(self.home_frame, text="Home")
         self.tabControl.add(self.youtube_archive_frame, text="YouTube Archive")
-        self.tabControl.add(self.web_archive_frame, text="Web Archive")
+        WebArchiveFrame(self.tkt, self.tabControl, self.status, self.log)
+        #self.tabControl.add(self.web_archive_frame_update, text="Web Archive")
         # self.tabControl.add(self.report_merger_tab, text="Report Merger")
         # self.tabControl.add(self.analytical_profiler, text="Analytical Profiler")
         self.tabControl.grid(column=0, row=1, sticky='NSEW')
@@ -321,183 +322,8 @@ class GeniusBot:
         self.bottom_frame.grid(row=4, column=0, sticky='NSEW')
         self.title_label.grid(column=0, row=0, sticky='NSEW', columnspan=1, padx=10, pady=10)
 
-    def init_web_archive_frame(self):
-        self.web_archive_frame = tk.Frame(self.tabControl)
-        tk.Grid.rowconfigure(self.web_archive_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.web_archive_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.web_archive_frame, 1, minsize=1, weight=1)
-        self.web_archive_selection_frame = ttk.Frame(self.web_archive_frame)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 2, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 3, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 4, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 5, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.web_archive_selection_frame, 0, minsize=1, weight=1)
-        self.web_archive_config_frame = ttk.Frame(self.web_archive_frame)
-        tk.Grid.rowconfigure(self.web_archive_config_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.web_archive_config_frame, 0, minsize=1, weight=0)
-        self.top_web_frame = ttk.Frame(self.web_archive_selection_frame)
-        # self.tabControl.pack(expand=1, fill="both")
-        tk.Grid.rowconfigure(self.top_web_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_web_frame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_web_frame, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.top_web_frame, 0, minsize=1, weight=1)
-        self.middle_web_button_frame = ttk.Frame(self.web_archive_selection_frame)
-        tk.Grid.rowconfigure(self.middle_web_button_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 2, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 3, minsize=1, weight=1)
-        self.middle_web_frame = ttk.Frame(self.web_archive_selection_frame)
-        tk.Grid.rowconfigure(self.middle_web_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.middle_web_frame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_frame, 0, minsize=1, weight=1)
-        self.bottom_web_frame = ttk.Frame(self.web_archive_selection_frame)
-        tk.Grid.rowconfigure(self.bottom_web_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.bottom_web_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.bottom_web_frame, 1, minsize=1, weight=1)
-
-        tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
-        # Buttons
-        self.web_add_url_button = ttk.Button(self.middle_web_button_frame, text="Add", style='Add.TButton', width=9,
-                                             command=self.add_webarchive_url)
-        self.web_add_url_button.grid(column=0, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_remove_url_button = ttk.Button(self.middle_web_button_frame, text="Remove", style='Remove.TButton',
-                                                width=9, command=self.remove_webarchive_url)
-        self.web_remove_url_button.grid(column=1, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_openfile_button = ttk.Button(self.middle_web_button_frame, text="Open File", style='Open.TButton',
-                                              width=9, command=self.open_file_webarchive)
-        self.web_openfile_button.grid(column=2, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_save_location_button = ttk.Button(self.middle_web_button_frame, text="Save Location", width=15,
-                                                   command=self.choose_save_location_webarchive)
-        self.web_save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_archive_button = ttk.Button(self.bottom_web_frame, text="Begin Archive",
-                                             command=lambda: self.run(lambda: self.archive_sites(), name='NoSync'))
-        self.web_archive_button.grid(column=0, row=3, columnspan=2, sticky='NSEW', padx=15, pady=10)
-
-        # Labels
-        # self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
-        self.web_queue_title = tk.StringVar()
-        self.web_queue_title.set("Download Queue")
-        self.web_queue_title_label = ttk.Label(self.middle_web_frame,
-                                               textvariable=self.web_queue_title,
-                                               style="Notes.TLabel")
-        self.web_queue_title_label.grid(column=0, row=0, columnspan=1)
-        self.web_config_title = tk.StringVar()
-        self.web_config_title.set("Configure Archive")
-        self.web_config_title_label = ttk.Label(self.web_archive_config_frame, textvariable=self.web_config_title,
-                                                style="Notes.TLabel")
-        self.web_config_title_label.grid(column=0, row=0, columnspan=2, pady=(5, 5), sticky='NSEW')
-        self.web_config_screenshot_value = tk.IntVar()
-        self.web_config_screenshot_value.set(1)
-        self.web_config_screenshot = ttk.Checkbutton(self.web_archive_config_frame, text="Capture Screenshot",
-                                                     variable=self.web_config_screenshot_value, onvalue=1, offvalue=0,
-                                                     style="TCheckbutton", command=self.onclick_capture_screenshot)
-        self.web_config_screenshot.grid(column=0, row=1, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_filetype_title = ttk.Label(self.web_archive_config_frame, text="File Type",
-                                                       style="Notes.TLabel")
-        self.web_screenshot_filetype_title.grid(column=0, row=2, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_filetype = tk.StringVar()
-        self.web_screenshot_filetype.set("PNG")  # default value
-        self.web_screenshot_filetype_menu = ttk.OptionMenu(self.web_archive_config_frame, self.web_screenshot_filetype,
-                                                           "PNG", "PNG", "JPEG")
-        self.web_screenshot_filetype_menu.grid(column=1, row=2, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_size_title = ttk.Label(self.web_archive_config_frame, text="Size",
-                                                   style="Notes.TLabel")
-        self.web_screenshot_size_title.grid(column=0, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_size = tk.StringVar()
-        self.web_screenshot_size.set("Full")  # default value
-        self.web_screenshot_size_menu = ttk.OptionMenu(self.web_archive_config_frame, self.web_screenshot_size,
-                                                       "Full", "Full", "Normal")
-        self.web_screenshot_size_menu.grid(column=1, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_quality_title = ttk.Label(self.web_archive_config_frame, text="Quality",
-                                                      style="Notes.TLabel")
-        self.web_screenshot_quality_title.grid(column=0, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_quality_value = tk.IntVar()
-        self.web_screenshot_quality_value.set(100)
-        self.web_screenshot_quality = tk.Scale(self.web_archive_config_frame, from_=10, to=100,
-                                               variable=self.web_screenshot_quality_value, orient=tk.HORIZONTAL)
-        self.web_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_config_htmldl_value = tk.IntVar()
-        self.web_config_htmldl = ttk.Checkbutton(self.web_archive_config_frame, text="Archive Website",
-                                                 variable=self.web_config_htmldl_value, onvalue=1, offvalue=0,
-                                                 style="TCheckbutton")
-        self.web_config_htmldl.grid(column=0, row=5, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_config_compress_value = tk.IntVar()
-        self.web_config_compress = ttk.Checkbutton(self.web_archive_config_frame, text="Compress/Zip",
-                                                   variable=self.web_config_compress_value, onvalue=1, offvalue=0,
-                                                   style="TCheckbutton")
-        self.web_config_compress.grid(column=0, row=6, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_config_twitter_value = tk.IntVar()
-        self.web_config_twitter = ttk.Checkbutton(self.web_archive_config_frame, text="Twitter to CSV",
-                                                  variable=self.web_config_twitter_value, onvalue=1, offvalue=0,
-                                                  style="TCheckbutton")
-        self.web_config_twitter.grid(column=0, row=7, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_links_text = tk.StringVar()
-        self.web_links_text.set(r'Enter Web Link(s) ⮟')
-        self.web_links_label = ttk.Label(self.top_web_frame, textvariable=self.web_links_text, style="Notes.TLabel")
-        self.web_links_label.grid(column=0, row=0, columnspan=1, sticky='W')
-        self.web_percentage_text = tk.StringVar()
-        self.web_percentage_text.set(
-            f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / (self.progress_bar_max_value_webarchive + 1)) * 100}%")
-        self.web_percentage_label = ttk.Label(self.bottom_web_frame, textvariable=self.web_percentage_text,
-                                              style="Notes.TLabel")
-        self.web_percentage_label.grid(column=0, row=2, columnspan=2)
-        self.web_percentage_title = tk.StringVar()
-        self.web_percentage_title.set("Percentage")
-        self.web_percentage_title_label = ttk.Label(self.bottom_web_frame, textvariable=self.web_percentage_title,
-                                                    style="Notes.TLabel")
-        self.web_percentage_title_label.grid(column=0, row=0, columnspan=2)
-
-        # ListBox
-        self.web_url_listbox = tk.Listbox(self.middle_web_frame, height=12)
-        self.web_url_listbox.grid(column=0, row=1, columnspan=2, rowspan=3, sticky='NSEW')
-        tk.Grid.columnconfigure(self.url_listbox, 0, weight=1)
-
-        # Entries
-        self.web_url_entry = tk.Text(self.top_web_frame, height=9)
-        self.web_url_entry.bind("<Tab>", self.focus_next_widget)
-        self.refresh_webarchive_list()
-        self.web_url_entry.grid(column=0, row=2, columnspan=2, sticky='NSEW')
-
-        # Progress Bar
-        self.progress_bar_webarchive = ttk.Progressbar(
-            self.bottom_web_frame, orient="horizontal",
-            mode="determinate"
-        )
-        self.web_archive_selection_frame.grid(column=1, row=0, columnspan=1, sticky='NSEW')
-        self.web_archive_config_frame.grid(column=0, row=0, columnspan=1, sticky='NSEW')
-        self.progress_bar_webarchive.grid(column=0, row=1, padx=15, pady=10, columnspan=2, sticky='NSEW')
-        self.top_web_frame.grid(row=1, column=0, sticky='NSEW')
-        self.middle_web_button_frame.grid(row=2, column=0, sticky='NSEW')
-        self.middle_web_frame.grid(row=3, column=0, sticky='NSEW')
-        self.bottom_web_frame.grid(row=4, column=0, sticky='NSEW')
-        # self.title_label.grid(column=0, row=0, sticky='NSEW', columnspan=1, padx=10, pady=10)
-
     def run(self, func, name=None):
         threading.Thread(target=func, name=name).start()
-
-    def onclick_capture_screenshot(self):
-        value = self.web_config_screenshot_value.get()
-        if value == 0:
-            self.web_screenshot_filetype_title.grid_forget()
-            self.web_screenshot_filetype_menu.grid_forget()
-            self.web_screenshot_size_title.grid_forget()
-            self.web_screenshot_size_menu.grid_forget()
-            self.web_screenshot_quality_title.grid_forget()
-            self.web_screenshot_quality.grid_forget()
-        elif value == 1:
-            self.web_screenshot_filetype_title.grid(column=0, row=2, columnspan=1, padx=(5, 0), pady=(5, 5),
-                                                    sticky='NSEW')
-            self.web_screenshot_filetype_menu.grid(column=1, row=2, columnspan=1, padx=(5, 5), pady=(5, 5),
-                                                   sticky='NSEW')
-            self.web_screenshot_size_title.grid(column=0, row=3, columnspan=1, padx=(5, 0), pady=(0, 5), sticky='NSEW')
-            self.web_screenshot_size_menu.grid(column=1, row=3, columnspan=1, padx=(5, 5), pady=(0, 5), sticky='NSEW')
-            self.web_screenshot_quality_title.grid(column=0, row=4, columnspan=1, padx=(5, 0), pady=(0, 5),
-                                                   sticky='NSEW')
-            self.web_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(0, 5), sticky='NSEW')
 
     def youtube_download(self):
         if self.file_type.get() == "Video":
@@ -623,145 +449,6 @@ class GeniusBot:
             print("Click on a link to remove")
             self.status.set(f'Click on a URL to remove')
 
-    def choose_save_location_webarchive(self):
-        self.save_location = tk.filedialog.askdirectory()
-        print("Save Filepath: ", self.save_location)
-        self.web_archiver.set_save_path(self.save_location)
-
-    def open_file_webarchive(self):
-        name = tk.filedialog.askopenfilename(initialdir=os.getcwd(),
-                                             filetypes=(("Text File", "*.txt"), ("All Files", "*.*")),
-                                             title="Choose a file."
-                                             )
-        # Using try in case user types in unknown file or closes without choosing a file.
-        try:
-            webarchive_urls = open(name, 'r')
-            print("webarchive_urls", webarchive_urls)
-            print("Length of Links Before Open File: ", len(self.url_list_webarchive))
-            for url in webarchive_urls:
-                self.url_list_webarchive.append(url)
-            self.refresh_webarchive_list()
-            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
-            self.web_percentage_text.set(
-                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} videos from file: {name}')
-        except:
-            print("No file exists")
-            self.status.set(f'File Not Found')
-
-    def refresh_webarchive_list(self):
-        self.web_url_listbox.delete(0, tk.END)
-        self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
-        for items in self.url_list_webarchive:
-            self.web_url_listbox.insert(tk.END, items)
-
-    def add_webarchive_url(self):
-        # Get Web Links
-        parse_addition = self.web_url_entry.get("1.0", tk.END)
-        if re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', parse_addition) != "":
-            parse_addition_array = parse_addition.splitlines()
-            for url in parse_addition_array:
-                if re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url) != "":
-                    self.status.set(f'Added URLs to Queue')
-                    temp = re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url)
-                    self.url_list_webarchive.append(temp)
-                else:
-                    print("Bad URL: ", url)
-                    self.status.set(f'Paste Some Website Links First! (CTRL+V) {url}')
-            self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
-            self.web_url_entry.delete("1.0", tk.END)
-            self.refresh_webarchive_list()
-            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
-            print(
-                f'URL: {self.url_list_webarchive} AND AND MAXVAL: {self.progress_bar_max_value_webarchive} AND LEN {len(self.url_list_webarchive)}')
-            self.web_percentage_text.set(
-                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} url(s)')
-
-    def remove_webarchive_url(self):
-        if self.web_url_listbox.curselection():
-            selected_text_list = [self.web_url_listbox.get(i) for i in self.web_url_listbox.curselection()]
-            x = 0
-            for url in selected_text_list:
-                self.url_list_webarchive.remove(url)
-                x += 1
-            self.refresh_webarchive_list()
-            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
-            if self.progress_bar_max_value_webarchive == 0:
-                self.web_percentage_text.set(
-                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(0) * 100}%")
-                self.progress_bar_webarchive['value'] = 0
-                self.progress_bar_value_webarchive = 0
-            else:
-                self.web_percentage_text.set(
-                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-                self.progress_bar_webarchive['value'] = self.progress_bar_max_value_webarchive
-                self.progress_bar_value_webarchive = self.progress_bar_max_value_webarchive
-            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} videos')
-        else:
-            print("Click on a link to remove")
-            self.status.set(f'Click on a URL to remove')
-
-    def archive_sites(self):
-        self.url_list_webarchive = list(filter(None, self.url_list_webarchive))
-        self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
-        self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
-        if self.progress_bar_max_value_webarchive > 0:
-            self.status.set(f'Downloading {len(self.url_list_webarchive)} URL(s)')
-            self.web_archive_button["state"] = "disabled"
-            self.web_add_url_button["state"] = "disabled"
-            self.web_remove_url_button["state"] = "disabled"
-            self.web_openfile_button["state"] = "disabled"
-            self.web_save_location_button["state"] = "disabled"
-            self.progress_bar_value_webarchive = 0
-            self.progress_bar_webarchive['maximum'] = self.progress_bar_max_value_webarchive
-            self.progress_bar_webarchive['value'] = 0
-            print(f'{self.progress_bar_max_value_webarchive}:MAX VALUE')
-            self.web_percentage_text.set(
-                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-            # Check to see if screenshot capture is enabled to launch browser
-            if self.web_config_screenshot_value.get() == 1:
-                self.web_archiver.launch_browser()
-            i = 0
-            for url in self.url_list_webarchive:
-                self.web_archiver.append_link(url=url)
-                print("Links Sent: ", self.web_archiver.get_links())
-                # Check to see if screenshot capture is enabled to capture screenshot
-                if self.web_config_screenshot_value.get() == 1:
-                    if self.web_screenshot_size.get() == "Full":
-                        self.web_archiver.fullpage_screenshot(url=url,
-                                                              filetype=self.web_screenshot_filetype.get(),
-                                                              quality=self.web_screenshot_quality.get())
-                    elif self.web_screenshot_size.get() == "Normal":
-                        self.web_archiver.screenshot(url=url,
-                                                     filetype=self.web_screenshot_filetype.get(),
-                                                     quality=self.web_screenshot_quality.get())
-                # self.youtube_downloader.download_hd_videos()
-                self.web_archiver.reset_links()
-                self.progress_bar_value_webarchive = i + 1
-                self.web_percentage_text.set(
-                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-                self.progress_bar_webarchive['value'] = i + 1
-                print("Value: ", self.progress_bar_value_webarchive)
-                print("Max Value: ", self.progress_bar_max_value_webarchive)
-                self.status.set(
-                    f'Completed {self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive}')
-                i += 1
-            # Check to see if screenshot capture is enabled to quit browser
-            if self.web_config_screenshot_value.get() == 1:
-                self.web_archiver.quit_driver()
-            self.tabControl.tab(1, state="normal")
-            self.tabControl.tab(2, state="normal")
-            self.web_archive_button["state"] = "enabled"
-            self.web_add_url_button["state"] = "enabled"
-            self.web_remove_url_button["state"] = "enabled"
-            self.web_openfile_button["state"] = "enabled"
-            self.web_save_location_button["state"] = "enabled"
-            self.status.set(f'Downloaded {self.progress_bar_value_webarchive} website screenshot(s)!')
-        else:
-            print("No Website Links Added")
-            self.status.set(f'Add Some Website Links First!')
-
     def download_video(self, quality):
         self.url_list_youtube = list(filter(None, self.url_list_youtube))
         self.url_list_youtube = list(dict.fromkeys(self.url_list_youtube))
@@ -845,20 +532,355 @@ class GeniusBot:
             print("No Videos Added")
             self.status.set(f'Add Some Videos First!')
 
-# Use this classing system to create YouTube classes and Web Archive Classes.
-#Usage: self.window = Frame1(self)
-#        self.window.grid(row=0, column=10, rowspan=2)
-class Frame1(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent, bg="red")
-        self.parent = parent
-        self.widgets()
 
-    def widgets(self):
-        self.text = tk.Text(self)
-        self.text.insert(tk.INSERT, "Hello World\t")
-        self.text.insert(tk.END, "This is the first frame")
-        self.text.grid(row=0, column=0, padx=20, pady=20) # margins
+# WebArchive Class
+class WebArchiveFrame(tk.Frame):
+    progress_bar_webarchive = None
+    progress_bar_value_webarchive = 0
+    progress_bar_max_value_webarchive = 0
+    url_list_webarchive = []
+    web_archiver = None
+    log = None
+    tabControl = None
+    web_archive_frame = None
+    status = None
+
+    def __init__(self, tkt_main, tab_control, status, logger=None):
+        if logger:
+            self.log = logger
+        else:
+            self.log = Log()
+        self.tkt = tkt_main
+        self.tabControl = tab_control
+        self.status = status
+        #self.web_archive_frame = web_archive_frame
+        self.web_archiver = WebPageArchive(self.log)
+        self.draw_frame()
+        self.tabControl.add(self.web_archive_frame, text="Web Archive")
+        tk.Frame.__init__(self, self.web_archive_frame)#, bg="red")
+
+    def run(self, func, name=None):
+        threading.Thread(target=func, name=name).start()
+
+    def draw_frame(self):
+        self.web_archive_frame = tk.Frame(self.tabControl)
+        tk.Grid.rowconfigure(self.web_archive_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.web_archive_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.web_archive_frame, 1, minsize=1, weight=1)
+        self.web_archive_selection_frame = ttk.Frame(self.web_archive_frame)
+        tk.Grid.rowconfigure(self.web_archive_selection_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.web_archive_selection_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.web_archive_selection_frame, 2, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.web_archive_selection_frame, 3, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.web_archive_selection_frame, 4, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.web_archive_selection_frame, 5, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.web_archive_selection_frame, 0, minsize=1, weight=1)
+        self.web_archive_config_frame = ttk.Frame(self.web_archive_frame)
+        tk.Grid.rowconfigure(self.web_archive_config_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.web_archive_config_frame, 0, minsize=1, weight=0)
+        self.top_web_frame = ttk.Frame(self.web_archive_selection_frame)
+        # self.tabControl.pack(expand=1, fill="both")
+        tk.Grid.rowconfigure(self.top_web_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.top_web_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.top_web_frame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.top_web_frame, 0, minsize=1, weight=1)
+        self.middle_web_button_frame = ttk.Frame(self.web_archive_selection_frame)
+        tk.Grid.rowconfigure(self.middle_web_button_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.middle_web_button_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.middle_web_button_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.middle_web_button_frame, 2, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.middle_web_button_frame, 3, minsize=1, weight=1)
+        self.middle_web_frame = ttk.Frame(self.web_archive_selection_frame)
+        tk.Grid.rowconfigure(self.middle_web_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.middle_web_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.middle_web_frame, 0, minsize=1, weight=1)
+        self.bottom_web_frame = ttk.Frame(self.web_archive_selection_frame)
+        tk.Grid.rowconfigure(self.bottom_web_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.bottom_web_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.bottom_web_frame, 1, minsize=1, weight=1)
+
+        #tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
+        #tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
+        # Buttons
+        self.web_add_url_button = ttk.Button(self.middle_web_button_frame, text="Add", style='Add.TButton', width=9,
+                                             command=self.add_webarchive_url)
+        self.web_add_url_button.grid(column=0, row=1, sticky='NSEW', padx=5, pady=10)
+        self.web_remove_url_button = ttk.Button(self.middle_web_button_frame, text="Remove", style='Remove.TButton',
+                                                width=9, command=self.remove_webarchive_url)
+        self.web_remove_url_button.grid(column=1, row=1, sticky='NSEW', padx=5, pady=10)
+        self.web_openfile_button = ttk.Button(self.middle_web_button_frame, text="Open File", style='Open.TButton',
+                                              width=9, command=self.open_file_webarchive)
+        self.web_openfile_button.grid(column=2, row=1, sticky='NSEW', padx=5, pady=10)
+        self.web_save_location_button = ttk.Button(self.middle_web_button_frame, text="Save Location", width=15,
+                                                   command=self.choose_save_location_webarchive)
+        self.web_save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
+        self.web_archive_button = ttk.Button(self.bottom_web_frame, text="Begin Archive",
+                                             command=lambda: self.run(lambda: self.archive_sites(), name='NoSync'))
+        self.web_archive_button.grid(column=0, row=3, columnspan=2, sticky='NSEW', padx=15, pady=10)
+
+        # Labels
+        # self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
+        self.web_queue_title = tk.StringVar()
+        self.web_queue_title.set("Download Queue")
+        self.web_queue_title_label = ttk.Label(self.middle_web_frame,
+                                               textvariable=self.web_queue_title,
+                                               style="Notes.TLabel")
+        self.web_queue_title_label.grid(column=0, row=0, columnspan=1)
+        self.web_config_title = tk.StringVar()
+        self.web_config_title.set("Configure Archive")
+        self.web_config_title_label = ttk.Label(self.web_archive_config_frame, textvariable=self.web_config_title,
+                                                style="Notes.TLabel")
+        self.web_config_title_label.grid(column=0, row=0, columnspan=2, pady=(5, 5), sticky='NSEW')
+        self.web_config_screenshot_value = tk.IntVar()
+        self.web_config_screenshot_value.set(1)
+        self.web_config_screenshot = ttk.Checkbutton(self.web_archive_config_frame, text="Capture Screenshot",
+                                                     variable=self.web_config_screenshot_value, onvalue=1, offvalue=0,
+                                                     style="TCheckbutton", command=self.onclick_capture_screenshot)
+        self.web_config_screenshot.grid(column=0, row=1, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_screenshot_filetype_title = ttk.Label(self.web_archive_config_frame, text="File Type",
+                                                       style="Notes.TLabel")
+        self.web_screenshot_filetype_title.grid(column=0, row=2, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_screenshot_filetype = tk.StringVar()
+        self.web_screenshot_filetype.set("PNG")  # default value
+        self.web_screenshot_filetype_menu = ttk.OptionMenu(self.web_archive_config_frame, self.web_screenshot_filetype,
+                                                           "PNG", "PNG", "JPEG")
+        self.web_screenshot_filetype_menu.grid(column=1, row=2, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_screenshot_size_title = ttk.Label(self.web_archive_config_frame, text="Size",
+                                                   style="Notes.TLabel")
+        self.web_screenshot_size_title.grid(column=0, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_screenshot_size = tk.StringVar()
+        self.web_screenshot_size.set("Full")  # default value
+        self.web_screenshot_size_menu = ttk.OptionMenu(self.web_archive_config_frame, self.web_screenshot_size,
+                                                       "Full", "Full", "Normal")
+        self.web_screenshot_size_menu.grid(column=1, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_screenshot_quality_title = ttk.Label(self.web_archive_config_frame, text="Quality",
+                                                      style="Notes.TLabel")
+        self.web_screenshot_quality_title.grid(column=0, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_screenshot_quality_value = tk.IntVar()
+        self.web_screenshot_quality_value.set(100)
+        self.web_screenshot_quality = tk.Scale(self.web_archive_config_frame, from_=10, to=100,
+                                               variable=self.web_screenshot_quality_value, orient=tk.HORIZONTAL)
+        self.web_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_config_htmldl_value = tk.IntVar()
+        self.web_config_htmldl = ttk.Checkbutton(self.web_archive_config_frame, text="Archive Website",
+                                                 variable=self.web_config_htmldl_value, onvalue=1, offvalue=0,
+                                                 style="TCheckbutton")
+        self.web_config_htmldl.grid(column=0, row=5, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_config_compress_value = tk.IntVar()
+        self.web_config_compress = ttk.Checkbutton(self.web_archive_config_frame, text="Compress/Zip",
+                                                   variable=self.web_config_compress_value, onvalue=1, offvalue=0,
+                                                   style="TCheckbutton")
+        self.web_config_compress.grid(column=0, row=6, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_config_twitter_value = tk.IntVar()
+        self.web_config_twitter = ttk.Checkbutton(self.web_archive_config_frame, text="Twitter to CSV",
+                                                  variable=self.web_config_twitter_value, onvalue=1, offvalue=0,
+                                                  style="TCheckbutton")
+        self.web_config_twitter.grid(column=0, row=7, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_links_text = tk.StringVar()
+        self.web_links_text.set(r'Enter Web Link(s) ⮟')
+        self.web_links_label = ttk.Label(self.top_web_frame, textvariable=self.web_links_text, style="Notes.TLabel")
+        self.web_links_label.grid(column=0, row=0, columnspan=1, sticky='W')
+        self.web_percentage_text = tk.StringVar()
+        self.web_percentage_text.set(
+            f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / (self.progress_bar_max_value_webarchive + 1)) * 100}%")
+        self.web_percentage_label = ttk.Label(self.bottom_web_frame, textvariable=self.web_percentage_text,
+                                              style="Notes.TLabel")
+        self.web_percentage_label.grid(column=0, row=2, columnspan=2)
+        self.web_percentage_title = tk.StringVar()
+        self.web_percentage_title.set("Percentage")
+        self.web_percentage_title_label = ttk.Label(self.bottom_web_frame, textvariable=self.web_percentage_title,
+                                                    style="Notes.TLabel")
+        self.web_percentage_title_label.grid(column=0, row=0, columnspan=2)
+
+        # ListBox
+        self.web_url_listbox = tk.Listbox(self.middle_web_frame, height=12)
+        self.web_url_listbox.grid(column=0, row=1, columnspan=2, rowspan=3, sticky='NSEW')
+        tk.Grid.columnconfigure(self.web_url_listbox, 0, weight=1)
+
+        # Entries
+        self.web_url_entry = tk.Text(self.top_web_frame, height=9)
+        self.web_url_entry.bind("<Tab>", self.focus_next_widget)
+        self.refresh_webarchive_list()
+        self.web_url_entry.grid(column=0, row=2, columnspan=2, sticky='NSEW')
+
+        # Progress Bar
+        self.progress_bar_webarchive = ttk.Progressbar(
+            self.bottom_web_frame, orient="horizontal",
+            mode="determinate"
+        )
+        self.web_archive_selection_frame.grid(column=1, row=0, columnspan=1, sticky='NSEW')
+        self.web_archive_config_frame.grid(column=0, row=0, columnspan=1, sticky='NSEW')
+        self.progress_bar_webarchive.grid(column=0, row=1, padx=15, pady=10, columnspan=2, sticky='NSEW')
+        self.top_web_frame.grid(row=1, column=0, sticky='NSEW')
+        self.middle_web_button_frame.grid(row=2, column=0, sticky='NSEW')
+        self.middle_web_frame.grid(row=3, column=0, sticky='NSEW')
+        self.bottom_web_frame.grid(row=4, column=0, sticky='NSEW')
+        # self.title_label.grid(column=0, row=0, sticky='NSEW', columnspan=1, padx=10, pady=10)
+
+    def archive_sites(self):
+        self.url_list_webarchive = list(filter(None, self.url_list_webarchive))
+        self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
+        self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
+        if self.progress_bar_max_value_webarchive > 0:
+            self.status.set(f'Downloading {len(self.url_list_webarchive)} URL(s)')
+            self.web_archive_button["state"] = "disabled"
+            self.web_add_url_button["state"] = "disabled"
+            self.web_remove_url_button["state"] = "disabled"
+            self.web_openfile_button["state"] = "disabled"
+            self.web_save_location_button["state"] = "disabled"
+            self.progress_bar_value_webarchive = 0
+            self.progress_bar_webarchive['maximum'] = self.progress_bar_max_value_webarchive
+            self.progress_bar_webarchive['value'] = 0
+            print(f'{self.progress_bar_max_value_webarchive}:MAX VALUE')
+            self.web_percentage_text.set(
+                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
+            # Check to see if screenshot capture is enabled to launch browser
+            if self.web_config_screenshot_value.get() == 1:
+                self.web_archiver.launch_browser()
+            i = 0
+            for url in self.url_list_webarchive:
+                self.web_archiver.append_link(url=url)
+                print("Links Sent: ", self.web_archiver.get_links())
+                # Check to see if screenshot capture is enabled to capture screenshot
+                if self.web_config_screenshot_value.get() == 1:
+                    if self.web_screenshot_size.get() == "Full":
+                        self.web_archiver.fullpage_screenshot(url=url,
+                                                              filetype=self.web_screenshot_filetype.get(),
+                                                              quality=self.web_screenshot_quality.get())
+                    elif self.web_screenshot_size.get() == "Normal":
+                        self.web_archiver.screenshot(url=url,
+                                                     filetype=self.web_screenshot_filetype.get(),
+                                                     quality=self.web_screenshot_quality.get())
+                # self.youtube_downloader.download_hd_videos()
+                self.web_archiver.reset_links()
+                self.progress_bar_value_webarchive = i + 1
+                self.web_percentage_text.set(
+                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
+                self.progress_bar_webarchive['value'] = i + 1
+                print("Value: ", self.progress_bar_value_webarchive)
+                print("Max Value: ", self.progress_bar_max_value_webarchive)
+                self.status.set(
+                    f'Completed {self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive}')
+                i += 1
+            # Check to see if screenshot capture is enabled to quit browser
+            if self.web_config_screenshot_value.get() == 1:
+                self.web_archiver.quit_driver()
+            self.tabControl.tab(1, state="normal")
+            self.tabControl.tab(2, state="normal")
+            self.web_archive_button["state"] = "enabled"
+            self.web_add_url_button["state"] = "enabled"
+            self.web_remove_url_button["state"] = "enabled"
+            self.web_openfile_button["state"] = "enabled"
+            self.web_save_location_button["state"] = "enabled"
+            self.status.set(f'Downloaded {self.progress_bar_value_webarchive} website screenshot(s)!')
+        else:
+            print("No Website Links Added")
+            self.status.set(f'Add Some Website Links First!')
+
+    def onclick_capture_screenshot(self):
+        value = self.web_config_screenshot_value.get()
+        if value == 0:
+            self.web_screenshot_filetype_title.grid_forget()
+            self.web_screenshot_filetype_menu.grid_forget()
+            self.web_screenshot_size_title.grid_forget()
+            self.web_screenshot_size_menu.grid_forget()
+            self.web_screenshot_quality_title.grid_forget()
+            self.web_screenshot_quality.grid_forget()
+        elif value == 1:
+            self.web_screenshot_filetype_title.grid(column=0, row=2, columnspan=1, padx=(5, 0), pady=(5, 5),
+                                                    sticky='NSEW')
+            self.web_screenshot_filetype_menu.grid(column=1, row=2, columnspan=1, padx=(5, 5), pady=(5, 5),
+                                                   sticky='NSEW')
+            self.web_screenshot_size_title.grid(column=0, row=3, columnspan=1, padx=(5, 0), pady=(0, 5), sticky='NSEW')
+            self.web_screenshot_size_menu.grid(column=1, row=3, columnspan=1, padx=(5, 5), pady=(0, 5), sticky='NSEW')
+            self.web_screenshot_quality_title.grid(column=0, row=4, columnspan=1, padx=(5, 0), pady=(0, 5),
+                                                   sticky='NSEW')
+            self.web_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(0, 5), sticky='NSEW')
+
+    def choose_save_location_webarchive(self):
+        self.save_location = tk.filedialog.askdirectory()
+        print("Save Filepath: ", self.save_location)
+        self.web_archiver.set_save_path(self.save_location)
+
+    def open_file_webarchive(self):
+        name = tk.filedialog.askopenfilename(initialdir=os.getcwd(),
+                                             filetypes=(("Text File", "*.txt"), ("All Files", "*.*")),
+                                             title="Choose a file."
+                                             )
+        # Using try in case user types in unknown file or closes without choosing a file.
+        try:
+            webarchive_urls = open(name, 'r')
+            print("webarchive_urls", webarchive_urls)
+            print("Length of Links Before Open File: ", len(self.url_list_webarchive))
+            for url in webarchive_urls:
+                self.url_list_webarchive.append(url)
+            self.refresh_webarchive_list()
+            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
+            self.web_percentage_text.set(
+                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
+            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} videos from file: {name}')
+        except:
+            print("No file exists")
+            self.status.set(f'File Not Found')
+
+    def refresh_webarchive_list(self):
+        self.web_url_listbox.delete(0, tk.END)
+        self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
+        for items in self.url_list_webarchive:
+            self.web_url_listbox.insert(tk.END, items)
+
+    def add_webarchive_url(self):
+        # Get Web Links
+        parse_addition = self.web_url_entry.get("1.0", tk.END)
+        if re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', parse_addition) != "":
+            parse_addition_array = parse_addition.splitlines()
+            for url in parse_addition_array:
+                if re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url) != "":
+                    self.status.set(f'Added URLs to Queue')
+                    temp = re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url)
+                    self.url_list_webarchive.append(temp)
+                else:
+                    print("Bad URL: ", url)
+                    self.status.set(f'Paste Some Website Links First! (CTRL+V) {url}')
+            self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
+            self.web_url_entry.delete("1.0", tk.END)
+            self.refresh_webarchive_list()
+            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
+            print(
+                f'URL: {self.url_list_webarchive} AND AND MAXVAL: {self.progress_bar_max_value_webarchive} AND LEN {len(self.url_list_webarchive)}')
+            self.web_percentage_text.set(
+                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
+            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} url(s)')
+
+    def remove_webarchive_url(self):
+        if self.web_url_listbox.curselection():
+            selected_text_list = [self.web_url_listbox.get(i) for i in self.web_url_listbox.curselection()]
+            x = 0
+            for url in selected_text_list:
+                self.url_list_webarchive.remove(url)
+                x += 1
+            self.refresh_webarchive_list()
+            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
+            if self.progress_bar_max_value_webarchive == 0:
+                self.web_percentage_text.set(
+                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(0) * 100}%")
+                self.progress_bar_webarchive['value'] = 0
+                self.progress_bar_value_webarchive = 0
+            else:
+                self.web_percentage_text.set(
+                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
+                self.progress_bar_webarchive['value'] = self.progress_bar_max_value_webarchive
+                self.progress_bar_value_webarchive = self.progress_bar_max_value_webarchive
+            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} videos')
+        else:
+            print("Click on a link to remove")
+            self.status.set(f'Click on a URL to remove')
+
+    # This class handles [TAB] Key to move to next Widget
+    def focus_next_widget(self, event):
+        event.widget.tk_focusNext().focus()
+        return ("break")
+
 
 root = tk.Tk()
 root.minsize(width=500, height=700)
