@@ -21,3 +21,4 @@ pyglet
 shapely
 piexif
 webdriver-manager
+cx-Freeze
