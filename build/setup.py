@@ -36,10 +36,10 @@ includefiles = [src_dir, lib_dir, img_dir, logs_dir, fonts_dir, str(os.path.join
                 str(os.path.join(python_install_dir, 'DLLs', 'tcl86t.dll'))]  # 'tcl86t.dll', 'tk86t.dll']
 includes = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
             'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
-            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time']
+            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver-manager']
 packages = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
             'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
-            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time']
+            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver-manager']
 excludes = ['PyQt4', 'PyQt5', 'Tkinter', 'sqlalchemy', 'cryptography', 'pypyodbc', 'appdirs', 'packaging', 'cx_oracle',
             'pyhive', 'spaCy']
 build_exe_options = {
