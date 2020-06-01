@@ -10,6 +10,7 @@ from youtube_download import YouTubeDownloader
 from webpage_archive import WebPageArchive
 from version_info import geniusbot_version
 from log import Log
+from version_info import geniusbot_version
 
 # Implement the default Matplotlib key bindings.
 '''from matplotlib.backend_bases import key_press_handler
@@ -23,50 +24,54 @@ from PIL import ImageTk, Image
 
 
 class GeniusBot:
-    hex_color_background = '#3E4A57'
-    progress_bar_youtube = None
-    progress_bar_value_youtube = 0
-    progress_bar_max_value_youtube = 0
-    # w_text = None
+    version = geniusbot_version
     tkt = None
-    url_list_youtube = []
     root = None
-    youtube_downloader = None
-    save_location = os.getcwd()
+    log = None
+    status = None
+    tabControl = None
     style = None
     font = None
-    tabControl = None
-    version = geniusbot_version
-    log = None
+    hex_color_background = '#3E4A57'
+    save_location = os.getcwd()
+    title = None
+    title_version = None
+    home_title = None
 
     def __init__(self, root_main, tkt_main):
         self.log = Log()
         self.log.init_logging()
         # Always uncomment these logs for a build.
-        #self.log.log_stdout()
-        #self.log.log_stderr()
+        # self.log.log_stdout()
+        # self.log.log_stderr()
         self.root = root_main
+        self.root.minsize(width=500, height=700)
+        self.root.title(f"GeniusBot")
+        self.root.geometry("500x700")
+        self.root.minsize(500, 700)
         self.tkt = tkt_main
         self.init_font()
         self.init_icon()
-        # self.root.geometry("500x700")
-        # self.root.minsize(500, 700)
+        self.root.geometry("500x700")
+        self.root.minsize(500, 700)
+        self.title = tk.StringVar()
+        self.title_version = tk.StringVar()
+        self.home_title = tk.StringVar()
         self.init_styles()
         self.init_main_frame()
         self.log.info("Initializing GeniusBot Complete!")
-        self.youtube_downloader = YouTubeDownloader(self.log)
 
     def init_font(self):
-        self.fontpath = f'{os.pardir}/fonts/OpenSans/OpenSans-Regular.ttf'
-        self.fontpath_alt = f'{os.curdir}/fonts/OpenSans/OpenSans-Regular.ttf'
-        if os.path.isfile(self.fontpath):
-            pyglet.font.add_file(self.fontpath)
+        font_path = f'{os.pardir}/fonts/OpenSans/OpenSans-Regular.ttf'
+        font_path_alt = f'{os.curdir}/fonts/OpenSans/OpenSans-Regular.ttf'
+        if os.path.isfile(font_path):
+            pyglet.font.add_file(font_path)
             action_man = pyglet.font.load('OpenSans')
             self.font = tk.font.Font(family="OpenSans", size=10)
             # self.font = tk.font.Font(family="Times New Roman", size=12)
             print("Using Open_Sans")
-        elif os.path.isfile(self.fontpath_alt):
-            pyglet.font.add_file(self.fontpath_alt)
+        elif os.path.isfile(font_path_alt):
+            pyglet.font.add_file(font_path_alt)
             action_man = pyglet.font.load('OpenSans')
             self.font = tk.font.Font(family="OpenSans", size=10)
             # self.font = tk.font.Font(family="Times New Roman", size=12)
@@ -76,19 +81,19 @@ class GeniusBot:
             self.font = tk.font.Font(family="Times New Roman", size=10)
 
     def init_icon(self):
-        self.iconpath = f'{os.pardir}/img/geniusbot.ico'
-        if os.path.isfile(self.iconpath):
+        icon_path = f'{os.pardir}/img/geniusbot.ico'
+        if os.path.isfile(icon_path):
             print("Icon Found")
         else:
-            self.iconpath = f'{os.curdir}/img/geniusbot.ico'
-        print(self.iconpath)
-        # self.root.wm_iconbitmap(os.path.abspath(self.iconpath))
+            icon_path = f'{os.curdir}/img/geniusbot.ico'
+        print(icon_path)
+        # self.root.wm_iconbitmap(os.path.abspath(self.icon_path))
         try:
-            self.root.iconbitmap(os.path.abspath(self.iconpath))
+            self.root.iconbitmap(os.path.abspath(icon_path))
         except tk.TclError:
             print("Icon not found")
             try:
-                self.root.wm_iconbitmap(os.path.abspath(self.iconpath))
+                self.root.wm_iconbitmap(os.path.abspath(icon_path))
             except tk.TclError:
                 print("Icon not found")
 
@@ -126,62 +131,59 @@ class GeniusBot:
                              lightcolor="grey", borderwidth=2)
 
     def init_main_frame(self):
-        # Frame UI
+        # Main Frame UI
         tk.Grid.rowconfigure(self.root, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.root, 0, minsize=1, weight=1)
-        self.main_frame = ttk.Frame(self.root)
-        tk.Grid.rowconfigure(self.main_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.main_frame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.main_frame, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.main_frame, 0, minsize=1, weight=1)
-        self.main_frame.grid(row=0, column=0, sticky='NSEW')
-        self.title = tk.StringVar()
-        self.title.set("GeniusBot")
-        self.title_frame = ttk.Frame(self.main_frame)
-        tk.Grid.rowconfigure(self.title_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.title_frame, 0, minsize=1, weight=1)
-        self.title_label = ttk.Label(self.title_frame, textvariable=self.title, style="Title.TLabel")
-        self.tabControl = ttk.Notebook(self.main_frame)
-        self.notification_frame = ttk.Frame(self.main_frame)
+        main_frame = ttk.Frame(self.root)
+        tk.Grid.rowconfigure(main_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(main_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(main_frame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(main_frame, 0, minsize=1, weight=1)
+        main_frame.grid(row=0, column=0, sticky='NSEW')
+
+        self.title.set(f"GeniusBot")
+        self.title_version.set(f"v{geniusbot_version}")
+        title_frame = ttk.Frame(main_frame)
+        tk.Grid.rowconfigure(title_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(title_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(title_frame, 1, minsize=1, weight=1)
+        title_label = ttk.Label(title_frame, textvariable=self.title, style="Title.TLabel")
+        title_version_label = ttk.Label(title_frame, textvariable=self.title_version, style="Notes.TLabel")
+        self.tabControl = ttk.Notebook(main_frame)
+        notification_frame = ttk.Frame(main_frame)
         # self.home_tab = tk.Frame(self.tabControl)
         # self.web_archive = tk.Frame(self.tabControl)
         self.report_merger_tab = tk.Frame(self.tabControl)
         self.analytical_profiler = tk.Frame(self.tabControl)
-        self.title_frame.grid(row=0, column=0, sticky='NSEW')
-        self.notification_frame.grid(row=5, column=0, sticky='NSEW')
+        title_frame.grid(row=0, column=0, sticky='NSEW')
+        notification_frame.grid(row=5, column=0, sticky='NSEW')
+        title_label.grid(column=0, row=0, sticky='NSE', columnspan=1, padx=(10, 5), pady=10)
+        title_version_label.grid(column=1, row=0, sticky='NSW', columnspan=1, padx=(0, 10), pady=(20,10))
         # Sets up Status Bar
         self.status = tk.StringVar()
         self.status.set(f"Welcome {os.getlogin()}! Please navigate to a tab to begin using GeniusBot!")
-        self.status_label = tk.Label(self.notification_frame, bg=self.hex_color_background, fg="white", bd=1,
-                                     textvariable=self.status, anchor='w', relief=tk.SUNKEN)
-        self.status_label.grid(column=0, row=0, sticky='NSEW', columnspan=1)
+        status_label = tk.Label(notification_frame, bg=self.hex_color_background, fg="white", bd=1,
+                                textvariable=self.status, anchor='w', relief=tk.SUNKEN)
+        status_label.grid(column=0, row=0, sticky='NSEW', columnspan=1)
         self.init_home_frame()
-        self.init_youtube_frame()
-        '''self.web_archive_frame = tk.Frame(self.tabControl)
-        tk.Grid.rowconfigure(self.web_archive_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.web_archive_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.web_archive_frame, 1, minsize=1, weight=1)'''
-        self.tabControl.add(self.home_frame, text="Home")
-        self.tabControl.add(self.youtube_archive_frame, text="YouTube Archive")
+        YouTubeFrame(self.tkt, self.tabControl, self.status, self.log)
         WebArchiveFrame(self.tkt, self.tabControl, self.status, self.log)
-        #self.tabControl.add(self.web_archive_frame_update, text="Web Archive")
         # self.tabControl.add(self.report_merger_tab, text="Report Merger")
         # self.tabControl.add(self.analytical_profiler, text="Analytical Profiler")
         self.tabControl.grid(column=0, row=1, sticky='NSEW')
 
     def init_home_frame(self):
-        self.home_frame = tk.Frame(self.tabControl)
-        tk.Grid.rowconfigure(self.home_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.home_frame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.home_frame, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.home_frame, 0, minsize=1, weight=1)
-        self.top_frame_home = ttk.Frame(self.home_frame)
-        # self.tabControl.pack(expand=1, fill="both")
-        tk.Grid.rowconfigure(self.top_frame_home, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_frame_home, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_frame_home, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.top_frame_home, 0, minsize=1, weight=1)
-        self.home_title = tk.StringVar()
+        home_frame = tk.Frame(self.tabControl)
+        tk.Grid.rowconfigure(home_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(home_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(home_frame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(home_frame, 0, minsize=1, weight=1)
+        top_frame_home = ttk.Frame(home_frame)
+        tk.Grid.rowconfigure(top_frame_home, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_frame_home, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_frame_home, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(top_frame_home, 0, minsize=1, weight=1)
+
         self.home_title.set(
             f"""GeniusBot is a world class tool that allows you to do a lot of useful\n
             things from a compact and portable application\n
@@ -191,12 +193,44 @@ class GeniusBot:
             4. Analytical Profiler (Coming Soon)\n
             5. Report Merger (Coming Soon)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
             """)
-        self.home_title_label = ttk.Label(self.top_frame_home, textvariable=self.home_title, anchor='w', style="Notes"
-                                                                                                               ".TLabel")
-        self.top_frame_home.grid(row=1, column=0, sticky='NSEW')
-        self.home_title_label.grid(column=0, row=0, columnspan=3)
+        home_title_label = ttk.Label(top_frame_home, textvariable=self.home_title, anchor='w', style="Notes"
+                                                                                                     ".TLabel")
+        top_frame_home.grid(row=1, column=0, sticky='NSEW')
+        home_title_label.grid(column=0, row=0, columnspan=3)
+        self.tabControl.add(home_frame, text="Home")
 
-    def init_youtube_frame(self):
+
+# YouTubeArchive Class
+class YouTubeFrame(tk.Frame):
+    progress_bar_youtube = None
+    progress_bar_value_youtube = 0
+    progress_bar_max_value_youtube = 0
+    url_list_youtube = []
+    youtube_downloader = None
+    log = None
+    tabControl = None
+    web_archive_frame = None
+    status = None
+
+    def __init__(self, tkt_main, tab_control, status, logger=None):
+        if logger:
+            self.log = logger
+        else:
+            self.log = Log()
+        self.tkt = tkt_main
+        self.tabControl = tab_control
+        self.status = status
+        # self.web_archive_frame = web_archive_frame
+        self.youtube_downloader = YouTubeDownloader(self.log)
+        self.draw_frame()
+        self.tabControl.add(self.youtube_archive_frame, text="YouTube Archive")
+        tk.Frame.__init__(self, self.web_archive_frame)  # , bg="red")
+
+    @staticmethod
+    def run(func, name=None):
+        threading.Thread(target=func, name=name).start()
+
+    def draw_frame(self):
         self.youtube_archive_frame = tk.Frame(self.tabControl)
         tk.Grid.rowconfigure(self.youtube_archive_frame, 0, minsize=1, weight=0)
         tk.Grid.rowconfigure(self.youtube_archive_frame, 1, minsize=1, weight=0)
@@ -226,9 +260,6 @@ class GeniusBot:
         tk.Grid.columnconfigure(self.bottom_frame, 0, minsize=1, weight=0)
         tk.Grid.columnconfigure(self.bottom_frame, 1, minsize=1, weight=0)
         tk.Grid.columnconfigure(self.bottom_frame, 2, minsize=1, weight=1)
-
-        tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
 
         # Buttons
         self.add_url_button = ttk.Button(self.middle_button_frame, text="Add", style='Add.TButton', width=12,
@@ -287,7 +318,8 @@ class GeniusBot:
         self.youtube_percentage_text = tk.StringVar()
         self.youtube_percentage_text.set(
             f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / (self.progress_bar_max_value_youtube + 1)) * 100}%")
-        self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.youtube_percentage_text, style="Notes.TLabel")
+        self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.youtube_percentage_text,
+                                          style="Notes.TLabel")
         self.percentage_label.grid(column=0, row=2, columnspan=3)
         self.percentage_title = tk.StringVar()
         self.percentage_title.set("Percentage")
@@ -320,10 +352,6 @@ class GeniusBot:
         self.middle_button_frame.grid(row=2, column=0, sticky='NSEW')
         self.middle_frame.grid(row=3, column=0, sticky='NSEW')
         self.bottom_frame.grid(row=4, column=0, sticky='NSEW')
-        self.title_label.grid(column=0, row=0, sticky='NSEW', columnspan=1, padx=10, pady=10)
-
-    def run(self, func, name=None):
-        threading.Thread(target=func, name=name).start()
 
     def youtube_download(self):
         if self.file_type.get() == "Video":
@@ -553,13 +581,13 @@ class WebArchiveFrame(tk.Frame):
         self.tkt = tkt_main
         self.tabControl = tab_control
         self.status = status
-        #self.web_archive_frame = web_archive_frame
         self.web_archiver = WebPageArchive(self.log)
         self.draw_frame()
         self.tabControl.add(self.web_archive_frame, text="Web Archive")
-        tk.Frame.__init__(self, self.web_archive_frame)#, bg="red")
+        tk.Frame.__init__(self, self.web_archive_frame)  # , bg="red")
 
-    def run(self, func, name=None):
+    @staticmethod
+    def run(func, name=None):
         threading.Thread(target=func, name=name).start()
 
     def draw_frame(self):
@@ -599,8 +627,8 @@ class WebArchiveFrame(tk.Frame):
         tk.Grid.columnconfigure(self.bottom_web_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.bottom_web_frame, 1, minsize=1, weight=1)
 
-        #tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
-        #tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
+        # tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
+        # tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
         # Buttons
         self.web_add_url_button = ttk.Button(self.middle_web_button_frame, text="Add", style='Add.TButton', width=9,
                                              command=self.add_webarchive_url)
@@ -882,12 +910,13 @@ class WebArchiveFrame(tk.Frame):
         return ("break")
 
 
-root = tk.Tk()
-root.minsize(width=500, height=700)
-root.title("GeniusBot")
-root.geometry("500x700")
-root.minsize(500, 700)
-# root.maxsize(width=600, height=800)
-tkthread = tkt.TkThread(root)  # make the thread-safe callable
-main_ui = GeniusBot(root, tkthread)
-root.mainloop()
+# Call Main Function
+def main():
+    if __name__ == "__main__":
+        root = tk.Tk()
+        tkthread = tkt.TkThread(root)  # make the thread-safe callable
+        main_ui = GeniusBot(root, tkthread)
+        root.mainloop()
+
+
+main()
