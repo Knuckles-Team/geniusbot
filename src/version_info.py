@@ -1,2 +1,2 @@
 # Python - GeniusBot Version
-geniusbot_version = 1.03
+geniusbot_version = 1.05
