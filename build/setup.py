@@ -17,14 +17,15 @@ img_dir = str(parent_dir) + "/img/"
 lib_dir = str(parent_dir) + "/lib/"
 logs_dir = str(parent_dir) + "/logs/"
 fonts_dir = str(parent_dir) + "/fonts/"
-sys.path.append(parent_dir)
+# Don't append parent_dir, it will contain build folder and recursively scan itself.
+#sys.path.append(parent_dir)
 sys.path.append(src_dir)
 
 from version_info import geniusbot_version
 
 company_name = 'WebArchive'
 product_name = 'GeniusBot'
-version = geniusbot_version
+version = f'{geniusbot_version}'
 
 base = None
 if sys.platform == "win32":
@@ -36,10 +37,10 @@ includefiles = [src_dir, lib_dir, img_dir, logs_dir, fonts_dir, str(os.path.join
                 str(os.path.join(python_install_dir, 'DLLs', 'tcl86t.dll'))]  # 'tcl86t.dll', 'tk86t.dll']
 includes = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
             'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
-            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver-manager']
+            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager']
 packages = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
             'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
-            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver-manager']
+            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager']
 excludes = ['PyQt4', 'PyQt5', 'Tkinter', 'sqlalchemy', 'cryptography', 'pypyodbc', 'appdirs', 'packaging', 'cx_oracle',
             'pyhive', 'spaCy']
 build_exe_options = {
