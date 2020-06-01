@@ -2,6 +2,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import time
+import platform
 import os
 import math
 import re
@@ -20,6 +21,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.utils import ChromeType
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -70,16 +73,20 @@ class WebPageArchive:
         self.chrome_options.add_argument('--start-maximized')
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument('--disable-notifications')
+        self.chrome_options.add_argument('--disable-dev-shm-usage')
         # This will now disable the extension I add so Comment it out
         #self.chrome_options.add_argument('--disable-extensions')
 
     def launch_browser(self):
-        try:
-            self.driver = webdriver.Chrome(ChromeDriverManager().install(),
-                                           desired_capabilities=self.capabilities,
-                                           chrome_options=self.chrome_options)
-        except Exception as e:
-            print("Could not open with Latest Chrome Version", e)
+            try:
+                # If not installed, run:
+                # wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                # sudo apt install ./google-chrome-stable_current_amd64.deb
+                self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
+                                               desired_capabilities=self.capabilities,
+                                               chrome_options=self.chrome_options)
+            except Exception as e:
+                print("Could not open with Latest Chrome Version", e)
 
     def append_link(self, url):
         print("URL Appended: ", url)

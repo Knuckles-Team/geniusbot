@@ -57,3 +57,6 @@ IMPLEMENTED SQLAlchemy Library Requires manual copy from Python install director
 
 For Full Page Screenshots to Remove any Headers on Website that are fixed use this JQuery:
 https://alisdair.mcdiarmid.org/kill-sticky-headers/
+
+For Linux Selenium: Ensure Chromium is not snap version - https://askubuntu.com/questions/1075103/chromium-config-folder-is-missing-in-ubuntu-18-04
+https://pypi.org/project/webdriver-manager/
