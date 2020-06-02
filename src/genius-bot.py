@@ -22,6 +22,7 @@ from matplotlib.figure import Figure'''
 import re
 import os
 import pyglet
+import math
 from PIL import ImageTk, Image
 
 
@@ -186,10 +187,10 @@ class GeniusBot:
             f"""GeniusBot is a world class tool that allows you to do a lot of useful\n
             things from a compact and portable application\n
             1. YouTube Archive\n
-            2. Web Archive\n
-            3. FFMPEG Video/Audio Converter (Coming Soon)\n
-            4. Analytical Profiler (Coming Soon)\n
-            5. Report Merger (Coming Soon)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+            2. Web Archive\n            
+            3. Analytical Profiler (Coming Soon)\n
+            4. Report Merger (Coming Soon)\n
+            5. FFMPEG Video/Audio Converter (Coming Soon)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
             """)
         home_title_label = ttk.Label(top_frame_home, textvariable=self.home_title, anchor='w', style="Notes"
                                                                                                      ".TLabel")
@@ -492,7 +493,7 @@ class YouTubeFrame(tk.Frame):
             self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
             self.progress_bar_youtube['value'] = 0
             self.youtube_percentage_text.set(
-                f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+                f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {math.ceil((self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100)}%")
             i = 0
             for url in self.url_list_youtube:
                 self.youtube_downloader.append_link(url)
@@ -501,7 +502,7 @@ class YouTubeFrame(tk.Frame):
                 self.youtube_downloader.reset_links()
                 self.progress_bar_value_youtube = i + 1
                 self.youtube_percentage_text.set(
-                    f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+                    f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {math.ceil((self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100)}%")
                 self.progress_bar_youtube['value'] = i + 1
                 print("Value: ", self.progress_bar_value_youtube)
                 print("Max Value: ", self.progress_bar_max_value_youtube)
@@ -534,7 +535,7 @@ class YouTubeFrame(tk.Frame):
             self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
             self.progress_bar_youtube['value'] = 0
             self.youtube_percentage_text.set(
-                f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+                f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {math.ceil((self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100)}%")
             i = 0
             for url in self.url_list_youtube:
                 self.youtube_downloader.append_link(url)
@@ -542,7 +543,7 @@ class YouTubeFrame(tk.Frame):
                 self.youtube_downloader.reset_links()
                 self.progress_bar_value_youtube = i + 1
                 self.youtube_percentage_text.set(
-                    f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
+                    f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {math.ceil((self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100)}%")
                 self.progress_bar_youtube['value'] = i + 1
                 print("Value: ", self.progress_bar_value_youtube)
                 print("Max Value: ", self.progress_bar_max_value_youtube)
@@ -759,7 +760,7 @@ class WebArchiveFrame(tk.Frame):
             self.progress_bar_webarchive['value'] = 0
             print(f'{self.progress_bar_max_value_webarchive}:MAX VALUE')
             self.web_percentage_text.set(
-                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
+                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {math.ceil((self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100)}%")
             # Check to see if screenshot capture is enabled to launch browser
             if self.web_config_screenshot_value.get() == 1:
                 self.web_archiver.launch_browser()
@@ -781,7 +782,7 @@ class WebArchiveFrame(tk.Frame):
                 self.web_archiver.reset_links()
                 self.progress_bar_value_webarchive = i + 1
                 self.web_percentage_text.set(
-                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
+                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {math.ceil((self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100)}%")
                 self.progress_bar_webarchive['value'] = i + 1
                 print("Value: ", self.progress_bar_value_webarchive)
                 print("Max Value: ", self.progress_bar_max_value_webarchive)

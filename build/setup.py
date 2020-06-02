@@ -41,11 +41,11 @@ includefiles = [src_dir, lib_dir, img_dir, logs_dir, fonts_dir, str(os.path.join
 includes = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
             'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
             'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager', 'appdirs',
-            'pandas_profiling', 'sklearn', 'scipy', 'seaborn']
+            'pandas_profiling', 'sklearn', 'scipy', 'seaborn', 'math']
 packages = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
             'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
             'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager', 'appdirs',
-            'pandas_profiling', 'sklearn', 'scipy', 'seaborn']
+            'pandas_profiling', 'sklearn', 'scipy', 'seaborn', 'math']
 excludes = ['PyQt4', 'PyQt5', 'Tkinter', 'sqlalchemy', 'cryptography', 'pypyodbc', 'packaging', 'cx_oracle',
             'pyhive', 'spaCy']
 build_exe_options = {
