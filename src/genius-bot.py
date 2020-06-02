@@ -469,7 +469,8 @@ class YouTubeFrame(tk.Frame):
             else:
                 self.youtube_percentage_text.set(
                     f"{self.progress_bar_max_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
-                self.progress_bar_youtube['value'] = self.progress_bar_max_value_youtube
+                self.progress_bar_youtube['value'] = self.progress_bar_value_youtube
+                self.progress_bar_youtube['maximum'] = self.progress_bar_max_value_youtube
                 self.progress_bar_value_youtube = self.progress_bar_max_value_youtube
             self.status.set(f'Queued {self.progress_bar_max_value_youtube} videos')
         else:
@@ -720,7 +721,7 @@ class WebArchiveFrame(tk.Frame):
         self.web_percentage_title_label.grid(column=0, row=0, columnspan=2)
 
         # ListBox
-        self.web_url_listbox = tk.Listbox(self.middle_web_frame, height=12)
+        self.web_url_listbox = tk.Listbox(self.middle_web_frame, height=12, selectmode='multiple', exportselection=0)
         self.web_url_listbox.grid(column=0, row=1, columnspan=2, rowspan=3, sticky='NSEW')
         tk.Grid.columnconfigure(self.web_url_listbox, 0, weight=1)
 
@@ -896,7 +897,8 @@ class WebArchiveFrame(tk.Frame):
             else:
                 self.web_percentage_text.set(
                     f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-                self.progress_bar_webarchive['value'] = self.progress_bar_max_value_webarchive
+                self.progress_bar_webarchive['value'] = self.progress_bar_value_webarchive
+                self.progress_bar_webarchive['maximum'] = self.progress_bar_max_value_webarchive
                 self.progress_bar_value_webarchive = self.progress_bar_max_value_webarchive
             self.status.set(f'Queued {self.progress_bar_max_value_webarchive} videos')
         else:
