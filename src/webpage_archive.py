@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import urllib.error
 import urllib.parse
 import urllib.request
