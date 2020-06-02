@@ -1,2 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 # Python - GeniusBot Version
-geniusbot_version = 1.05
+geniusbot_version = 1.08

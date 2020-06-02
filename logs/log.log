@@ -1,11 +1,23 @@
-2020-06-01 00:17:51,929:DEBUG:root:Debug: Initialized
-2020-06-01 00:17:51,929:INFO:root:Info: Initialized
-2020-06-01 00:17:51,929:WARNING:root:Warning: Initialized
-2020-06-01 00:17:51,929:ERROR:root:Error: Initialized
-2020-06-01 00:17:51,929:CRITICAL:root:Critical: Initialized
-2020-06-01 00:17:51,929:INFO:root:Logging Module: Initializing
-2020-06-01 00:17:52,719:INFO:root:YouTube Download: Initialized
-2020-06-01 00:17:52,719:INFO:root:Save Path Changed to: <bound method YouTubeDownloader.set_os_save_path of <youtube_download.YouTubeDownloader object at 0x000001D14F371AF0>>
-2020-06-01 00:17:52,719:INFO:root:Found ffmpeg at: C:\Users\knuck\Documents\Python\GeniusBot\lib\ffmpeg\bin\ffmpeg.exe
-2020-06-01 00:17:52,875:INFO:root:Initializing Web Archive Complete!
-2020-06-01 00:17:52,896:INFO:root:Initializing GeniusBot Complete!
+2020-06-01 23:30:59,129:DEBUG:root:Debug: Initialized
+2020-06-01 23:30:59,130:INFO:root:Info: Initialized
+2020-06-01 23:30:59,130:WARNING:root:Warning: Initialized
+2020-06-01 23:30:59,130:ERROR:root:Error: Initialized
+2020-06-01 23:30:59,130:CRITICAL:root:Critical: Initialized
+2020-06-01 23:30:59,130:INFO:root:Logging Module: Initializing
+2020-06-01 23:30:59,619:INFO:root:YouTube Download: Initialized
+2020-06-01 23:30:59,619:INFO:root:Save Path Changed to: <bound method YouTubeDownloader.set_os_save_path of <youtube_download.YouTubeDownloader object at 0x000001C975A11130>>
+2020-06-01 23:30:59,620:INFO:root:Found ffmpeg at: C:\Users\knuck\Documents\Python\GeniusBot\lib\ffmpeg\bin\ffmpeg.exe
+2020-06-01 23:30:59,971:INFO:root:Initializing Web Archive Complete!
+2020-06-01 23:30:59,991:INFO:root:Initializing Web Archive Complete!
+2020-06-01 23:31:00,047:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-01 23:31:00,047:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
+2020-06-01 23:31:00,048:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-01 23:31:00,048:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
+2020-06-01 23:31:00,049:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-01 23:31:00,050:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
+2020-06-01 23:31:00,053:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-01 23:31:00,053:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
+2020-06-01 23:31:00,053:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-01 23:31:00,053:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
+2020-06-01 23:31:00,158:INFO:root:Initializing Web Archive Complete!
+2020-06-01 23:31:00,177:INFO:root:Initializing GeniusBot Complete!
