@@ -208,8 +208,33 @@ class YouTubeFrame(tk.Frame):
     youtube_downloader = None
     log = None
     tabControl = None
-    web_archive_frame = None
+    youtube_archive_frame = None
     status = None
+    add_url_button = None
+    remove_url_button = None
+    openfile_button = None
+    save_location = None
+    save_location_button = None
+    file_type = None
+    file_type_menu = None
+    video_quality_type = None
+    video_quality_type_menu = None
+    audio_quality_type = None
+    audio_quality_type_menu = None
+    download_button = None
+    queue_title = None
+    queue_title_label = None
+    youtube_links_text = None
+    youtube_links_label = None
+    youtube_channels_text = None
+    youtube_channels_label = None
+    youtube_percentage_text = None
+    percentage_label = None
+    percentage_title = None
+    percentage_title_label = None
+    url_listbox = None
+    url_entry = None
+    channel_entry = None
 
     def __init__(self, tkt_main, tab_control, status, logger=None):
         if logger:
@@ -223,7 +248,7 @@ class YouTubeFrame(tk.Frame):
         self.youtube_downloader = YouTubeDownloader(self.log)
         self.draw_frame()
         self.tabControl.add(self.youtube_archive_frame, text="YouTube Archive")
-        tk.Frame.__init__(self, self.web_archive_frame)  # , bg="red")
+        tk.Frame.__init__(self, self.youtube_archive_frame)  # , bg="red")
 
     @staticmethod
     def run(func, name=None):
@@ -238,102 +263,97 @@ class YouTubeFrame(tk.Frame):
         tk.Grid.rowconfigure(self.youtube_archive_frame, 4, minsize=1, weight=0)
         tk.Grid.rowconfigure(self.youtube_archive_frame, 5, minsize=1, weight=0)
         tk.Grid.columnconfigure(self.youtube_archive_frame, 0, minsize=1, weight=1)
-        self.top_frame = ttk.Frame(self.youtube_archive_frame)
-        # self.tabControl.pack(expand=1, fill="both")
-        tk.Grid.rowconfigure(self.top_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_frame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_frame, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.top_frame, 0, minsize=1, weight=1)
-        self.middle_button_frame = ttk.Frame(self.youtube_archive_frame)
-        tk.Grid.rowconfigure(self.middle_button_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.middle_button_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_button_frame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_button_frame, 2, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_button_frame, 3, minsize=1, weight=1)
-        self.middle_frame = ttk.Frame(self.youtube_archive_frame)
-        tk.Grid.rowconfigure(self.middle_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.middle_frame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_frame, 0, minsize=1, weight=1)
-        self.bottom_frame = ttk.Frame(self.youtube_archive_frame)
-        tk.Grid.rowconfigure(self.bottom_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.bottom_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.bottom_frame, 1, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.bottom_frame, 2, minsize=1, weight=1)
+        top_frame = ttk.Frame(self.youtube_archive_frame)
+        tk.Grid.rowconfigure(top_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_frame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(top_frame, 0, minsize=1, weight=1)
+        middle_button_frame = ttk.Frame(self.youtube_archive_frame)
+        tk.Grid.rowconfigure(middle_button_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(middle_button_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_button_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_button_frame, 2, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_button_frame, 3, minsize=1, weight=1)
+        middle_frame = ttk.Frame(self.youtube_archive_frame)
+        tk.Grid.rowconfigure(middle_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(middle_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_frame, 0, minsize=1, weight=1)
+        bottom_frame = ttk.Frame(self.youtube_archive_frame)
+        tk.Grid.rowconfigure(bottom_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(bottom_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(bottom_frame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(bottom_frame, 2, minsize=1, weight=1)
 
         # Buttons
-        self.add_url_button = ttk.Button(self.middle_button_frame, text="Add", style='Add.TButton', width=12,
+        self.add_url_button = ttk.Button(middle_button_frame, text="Add", style='Add.TButton', width=12,
                                          command=self.add_youtube_url)
         self.add_url_button.grid(column=0, row=1, sticky='NSEW', padx=5, pady=10)
-        self.remove_url_button = ttk.Button(self.middle_button_frame, text="Remove", style='Remove.TButton', width=12,
+        self.remove_url_button = ttk.Button(middle_button_frame, text="Remove", style='Remove.TButton', width=12,
                                             command=self.remove_youtube_url)
         self.remove_url_button.grid(column=1, row=1, sticky='NSEW', padx=5, pady=10)
-        self.openfile_button = ttk.Button(self.middle_button_frame, text="Open File", style='Open.TButton', width=12,
+        self.openfile_button = ttk.Button(middle_button_frame, text="Open File", style='Open.TButton', width=12,
                                           command=self.open_file_youtube)
         self.openfile_button.grid(column=2, row=1, sticky='NSEW', padx=5, pady=10)
-        self.save_location_button = ttk.Button(self.middle_button_frame, text="Save Location", width=18,
+        self.save_location_button = ttk.Button(middle_button_frame, text="Save Location", width=18,
                                                command=self.choose_save_location_youtube)
 
         self.save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
 
         self.file_type = tk.StringVar()
         self.file_type.set("Video")
-        self.file_type_menu = tk.OptionMenu(self.bottom_frame, self.file_type, "Video", "Audio",
+        self.file_type_menu = tk.OptionMenu(bottom_frame, self.file_type, "Video", "Audio",
                                             command=self.set_file_type)
         self.video_quality_type = tk.StringVar()
         self.video_quality_type.set("Highest")
-        self.video_quality_type_menu = tk.OptionMenu(self.bottom_frame, self.video_quality_type, "Highest", "720p",
+        self.video_quality_type_menu = tk.OptionMenu(bottom_frame, self.video_quality_type, "Highest", "720p",
                                                      "Lowest")
         self.audio_quality_type = tk.StringVar()
         self.audio_quality_type.set("320kbps")
-        self.audio_quality_type_menu = tk.OptionMenu(self.bottom_frame, self.audio_quality_type, "320kbps", "256kbps",
+        self.audio_quality_type_menu = tk.OptionMenu(bottom_frame, self.audio_quality_type, "320kbps", "256kbps",
                                                      "128kbps")
 
         self.file_type_menu.grid(column=0, row=3, sticky='NSEW', padx=5, pady=10)
         self.video_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
         # self.audio_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
         # self.audio_quality_type_menu.grid_forget()
-        # self.download_button_video = ttk.Button(self.bottom_frame, text="Download Video", command=lambda: self.run(lambda: self.download_video(), name='NoSync'))
-        # self.download_button_video.grid(column=0, row=3, sticky='NSEW', padx=5, pady=10)
-        self.download_button = ttk.Button(self.bottom_frame, text="Download",
+        self.download_button = ttk.Button(bottom_frame, text="Download",
                                           command=lambda: self.run(lambda: self.youtube_download(), name='NoSync'))
         self.download_button.grid(column=2, row=3, sticky='NSEW', padx=15, pady=10)
-
         # Labels
-        # self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
         self.queue_title = tk.StringVar()
         self.queue_title.set("Download Queue")
-        self.queue_title_label = ttk.Label(self.middle_frame, textvariable=self.queue_title, style="Notes.TLabel")
+        self.queue_title_label = ttk.Label(middle_frame, textvariable=self.queue_title, style="Notes.TLabel")
         self.queue_title_label.grid(column=0, row=0, columnspan=3)
-        self.youutube_links_text = tk.StringVar()
-        self.youutube_links_text.set(r'Enter YouTube Link(s) ⮟')
-        self.youutube_links_label = ttk.Label(self.top_frame, textvariable=self.youutube_links_text,
-                                              style="Notes.TLabel")
-        self.youutube_links_label.grid(column=0, row=0, columnspan=2, sticky='W')
-        self.youutube_channels_text = tk.StringVar()
-        self.youutube_channels_text.set(r'Enter YouTube Channel or User ⮞')
-        self.youutube_channels_label = ttk.Label(self.top_frame, textvariable=self.youutube_channels_text,
-                                                 style="Notes.TLabel")
-        self.youutube_channels_label.grid(column=0, row=4, columnspan=2, sticky='W')
+        self.youtube_links_text = tk.StringVar()
+        self.youtube_links_text.set(r'Enter YouTube Link(s) ⮟')
+        self.youtube_links_label = ttk.Label(top_frame, textvariable=self.youtube_links_text,
+                                             style="Notes.TLabel")
+        self.youtube_links_label.grid(column=0, row=0, columnspan=2, sticky='W')
+        self.youtube_channels_text = tk.StringVar()
+        self.youtube_channels_text.set(r'Enter YouTube Channel or User ⮞')
+        self.youtube_channels_label = ttk.Label(top_frame, textvariable=self.youtube_channels_text,
+                                                style="Notes.TLabel")
+        self.youtube_channels_label.grid(column=0, row=4, columnspan=2, sticky='W')
         self.youtube_percentage_text = tk.StringVar()
         self.youtube_percentage_text.set(
             f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / (self.progress_bar_max_value_youtube + 1)) * 100}%")
-        self.percentage_label = ttk.Label(self.bottom_frame, textvariable=self.youtube_percentage_text,
+        self.percentage_label = ttk.Label(bottom_frame, textvariable=self.youtube_percentage_text,
                                           style="Notes.TLabel")
         self.percentage_label.grid(column=0, row=2, columnspan=3)
         self.percentage_title = tk.StringVar()
         self.percentage_title.set("Percentage")
-        self.percentage_title_label = ttk.Label(self.bottom_frame, textvariable=self.percentage_title,
+        self.percentage_title_label = ttk.Label(bottom_frame, textvariable=self.percentage_title,
                                                 style="Notes.TLabel")
         self.percentage_title_label.grid(column=0, row=0, columnspan=3)
 
         # ListBox
-        self.url_listbox = tk.Listbox(self.middle_frame, height=12, selectmode='multiple', exportselection=0)
+        self.url_listbox = tk.Listbox(middle_frame, height=12, selectmode='multiple', exportselection=0)
         self.url_listbox.grid(column=0, row=1, columnspan=3, rowspan=3, sticky='NSEW')
         tk.Grid.columnconfigure(self.url_listbox, 0, weight=1)
 
         # Entries
-        self.url_entry = tk.Text(self.top_frame, height=9)
-        self.channel_entry = tk.Text(self.top_frame, height=1, width=33)
+        self.url_entry = tk.Text(top_frame, height=9)
+        self.channel_entry = tk.Text(top_frame, height=1, width=33)
         # tk.Grid.columnconfigure(self.url_entry, 0, weight=1)
         self.channel_entry.bind("<Tab>", self.focus_next_widget)
         self.channel_entry.grid(column=1, row=4, columnspan=2, stick='NSEW')
@@ -343,14 +363,14 @@ class YouTubeFrame(tk.Frame):
 
         # Progress Bar
         self.progress_bar_youtube = ttk.Progressbar(
-            self.bottom_frame, orient="horizontal",
+            bottom_frame, orient="horizontal",
             length=300, mode="determinate"
         )
         self.progress_bar_youtube.grid(column=0, row=1, padx=15, pady=10, columnspan=3, sticky='NSEW')
-        self.top_frame.grid(row=1, column=0, sticky='NSEW')
-        self.middle_button_frame.grid(row=2, column=0, sticky='NSEW')
-        self.middle_frame.grid(row=3, column=0, sticky='NSEW')
-        self.bottom_frame.grid(row=4, column=0, sticky='NSEW')
+        top_frame.grid(row=1, column=0, sticky='NSEW')
+        middle_button_frame.grid(row=2, column=0, sticky='NSEW')
+        middle_frame.grid(row=3, column=0, sticky='NSEW')
+        bottom_frame.grid(row=4, column=0, sticky='NSEW')
 
     def youtube_download(self):
         if self.file_type.get() == "Video":
@@ -365,14 +385,17 @@ class YouTubeFrame(tk.Frame):
         if self.file_type.get() == "Video":
             self.audio_quality_type_menu.grid_forget()
             self.video_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
+            print(value)
         elif self.file_type.get() == "Audio":
             self.video_quality_type_menu.grid_forget()
             self.audio_quality_type_menu.grid(column=1, row=3, sticky='NSEW', padx=5, pady=10)
+            print(value)
 
     # This class handles [TAB] Key to move to next Widget
-    def focus_next_widget(self, event):
+    @staticmethod
+    def focus_next_widget(event):
         event.widget.tk_focusNext().focus()
-        return ("break")
+        return "break"
 
     def choose_save_location_youtube(self):
         self.save_location = tk.filedialog.askdirectory()
@@ -396,8 +419,8 @@ class YouTubeFrame(tk.Frame):
             self.youtube_percentage_text.set(
                 f"{self.progress_bar_value_youtube}/{self.progress_bar_max_value_youtube} | {(self.progress_bar_value_youtube / self.progress_bar_max_value_youtube) * 100}%")
             self.status.set(f'Queued {self.progress_bar_max_value_youtube} videos from file: {name}')
-        except:
-            print("No file exists")
+        except Exception as e:
+            print("No file exists: ", e)
             self.status.set(f'File Not Found')
 
     def refresh_youtube_list(self):
@@ -408,7 +431,6 @@ class YouTubeFrame(tk.Frame):
 
     def add_youtube_url(self):
         # Get Channel
-        parse_channel_addition = ""
         parse_channel_addition = self.channel_entry.get("1.0", tk.END)
         print("Parsed Addition: ", parse_channel_addition)
         if re.sub(r'[^A-Za-z0-9_./:&-?!=]', '', parse_channel_addition) != "":
@@ -463,7 +485,7 @@ class YouTubeFrame(tk.Frame):
             self.progress_bar_max_value_youtube = len(self.url_list_youtube)
             if self.progress_bar_max_value_youtube == 0:
                 self.youtube_percentage_text.set(
-                    f"{self.progress_bar_max_value_youtube}/{self.progress_bar_max_value_youtube} | {(0) * 100}%")
+                    f"{self.progress_bar_max_value_youtube}/{self.progress_bar_max_value_youtube} | {0 * 100}%")
                 self.progress_bar_youtube['value'] = 0
                 self.progress_bar_value_youtube = 0
             else:
@@ -563,11 +585,11 @@ class YouTubeFrame(tk.Frame):
 
 # WebArchive Class
 class WebArchiveFrame(tk.Frame):
-    progress_bar_webarchive = None
-    progress_bar_value_webarchive = 0
-    progress_bar_max_value_webarchive = 0
-    url_list_webarchive = []
-    web_archiver = None
+    progress_bar_web_archive = None
+    progress_bar_value_web_archive = 0
+    progress_bar_max_value_web_archive = 0
+    url_list_web_archive = []
+    web_archive = None
     log = None
     tabControl = None
     web_archive_frame = None
@@ -581,7 +603,7 @@ class WebArchiveFrame(tk.Frame):
         self.tkt = tkt_main
         self.tabControl = tab_control
         self.status = status
-        self.web_archiver = WebPageArchive(self.log)
+        self.web_archive = WebPageArchive(self.log)
         self.draw_frame()
         self.tabControl.add(self.web_archive_frame, text="Web Archive")
         tk.Frame.__init__(self, self.web_archive_frame)  # , bg="red")
@@ -595,54 +617,54 @@ class WebArchiveFrame(tk.Frame):
         tk.Grid.rowconfigure(self.web_archive_frame, 0, minsize=1, weight=1)
         tk.Grid.columnconfigure(self.web_archive_frame, 0, minsize=1, weight=0)
         tk.Grid.columnconfigure(self.web_archive_frame, 1, minsize=1, weight=1)
-        self.web_archive_selection_frame = ttk.Frame(self.web_archive_frame)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 2, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 3, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 4, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.web_archive_selection_frame, 5, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.web_archive_selection_frame, 0, minsize=1, weight=1)
-        self.web_archive_config_frame = ttk.Frame(self.web_archive_frame)
-        tk.Grid.rowconfigure(self.web_archive_config_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.web_archive_config_frame, 0, minsize=1, weight=0)
-        self.top_web_frame = ttk.Frame(self.web_archive_selection_frame)
+        web_archive_selection_frame = ttk.Frame(self.web_archive_frame)
+        tk.Grid.rowconfigure(web_archive_selection_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(web_archive_selection_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(web_archive_selection_frame, 2, minsize=1, weight=0)
+        tk.Grid.rowconfigure(web_archive_selection_frame, 3, minsize=1, weight=1)
+        tk.Grid.rowconfigure(web_archive_selection_frame, 4, minsize=1, weight=0)
+        tk.Grid.rowconfigure(web_archive_selection_frame, 5, minsize=1, weight=0)
+        tk.Grid.columnconfigure(web_archive_selection_frame, 0, minsize=1, weight=1)
+        web_archive_config_frame = ttk.Frame(self.web_archive_frame)
+        tk.Grid.rowconfigure(web_archive_config_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(web_archive_config_frame, 0, minsize=1, weight=0)
+        top_web_frame = ttk.Frame(web_archive_selection_frame)
         # self.tabControl.pack(expand=1, fill="both")
-        tk.Grid.rowconfigure(self.top_web_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_web_frame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.top_web_frame, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.top_web_frame, 0, minsize=1, weight=1)
-        self.middle_web_button_frame = ttk.Frame(self.web_archive_selection_frame)
-        tk.Grid.rowconfigure(self.middle_web_button_frame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 2, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_button_frame, 3, minsize=1, weight=1)
-        self.middle_web_frame = ttk.Frame(self.web_archive_selection_frame)
-        tk.Grid.rowconfigure(self.middle_web_frame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.middle_web_frame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middle_web_frame, 0, minsize=1, weight=1)
-        self.bottom_web_frame = ttk.Frame(self.web_archive_selection_frame)
-        tk.Grid.rowconfigure(self.bottom_web_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.bottom_web_frame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.bottom_web_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(top_web_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_web_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_web_frame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(top_web_frame, 0, minsize=1, weight=1)
+        middle_web_button_frame = ttk.Frame(web_archive_selection_frame)
+        tk.Grid.rowconfigure(middle_web_button_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(middle_web_button_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_web_button_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_web_button_frame, 2, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_web_button_frame, 3, minsize=1, weight=1)
+        middle_web_frame = ttk.Frame(web_archive_selection_frame)
+        tk.Grid.rowconfigure(middle_web_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(middle_web_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_web_frame, 0, minsize=1, weight=1)
+        bottom_web_frame = ttk.Frame(web_archive_selection_frame)
+        tk.Grid.rowconfigure(bottom_web_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(bottom_web_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(bottom_web_frame, 1, minsize=1, weight=1)
 
         # tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
         # tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
         # Buttons
-        self.web_add_url_button = ttk.Button(self.middle_web_button_frame, text="Add", style='Add.TButton', width=9,
+        self.web_add_url_button = ttk.Button(middle_web_button_frame, text="Add", style='Add.TButton', width=9,
                                              command=self.add_webarchive_url)
         self.web_add_url_button.grid(column=0, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_remove_url_button = ttk.Button(self.middle_web_button_frame, text="Remove", style='Remove.TButton',
+        self.web_remove_url_button = ttk.Button(middle_web_button_frame, text="Remove", style='Remove.TButton',
                                                 width=9, command=self.remove_webarchive_url)
         self.web_remove_url_button.grid(column=1, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_openfile_button = ttk.Button(self.middle_web_button_frame, text="Open File", style='Open.TButton',
+        self.web_openfile_button = ttk.Button(middle_web_button_frame, text="Open File", style='Open.TButton',
                                               width=9, command=self.open_file_webarchive)
         self.web_openfile_button.grid(column=2, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_save_location_button = ttk.Button(self.middle_web_button_frame, text="Save Location", width=15,
+        self.web_save_location_button = ttk.Button(middle_web_button_frame, text="Save Location", width=15,
                                                    command=self.choose_save_location_webarchive)
         self.web_save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
-        self.web_archive_button = ttk.Button(self.bottom_web_frame, text="Begin Archive",
+        self.web_archive_button = ttk.Button(bottom_web_frame, text="Begin Archive",
                                              command=lambda: self.run(lambda: self.archive_sites(), name='NoSync'))
         self.web_archive_button.grid(column=0, row=3, columnspan=2, sticky='NSEW', padx=15, pady=10)
 
@@ -650,149 +672,149 @@ class WebArchiveFrame(tk.Frame):
         # self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
         self.web_queue_title = tk.StringVar()
         self.web_queue_title.set("Download Queue")
-        self.web_queue_title_label = ttk.Label(self.middle_web_frame,
+        self.web_queue_title_label = ttk.Label(middle_web_frame,
                                                textvariable=self.web_queue_title,
                                                style="Notes.TLabel")
         self.web_queue_title_label.grid(column=0, row=0, columnspan=1)
         self.web_config_title = tk.StringVar()
         self.web_config_title.set("Configure Archive")
-        self.web_config_title_label = ttk.Label(self.web_archive_config_frame, textvariable=self.web_config_title,
+        self.web_config_title_label = ttk.Label(web_archive_config_frame, textvariable=self.web_config_title,
                                                 style="Notes.TLabel")
         self.web_config_title_label.grid(column=0, row=0, columnspan=2, pady=(5, 5), sticky='NSEW')
         self.web_config_screenshot_value = tk.IntVar()
         self.web_config_screenshot_value.set(1)
-        self.web_config_screenshot = ttk.Checkbutton(self.web_archive_config_frame, text="Capture Screenshot",
+        self.web_config_screenshot = ttk.Checkbutton(web_archive_config_frame, text="Capture Screenshot",
                                                      variable=self.web_config_screenshot_value, onvalue=1, offvalue=0,
                                                      style="TCheckbutton", command=self.onclick_capture_screenshot)
         self.web_config_screenshot.grid(column=0, row=1, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_filetype_title = ttk.Label(self.web_archive_config_frame, text="File Type",
+        self.web_screenshot_filetype_title = ttk.Label(web_archive_config_frame, text="File Type",
                                                        style="Notes.TLabel")
         self.web_screenshot_filetype_title.grid(column=0, row=2, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_screenshot_filetype = tk.StringVar()
         self.web_screenshot_filetype.set("PNG")  # default value
-        self.web_screenshot_filetype_menu = ttk.OptionMenu(self.web_archive_config_frame, self.web_screenshot_filetype,
+        self.web_screenshot_filetype_menu = ttk.OptionMenu(web_archive_config_frame, self.web_screenshot_filetype,
                                                            "PNG", "PNG", "JPEG")
         self.web_screenshot_filetype_menu.grid(column=1, row=2, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_size_title = ttk.Label(self.web_archive_config_frame, text="Size",
+        self.web_screenshot_size_title = ttk.Label(web_archive_config_frame, text="Size",
                                                    style="Notes.TLabel")
         self.web_screenshot_size_title.grid(column=0, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_screenshot_size = tk.StringVar()
         self.web_screenshot_size.set("Full")  # default value
-        self.web_screenshot_size_menu = ttk.OptionMenu(self.web_archive_config_frame, self.web_screenshot_size,
+        self.web_screenshot_size_menu = ttk.OptionMenu(web_archive_config_frame, self.web_screenshot_size,
                                                        "Full", "Full", "Normal")
         self.web_screenshot_size_menu.grid(column=1, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
-        self.web_screenshot_quality_title = ttk.Label(self.web_archive_config_frame, text="Quality",
+        self.web_screenshot_quality_title = ttk.Label(web_archive_config_frame, text="Quality",
                                                       style="Notes.TLabel")
         self.web_screenshot_quality_title.grid(column=0, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_screenshot_quality_value = tk.IntVar()
         self.web_screenshot_quality_value.set(100)
-        self.web_screenshot_quality = tk.Scale(self.web_archive_config_frame, from_=10, to=100,
+        self.web_screenshot_quality = tk.Scale(web_archive_config_frame, from_=10, to=100,
                                                variable=self.web_screenshot_quality_value, orient=tk.HORIZONTAL)
         self.web_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_config_htmldl_value = tk.IntVar()
-        self.web_config_htmldl = ttk.Checkbutton(self.web_archive_config_frame, text="Archive Website",
+        self.web_config_htmldl = ttk.Checkbutton(web_archive_config_frame, text="Archive Website",
                                                  variable=self.web_config_htmldl_value, onvalue=1, offvalue=0,
                                                  style="TCheckbutton")
         self.web_config_htmldl.grid(column=0, row=5, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_config_compress_value = tk.IntVar()
-        self.web_config_compress = ttk.Checkbutton(self.web_archive_config_frame, text="Compress/Zip",
+        self.web_config_compress = ttk.Checkbutton(web_archive_config_frame, text="Compress/Zip",
                                                    variable=self.web_config_compress_value, onvalue=1, offvalue=0,
                                                    style="TCheckbutton")
         self.web_config_compress.grid(column=0, row=6, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_config_twitter_value = tk.IntVar()
-        self.web_config_twitter = ttk.Checkbutton(self.web_archive_config_frame, text="Twitter to CSV",
+        self.web_config_twitter = ttk.Checkbutton(web_archive_config_frame, text="Twitter to CSV",
                                                   variable=self.web_config_twitter_value, onvalue=1, offvalue=0,
                                                   style="TCheckbutton")
         self.web_config_twitter.grid(column=0, row=7, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_links_text = tk.StringVar()
         self.web_links_text.set(r'Enter Web Link(s) ⮟')
-        self.web_links_label = ttk.Label(self.top_web_frame, textvariable=self.web_links_text, style="Notes.TLabel")
+        self.web_links_label = ttk.Label(top_web_frame, textvariable=self.web_links_text, style="Notes.TLabel")
         self.web_links_label.grid(column=0, row=0, columnspan=1, sticky='W')
         self.web_percentage_text = tk.StringVar()
         self.web_percentage_text.set(
-            f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / (self.progress_bar_max_value_webarchive + 1)) * 100}%")
-        self.web_percentage_label = ttk.Label(self.bottom_web_frame, textvariable=self.web_percentage_text,
+            f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | {(self.progress_bar_value_web_archive / (self.progress_bar_max_value_web_archive + 1)) * 100}%")
+        self.web_percentage_label = ttk.Label(bottom_web_frame, textvariable=self.web_percentage_text,
                                               style="Notes.TLabel")
         self.web_percentage_label.grid(column=0, row=2, columnspan=2)
         self.web_percentage_title = tk.StringVar()
         self.web_percentage_title.set("Percentage")
-        self.web_percentage_title_label = ttk.Label(self.bottom_web_frame, textvariable=self.web_percentage_title,
+        self.web_percentage_title_label = ttk.Label(bottom_web_frame, textvariable=self.web_percentage_title,
                                                     style="Notes.TLabel")
         self.web_percentage_title_label.grid(column=0, row=0, columnspan=2)
 
         # ListBox
-        self.web_url_listbox = tk.Listbox(self.middle_web_frame, height=12, selectmode='multiple', exportselection=0)
+        self.web_url_listbox = tk.Listbox(middle_web_frame, height=12, selectmode='multiple', exportselection=0)
         self.web_url_listbox.grid(column=0, row=1, columnspan=2, rowspan=3, sticky='NSEW')
         tk.Grid.columnconfigure(self.web_url_listbox, 0, weight=1)
 
         # Entries
-        self.web_url_entry = tk.Text(self.top_web_frame, height=9)
+        self.web_url_entry = tk.Text(top_web_frame, height=9)
         self.web_url_entry.bind("<Tab>", self.focus_next_widget)
         self.refresh_webarchive_list()
         self.web_url_entry.grid(column=0, row=2, columnspan=2, sticky='NSEW')
 
         # Progress Bar
-        self.progress_bar_webarchive = ttk.Progressbar(
-            self.bottom_web_frame, orient="horizontal",
+        self.progress_bar_web_archive = ttk.Progressbar(
+            bottom_web_frame, orient="horizontal",
             mode="determinate"
         )
-        self.web_archive_selection_frame.grid(column=1, row=0, columnspan=1, sticky='NSEW')
-        self.web_archive_config_frame.grid(column=0, row=0, columnspan=1, sticky='NSEW')
-        self.progress_bar_webarchive.grid(column=0, row=1, padx=15, pady=10, columnspan=2, sticky='NSEW')
-        self.top_web_frame.grid(row=1, column=0, sticky='NSEW')
-        self.middle_web_button_frame.grid(row=2, column=0, sticky='NSEW')
-        self.middle_web_frame.grid(row=3, column=0, sticky='NSEW')
-        self.bottom_web_frame.grid(row=4, column=0, sticky='NSEW')
+        web_archive_selection_frame.grid(column=1, row=0, columnspan=1, sticky='NSEW')
+        web_archive_config_frame.grid(column=0, row=0, columnspan=1, sticky='NSEW')
+        self.progress_bar_web_archive.grid(column=0, row=1, padx=15, pady=10, columnspan=2, sticky='NSEW')
+        top_web_frame.grid(row=1, column=0, sticky='NSEW')
+        middle_web_button_frame.grid(row=2, column=0, sticky='NSEW')
+        middle_web_frame.grid(row=3, column=0, sticky='NSEW')
+        bottom_web_frame.grid(row=4, column=0, sticky='NSEW')
         # self.title_label.grid(column=0, row=0, sticky='NSEW', columnspan=1, padx=10, pady=10)
 
     def archive_sites(self):
-        self.url_list_webarchive = list(filter(None, self.url_list_webarchive))
-        self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
-        self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
-        if self.progress_bar_max_value_webarchive > 0:
-            self.status.set(f'Downloading {len(self.url_list_webarchive)} URL(s)')
+        self.url_list_web_archive = list(filter(None, self.url_list_web_archive))
+        self.url_list_web_archive = list(dict.fromkeys(self.url_list_web_archive))
+        self.progress_bar_max_value_web_archive = len(self.url_list_web_archive)
+        if self.progress_bar_max_value_web_archive > 0:
+            self.status.set(f'Downloading {len(self.url_list_web_archive)} URL(s)')
             self.web_archive_button["state"] = "disabled"
             self.web_add_url_button["state"] = "disabled"
             self.web_remove_url_button["state"] = "disabled"
             self.web_openfile_button["state"] = "disabled"
             self.web_save_location_button["state"] = "disabled"
-            self.progress_bar_value_webarchive = 0
-            self.progress_bar_webarchive['maximum'] = self.progress_bar_max_value_webarchive
-            self.progress_bar_webarchive['value'] = 0
-            print(f'{self.progress_bar_max_value_webarchive}:MAX VALUE')
+            self.progress_bar_value_web_archive = 0
+            self.progress_bar_web_archive['maximum'] = self.progress_bar_max_value_web_archive
+            self.progress_bar_web_archive['value'] = 0
+            print(f'{self.progress_bar_max_value_web_archive}:MAX VALUE')
             self.web_percentage_text.set(
-                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {math.ceil((self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100)}%")
+                f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | {math.ceil((self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100)}%")
             # Check to see if screenshot capture is enabled to launch browser
             if self.web_config_screenshot_value.get() == 1:
-                self.web_archiver.launch_browser()
+                self.web_archive.launch_browser()
             i = 0
-            for url in self.url_list_webarchive:
-                self.web_archiver.append_link(url=url)
-                print("Links Sent: ", self.web_archiver.get_links())
+            for url in self.url_list_web_archive:
+                self.web_archive.append_link(url=url)
+                print("Links Sent: ", self.web_archive.get_links())
                 # Check to see if screenshot capture is enabled to capture screenshot
                 if self.web_config_screenshot_value.get() == 1:
                     if self.web_screenshot_size.get() == "Full":
-                        self.web_archiver.fullpage_screenshot(url=url,
-                                                              filetype=self.web_screenshot_filetype.get(),
-                                                              quality=self.web_screenshot_quality.get())
+                        self.web_archive.fullpage_screenshot(url=url,
+                                                             filetype=self.web_screenshot_filetype.get(),
+                                                             quality=self.web_screenshot_quality.get())
                     elif self.web_screenshot_size.get() == "Normal":
-                        self.web_archiver.screenshot(url=url,
-                                                     filetype=self.web_screenshot_filetype.get(),
-                                                     quality=self.web_screenshot_quality.get())
+                        self.web_archive.screenshot(url=url,
+                                                    filetype=self.web_screenshot_filetype.get(),
+                                                    quality=self.web_screenshot_quality.get())
                 # self.youtube_downloader.download_hd_videos()
-                self.web_archiver.reset_links()
-                self.progress_bar_value_webarchive = i + 1
+                self.web_archive.reset_links()
+                self.progress_bar_value_web_archive = i + 1
                 self.web_percentage_text.set(
-                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {math.ceil((self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100)}%")
-                self.progress_bar_webarchive['value'] = i + 1
-                print("Value: ", self.progress_bar_value_webarchive)
-                print("Max Value: ", self.progress_bar_max_value_webarchive)
+                    f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | {math.ceil((self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100)}%")
+                self.progress_bar_web_archive['value'] = i + 1
+                print("Value: ", self.progress_bar_value_web_archive)
+                print("Max Value: ", self.progress_bar_max_value_web_archive)
                 self.status.set(
-                    f'Completed {self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive}')
+                    f'Completed {self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive}')
                 i += 1
             # Check to see if screenshot capture is enabled to quit browser
             if self.web_config_screenshot_value.get() == 1:
-                self.web_archiver.quit_driver()
+                self.web_archive.quit_driver()
             self.tabControl.tab(1, state="normal")
             self.tabControl.tab(2, state="normal")
             self.web_archive_button["state"] = "enabled"
@@ -800,7 +822,7 @@ class WebArchiveFrame(tk.Frame):
             self.web_remove_url_button["state"] = "enabled"
             self.web_openfile_button["state"] = "enabled"
             self.web_save_location_button["state"] = "enabled"
-            self.status.set(f'Downloaded {self.progress_bar_value_webarchive} website screenshot(s)!')
+            self.status.set(f'Downloaded {self.progress_bar_value_web_archive} website screenshot(s)!')
         else:
             print("No Website Links Added")
             self.status.set(f'Add Some Website Links First!')
@@ -828,7 +850,7 @@ class WebArchiveFrame(tk.Frame):
     def choose_save_location_webarchive(self):
         self.save_location = tk.filedialog.askdirectory()
         print("Save Filepath: ", self.save_location)
-        self.web_archiver.set_save_path(self.save_location)
+        self.web_archive.set_save_path(self.save_location)
 
     def open_file_webarchive(self):
         name = tk.filedialog.askopenfilename(initialdir=os.getcwd(),
@@ -839,22 +861,22 @@ class WebArchiveFrame(tk.Frame):
         try:
             webarchive_urls = open(name, 'r')
             print("webarchive_urls", webarchive_urls)
-            print("Length of Links Before Open File: ", len(self.url_list_webarchive))
+            print("Length of Links Before Open File: ", len(self.url_list_web_archive))
             for url in webarchive_urls:
-                self.url_list_webarchive.append(url)
+                self.url_list_web_archive.append(url)
             self.refresh_webarchive_list()
-            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
+            self.progress_bar_max_value_web_archive = len(self.url_list_web_archive)
             self.web_percentage_text.set(
-                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} videos from file: {name}')
+                f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | {(self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100}%")
+            self.status.set(f'Queued {self.progress_bar_max_value_web_archive} videos from file: {name}')
         except:
             print("No file exists")
             self.status.set(f'File Not Found')
 
     def refresh_webarchive_list(self):
         self.web_url_listbox.delete(0, tk.END)
-        self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
-        for items in self.url_list_webarchive:
+        self.url_list_web_archive = list(dict.fromkeys(self.url_list_web_archive))
+        for items in self.url_list_web_archive:
             self.web_url_listbox.insert(tk.END, items)
 
     def add_webarchive_url(self):
@@ -866,41 +888,41 @@ class WebArchiveFrame(tk.Frame):
                 if re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url) != "":
                     self.status.set(f'Added URLs to Queue')
                     temp = re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url)
-                    self.url_list_webarchive.append(temp)
+                    self.url_list_web_archive.append(temp)
                 else:
                     print("Bad URL: ", url)
                     self.status.set(f'Paste Some Website Links First! (CTRL+V) {url}')
-            self.url_list_webarchive = list(dict.fromkeys(self.url_list_webarchive))
+            self.url_list_web_archive = list(dict.fromkeys(self.url_list_web_archive))
             self.web_url_entry.delete("1.0", tk.END)
             self.refresh_webarchive_list()
-            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
+            self.progress_bar_max_value_web_archive = len(self.url_list_web_archive)
             print(
-                f'URL: {self.url_list_webarchive} AND AND MAXVAL: {self.progress_bar_max_value_webarchive} AND LEN {len(self.url_list_webarchive)}')
+                f'URL: {self.url_list_web_archive} AND AND MAXVAL: {self.progress_bar_max_value_web_archive} AND LEN {len(self.url_list_web_archive)}')
             self.web_percentage_text.set(
-                f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} url(s)')
+                f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | {(self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100}%")
+            self.status.set(f'Queued {self.progress_bar_max_value_web_archive} url(s)')
 
     def remove_webarchive_url(self):
         if self.web_url_listbox.curselection():
             selected_text_list = [self.web_url_listbox.get(i) for i in self.web_url_listbox.curselection()]
             x = 0
             for url in selected_text_list:
-                self.url_list_webarchive.remove(url)
+                self.url_list_web_archive.remove(url)
                 x += 1
             self.refresh_webarchive_list()
-            self.progress_bar_max_value_webarchive = len(self.url_list_webarchive)
-            if self.progress_bar_max_value_webarchive == 0:
+            self.progress_bar_max_value_web_archive = len(self.url_list_web_archive)
+            if self.progress_bar_max_value_web_archive == 0:
                 self.web_percentage_text.set(
-                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(0) * 100}%")
-                self.progress_bar_webarchive['value'] = 0
-                self.progress_bar_value_webarchive = 0
+                    f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | {(0) * 100}%")
+                self.progress_bar_web_archive['value'] = 0
+                self.progress_bar_value_web_archive = 0
             else:
                 self.web_percentage_text.set(
-                    f"{self.progress_bar_value_webarchive}/{self.progress_bar_max_value_webarchive} | {(self.progress_bar_value_webarchive / self.progress_bar_max_value_webarchive) * 100}%")
-                self.progress_bar_webarchive['value'] = self.progress_bar_value_webarchive
-                self.progress_bar_webarchive['maximum'] = self.progress_bar_max_value_webarchive
-                self.progress_bar_value_webarchive = self.progress_bar_max_value_webarchive
-            self.status.set(f'Queued {self.progress_bar_max_value_webarchive} videos')
+                    f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | {(self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100}%")
+                self.progress_bar_web_archive['value'] = self.progress_bar_value_web_archive
+                self.progress_bar_web_archive['maximum'] = self.progress_bar_max_value_web_archive
+                self.progress_bar_value_web_archive = self.progress_bar_max_value_web_archive
+            self.status.set(f'Queued {self.progress_bar_max_value_web_archive} videos')
         else:
             print("Click on a link to remove")
             self.status.set(f'Click on a URL to remove')
@@ -932,6 +954,8 @@ class ReportMergeFrame(tk.Frame):
     column_order_list_f2 = []
     joins_list = None
     save_location = os.getcwd()
+    file1titlecolumns_rm_frame = None
+    file2titlecolumns_rm_frame = None
 
     def __init__(self, tkt_main, tab_control, status, logger=None):
         if logger:
@@ -959,101 +983,108 @@ class ReportMergeFrame(tk.Frame):
     def draw_frame(self):
         # Setting up Frames in Report Merger Tab
         self.report_merge_frame = tk.Frame(self.tabControl)
-        self.titleRMFrame = ttk.Frame(self.report_merge_frame, style="Top.TFrame")
-        self.topRMFrame = ttk.Frame(self.report_merge_frame)
-        self.middleRMFrame = ttk.Frame(self.report_merge_frame)
-        self.filecolumnsRMFrame = ttk.Frame(self.report_merge_frame)
-        self.file1titlecolumnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.file1columnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.file2titlecolumnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.file2columnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.lowermiddleRMFrame = ttk.Frame(self.report_merge_frame)
-        self.lowerRMFrame = ttk.Frame(self.report_merge_frame)
-        self.lowestRMFrame = ttk.Frame(self.report_merge_frame)
-        tk.Grid.rowconfigure(self.titleRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.titleRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.topRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.topRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.topRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.topRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.middleRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.middleRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.middleRMFrame, 2, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.middleRMFrame, 3, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.middleRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middleRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.filecolumnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.filecolumnsRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.filecolumnsRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.file1titlecolumnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file1titlecolumnsRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.file1columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file1columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file1columnsRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.file1columnsRMFrame, 2, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.file2titlecolumnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file2titlecolumnsRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.file2columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file2columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file2columnsRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.file2columnsRMFrame, 2, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.lowermiddleRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.lowermiddleRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowermiddleRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.lowermiddleRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.lowerRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.lowerRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowerRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.lowerRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.lowestRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 3, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 4, minsize=1, weight=0)
-        self.titleRMFrame.grid(column=0, row=0, sticky='NSEW')
-        self.topRMFrame.grid(column=0, row=1, sticky='NSEW')
-        self.middleRMFrame.grid(column=0, row=2, sticky='NSEW')
-        self.filecolumnsRMFrame.grid(column=0, row=3, sticky='NSEW')
-        self.file1titlecolumnsRMFrame.grid(column=0, row=0, sticky='NSEW')
-        self.file1columnsRMFrame.grid(column=0, row=1, sticky='NSEW')
-        self.file2titlecolumnsRMFrame.grid(column=1, row=0, sticky='NSEW')
-        self.file2columnsRMFrame.grid(column=1, row=1, sticky='NSEW')
-        self.lowermiddleRMFrame.grid(column=0, row=4, sticky='NSEW')
-        self.lowerRMFrame.grid(column=0, row=5, sticky='NSEW')
-        self.lowestRMFrame.grid(column=0, row=6, sticky='NSEW')
+        tk.Grid.rowconfigure(self.report_merge_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.report_merge_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.report_merge_frame, 2, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.report_merge_frame, 3, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.report_merge_frame, 4, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.report_merge_frame, 5, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.report_merge_frame, 0, minsize=1, weight=1)
+        title_rm_frame = ttk.Frame(self.report_merge_frame, style="Top.TFrame")
+        top_rm_frame = ttk.Frame(self.report_merge_frame)
+        middle_rm_frame = ttk.Frame(self.report_merge_frame)
+        filecolumns_rm_frame = ttk.Frame(self.report_merge_frame)
+        self.file1titlecolumns_rm_frame = ttk.Frame(filecolumns_rm_frame)
+        file1columns_rm_frame = ttk.Frame(filecolumns_rm_frame)
+        self.file2titlecolumns_rm_frame = ttk.Frame(filecolumns_rm_frame)
+        file2columns_rm_frame = ttk.Frame(filecolumns_rm_frame)
+        lowermiddle_rm_frame = ttk.Frame(self.report_merge_frame)
+        lower_rm_frame = ttk.Frame(self.report_merge_frame)
+        lowest_rm_frame = ttk.Frame(self.report_merge_frame)
+        tk.Grid.rowconfigure(title_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(title_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.rowconfigure(top_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_rm_frame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(top_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(top_rm_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(middle_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(middle_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(middle_rm_frame, 2, minsize=1, weight=1)
+        tk.Grid.rowconfigure(middle_rm_frame, 3, minsize=1, weight=0)
+        tk.Grid.columnconfigure(middle_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(filecolumns_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(filecolumns_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(filecolumns_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.file1titlecolumns_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.file1titlecolumns_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.rowconfigure(file1columns_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(file1columns_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(file1columns_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(file1columns_rm_frame, 2, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.file2titlecolumns_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.file2titlecolumns_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.rowconfigure(file2columns_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(file2columns_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(file2columns_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(file2columns_rm_frame, 2, minsize=1, weight=0)
+        tk.Grid.rowconfigure(lowermiddle_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(lowermiddle_rm_frame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(lowermiddle_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(lowermiddle_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(lower_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(lower_rm_frame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(lower_rm_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(lower_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(lowest_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(lowest_rm_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(lowest_rm_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(lowest_rm_frame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(lowest_rm_frame, 3, minsize=1, weight=0)
+        tk.Grid.columnconfigure(lowest_rm_frame, 4, minsize=1, weight=0)
+        title_rm_frame.grid(column=0, row=0, sticky='NSEW')
+        top_rm_frame.grid(column=0, row=1, sticky='NSEW')
+        middle_rm_frame.grid(column=0, row=2, sticky='NSEW')
+        filecolumns_rm_frame.grid(column=0, row=3, sticky='NSEW')
+        self.file1titlecolumns_rm_frame.grid(column=0, row=0, sticky='NSEW')
+        file1columns_rm_frame.grid(column=0, row=1, sticky='NSEW')
+        self.file2titlecolumns_rm_frame.grid(column=1, row=0, sticky='NSEW')
+        file2columns_rm_frame.grid(column=1, row=1, sticky='NSEW')
+        lowermiddle_rm_frame.grid(column=0, row=4, sticky='NSEW')
+        lower_rm_frame.grid(column=0, row=5, sticky='NSEW')
+        lowest_rm_frame.grid(column=0, row=6, sticky='NSEW')
 
         # Set the Buttons for the Report Merger class
         self.file1_filename = "Choose First File to be Merged"
         self.filename_1_text = tk.StringVar()
         self.filename_1_text.set(self.file1_filename)
-        self.filename_1_label = ttk.Label(self.topRMFrame, style="File.TLabel", textvariable=self.filename_1_text)
+        self.filename_1_label = ttk.Label(top_rm_frame, style="File.TLabel", textvariable=self.filename_1_text)
         self.filename_1_label.grid(row=0, column=0, padx=5, columnspan=2, sticky='NSEW')
-        self.file_1_browse_button = ttk.Button(self.topRMFrame, text="Browse File 1",
+        file_1_browse_button = ttk.Button(top_rm_frame, text="Browse File 1",
                                                command=lambda: self.run(lambda: self.open_report_file(1),
                                                                         name='NoSync'))
 
         self.file2_filename = "Choose Second File to be Merged"
         self.filename_2_text = tk.StringVar()
         self.filename_2_text.set(self.file2_filename)
-        self.filename_2_label = ttk.Label(self.topRMFrame, style="File.TLabel", textvariable=self.filename_2_text)
+        self.filename_2_label = ttk.Label(top_rm_frame, style="File.TLabel", textvariable=self.filename_2_text)
         self.filename_2_label.grid(row=1, column=0, padx=5, columnspan=2, sticky='NSEW')
-        self.file_2_browse_button = ttk.Button(self.topRMFrame, text="Browse File 2",
+        file_2_browse_button = ttk.Button(top_rm_frame, text="Browse File 2",
                                                command=lambda: self.run(lambda: self.open_report_file(2),
                                                                         name='NoSync'))
 
-        self.save_location_button = ttk.Button(self.lowestRMFrame, text="Browse Save Location",
+        self.save_location_button = ttk.Button(lowest_rm_frame, text="Browse Save Location",
                                                command=lambda: self.run(lambda: self.prompt_save_location(),
                                                                         name='NoSync'))
-        self.save_file_name_widget = tk.Text(self.lowestRMFrame, height=1)
+        self.save_file_name_widget = tk.Text(lowest_rm_frame, height=1)
         self.save_file_name_widget.bind("<Tab>", self.focus_next_widget)
-        self.save_file_name_label = ttk.Label(self.lowestRMFrame, style="Notes.TLabel", text="Merged Report Filename: ")
+        self.save_file_name_label = ttk.Label(lowest_rm_frame, style="Notes.TLabel", text="Filename: ")
 
-        self.join_type_label = ttk.Label(self.lowermiddleRMFrame, style="Notes.TLabel", text="Join Type: ")
+        self.join_type_label = ttk.Label(lowermiddle_rm_frame, style="Notes.TLabel", text="Join Type: ")
         self.join_type_label.grid(column=0, row=0, padx=5, sticky="NSE")
         self.join_tip_text = tk.StringVar()
         self.join_tip_text.set(self.inner_join_tip)
-        self.join_tip_label = ttk.Label(self.lowerRMFrame, style="Notes.TLabel", textvariable=self.join_tip_text)
+        self.join_tip_label = ttk.Label(lower_rm_frame, style="Notes.TLabel", textvariable=self.join_tip_text)
         self.join_tip_label.grid(row=1, column=0, columnspan=2, padx=5, sticky='NSEW')
         self.joins = tk.StringVar()
         # self.joins.set("inner")
@@ -1085,58 +1116,58 @@ class ReportMergeFrame(tk.Frame):
         self.join_type_right_image_widget = ImageTk.PhotoImage(self.join_type_right_image)
         self.join_type_outer_image_widget = ImageTk.PhotoImage(self.join_type_outer_image)
         self.join_type_append_image_widget = ImageTk.PhotoImage(self.join_type_append_image)
-        self.join_type_inner_image_panel = ttk.Label(self.lowerRMFrame, image=self.join_type_inner_image_widget,
+        self.join_type_inner_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_inner_image_widget,
                                                      anchor='center')
-        self.join_type_left_image_panel = ttk.Label(self.lowerRMFrame, image=self.join_type_left_image_widget,
+        self.join_type_left_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_left_image_widget,
                                                     anchor='center')
-        self.join_type_right_image_panel = ttk.Label(self.lowerRMFrame, image=self.join_type_right_image_widget,
+        self.join_type_right_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_right_image_widget,
                                                      anchor='center')
-        self.join_type_outer_image_panel = ttk.Label(self.lowerRMFrame, image=self.join_type_outer_image_widget,
+        self.join_type_outer_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_outer_image_widget,
                                                      anchor='center')
-        self.join_type_append_image_panel = ttk.Label(self.lowerRMFrame, image=self.join_type_append_image_widget,
+        self.join_type_append_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_append_image_widget,
                                                       anchor='center')
         self.join_type_inner_image_panel.grid(column=0, row=0, columnspan=2, padx=5,
                                               sticky='NSEW')  # .pack(padx=(20, 20), pady=(20, 30), side=LEFT)
 
-        self.joins_list = ttk.OptionMenu(self.lowermiddleRMFrame, self.joins, "inner", "inner", "outer", "left",
+        self.joins_list = ttk.OptionMenu(lowermiddle_rm_frame, self.joins, "inner", "inner", "outer", "left",
                                          "right",
                                          "append", command=self.join_type)
         self.export_option_rm = tk.StringVar()
         self.export_option_rm.set("CSV")
-        self.export_type_rm = ttk.OptionMenu(self.lowestRMFrame, self.export_option_rm, "CSV", "CSV", "Excel",
+        self.export_type_rm = ttk.OptionMenu(lowest_rm_frame, self.export_option_rm, "CSV", "CSV", "Excel",
                                              command=self.set_rm_export)
         # self.joins_list.configure("TMenubutton", foreground="black")
         self.joins_list.grid(column=1, row=0, padx=(0, 100), sticky="NSW")
 
-        self.run_merge = ttk.Button(self.lowestRMFrame, style="Run.TButton", text="Merge",
+        self.run_merge = ttk.Button(lowest_rm_frame, style="Run.TButton", text="Merge",
                                     command=lambda: self.run(lambda: self.run_merge_report(), name='NoSync'))
-        # self.run_merge_excel = Button(self.lowestRMFrame, style="Run.TButton", text="Merge to Excel", command=lambda: self.run_merge_report_tkt())
-        self.file_1_browse_button.grid(row=0, column=2, padx=5, sticky='NSEW')
-        self.file_2_browse_button.grid(row=1, column=2, padx=5, sticky='NSEW')
+        # self.run_merge_excel = Button(self.lowest_rm_frame, style="Run.TButton", text="Merge to Excel", command=lambda: self.run_merge_report_tkt())
+        file_1_browse_button.grid(row=0, column=2, padx=5, sticky='NSEW')
+        file_2_browse_button.grid(row=1, column=2, padx=5, sticky='NSEW')
         self.file1_columnstext = tk.StringVar()
         self.file1_columnstext.set("File 1 - Columns")
-        self.file1_columnslabel = ttk.Label(self.middleRMFrame, style="Notes.TLabel",
+        self.file1_columnslabel = ttk.Label(middle_rm_frame, style="Notes.TLabel",
                                             textvariable=self.file1_columnstext)
-        self.file1_columnslabel_type_title = ttk.Label(self.file1titlecolumnsRMFrame, style="Notes.TLabel",
+        self.file1_columnslabel_type_title = ttk.Label(self.file1titlecolumns_rm_frame, style="Notes.TLabel",
                                                        text="File 1 - Select Column Order & Type")
         self.file2_columnstext = tk.StringVar()
         self.file2_columnstext.set("File 2 - Columns")
-        self.file2_columnslabel = ttk.Label(self.middleRMFrame, style="Notes.TLabel",
+        self.file2_columnslabel = ttk.Label(middle_rm_frame, style="Notes.TLabel",
                                             textvariable=self.file2_columnstext)
-        self.file2_columnslabel_type_title = ttk.Label(self.file2titlecolumnsRMFrame, style="Notes.TLabel",
+        self.file2_columnslabel_type_title = ttk.Label(self.file2titlecolumns_rm_frame, style="Notes.TLabel",
                                                        text="File 2 - Select Column Order & Type")
 
         self.file1_keys = tk.StringVar()
         self.file1_keys.set("")
         self.file2_keys = tk.StringVar()
         self.file2_keys.set("")
-        # self.scrollbar = Scrollbar(self.middleRMFrame, orient=VERTICAL)
-        self.file1_pk = tk.Listbox(self.middleRMFrame, listvariable=self.file1_keys, selectmode=tk.MULTIPLE,
+        # self.scrollbar = Scrollbar(self.middle_rm_frame, orient=VERTICAL)
+        self.file1_pk = tk.Listbox(middle_rm_frame, listvariable=self.file1_keys, selectmode=tk.MULTIPLE,
                                    exportselection=False)  # , yscrollcommand=self.scrollbar.set)
-        self.file2_pk = tk.Listbox(self.middleRMFrame, listvariable=self.file2_keys, selectmode=tk.MULTIPLE,
+        self.file2_pk = tk.Listbox(middle_rm_frame, listvariable=self.file2_keys, selectmode=tk.MULTIPLE,
                                    exportselection=False)  # , yscrollcommand=self.scrollbar.set)
-        '''self.file1_pk = DragDropListboxMulti(self.middleRMFrame, listvariable=self.file1_keys, exportselection=0)
-        self.file2_pk = DragDropListboxMulti(self.middleRMFrame, listvariable=self.file2_keys, exportselection=0)'''
+        '''self.file1_pk = DragDropListboxMulti(self.middle_rm_frame, listvariable=self.file1_keys, exportselection=0)
+        self.file2_pk = DragDropListboxMulti(self.middle_rm_frame, listvariable=self.file2_keys, exportselection=0)'''
         self.file1_pk.bind('<<ListboxSelect>>', self.onselect_file1_pk)
         self.file2_pk.bind('<<ListboxSelect>>', self.onselect_file2_pk)
         # self.file1_pk.bind('<FocusOut>', self.deselect_file1_pk)
@@ -1217,16 +1248,16 @@ class ReportMergeFrame(tk.Frame):
         # Check if this is the first or second file we are working with.
         if file_num == 1:
             self.dtypes_list_file1.append([index,
-                                           ttk.OptionMenu(self.file1columnsRMFrame, self.column_order_list_f1[counter],
+                                           ttk.OptionMenu(self.file1titlecolumns_rm_frame, self.column_order_list_f1[counter],
                                                           tk.IntVar().set(0),
                                                           *list(range(0, index_length)),
                                                           command=lambda value: self.run(
                                                               lambda: self.column_order(value, counter, column_name,
                                                                                         index, 1),
                                                               name='NoSync')),
-                                           ttk.Label(self.file1columnsRMFrame, style="Notes.TLabel",
+                                           ttk.Label(self.file1titlecolumns_rm_frame, style="Notes.TLabel",
                                                      text=f"{column_name}"),
-                                           ttk.OptionMenu(self.file1columnsRMFrame, self.report_dtypes_f1[counter],
+                                           ttk.OptionMenu(self.file1titlecolumns_rm_frame, self.report_dtypes_f1[counter],
                                                           "string", "string",
                                                           "date", "int",
                                                           command=lambda value: self.run(
@@ -1244,7 +1275,7 @@ class ReportMergeFrame(tk.Frame):
             print("DTYPE LIST: ", self.dtypes_list_file1)
         elif file_num == 2:
             self.dtypes_list_file2.append([index,
-                                           ttk.OptionMenu(self.file2columnsRMFrame, self.column_order_list_f2[counter],
+                                           ttk.OptionMenu(self.file2titlecolumns_rm_frame, self.column_order_list_f2[counter],
                                                           tk.IntVar().set(0),
                                                           *list(range(0, index_length)),
                                                           command=lambda value: self.run(
@@ -1252,9 +1283,9 @@ class ReportMergeFrame(tk.Frame):
                                                                                         index,
                                                                                         2),
                                                               name='NoSync')),
-                                           ttk.Label(self.file2columnsRMFrame, style="Notes.TLabel",
+                                           ttk.Label(self.file2titlecolumns_rm_frame, style="Notes.TLabel",
                                                      text=f"{column_name}"),
-                                           ttk.OptionMenu(self.file2columnsRMFrame, self.report_dtypes_f2[counter],
+                                           ttk.OptionMenu(self.file2titlecolumns_rm_frame, self.report_dtypes_f2[counter],
                                                           "string", "string",
                                                           "date", "int",
                                                           command=lambda value: self.run(
@@ -1410,7 +1441,7 @@ class ReportMergeFrame(tk.Frame):
             self.run_merge["state"] = "normal"
 
     def join_type(self, value):
-        self.status['text'] = "{}".format("Selected Join Type: %s" % value)
+        self.status['text'] = f"Selected Join Type: {value}"
         self.report_merger.set_join_type(value)
         if value == "inner":
             self.join_tip_text.set(self.inner_join_tip)
@@ -1616,7 +1647,7 @@ class AnalyticalProfilerFrame(tk.Frame):
                                                                         name='NoSync'))
         self.save_file_name_widget = tk.Text(self.lowestRMFrame, height=1)
         self.save_file_name_widget.bind("<Tab>", self.focus_next_widget)
-        self.save_file_name_label = ttk.Label(self.lowestRMFrame, style="Notes.TLabel", text="Merged Report Filename: ")
+        self.save_file_name_label = ttk.Label(self.lowestRMFrame, style="Notes.TLabel", text="Filename: ")
 
         self.export_option_rm = tk.StringVar()
         self.export_option_rm.set("CSV")
