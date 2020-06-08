@@ -85,4 +85,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## License
-Please attribute any uses to this repository. Do not resale this application.
+Please attribute any uses to this repository. Do not resale this application. Test
