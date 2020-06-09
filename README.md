@@ -2,18 +2,45 @@
 ![Alt text](img/geniusbot-small.png?raw=true "GeniusBot") 
 
 The Ever-learning and ever-improving tool!
-- YouTube Archving
-- Full Web Page Screenshots
+- YouTube Archiving
+- Web Page Archiving
 - Report Merging
 - Analytic Profiler
 
 #### YouTube Archiving
-![Alt text](screenshots/YouTubeArchive-small.png?raw=true "Report Merge")
+Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities. 
+![Alt text](screenshots/YouTubeArchive-small.png?raw=true "YouTube Archive")
 
+Examples for user/channel entry.
+![Alt text](screenshots/user.png?raw=true "User Entry")
+![Alt text](screenshots/channel.png?raw=true "Channel Entry")
+
+Open File allows you to browse for a text file that has a list of YouTube links.
+Examples contents:
+```
+https://www.youtube.com/watch?v=75-siCngYCc
+https://www.youtube.com/watch?v=7RSpZkIjK4w
+https://www.youtube.com/watch?v=7qRSAUb96wg
+```
 #### WebPage Archiving
-![Alt text](screenshots/WebArchive-small.png?raw=true "Report Merge")
+Archive any website by taking screenshots of any website entered.
+
+Choose from a variety of options like file type, quality, and image size.
+
+More to come...
+
+![Alt text](screenshots/WebArchive-small.png?raw=true "Web Archive")
 
 #### Report Merging
+Take two CSV/Excel files and join them on whatever columns and whatever join type necessary. 
+
+Additionally, data can be appended from one file to the other.
+
+When the columns are chosen, ensure you are:
+* Choosing the correct data type for that column
+* Lining up the ordering of the columns from the drop-downs on the bottom half of the screen so both files match each other.
+* Choosing the correct join type, the safe bet for testing purposes is always a left/right join.
+
 ![Alt text](screenshots/ReportMerge-small.png?raw=true "Report Merge")
 
 ## Getting Started
@@ -29,7 +56,8 @@ These instructions will get you a copy of the project up and running on your loc
 1. PyCharm installed
 2. Python 3.8 installed
 3. pip install cx_freeze
-4. (Optional) From root repository directory, run: pip install -r requirements.txt
+4. Google Chrome (For Selenium WebDriver) Chromium & FireFox support coming soon!
+5. (Optional) From root repository directory, run: pip install -r requirements.txt
 ```
 #### Instructions:
 ```
