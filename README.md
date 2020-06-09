@@ -14,6 +14,7 @@ Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities.
 Examples for how to find user & channel.
 
 ![User Entry Image](screenshots/user.png?raw=true "User Entry")
+
 ![Channel Entry Image](screenshots/channel.png?raw=true "Channel Entry")
 
 Open File allows you to browse for a text file that has a list of YouTube links.
