@@ -57,3 +57,4 @@ widgetsnbextension
 ipywidgets
 numba
 phik
+xlsxwriter

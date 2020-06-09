@@ -34,7 +34,7 @@ These instructions will get you a copy of the project up and running on your loc
 #### Instructions:
 ```
 1. In PyCharm, configure interpreter to use the virtual environment located in the repository (point it to the /venv/ folder)
-2. In PyCharm, run GeniusBot.py to open the GUI.
+2. In PyCharm, run geniusbot.py to open the GUI.
 ```
 ## Instructions to Build Portable Version:
 #### Pre-requisites:

@@ -1284,7 +1284,7 @@ class ReportMergeFrame(tk.Frame):
     # Prompt user for save location for Report Merging
     def prompt_save_location(self):
         self.save_location = filedialog.askdirectory()
-        self.status['text'] = "{}".format("Will save report in: %s" % self.save_location)
+        self.status.set("{}".format("Will save report in: %s" % self.save_location))
         self.report_merger.set_save_directory(self.save_location)
 
     def onselect_file1_pk(self, evt):
@@ -1427,7 +1427,7 @@ class ReportMergeFrame(tk.Frame):
             self.dtypes_list_file2 = []
 
     def column_order(self, value, column_num, index, file_num):
-        self.status['text'] = "{}".format("Selected Column Order: %s" % value)
+        self.status.set("{}".format("Selected Column Order: %s" % value))
         if file_num == 1:
             print("List Before Change: ", self.dtypes_list_file1[column_num])
             # Capture Old Value Before Changing
@@ -1468,12 +1468,12 @@ class ReportMergeFrame(tk.Frame):
             print("List After Sort: ", self.dtypes_list_file2)
 
     def dtype_type(self, data_type, column, file):
-        self.status['text'] = "{}".format("Selected Data Type: %s" % data_type)
+        self.status.set("{}".format("Selected Data Type: %s" % data_type))
         error = self.report_merger.set_columndtype(file, column, data_type)
         if error == 0:
-            self.status['text'] = f'Column "{column}" successfully changed to {data_type}'
+            self.status.set(f'Column "{column}" successfully changed to {data_type}')
         elif error == 1:
-            self.status['text'] = f'Column "{column}" could not be changed to {data_type}'
+            self.status.set(f'Column "{column}" could not be changed to {data_type}')
 
     # Chooses export type
     def set_rm_export(self, value):
@@ -1534,7 +1534,7 @@ class ReportMergeFrame(tk.Frame):
             self.run_merge["state"] = "normal"
 
     def join_type(self, value):
-        self.status['text'] = f"Selected Join Type: {value}"
+        self.status.set(f"Selected Join Type: {value}")
         self.report_merger.set_join_type(value)
         if value == "inner":
             self.join_tip_text.set(self.inner_join_tip)
@@ -1582,12 +1582,12 @@ class ReportMergeFrame(tk.Frame):
         report_name = self.save_file_name_widget.get("1.0", "end-1c")
         self.report_merger.set_report_name(report_name)
         if self.report_merger.get_join_type() == "append":
-            self.status['text'] = "{}".format("Running Merge, Please Be Patient (Bigger File = More Time)")
+            self.status.set("{}".format("Running Merge, Please Be Patient (Bigger File = More Time)"))
             self.report_merger.join_data(res_list1, res_list2)
-            self.status['text'] = "{}".format("Exporting Data...")
+            self.status.set("{}".format("Exporting Data..."))
             # csv_flag = 1
             self.report_merger.export_data(self.csv_flag_rm)
-            self.status['text'] = f"Export Complete! Please find that report in {self.save_location}"
+            self.status.set(f"Export Complete! Please find that report in {self.save_location}")
         else:
             # Check if there are columns chosen
             if self.dtypes_list_file1 and self.dtypes_list_file2:
@@ -1604,14 +1604,14 @@ class ReportMergeFrame(tk.Frame):
                 print(res_list2)
                 self.report_merger.set_df1_join_keys(res_list1)
                 self.report_merger.set_df2_join_keys(res_list2)
-                self.status['text'] = "{}".format("Running Merge, Please Be Patient (Bigger File = More Time)")
+                self.status.set("{}".format("Running Merge, Please Be Patient (Bigger File = More Time)"))
                 self.report_merger.join_data()
-                self.status['text'] = "{}".format("Exporting Data...")
+                self.status.set("{}".format("Exporting Data..."))
                 self.report_merger.export_data(self.csv_flag_rm)
-                self.status['text'] = f'Exported Successfully: {self.save_location}'
+                self.status.set(f'Exported Successfully: {self.save_location}')
             else:
                 print("Select a Join Key!")
-                self.status['text'] = "{}".format("Select a column to join on (Join Key Required)!")
+                self.status.set("{}".format("Select a column to join on (Join Key Required)!"))
         self.run_merge["state"] = "normal"
 
 
@@ -1797,7 +1797,7 @@ class AnalyticalProfilerFrame(tk.Frame):
     # Prompt user for save location for Report Merging
     def prompt_save_location(self):
         self.save_location = filedialog.askdirectory()
-        self.status['text'] = "{}".format("Will save report in: %s" % self.save_location)
+        self.status.set("{}".format("Will save report in: %s" % self.save_location))
         self.analytical_profiler.set_save_directory(self.save_location)
 
     # Chooses export type
@@ -1822,11 +1822,11 @@ class AnalyticalProfilerFrame(tk.Frame):
                 return 1
             print("Gathered Filename: ", self.file1_filename)
             self.filename_1_text.set("{}".format("%s" % self.file1_filename))
-            self.status['text'] = "{}".format("Selected File: %s" % self.file1_filename)
+            self.status.set("{}".format("Selected File: %s" % self.file1_filename))
             # self.analytical_profiler.set_file_1(self.file1_filename)
-            self.status['text'] = "{}".format("Loading File")
+            self.status.set("{}".format("Loading File"))
             # self.analytical_profiler.load_dataframe_1()
-            self.status['text'] = "{}".format("Populating List")
+            self.status.set("{}".format("Populating List"))
             # string1 = self.report_merger.get_features(self.report_merger.get_df1())
             # self.file1_keys.set(string1)
             self.file_1_browse_button["state"] = "normal"
