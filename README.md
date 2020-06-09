@@ -88,22 +88,22 @@ To fix TkThread (Thread) not found issue. Copy Tkthread folder into 'venv>tcl>tc
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+Explain how to run the automated tests for this system when they are implemented.
 
 ### Break down into end to end tests
 
-Explain what these tests test and why
+Tests will be created soon. This section will explain what these tests test and why
 
 ```
-Give an example
+Example test criteria
 ```
 
 ### And coding style tests
 
-Explain what these tests test and why
+Unit testing still needs to be implemented.
 
 ```
-Give an example
+An Example will be provided
 ```
 
 ## Built With
@@ -133,7 +133,7 @@ Please attribute any uses to this repository. Do not resale this application. Te
 All credits to the FFMPEG team for the audio/video conversions
 ## Authors
 
-* **Audel Rouhi** - *Sole Developer* - [knucklessg1](https://github.com/Knucklessg1)
+* **Audel Rouhi** - *Software & Automation Engineer + Data Scientist* - [knucklessg1](https://github.com/Knucklessg1)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
