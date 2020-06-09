@@ -11,7 +11,8 @@ The Ever-learning and ever-improving tool!
 Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities. 
 ![YouTube Archive Image](screenshots/YouTubeArchive-small.png?raw=true "YouTube Archive")
 
-Examples for user/channel entry.
+Examples for how to find user & channel.
+
 ![User Entry Image](screenshots/user.png?raw=true "User Entry")
 ![Channel Entry Image](screenshots/channel.png?raw=true "Channel Entry")
 
