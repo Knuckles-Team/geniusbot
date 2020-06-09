@@ -7,6 +7,8 @@ The Ever-learning and ever-improving tool!
 - Report Merging
 - Analytic Profiler
 
+[Download GeniusBot v1.8.0 Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.0/GeniusBot-1.8.0-amd64.msi)
+
 #### YouTube Archiving
 Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities. 
 ![YouTube Archive Image](screenshots/YouTubeArchive-small.png?raw=true "YouTube Archive")
