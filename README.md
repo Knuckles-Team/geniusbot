@@ -12,9 +12,7 @@ Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities.
 ![YouTube Archive Image](screenshots/YouTubeArchive-small.png?raw=true "YouTube Archive")
 
 Examples for how to find user & channel.
-
 ![User Entry Image](screenshots/user.PNG?raw=true "User Entry")
-
 ![Channel Entry Image](screenshots/channel.PNG?raw=true "Channel Entry")
 
 Open File allows you to browse for a text file that has a list of YouTube links.
