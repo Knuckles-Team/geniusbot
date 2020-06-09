@@ -1,9 +1,20 @@
-# GeniusBot
+# GeniusBot 
+![Alt text](img/geniusbot-small.png?raw=true "GeniusBot") 
+
 The Ever-learning and ever-improving tool!
 - YouTube Archving
 - Full Web Page Screenshots
 - Report Merging
 - Analytic Profiler
+
+#### YouTube Archiving
+![Alt text](screenshots/YouTubeArchive-small.png?raw=true "Report Merge")
+
+#### WebPage Archiving
+![Alt text](screenshots/WebArchive-small.png?raw=true "Report Merge")
+
+#### Report Merging
+![Alt text](screenshots/ReportMerge-small.png?raw=true "Report Merge")
 
 ## Getting Started
 
@@ -106,6 +117,7 @@ Give an example
 * FireFox Web Driver
 * PyTube3
 * Tkthread
+* FFMPEG
 
 ## Versioning
 
@@ -118,7 +130,7 @@ Please make sure to update tests as appropriate.
 
 ## License
 Please attribute any uses to this repository. Do not resale this application. Test
-
+All credits to the FFMPEG team for the audio/video conversions
 ## Authors
 
 * **Audel Rouhi** - *Sole Developer* - [knucklessg1](https://github.com/Knucklessg1)
@@ -128,7 +140,7 @@ See also the list of [contributors](https://github.com/your/project/contributors
 ## Acknowledgments
 
 * tkthread - tclthread
-
+* FFMPEG - All credits to the FFMPEG team for the audio/video conversions
 ## Pip Tips
 #### To update pip:
 ```
