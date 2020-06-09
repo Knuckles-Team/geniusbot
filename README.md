@@ -9,11 +9,11 @@ The Ever-learning and ever-improving tool!
 
 #### YouTube Archiving
 Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities. 
-![Alt text](screenshots/YouTubeArchive-small.png?raw=true "YouTube Archive")
+![YouTube Archive Image](screenshots/YouTubeArchive-small.png?raw=true "YouTube Archive")
 
 Examples for user/channel entry.
-![Alt text](screenshots/user.png?raw=true "User Entry")
-![Alt text](screenshots/channel.png?raw=true "Channel Entry")
+![User Entry Image](screenshots/user.png?raw=true "User Entry")
+![Channel Entry Image](screenshots/channel.png?raw=true "Channel Entry")
 
 Open File allows you to browse for a text file that has a list of YouTube links.
 Examples contents:
@@ -29,7 +29,7 @@ Choose from a variety of options like file type, quality, and image size.
 
 More to come...
 
-![Alt text](screenshots/WebArchive-small.png?raw=true "Web Archive")
+![Web Archive Image](screenshots/WebArchive-small.png?raw=true "Web Archive")
 
 #### Report Merging
 Take two CSV/Excel files and join them on whatever columns and whatever join type necessary. 
@@ -41,7 +41,7 @@ When the columns are chosen, ensure you are:
 * Lining up the ordering of the columns from the drop-downs on the bottom half of the screen so both files match each other.
 * Choosing the correct join type, the safe bet for testing purposes is always a left/right join.
 
-![Alt text](screenshots/ReportMerge-small.png?raw=true "Report Merge")
+![Report Merge Image](screenshots/ReportMerge-small.png?raw=true "Report Merge")
 
 ## Getting Started
 
