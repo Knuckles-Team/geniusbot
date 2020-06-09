@@ -1497,11 +1497,11 @@ class ReportMergeFrame(tk.Frame):
                 return 1
             print("Gathered Filename: ", self.file1_filename)
             self.filename_1_text.set("{}".format("%s" % self.file1_filename))
-            self.status['text'] = "{}".format("Selected File: %s" % self.file1_filename)
+            self.status.set(f"Selected File: {self.file1_filename}")
             self.report_merger.set_file_1(self.file1_filename)
-            self.status['text'] = "{}".format("Loading File")
+            self.status.set("Loading File")
             self.report_merger.load_dataframe_1()
-            self.status['text'] = "{}".format("Populating List")
+            self.status.set("Populating List")
             string1 = self.report_merger.get_features(self.report_merger.get_df1())
             self.file1_keys.set(string1)
             self.file_1_browse_button["state"] = "normal"
@@ -1517,11 +1517,11 @@ class ReportMergeFrame(tk.Frame):
                 return 1
             print("Gathered Filename: ", self.file2_filename)
             self.filename_2_text.set("{}".format("%s" % self.file2_filename))
-            self.status['text'] = "{}".format("Selected File: %s" % self.file2_filename)
+            self.status.set(f"Selected File: {self.file2_filename}")
             self.report_merger.set_file_2(self.file2_filename)
-            self.status['text'] = "{}".format("Loading File")
+            self.status.set("Loading File")
             self.report_merger.load_dataframe_2()
-            self.status['text'] = "{}".format("Populating List")
+            self.status.set("Populating List")
             string2 = self.report_merger.get_features(self.report_merger.get_df2())
             self.file2_keys.set(string2)
             self.file_2_browse_button["state"] = "normal"

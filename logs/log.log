@@ -1,23 +1,40 @@
-2020-06-08 01:03:30,645:DEBUG:root:Debug: Initialized
-2020-06-08 01:03:30,645:INFO:root:Info: Initialized
-2020-06-08 01:03:30,645:WARNING:root:Warning: Initialized
-2020-06-08 01:03:30,645:ERROR:root:Error: Initialized
-2020-06-08 01:03:30,645:CRITICAL:root:Critical: Initialized
-2020-06-08 01:03:30,645:INFO:root:Logging Module: Initializing
-2020-06-08 01:03:31,145:INFO:root:YouTube Download: Initialized
-2020-06-08 01:03:31,145:INFO:root:Save Path Changed to: <bound method YouTubeDownloader.set_os_save_path of <youtube_download.YouTubeDownloader object at 0x0000011F371DF280>>
-2020-06-08 01:03:31,145:INFO:root:Found ffmpeg at: C:\Users\knuck\Documents\Python\GeniusBot\lib\ffmpeg\bin\ffmpeg.exe
-2020-06-08 01:03:31,427:INFO:root:Initializing Web Archive Complete!
-2020-06-08 01:03:31,458:INFO:root:Initializing Web Archive Complete!
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
-2020-06-08 01:03:31,505:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 41 32768
-2020-06-08 01:03:31,598:INFO:root:Initializing Web Archive Complete!
-2020-06-08 01:03:31,614:INFO:root:Initializing GeniusBot Complete!
+2020-06-08 17:35:31,060:DEBUG:root:Debug: Initialized
+2020-06-08 17:35:31,060:INFO:root:Info: Initialized
+2020-06-08 17:35:31,060:WARNING:root:Warning: Initialized
+2020-06-08 17:35:31,060:ERROR:root:Error: Initialized
+2020-06-08 17:35:31,060:CRITICAL:root:Critical: Initialized
+2020-06-08 17:35:31,060:INFO:root:Logging Module: Initializing
+2020-06-08 17:35:31,410:INFO:root:YouTube Download: Initialized
+2020-06-08 17:35:31,410:INFO:root:Save Path Changed to: <bound method YouTubeDownloader.set_os_save_path of <youtube_download.YouTubeDownloader object at 0x00000293FFE234C0>>
+2020-06-08 17:35:31,410:INFO:root:Found ffmpeg at: C:\Users\knuck\Documents\Python\GeniusBot\lib\ffmpeg\bin\ffmpeg.exe
+2020-06-08 17:35:31,623:INFO:root:Initializing Web Archive Complete!
+2020-06-08 17:35:31,649:INFO:root:Initializing Web Archive Complete!
+2020-06-08 17:35:31,671:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-08 17:35:31,671:DEBUG:PIL.PngImagePlugin:STREAM b'sRGB' 41 1
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'gAMA' 54 4
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'pHYs' 70 9
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 91 7786
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'sRGB' 41 1
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'gAMA' 54 4
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'pHYs' 70 9
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 91 8351
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'sRGB' 41 1
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'gAMA' 54 4
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'pHYs' 70 9
+2020-06-08 17:35:31,672:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 91 8605
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'sRGB' 41 1
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'gAMA' 54 4
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'pHYs' 70 9
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 91 9273
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'IHDR' 16 13
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'bKGD' 41 6
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:b'bKGD' 41 6 (unknown)
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'pHYs' 59 9
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'tIME' 80 7
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:b'tIME' 80 7 (unknown)
+2020-06-08 17:35:31,673:DEBUG:PIL.PngImagePlugin:STREAM b'IDAT' 99 3393
+2020-06-08 17:35:31,697:INFO:root:Initializing Web Archive Complete!
+2020-06-08 17:35:31,708:INFO:root:Initializing GeniusBot Complete!
