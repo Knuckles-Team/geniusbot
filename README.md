@@ -7,7 +7,7 @@ The Ever-learning and ever-improving tool!
 - Report Merging
 - Analytic Profiler
 
-[Download GeniusBot v1.8.0 Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.0/GeniusBot-1.8.0-amd64.msi)
+[Download GeniusBot v1.8.2 Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.2/GeniusBot-1.8.2-amd64.msi)
 
 #### YouTube Archiving
 Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities. 
@@ -115,6 +115,15 @@ To fix TkThread (Thread) not found issue. Copy Tkthread folder into 'venv>tcl>tc
 * [For Linux Selenium: Ensure Chromium is not snap version](https://askubuntu.com/questions/1075103/chromium-config-folder-is-missing-in-ubuntu-18-04)
 
 * [Web Driver Manager to Manage Selenium Drivers Automatically](https://pypi.org/project/webdriver-manager/)
+
+* multiprocessesing.pool not found when launching from installed version. (multiprocessing package needs to be copied into the virtual environment or installed) Then in the compiled version, rename Pool.pyc to pool.pyc. 
+
+* Module not found scipy.spatial.cKDTree. Add scipy.spatial.cKDTree to excludes in setup.
+
+* Module not found 'astropy.constants.codata2018', 'astropy.constants.iau2015'. Add 'astropy.constants.codata2018', 'astropy.constants.iau2015' to excludes in setup.
+
+* [Module not found mpl_toolkits. create __init__.py in main package folder](https://stackoverflow.com/questions/18596410/importerror-no-module-named-mpl-toolkits-with-maptlotlib-1-3-0-and-py2exe) 
+This was applied on custom lib folder and venv.
 
 ## Running the tests
 

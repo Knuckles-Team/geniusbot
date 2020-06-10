@@ -3,6 +3,8 @@
 
 import os
 import sys
+# import matplotlib
+# from mpl_toolkits import axes_grid, axes_grid1
 
 
 from pathlib import Path
@@ -21,7 +23,7 @@ lib_dir = str(parent_dir) + "/lib/"
 logs_dir = str(parent_dir) + "/logs/"
 fonts_dir = str(parent_dir) + "/fonts/"
 # Don't append parent_dir, it will contain build folder and recursively scan itself.
-#sys.path.append(parent_dir)
+# sys.path.append(parent_dir)
 sys.path.append(src_dir)
 
 from version_info import geniusbot_version
@@ -36,22 +38,25 @@ if sys.platform == "win32":
 
 os.environ['TCL_LIBRARY'] = os.path.join(python_install_dir, 'tcl', 'tcl8.6')
 os.environ['TK_LIBRARY'] = os.path.join(python_install_dir, 'tcl', 'tk8.6')
-includefiles = [src_dir, lib_dir, img_dir, logs_dir, fonts_dir, str(os.path.join(python_install_dir, 'DLLs', 'tk86t.dll')),
-                str(os.path.join(python_install_dir, 'DLLs', 'tcl86t.dll'))]  # 'tcl86t.dll', 'tk86t.dll']
+include_files = [src_dir, lib_dir, img_dir, logs_dir, fonts_dir,
+                 str(os.path.join(python_install_dir, 'DLLs', 'tk86t.dll')),
+                 str(os.path.join(python_install_dir, 'DLLs', 'tcl86t.dll'))]
+
 includes = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
             'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
             'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager', 'appdirs',
-            'pandas_profiling', 'sklearn', 'scipy', 'seaborn', 'math', 'xlsxwriter']
-packages = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json', 'joblib', 'pyglet', 'pytube',
-            'urllib', 're', 'platform', 'tqdm', 'tkinter', 'mutagen', 'requests', 'subprocess', 'threading', 'tkthread',
-            'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager', 'appdirs',
-            'pandas_profiling', 'sklearn', 'scipy', 'seaborn', 'math', 'xlsxwriter']
+            'pandas_profiling', 'sklearn', 'scipy', 'seaborn', 'math', 'xlsxwriter', 'multiprocessing',
+            'astropy.constants.codata2018', 'astropy.constants.iau2015', 'matplotlib', 'matplotlib.pyplot',
+            'pkg_resources']
+
+packages = includes
+
 excludes = ['PyQt4', 'PyQt5', 'Tkinter', 'sqlalchemy', 'cryptography', 'pypyodbc', 'packaging', 'cx_oracle',
-            'pyhive', 'spaCy']
+            'pyhive', 'spaCy', 'scipy.spatial.cKDTree']
 build_exe_options = {
     'packages': packages,
     'includes': includes,
-    'include_files': includefiles,
+    'include_files': include_files,
     'include_msvcr': True,
     'add_to_path': True,
     # 'build_exe': 'GeniusBot',
