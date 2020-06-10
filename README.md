@@ -66,13 +66,13 @@ These instructions will get you a copy of the project up and running on your loc
 1. In PyCharm, configure interpreter to use the virtual environment located in the repository (point it to the /venv/ folder)
 2. In PyCharm, run geniusbot.py to open the GUI.
 ```
-## Instructions to Build Portable Version:
+## Instructions to Compile: 
 #### Pre-requisites:
 ```
 1. pip install cx_freeze
 2. (Optional) From root repository directory, run: pip install -r requirements.txt
 ```
-#### Instructions:
+#### Instructions to Compile Portable Version:
 ```
 1. To Compile install MSI file go to the build folder and open powershell in that directory.
 2. Run the following command: ..\venv\Scripts\python .\setup.py build
@@ -80,19 +80,29 @@ or
 2. (Only run this method if you've installed tcl-thread and requirements) Run the following command: python .\setup.py build
 3. Another build folder will be generated with a GeniusBot.exe file inside. Open this file to run GeniusBot without installing
 ```
-## Instructions to Compile Microsoft Installer File (MSI):
-#### Pre-requisites:
-```
-1. pip install cx_freeze
-2. (Optional) From root repository directory, run: pip install -r requirements.txt
-```
-#### Instructions:
+#### Instructions to Compile Microsoft Installer File (MSI):
 ```
 1. To Compile install MSI file go to the build folder and open powershell in that directory.
 2. Run the following command: ..\venv\Scripts\python .\setup.py bdist --format=msi
 or
 2. (Only run this method if you've installed tcl-thread and requirements) Run the following command: python .\setup.py bdist --format=msi
 3. The setup.msi file will be generated in the dist folder located in the build folder.
+```
+#### Instructions to Compile Mac Application:
+```
+1. To Compile install Mac App file go to the build folder and open terminal in that directory.
+2. Run the following command: ..\venv\Scripts\python .\setup.py bdist_mac
+or
+2. (Only run this method if you've installed tcl-thread and requirements) Run the following command: python .\setup.py bdist_mac
+3. The application file will be generated in the dist folder located in the build folder.
+```
+#### Instructions to Compile Linux Application:
+```
+1. To Compile install Linux Application file go to the build folder and open terminal in that directory.
+2. Run the following command: ..\venv\Scripts\python .\setup.py bdist_rpm
+or
+2. (Only run this method if you've installed tcl-thread and requirements) Run the following command: python .\setup.py bdist_rpm
+3. The application file will be generated in the dist folder located in the build folder.
 ```
 
 ## Bug Fixes and Issue Resolutions:
