@@ -171,10 +171,18 @@ class WebPageArchive:
             title = re.sub('[\\/:"*?<>|]', '', filename)
             self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
         else:
-            title = re.sub('[\\/:"*?<>|]', '', self.driver.title)
-            title = title.replace(" ", "_")
-            print("Title: ", title)
-            self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
+            print("driver title ", self.driver.title)
+            print("Url, ", url)
+            if self.driver.title:
+                title = re.sub('[\\/:"*?<>|]', '', self.driver.title)
+                title = title.replace(" ", "_")
+                print("Title: ", title)
+                self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
+            else:
+                title = re.sub('[\\/:"*?<>|.,]', '', url)
+                title = title.replace(" ", "_")
+                print("Title: ", title)
+                self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
 
     def fullpage_screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url)
@@ -182,10 +190,18 @@ class WebPageArchive:
             title = re.sub('[\\/:"*?<>|.,]', '', filename)
             self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
         else:
-            title = re.sub('[\\/:"*?<>|.,]', '', self.driver.title)
-            title = title.replace(" ", "_")
-            print("Title: ", title)
-            self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
+            print("driver title ", self.driver.title)
+            print("Url, ", url)
+            if self.driver.title:
+                title = re.sub('[\\/:"*?<>|.,]', '', self.driver.title)
+                title = title.replace(" ", "_")
+                print("Title: ", title)
+                self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
+            else:
+                title = re.sub('[\\/:"*?<>.,|]', '', url)
+                title = title.replace(" ", "_")
+                print("Title: ", title)
+                self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
 
     def set_save_path(self, save_path):
         self.SAVE_PATH = save_path

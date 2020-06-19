@@ -194,5 +194,6 @@ class ReportMerge:
             self.df_final.to_csv(self.csv_export, index=False)
             print("Exported to CSV Complete!")
         else:
+            # Export large data by creating xlsxwriter first and setting archivezip64 option
             self.df_final.to_excel(self.excel_export, index=False, engine='xlsxwriter')
             print("Exported to Excel Complete!")
