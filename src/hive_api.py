@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import warnings
 import pypyodbc as pyodbc
 import pandas as pd
