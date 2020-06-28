@@ -47,12 +47,11 @@ includes = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json
             'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager', 'appdirs',
             'pandas_profiling', 'sklearn', 'scipy', 'seaborn', 'math', 'xlsxwriter', 'multiprocessing',
             'astropy.constants.codata2018', 'astropy.constants.iau2015', 'matplotlib', 'matplotlib.pyplot',
-            'pkg_resources']
+            'pkg_resources', 'paramiko', 'pyhive', 'sqlalchemy', 'pypyodbc', 'cx_oracle']
 
 packages = includes
 
-excludes = ['PyQt4', 'PyQt5', 'Tkinter', 'sqlalchemy', 'cryptography', 'pypyodbc', 'packaging', 'cx_oracle',
-            'pyhive', 'spaCy', 'scipy.spatial.cKDTree']
+excludes = ['PyQt4', 'PyQt5', 'Tkinter',  'cryptography',  'packaging', 'spaCy', 'scipy.spatial.cKDTree']
 build_exe_options = {
     'packages': packages,
     'includes': includes,
