@@ -58,3 +58,8 @@ ipywidgets
 numba
 phik
 xlsxwriter
+paramiko
+cx_oracle
+pypyodbc
+sqlalchemy
+pyhive

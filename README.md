@@ -5,7 +5,11 @@ The Ever-learning and ever-improving tool!
 - YouTube Archiving
 - Web Page Archiving
 - Report Merging
+
+Features Coming Soon
 - Analytic Profiler
+- Chat Rooms
+- Video/Audio Converter
 
 [Download GeniusBot v1.8.2 Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.2/GeniusBot-1.8.2-amd64.msi)
 
@@ -134,6 +138,11 @@ To fix TkThread (Thread) not found issue. Copy Tkthread folder into 'venv>tcl>tc
 
 * [Module not found mpl_toolkits. create __init__.py in main package folder](https://stackoverflow.com/questions/18596410/importerror-no-module-named-mpl-toolkits-with-maptlotlib-1-3-0-and-py2exe) 
 This was applied on custom lib folder and venv.
+
+* PyHive not finding the correct SASL. C++ distributable installed from Visual Studio
+
+* PyHive not importing dialect
+    import dialect by registering it using sqlalchemy dialect registrar. 
 
 ## Running the tests
 
