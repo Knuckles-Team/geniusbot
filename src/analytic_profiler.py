@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 
 class ReportAnalyzer:
     log = None
+
     # Pandas Profiling
     file_raw = None
     df_raw = None
@@ -34,10 +35,10 @@ class ReportAnalyzer:
     profile = None
 
     # Custom Report
-    csv_path = "./"
-    plot_path = "./"
-    report_path = "./"
-    clean_csv_path = "./"
+    csv_path = os.getcwd()
+    plot_path = os.getcwd()
+    report_path = os.getcwd()
+    clean_csv_path = os.getcwd()
     data = None
     nan_prop = None
     categorical_variable = None
@@ -55,6 +56,18 @@ class ReportAnalyzer:
         self.plot = AnalyticalPlot()
         self.model = AnalyticalModel()
 
+    def set_save_directory(self, directory):
+        self.set_pandas_save_directory(directory)
+        self.set_csv_path(directory)
+        self.set_plot_path(directory)
+        self.set_report_path(directory)
+        self.set_clean_csv_path(directory)
+
+    def set_pandas_save_directory(self, save_path):
+        self.save_directory = save_path
+        print("New Directory: ", self.save_directory)
+        self.export = self.save_directory + '\\' + self.report_name_html
+
     def set_csv_path(self, csv_path):
         self.csv_path = csv_path
 
@@ -68,86 +81,94 @@ class ReportAnalyzer:
         self.clean_csv_path = clean_csv_path
 
     def run_analysis(self):
-        # Creating a txt file in the report_path
-        filename = os.path.join(self.report_path, "report" + ".txt")
-
-        # Assigning csv file to a variable call 'data'
-        self.data = pd.read_csv(self.csv_path)
-
-        # Create a function to separate out numerical and categorical data
-        ## Using this function to ensure that all non-numerical in a numerical column
-        ## and non-categorical in a categorical column is annotated
-
-
-        self.categorical_variable = self.cat_variable(self.data)
-        self.numerical_variable = self.num_variable(self.data)
-
-
-        # Assigning variable filename to report and enable writing mode
-        report = open(filename, "w")
-        print("Opened Report")
-
-        # Execute overview function in model module
-        self.data = self.model.overview(self.data, self.numerical_variable, report)
-
-        # Create a function to decide whether to drop all NA values or replace them
-        ## Drop it if NAN count < 5 %
-        self.nan_prop = (self.data.isna().mean().round(2) * 100)  # Show % of NaN values per column
-
-        cols_to_drop = self.drop_na()
-
-        print("Dropped NA Values")
-        self.data = self.data.dropna(subset=cols_to_drop)
-
-        ## Using Imputer to fill NaN values
-        ## Counting the proportion of NaN
-        cols_to_fill = self.fill_na()
-
-        cat_var_tofill = []
-        num_var_tofill = []
-
-        for var in cols_to_fill:
-            if var in self.categorical_variable:
-                cat_var_tofill.append(var)
-            else:
-                num_var_tofill.append(var)
-
-        print("Categorical Values")
-        imp_cat = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
         try:
-            self.data[cat_var_tofill] = imp_cat.fit_transform(self.data[cat_var_tofill])
-        except ValueError:
-            pass
+            # Creating a txt file in the report_path
+            print("Creating txt file in the report_path")
+            filename = os.path.join(self.report_path, "report" + ".txt")
 
-        print("Number Values")
-        imp_num = SimpleImputer(missing_values=np.nan, strategy='median')
-        try:
-            self.data[num_var_tofill] = imp_num.fit_transform(self.data[num_var_tofill])
-        except ValueError:
-            pass
+            # Assigning csv file to a variable call 'data'
+            print("Assigning csv file to a variable call 'data'")
+            self.data = self.df_raw.copy()
 
-        self.data = self.outlier()
+            # Create a function to separate out numerical and categorical data
+            ## Using this function to ensure that all non-numerical in a numerical column
+            ## and non-categorical in a categorical column is annotated
 
-        ## Creating possible combinations among a list of numerical variables
-        num_var_combination = list(itertools.combinations(self.numerical_variable, 2))
+            print("Assigning Categorical and Numerical Variables")
+            self.categorical_variable = self.cat_variable(self.data)
+            self.numerical_variable = self.num_variable(self.data)
+            print("Assigning Categorical and Numerical Variables Completed")
 
-        ## Creating possible combinations among a list of categorical variables
-        cat_var_combination = list(itertools.combinations(self.categorical_variable, 2))
+            # Assigning variable filename to report and enable writing mode
+            print("Opening Report")
+            report = open(filename, "w")
+            print("Opening Report Complete")
 
-        ## Creating possible combinations among a list of numerical and categorical variuable
-        catnum_combination = list(itertools.product(self.numerical_variable, self.categorical_variable))
+            # Execute overview function in model module
+            self.data = self.model.overview(self.data, self.numerical_variable, report)
 
-        print("Running Model")
-        ## Running the report now
-        self.model.run(num_var_combination, catnum_combination, cat_var_combination, report, self.data)
-        # Create an output file that shows cleaned data
-        data2 = self.data.copy()
-        data2.to_csv(r'{}/cleaned_csv.csv'.format(self.clean_csv_path), index=False)
+            # Create a function to decide whether to drop all NA values or replace them
+            ## Drop it if NAN count < 5 %
+            self.nan_prop = (self.data.isna().mean().round(2) * 100)  # Show % of NaN values per column
 
-        print("Running Plots")
-        # Running plot class from Graph package
-        self.plot.run(self.data, self.categorical_variable, self.numerical_variable, num_var_combination, cat_var_combination,
-                 catnum_combination, self.plot_path)
+            cols_to_drop = self.drop_na()
+
+            print("Dropped NA Values")
+            self.data = self.data.dropna(subset=cols_to_drop)
+
+            ## Using Imputer to fill NaN values
+            ## Counting the proportion of NaN
+            cols_to_fill = self.fill_na()
+
+            cat_var_tofill = []
+            num_var_tofill = []
+
+            for var in cols_to_fill:
+                if var in self.categorical_variable:
+                    cat_var_tofill.append(var)
+                else:
+                    num_var_tofill.append(var)
+
+            print("Categorical Values")
+            imp_cat = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
+            try:
+                self.data[cat_var_tofill] = imp_cat.fit_transform(self.data[cat_var_tofill])
+            except ValueError:
+                pass
+
+            print("Number Values")
+            imp_num = SimpleImputer(missing_values=np.nan, strategy='median')
+            try:
+                self.data[num_var_tofill] = imp_num.fit_transform(self.data[num_var_tofill])
+            except ValueError:
+                pass
+
+            self.data = self.outlier()
+
+            ## Creating possible combinations among a list of numerical variables
+            num_var_combination = list(itertools.combinations(self.numerical_variable, 2))
+
+            ## Creating possible combinations among a list of categorical variables
+            cat_var_combination = list(itertools.combinations(self.categorical_variable, 2))
+
+            ## Creating possible combinations among a list of numerical and categorical variuable
+            catnum_combination = list(itertools.product(self.numerical_variable, self.categorical_variable))
+
+            print("Running Model")
+            ## Running the report now
+            self.model.run(num_var_combination, catnum_combination, cat_var_combination, report, self.data)
+            # Create an output file that shows cleaned data
+            data2 = self.data.copy()
+            data2.to_csv(r'{}/cleaned_csv.csv'.format(self.clean_csv_path), index=False)
+
+            print("Running Plots")
+            # Running plot class from Graph package
+            self.plot.run(self.data, self.categorical_variable, self.numerical_variable, num_var_combination,
+                          cat_var_combination, catnum_combination, self.plot_path)
+            return 0
+        except Exception as e:
+            print("[ERROR]: ", e)
+            return e
 
     def cat_variable(self, df):
         return list(df.select_dtypes(include=['category', 'object']))
@@ -201,11 +222,6 @@ class ReportAnalyzer:
 
     def get_report_title(self):
         return self.report_title
-
-    def set_save_directory(self, directory):
-        self.save_directory = directory
-        print("New Directory: ", self.save_directory)
-        self.export = self.save_directory + '\\' + self.report_name_html
 
     # Load Files to Dataframe
     def load_dataframe(self):

@@ -850,7 +850,7 @@ class WebArchiveFrame(tk.Frame):
                 self.progress_bar_value_web_archive = i + 1
                 self.web_percentage_text.set((
                     f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | ",
-                    f"{math.ceil((self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive)*100)}",
+                    f"{math.ceil((self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100)}",
                     f"%"))
                 self.progress_bar_web_archive['value'] = i + 1
                 print("Value: ", self.progress_bar_value_web_archive)
@@ -1622,6 +1622,16 @@ class AnalyticalProfilerFrame(tk.Frame):
     tabControl = None
     analytical_profiler_frame = None
     status = None
+    csv_flag_rm = 1
+    save_location = os.getcwd()
+    file_filename = "Choose File to be Analyzed"
+    filename_text = None
+    titleAPFrame = None
+    topAPFrame = None
+    middleAPFrame = None
+    lower_middleAPFrame = None
+    lowerAPFrame = None
+    lowestAPFrame = None
 
     def __init__(self, tkt_main, tab_control, status, logger=None):
         if logger:
@@ -1649,148 +1659,77 @@ class AnalyticalProfilerFrame(tk.Frame):
     def draw_frame(self):
         # Setting up Frames in Report Merger Tab
         self.analytical_profiler_frame = tk.Frame(self.tabControl)
-        self.titleRMFrame = ttk.Frame(self.analytical_profiler_frame, style="Top.TFrame")
-        self.topRMFrame = ttk.Frame(self.analytical_profiler_frame)
-        self.middleRMFrame = ttk.Frame(self.analytical_profiler_frame)
-        self.filecolumnsRMFrame = ttk.Frame(self.analytical_profiler_frame)
-        self.file1titlecolumnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.file1columnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.file2titlecolumnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.file2columnsRMFrame = ttk.Frame(self.filecolumnsRMFrame)
-        self.lowermiddleRMFrame = ttk.Frame(self.analytical_profiler_frame)
-        self.lowerRMFrame = ttk.Frame(self.analytical_profiler_frame)
-        self.lowestRMFrame = ttk.Frame(self.analytical_profiler_frame)
-        tk.Grid.rowconfigure(self.titleRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.titleRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.topRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.topRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.topRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.topRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.middleRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.middleRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.middleRMFrame, 2, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.middleRMFrame, 3, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.middleRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.middleRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.filecolumnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.filecolumnsRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.filecolumnsRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.file1titlecolumnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file1titlecolumnsRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.file1columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file1columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file1columnsRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.file1columnsRMFrame, 2, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.file2titlecolumnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file2titlecolumnsRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.file2columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file2columnsRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.file2columnsRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.file2columnsRMFrame, 2, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.lowermiddleRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.lowermiddleRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowermiddleRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.lowermiddleRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.lowerRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.rowconfigure(self.lowerRMFrame, 1, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowerRMFrame, 0, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.lowerRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.rowconfigure(self.lowestRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 0, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 1, minsize=1, weight=1)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 2, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 3, minsize=1, weight=0)
-        tk.Grid.columnconfigure(self.lowestRMFrame, 4, minsize=1, weight=0)
-        self.titleRMFrame.grid(column=0, row=0, sticky='NSEW')
-        self.topRMFrame.grid(column=0, row=1, sticky='NSEW')
-        self.middleRMFrame.grid(column=0, row=2, sticky='NSEW')
-        self.filecolumnsRMFrame.grid(column=0, row=3, sticky='NSEW')
-        self.file1titlecolumnsRMFrame.grid(column=0, row=0, sticky='NSEW')
-        self.file1columnsRMFrame.grid(column=0, row=1, sticky='NSEW')
-        self.file2titlecolumnsRMFrame.grid(column=1, row=0, sticky='NSEW')
-        self.file2columnsRMFrame.grid(column=1, row=1, sticky='NSEW')
-        self.lowermiddleRMFrame.grid(column=0, row=4, sticky='NSEW')
-        self.lowerRMFrame.grid(column=0, row=5, sticky='NSEW')
-        self.lowestRMFrame.grid(column=0, row=6, sticky='NSEW')
+        tk.Grid.rowconfigure(self.analytical_profiler_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.analytical_profiler_frame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.analytical_profiler_frame, 2, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.analytical_profiler_frame, 0, minsize=1, weight=1)
+        self.titleAPFrame = ttk.Frame(self.analytical_profiler_frame, style="Top.TFrame")
+        self.topAPFrame = ttk.Frame(self.analytical_profiler_frame)
+        self.middleAPFrame = ttk.Frame(self.analytical_profiler_frame)
+        self.lower_middleAPFrame = ttk.Frame(self.analytical_profiler_frame)
+        self.lowerAPFrame = ttk.Frame(self.analytical_profiler_frame)
+        self.lowestAPFrame = ttk.Frame(self.analytical_profiler_frame)
+        tk.Grid.rowconfigure(self.titleAPFrame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.titleAPFrame, 0, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.topAPFrame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.topAPFrame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.topAPFrame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.topAPFrame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.middleAPFrame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.middleAPFrame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.middleAPFrame, 2, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.middleAPFrame, 3, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.middleAPFrame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.middleAPFrame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.lower_middleAPFrame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.lower_middleAPFrame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.lower_middleAPFrame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.lower_middleAPFrame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.lowerAPFrame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(self.lowerAPFrame, 1, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.lowerAPFrame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.lowerAPFrame, 1, minsize=1, weight=1)
+        tk.Grid.rowconfigure(self.lowestAPFrame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.lowestAPFrame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.lowestAPFrame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.lowestAPFrame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.lowestAPFrame, 3, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.lowestAPFrame, 4, minsize=1, weight=0)
+        self.titleAPFrame.grid(column=0, row=0, sticky='NSEW')
+        self.topAPFrame.grid(column=0, row=1, sticky='NSEW')
+        self.middleAPFrame.grid(column=0, row=2, sticky='NSEW')
+        self.lower_middleAPFrame.grid(column=0, row=4, sticky='NSEW')
+        self.lowerAPFrame.grid(column=0, row=5, sticky='NSEW')
+        self.lowestAPFrame.grid(column=0, row=6, sticky='NSEW')
 
         # Set the Buttons for the Report Merger class
-        self.file1_filename = "Choose First File to be Merged"
-        self.filename_1_text = tk.StringVar()
-        self.filename_1_text.set(self.file1_filename)
-        self.filename_1_label = ttk.Label(self.topRMFrame, style="File.TLabel", textvariable=self.filename_1_text)
-        self.filename_1_label.grid(row=0, column=0, padx=5, columnspan=2, sticky='NSEW')
-        self.file_1_browse_button = ttk.Button(self.topRMFrame, text="Browse File 1",
-                                               command=lambda: self.run(lambda: self.open_report_file(1),
-                                                                        name='NoSync'))
+        self.file_filename = "Choose file to be analyzed"
+        self.filename_text = tk.StringVar()
+        self.filename_text.set(self.file_filename)
+        self.filename_label = ttk.Label(self.topAPFrame, style="File.TLabel", textvariable=self.filename_text)
+        self.filename_label.grid(row=0, column=0, padx=5, columnspan=2, sticky='NSEW')
+        self.file_browse_button = ttk.Button(self.topAPFrame, text="Browse File",
+                                             command=lambda: self.run(lambda: self.open_report_file(),
+                                                                      name='NoSync'))
 
-        self.file2_filename = "Choose Second File to be Merged"
-        self.filename_2_text = tk.StringVar()
-        self.filename_2_text.set(self.file2_filename)
-        self.filename_2_label = ttk.Label(self.topRMFrame, style="File.TLabel", textvariable=self.filename_2_text)
-        self.filename_2_label.grid(row=1, column=0, padx=5, columnspan=2, sticky='NSEW')
-        self.file_2_browse_button = ttk.Button(self.topRMFrame, text="Browse File 2",
-                                               command=lambda: self.run(lambda: self.open_report_file(2),
-                                                                        name='NoSync'))
-
-        self.save_location_button = ttk.Button(self.lowestRMFrame, text="Browse Save Location",
+        self.save_location_button = ttk.Button(self.lowestAPFrame, text="Browse Save Location",
                                                command=lambda: self.run(lambda: self.prompt_save_location(),
                                                                         name='NoSync'))
-        self.save_file_name_widget = tk.Text(self.lowestRMFrame, height=1)
+        self.run_analysis_button = ttk.Button(self.lowestAPFrame, text="Run Analysis",
+                                               command=lambda: self.run(lambda: self.run_analysis(),
+                                                                        name='NoSync'))
+        self.save_file_name_widget = tk.Text(self.lowestAPFrame, height=1)
         self.save_file_name_widget.bind("<Tab>", self.focus_next_widget)
-        self.save_file_name_label = ttk.Label(self.lowestRMFrame, style="Notes.TLabel", text="Filename: ")
+        self.save_file_name_label = ttk.Label(self.lowestAPFrame, style="Notes.TLabel", text="Filename: ")
 
         self.export_option_rm = tk.StringVar()
         self.export_option_rm.set("CSV")
-        self.export_type_rm = ttk.OptionMenu(self.lowestRMFrame, self.export_option_rm, "CSV", "CSV", "Excel",
+        self.export_type_rm = ttk.OptionMenu(self.lowestAPFrame, self.export_option_rm, "CSV", "CSV", "Excel",
                                              command=self.set_rm_export)
-        # self.joins_list.configure("TMenubutton", foreground="black")
-
-        # self.run_merge = ttk.Button(self.lowestRMFrame, style="Run.TButton", text="Merge",
-        #                            command=lambda: self.run(lambda: self.run_merge_report(), name='NoSync'))
-        # self.run_merge_excel = Button(self.lowestRMFrame, style="Run.TButton", text="Merge to Excel", command=lambda: self.run_merge_report_tkt())
-        self.file_1_browse_button.grid(row=0, column=2, padx=5, sticky='NSEW')
-        self.file_2_browse_button.grid(row=1, column=2, padx=5, sticky='NSEW')
-        self.file1_columnstext = tk.StringVar()
-        self.file1_columnstext.set("File 1 - Columns")
-        self.file1_columnslabel = ttk.Label(self.middleRMFrame, style="Notes.TLabel",
-                                            textvariable=self.file1_columnstext)
-        self.file1_columnslabel_type_title = ttk.Label(self.file1titlecolumnsRMFrame, style="Notes.TLabel",
-                                                       text="File 1 - Select Column Order & Type")
-        self.file2_columnstext = tk.StringVar()
-        self.file2_columnstext.set("File 2 - Columns")
-        self.file2_columnslabel = ttk.Label(self.middleRMFrame, style="Notes.TLabel",
-                                            textvariable=self.file2_columnstext)
-        self.file2_columnslabel_type_title = ttk.Label(self.file2titlecolumnsRMFrame, style="Notes.TLabel",
-                                                       text="File 2 - Select Column Order & Type")
-
-        self.file1_keys = tk.StringVar()
-        self.file1_keys.set("")
-        self.file2_keys = tk.StringVar()
-        self.file2_keys.set("")
-        # self.scrollbar = Scrollbar(self.middleRMFrame, orient=VERTICAL)
-        self.file1_pk = tk.Listbox(self.middleRMFrame, listvariable=self.file1_keys, selectmode=tk.MULTIPLE,
-                                   exportselection=False)  # , yscrollcommand=self.scrollbar.set)
-        self.file2_pk = tk.Listbox(self.middleRMFrame, listvariable=self.file2_keys, selectmode=tk.MULTIPLE,
-                                   exportselection=False)  # , yscrollcommand=self.scrollbar.set)
-        '''self.file1_pk = DragDropListboxMulti(self.middleRMFrame, listvariable=self.file1_keys, exportselection=0)
-        self.file2_pk = DragDropListboxMulti(self.middleRMFrame, listvariable=self.file2_keys, exportselection=0)'''
-        # self.file1_pk.bind('<<ListboxSelect>>', self.onselect_file1_pk)
-        # self.file2_pk.bind('<<ListboxSelect>>', self.onselect_file2_pk)
-        # self.file1_pk.bind('<FocusOut>', self.deselect_file1_pk)
-        # self.file2_pk.bind('<FocusOut>', self.deselect_file2_pk)
-        self.file1_pk.configure(justify=tk.RIGHT)
-        self.file2_pk.configure(justify=tk.RIGHT)
-        self.file1_columnslabel.grid(row=0, column=0, padx=5, sticky='NSEW')
-        self.file2_columnslabel.grid(row=0, column=1, padx=5, sticky='NSEW')
-        self.file1_pk.grid(row=1, column=0, padx=5, pady=5, sticky='NSEW')
-        self.file2_pk.grid(row=1, column=1, padx=5, pady=5, sticky='NSEW')
-        self.file1_columnslabel_type_title.grid(row=0, column=0, padx=5, sticky='NSEW')
-        self.file2_columnslabel_type_title.grid(row=0, column=0, padx=5, sticky='NSEW')
-        # self.run_merge.grid(row=0, column=4, columnspan=1, padx=5, pady=5, sticky='NSEW')
-        # self.run_merge["state"] = "disabled"
+        self.file_browse_button.grid(row=0, column=2, padx=5, sticky='NSEW')
         self.export_type_rm.grid(row=0, column=2, columnspan=1, padx=5, pady=5, sticky='NSEW')
-        # self.run_merge_excel.grid(row=0, column=4, columnspan=1, padx=5, pady=5, sticky='NSEW')
         self.save_location_button.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        self.run_analysis_button.grid(row=0, column=4, columnspan=1, padx=5, pady=5, sticky='NSEW')
         self.save_file_name_label.grid(row=0, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
         self.save_file_name_widget.grid(row=0, column=1, columnspan=1, padx=5, pady=5, sticky='NSEW')
 
@@ -1807,40 +1746,48 @@ class AnalyticalProfilerFrame(tk.Frame):
         else:
             self.csv_flag_rm = 0
 
-        # Opens Report Merger File for Both Files Depending on "number", which is for file 1 or file 2
-
-    def open_report_file(self, number):
-        if number == 1:
-            self.file_1_browse_button["state"] = "disabled"
-            print("Selecting File 1")
-            self.file1_filename = filedialog.askopenfilename(initialdir="/", title="Select A Report", filetypes=(
-                ("Excel File", "*.xlsx;*xls;*csv"), ("Other Excel Files", "*.xlsm,*.xltx,*.xltm,*.csv")))
-            self.filename_1_text.set(self.file1_filename)
-            if (self.filename_1_text.get() == ""):
-                self.filename_1_text.set("No File Selected")
-                self.file_1_browse_button["state"] = "normal"
-                return 1
-            print("Gathered Filename: ", self.file1_filename)
-            self.filename_1_text.set("{}".format("%s" % self.file1_filename))
-            self.status.set("{}".format("Selected File: %s" % self.file1_filename))
-            # self.analytical_profiler.set_file_1(self.file1_filename)
-            self.status.set("{}".format("Loading File"))
-            # self.analytical_profiler.load_dataframe_1()
-            self.status.set("{}".format("Populating List"))
-            # string1 = self.report_merger.get_features(self.report_merger.get_df1())
-            # self.file1_keys.set(string1)
-            self.file_1_browse_button["state"] = "normal"
-        elif number == 2:
-            print("Test")
-        if self.filename_1_text.get() in (
-                "No File Selected", "Choose First File to be Merged") or self.filename_2_text.get() in (
-                "No File Selected", "Choose Second File to be Merged"):
-            print("Entered")
-            # self.run_merge["state"] = "disabled"
+    def open_report_file(self):
+        self.file_browse_button["state"] = "disabled"
+        print("Selecting File 1")
+        self.file_filename = filedialog.askopenfilename(initialdir="/", title="Select A Report", filetypes=(
+            ("Excel File", "*.xlsx;*xls;*csv"), ("Other Excel Files", "*.xlsm,*.xltx,*.xltm,*.csv")))
+        self.filename_text.set(self.file_filename)
+        if self.filename_text.get():
+            self.analytical_profiler.set_file(self.filename_text.get())
+            self.analytical_profiler.load_dataframe()
+            print("File selected")
         else:
-            print("Test")
-            # self.run_merge["state"] = "normal"
+            self.filename_text.set("No File Selected")
+            self.file_browse_button["state"] = "normal"
+            return 1
+        print("Gathered Filename: ", self.file_filename)
+        self.filename_text.set("{}".format("%s" % self.file_filename))
+        self.status.set("{}".format("Selected File: %s" % self.file_filename))
+        self.status.set("{}".format("Loading File"))
+        self.status.set("{}".format("Populating List"))
+        self.file_browse_button["state"] = "normal"
 
+    def run_analysis(self):
+        # Set Parameters like Report Name, and paths for export
+        report_name = self.save_file_name_widget.get("1.0", "end-1c")
+        report_title = report_name
+
+        # Custom Report
+        self.status.set("{}".format("Running Visualizer and Data Modeler"))
+        test_success = self.analytical_profiler.run_analysis()
+        if test_success == 0:
+            success_string = "Visualization Complete\n"
+        else:
+            success_string = ""
+        # Pandas Profiling
+        self.analytical_profiler.set_report_title(report_title)
+        self.analytical_profiler.set_report_name(report_name)
+        sample_flag = None  # Set to the sample size if you would like to do it on a sample instead.
+        minimal_flag = False  # Quicker run if set to true, but not everything is captured.
+        self.status.set(f"{success_string}Running Pandas Profiling")
+        self.analytical_profiler.create_report(sample_flag, minimal_flag)
+        self.analytical_profiler.export_report()
+        self.status.set(f"Analysis Complete!")
 
 # Call Main Function
 def main():
