@@ -1632,6 +1632,21 @@ class AnalyticalProfilerFrame(tk.Frame):
     lower_middleAPFrame = None
     lowerAPFrame = None
     lowestAPFrame = None
+    filename_label = None
+    file_browse_button = None
+    save_location_button = None
+    run_analysis_button = None
+    export_button = None
+    save_file_name_widget = None
+    save_file_name_label = None
+    file_browse_button = None
+    save_location_button = None
+    run_analysis_button = None
+    export_button = None
+    save_file_name_widget = None
+    save_file_name_label = None
+    export_option_rm = None
+    export_type_rm = None
 
     def __init__(self, tkt_main, tab_control, status, logger=None):
         if logger:
@@ -1711,13 +1726,15 @@ class AnalyticalProfilerFrame(tk.Frame):
         self.file_browse_button = ttk.Button(self.topAPFrame, text="Browse File",
                                              command=lambda: self.run(lambda: self.open_report_file(),
                                                                       name='NoSync'))
-
         self.save_location_button = ttk.Button(self.lowestAPFrame, text="Browse Save Location",
                                                command=lambda: self.run(lambda: self.prompt_save_location(),
                                                                         name='NoSync'))
         self.run_analysis_button = ttk.Button(self.lowestAPFrame, text="Run Analysis",
-                                               command=lambda: self.run(lambda: self.run_analysis(),
-                                                                        name='NoSync'))
+                                              command=lambda: self.run(lambda: self.run_pandas_profiling(),
+                                                                       name='NoSync'))
+        self.export_button = ttk.Button(self.lowestAPFrame, text="Export Analysis",
+                                        command=lambda: self.run(lambda: self.export_analysis(),
+                                                                 name='NoSync'))
         self.save_file_name_widget = tk.Text(self.lowestAPFrame, height=1)
         self.save_file_name_widget.bind("<Tab>", self.focus_next_widget)
         self.save_file_name_label = ttk.Label(self.lowestAPFrame, style="Notes.TLabel", text="Filename: ")
@@ -1756,6 +1773,13 @@ class AnalyticalProfilerFrame(tk.Frame):
             self.analytical_profiler.set_file(self.filename_text.get())
             self.analytical_profiler.load_dataframe()
             print("File selected")
+            # Custom Report
+            self.status.set("{}".format("Running Visualizer and Data Modeler"))
+            test_success = self.analytical_profiler.run_analysis()
+            if test_success == 0:
+                self.status.set(f"Visualization Complete")
+            else:
+                self.status.set(f"File Could not be Visualized, but Pandas Profiling may still work")
         else:
             self.filename_text.set("No File Selected")
             self.file_browse_button["state"] = "normal"
@@ -1767,27 +1791,24 @@ class AnalyticalProfilerFrame(tk.Frame):
         self.status.set("{}".format("Populating List"))
         self.file_browse_button["state"] = "normal"
 
-    def run_analysis(self):
+    def run_pandas_profiling(self):
         # Set Parameters like Report Name, and paths for export
         report_name = self.save_file_name_widget.get("1.0", "end-1c")
         report_title = report_name
 
-        # Custom Report
-        self.status.set("{}".format("Running Visualizer and Data Modeler"))
-        test_success = self.analytical_profiler.run_analysis()
-        if test_success == 0:
-            success_string = "Visualization Complete\n"
-        else:
-            success_string = ""
         # Pandas Profiling
         self.analytical_profiler.set_report_title(report_title)
         self.analytical_profiler.set_report_name(report_name)
         sample_flag = None  # Set to the sample size if you would like to do it on a sample instead.
         minimal_flag = False  # Quicker run if set to true, but not everything is captured.
-        self.status.set(f"{success_string}Running Pandas Profiling")
+        self.status.set(f"Running Pandas Profiling")
         self.analytical_profiler.create_report(sample_flag, minimal_flag)
         self.analytical_profiler.export_report()
         self.status.set(f"Analysis Complete!")
+
+    def export_analysis(self):
+        print("Implement this")
+
 
 # Call Main Function
 def main():
