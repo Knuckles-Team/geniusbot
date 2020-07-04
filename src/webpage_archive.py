@@ -34,8 +34,8 @@ from selenium.webdriver.chrome.options import Options
 
 
 class WebPageArchive:
-    SAVE_PATH = None
-    OS_SAVE_PATH = None
+    SAVE_PATH = os.getcwd()
+    OS_SAVE_PATH = os.getcwd()
     driver = None
     capabilities = None
     chrome_options = webdriver.ChromeOptions()
