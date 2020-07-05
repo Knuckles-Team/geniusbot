@@ -969,7 +969,7 @@ class WebArchiveFrame(tk.Frame):
                 self.web_percentage_text.set((
                     f"{self.progress_bar_value_web_archive}/{self.progress_bar_max_value_web_archive} | ",
                     f"{(self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100}%"))
-                self.progress_bar_web_archive['value'] = self.progress_bar_value_web_archive
+                self.progress_bar_web_archive['value'] = self.progress_bar_max_value_web_archive
                 self.progress_bar_web_archive['maximum'] = self.progress_bar_max_value_web_archive
                 self.progress_bar_value_web_archive = self.progress_bar_max_value_web_archive
             self.status.set(f'Queued {self.progress_bar_max_value_web_archive} videos')
@@ -1639,12 +1639,6 @@ class AnalyticalProfilerFrame(tk.Frame):
     export_button = None
     save_file_name_widget = None
     save_file_name_label = None
-    file_browse_button = None
-    save_location_button = None
-    run_analysis_button = None
-    export_button = None
-    save_file_name_widget = None
-    save_file_name_label = None
     export_option_rm = None
     export_type_rm = None
 
@@ -1669,7 +1663,7 @@ class AnalyticalProfilerFrame(tk.Frame):
     @staticmethod
     def focus_next_widget(event):
         event.widget.tk_focusNext().focus()
-        return ("break")
+        return "break"
 
     def draw_frame(self):
         # Setting up Frames in Report Merger Tab
@@ -1815,7 +1809,7 @@ def main():
     if __name__ == "__main__":
         root = tk.Tk()
         tkthread = tkt.TkThread(root)  # make the thread-safe callable
-        main_ui = GeniusBot(root, tkthread)
+        GeniusBot(root, tkthread)
         root.mainloop()
 
 

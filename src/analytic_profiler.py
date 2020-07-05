@@ -68,17 +68,17 @@ class ReportAnalyzer:
         print("New Directory: ", self.save_directory)
         self.export = self.save_directory + '\\' + self.report_name_html
 
-    def set_csv_path(self, csv_path):
-        self.csv_path = csv_path
+    def set_csv_path(self, new_csv_path):
+        self.csv_path = new_csv_path
 
-    def set_plot_path(self, plot_path):
-        self.plot_path = plot_path
+    def set_plot_path(self, new_plot_path):
+        self.plot_path = new_plot_path
 
-    def set_report_path(self, report_path):
-        self.report_path = report_path
+    def set_report_path(self, new_report_path):
+        self.report_path = new_report_path
 
-    def set_clean_csv_path(self, clean_csv_path):
-        self.clean_csv_path = clean_csv_path
+    def set_clean_csv_path(self, new_clean_csv_path):
+        self.clean_csv_path = new_clean_csv_path
 
     def run_analysis(self):
         try:
@@ -91,8 +91,8 @@ class ReportAnalyzer:
             self.data = self.df_raw.copy()
 
             # Create a function to separate out numerical and categorical data
-            ## Using this function to ensure that all non-numerical in a numerical column
-            ## and non-categorical in a categorical column is annotated
+            # Using this function to ensure that all non-numerical in a numerical column
+            # and non-categorical in a categorical column is annotated
 
             print("Assigning Categorical and Numerical Variables")
             self.categorical_variable = self.cat_variable(self.data)
@@ -108,7 +108,7 @@ class ReportAnalyzer:
             self.data = self.model.overview(self.data, self.numerical_variable, report)
 
             # Create a function to decide whether to drop all NA values or replace them
-            ## Drop it if NAN count < 5 %
+            # Drop it if NAN count < 5 %
             self.nan_prop = (self.data.isna().mean().round(2) * 100)  # Show % of NaN values per column
 
             cols_to_drop = self.drop_na()
@@ -116,8 +116,8 @@ class ReportAnalyzer:
             print("Dropped NA Values")
             self.data = self.data.dropna(subset=cols_to_drop)
 
-            ## Using Imputer to fill NaN values
-            ## Counting the proportion of NaN
+            # Using Imputer to fill NaN values
+            # Counting the proportion of NaN
             cols_to_fill = self.fill_na()
 
             cat_var_tofill = []
@@ -145,17 +145,17 @@ class ReportAnalyzer:
 
             self.data = self.outlier()
 
-            ## Creating possible combinations among a list of numerical variables
+            # Creating possible combinations among a list of numerical variables
             num_var_combination = list(itertools.combinations(self.numerical_variable, 2))
 
-            ## Creating possible combinations among a list of categorical variables
+            # Creating possible combinations among a list of categorical variables
             cat_var_combination = list(itertools.combinations(self.categorical_variable, 2))
 
-            ## Creating possible combinations among a list of numerical and categorical variuable
+            # Creating possible combinations among a list of numerical and categorical variuable
             catnum_combination = list(itertools.product(self.numerical_variable, self.categorical_variable))
 
             print("Running Model")
-            ## Running the report now
+            # Running the report now
             self.model.run(num_var_combination, catnum_combination, cat_var_combination, report, self.data)
             # Create an output file that shows cleaned data
             data2 = self.data.copy()
@@ -170,10 +170,12 @@ class ReportAnalyzer:
             print("[ERROR]: ", e)
             return e
 
-    def cat_variable(self, df):
+    @staticmethod
+    def cat_variable(df):
         return list(df.select_dtypes(include=['category', 'object']))
 
-    def num_variable(self, df):
+    @staticmethod
+    def num_variable(df):
         return list(df.select_dtypes(exclude=['category', 'object']))
 
     def drop_na(self):
@@ -205,11 +207,11 @@ class ReportAnalyzer:
         self.file_raw = file_raw
 
     # Pandas Profiling Set Report Name
-    def set_report_name(self, report_name):
-        if report_name != "":
-            print("Report Name: ", report_name)
-            self.report_name = report_name
-            self.report_name_html = str(report_name) + ".html"
+    def set_report_name(self, new_report_name):
+        if new_report_name != "":
+            print("Report Name: ", new_report_name)
+            self.report_name = new_report_name
+            self.report_name_html = str(new_report_name) + ".html"
             self.export = self.save_directory + '\\' + str(self.report_name) + ".html"
         else:
             print("Report Name was Blank")
@@ -217,8 +219,8 @@ class ReportAnalyzer:
     def get_report_name(self):
         return self.report_name
 
-    def set_report_title(self, report_title):
-        self.report_title = report_title
+    def set_report_title(self, new_report_title):
+        self.report_title = new_report_title
 
     def get_report_title(self):
         return self.report_title
@@ -239,7 +241,8 @@ class ReportAnalyzer:
             print("Error")
             return 1
 
-    def get_features(self, df):
+    @staticmethod
+    def get_features(df):
         concat_str = ""
         for col in df.columns:
             concat_str = concat_str + " " + str(col)
@@ -258,7 +261,8 @@ class AnalyticalModel:
     def __init__(self):
         print("Init")
 
-    def overview(self, df, numerical_variable, report):
+    @staticmethod
+    def overview(df, numerical_variable, report):
         data_head = df.head()
         data_shape = df.shape
         data_type = df.dtypes
@@ -268,12 +272,17 @@ class AnalyticalModel:
         zero_prop = ((df[df == 0].count(axis=0) / len(df.index)).round(2) * 100)
         data_summary = df.describe()
         report.write(
-            "______Exploratory data analysis summary by Edator______\n\n\n\nThe first 5 rows of content comprise of:\n\n{}\n\n\nThere are a total of {} rows and {} columns.\n\n\nThe data type for each column is:\n\n{}\n\n\nNumber of NaN values for each column:\n\n{}\n\n\n% of zeros in each column:\n\n{}\n\n\nThe summary of data:\n\n{}"
-            .format(data_head, data_shape[0], data_shape[1], data_type, null_values, zero_prop, data_summary))
+            """______Exploratory data analysis summary by Edator______\n\n\n\nThe first 5 rows of content comprise of:
+            \n\n{}\n\n\nThere are a total of {} rows and {} columns.\n\n\nThe data type for each column is:\n\n{}\n\n\n
+            Number of NaN values for each column:\n\n{}\n\n\n% of zeros in each column:\n\n{}\n\n\n
+            The summary of data:\n\n{}""".format(data_head, data_shape[0], data_shape[1],
+                                                 data_type, null_values, zero_prop, data_summary)
+        )
         return df
 
     # Creating report for correlation
-    def run(self, num_var_combination, catnum_combination, cat_var_combination, report, data):
+    @staticmethod
+    def run(num_var_combination, catnum_combination, cat_var_combination, report, data):
         # Pearson correlation (Numerical)
         report.write("\n\n\n__________Correlation Summary (Pearson)__________")
         for i in num_var_combination:
@@ -292,10 +301,10 @@ class AnalyticalModel:
             spearsman_data = stats.spearmanr(data[var1], data[var2])
             spearsman_r2, spearsman_pvalue = ((spearsman_data[0] ** 2), spearsman_data[1])
             report.write(
-                "\n\nThe Spearsman R_Square and Spearsman P-values between {} and {} are {} and {} respectively."
-                .format(var1, var2, spearsman_r2, spearsman_pvalue))
+                    "\n\nThe Spearsman R_Square and Spearsman P-values between {} and {} are {} and {} respectively."
+                    .format(var1, var2, spearsman_r2, spearsman_pvalue))
 
-        ## For numeric-categorical variables
+        # For numeric-categorical variables
         # ONE WAY ANOVA (Cat-num variables)
         report.write("\n\n\n\n__________Correlation Summary (One Way ANOVA)__________")
         for j in catnum_combination:
@@ -307,7 +316,7 @@ class AnalyticalModel:
             report.write("\n\nThe One Way ANOVA P-value between {} and {} is {}."
                          .format(var1, var2, one_way_anova_pvalue))
 
-        ## For categorical-categorical variables
+        # For categorical-categorical variables
         # Chi-Sq test
         report.write("\n\n\n\n__________Correlation Summary (Chi Square Test)__________")
         for k in cat_var_combination:
@@ -330,7 +339,7 @@ class AnalyticalPlot:
         print("Init")
 
     def run(self, data, categorical_variable, numerical_variable, num_var_combination, cat_var_combination,
-            catnum_combination, plot_path):
+            catnum_combination, plot_save_path):
         self.num_var_combination = num_var_combination
         self.cat_var_combination = cat_var_combination
         self.catnum_combination = catnum_combination
@@ -346,7 +355,7 @@ class AnalyticalPlot:
         # Creating possible combinations among a list of numerical and categorical variuable
         self.catnum_combination = list(itertools.product(numerical_variable, categorical_variable))
 
-        ## Using regplot for numerical-numerical variables
+        # Using regplot for numerical-numerical variables
         num_var_hue_combination = list(itertools.product(self.num_var_combination, hue_lst))
         for i in num_var_hue_combination:
             var1 = i[0][0]
@@ -354,34 +363,34 @@ class AnalyticalPlot:
             hue1 = i[1]
             plot1 = sns.scatterplot(data=data, x=var1, y=var2, hue=hue1)
             fig1 = plot1.get_figure()
-            fig1.savefig(plot_path + "/{} vs {} by {} scatterplot.png".format(var1, var2, hue1))
+            fig1.savefig(plot_save_path + "/{} vs {} by {} scatterplot.png".format(var1, var2, hue1))
             fig1.clf()
 
-        ## Using countplot for categorical data
+        # Using countplot for categorical data
         for j in categorical_variable:
             plot2 = sns.countplot(data=data, x=j)
             fig2 = plot2.get_figure()
-            fig2.savefig(plot_path + "/{}_countplot.png".format(j))
+            fig2.savefig(plot_save_path + "/{}_countplot.png".format(j))
             fig2.clf()
 
-        ## Using boxplot for numerical + Categorical data
+        # Using boxplot for numerical + Categorical data
         for k in self.catnum_combination:
             num1 = k[0]
             cat1 = k[1]
             plot3 = sns.boxplot(data=data, x=cat1, y=num1)
             fig3 = plot3.get_figure()
-            fig3.savefig(plot_path + "/{}_{}_barplot.png".format(num1, cat1))
+            fig3.savefig(plot_save_path + "/{}_{}_barplot.png".format(num1, cat1))
             fig3.clf()
 
-        ## Creating heatmap to show correlation
+        # Creating heatmap to show correlation
         le = LabelEncoder()
         for cat in data[categorical_variable]:
             data[cat] = le.fit_transform(data[cat])
         plt.figure(figsize=(15, 10))
-        corrMatrix = data.corr()
-        plot4 = sns.heatmap(corrMatrix, annot=True)
+        corr_matrix = data.corr()
+        plot4 = sns.heatmap(corr_matrix, annot=True)
         fig4 = plot4.get_figure()
-        fig4.savefig(plot_path + "/heatplot.png")
+        fig4.savefig(plot_save_path + "/heatplot.png")
         fig4.clf()
 
 
@@ -389,7 +398,7 @@ class AnalyticalPlot:
 if __name__ == "__main__":
     # Create Object
     test = ReportAnalyzer()
-    
+
     # Set Parameters like Report Name, and paths for export
     report_name = "Sample"
     report_title = "Sample_Title"
@@ -398,21 +407,21 @@ if __name__ == "__main__":
     plot_path = "./test"
     report_path = "./test"
     clean_csv_path = "./test"
-    
+
     # Custom Report    
     test.set_csv_path(csv_path)
     test.set_plot_path(plot_path)
     test.set_report_path(report_path)
     test.set_clean_csv_path(clean_csv_path)
     test.run_analysis()
-    
+
     # Pandas Profiling
     test.set_file(csv_path)
     test.load_dataframe()
     test.set_report_title(report_name)
     test.set_report_name(report_name)
-    sample_flag = None #Set to the sample size if you would like to do it on a sample instead.
-    minimal_flag = False #Quicker run if set to true, but not everything is captured.
+    sample_flag = None  # Set to the sample size if you would like to do it on a sample instead.
+    minimal_flag = False  # Quicker run if set to true, but not everything is captured.
     test.create_report(sample_flag, minimal_flag)
     test.set_save_directory(pandas_profiling_export)
     test.export_report()

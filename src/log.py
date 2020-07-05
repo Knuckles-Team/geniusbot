@@ -4,6 +4,7 @@
 import logging
 import os
 import sys
+import shutil
 
 
 # This creates the log object for all of GeniusBot
@@ -14,15 +15,18 @@ class Log:
 
     # Initialize the Class
     def __init__(self):
-        #print("Test")
+        # print("Test")
+        if not os.path.exists(f"{os.pardir}/logs/log.log"):
+            with open(f"{os.pardir}/logs/log.log", 'w'):
+                pass
         self.logging_file = f"{os.pardir}/logs/log.log"
         self.logging_dir = f"{os.pardir}/logs/"
-        #print("attempt one: ", self.logging_dir)
+        # print("attempt one: ", self.logging_dir)
         if os.path.isdir(self.logging_dir):
             print("Log File: ", self.logging_file)
         else:
             self.logging_file = f"{os.curdir}/logs/log.log"
-            #print("Log File: ", self.logging_file)
+            # print("Log File: ", self.logging_file)
         logging.basicConfig(filename=self.logging_file, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
                             filemode='w', level=logging.DEBUG)
 
@@ -80,6 +84,10 @@ class Log:
     # Get logwriter file location
     def get_logfile(self):
         return self.logging_file
+
+    # Log Dump
+    def get_log_dump(self):
+        shutil.copy(self.logging_file, f"{self.logging_dir}log_dump.txt")
 
 
 # This class will write to the logfile in stream format

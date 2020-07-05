@@ -6,15 +6,11 @@ import platform
 import re
 import subprocess
 import urllib.request
-#importing module
-import logging
 
 import requests
-#from joblib import Parallel, delayed
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC, COMM
 from pytube import YouTube
-#from tqdm import tqdm
 
 
 class YouTubeDownloader:
@@ -35,14 +31,15 @@ class YouTubeDownloader:
     ffmpeg = ""
     log = None
     logging_file = ""
+    packaged_ffmpeg = "ffmpeg"
 
     def __init__(self, logger=None):
-        #Create and configure logger
+        # Create and configure logger
         if logger:
             self.log = logger
         else:
             self.log = None
-            #self.log = Log()
+            # self.log = Log()
 
         self.log.info("YouTube Download: Initialized")
         self.num_cores = 2
@@ -50,11 +47,10 @@ class YouTubeDownloader:
         print("INIT CWD: ", self.SAVE_PATH)
         self.import_ffmpeg()
 
-
     def open_file(self):
         youtube_urls = open('links_file.txt', 'r')
         print("youtube_urls", youtube_urls)
-        #self.log.info(str("YouTube URLs: ")+youtube_urls)
+        # self.log.info(str("YouTube URLs: ")+youtube_urls)
         self.log.info(str("Length of Links Before Open File: ")+str(len(self.link)))
         print("Length of Links Before Open File: ", len(self.link))
         for url in youtube_urls:
@@ -112,17 +108,13 @@ class YouTubeDownloader:
         else:
             self.packaged_ffmpeg = "ffmpeg"
 
-
-    def install_ffmpeg(self):
+    @staticmethod
+    def install_ffmpeg():
         print("Install FFMPEG CMD")
         cmd = f'sudo apt-get install ffmpeg -y'
-        #cmd = cmd.replace('/', os.sep)
         print("CMD: ", cmd)
         muxing_process = subprocess.Popen(cmd, shell=True)
         muxing_process.wait()
-
-    def install_tcl_thread(self):
-        print("Install thread by running command")
 
     def extend_link(self, urls):
         print("URL Extended: ", urls)
@@ -252,9 +244,9 @@ class YouTubeDownloader:
                         print("Clean Author: ", self.author_clean)
                         print("Clean Title ", self.title_clean)
                         break
-                except:
+                except Exception as e:
                     attempts += 1
-                    print("Connection Error: Attempt ", attempts)  # to handle exception
+                    print(f"[Error - Retrying] Connection Error: {e}\tAttempt {attempts}")  # to handle exception
 
             # Create Directory for Videos about to be downloaded
             self.make_channel_directory()
@@ -275,9 +267,9 @@ class YouTubeDownloader:
                         print("Saving Video")
                         standard_hd_video.download(self.CHANNEL_SAVE_PATH)
                         break
-                    except:
+                    except Exception as e:
                         save_attempts += 1
-                        print("Some Error!")
+                        print("[Error] Error Saving: ", e)
                 print('Task Completed!')
                 return
 
@@ -292,35 +284,35 @@ class YouTubeDownloader:
             try:
                 webm_video = self.yt.streams.filter(progressive=False, file_extension='webm', only_video=True)
             except AttributeError as e:
-                print("Error in Reading YouTube Stream, retrying....")
+                print("[Error - Retrying] Error in Reading YouTube Stream: ", e)
                 try:
                     webm_video = self.yt.streams.filter(progressive=False, file_extension='webm', only_video=True)
                 except AttributeError as e:
-                    print("Error in Reading YouTube Stream")
+                    print("[Error] Error in Reading YouTube Stream: ", e)
             try:
                 mp4_video = self.yt.streams.filter(progressive=False, file_extension='mp4', only_video=True)
             except AttributeError as e:
-                print("Error in Reading YouTube Stream, retrying....")
+                print("[Error - Retrying] Error in Reading YouTube Stream: ", e)
                 try:
                     mp4_video = self.yt.streams.filter(progressive=False, file_extension='mp4', only_video=True)
                 except AttributeError as e:
-                    print("Error in Reading YouTube Stream")
+                    print("[Error] Error in Reading YouTube Stream: ", e)
             try:
                 webm_audio = self.yt.streams.filter(progressive=False, file_extension='webm', only_audio=True)
             except AttributeError as e:
-                print("Error in Reading YouTube Stream, retrying....")
+                print("[Error - Retrying] Error in Reading YouTube Stream: ", e)
                 try:
                     webm_audio = self.yt.streams.filter(progressive=False, file_extension='webm', only_audio=True)
                 except AttributeError as e:
-                    print("Error in Reading YouTube Stream")
+                    print("[Error] Error in Reading YouTube Stream: ", e)
             try:
                 mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True)
             except AttributeError as e:
-                print("Error in Reading YouTube Stream, retrying....")
+                print("[Error - Retrying] Error in Reading YouTube Stream: ", e)
                 try:
                     mp4_audio = self.yt.streams.filter(progressive=False, file_extension='mp4', only_audio=True)
                 except AttributeError as e:
-                    print("Error in Reading YouTube Stream")
+                    print("[Error] Error in Reading YouTube Stream: ", e)
 
             if quality == "highest":
                 if webm_video:
@@ -359,9 +351,9 @@ class YouTubeDownloader:
                     webm_video.download(output_path=self.CHANNEL_SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
                     save_attempts_video_mp4 = 3
                     break
-                except:
+                except Exception as e:
                     save_attempts_video += 1
-                    print("Some WEBM Video Error!")
+                    print("Some WEBM Video Error: ", e)
             while save_attempts_video_mp4 < 3:
                 # downloading the video
                 try:
@@ -369,9 +361,9 @@ class YouTubeDownloader:
                     mp4_video.download(output_path=self.CHANNEL_SAVE_PATH, filename="_video_dl", filename_prefix=self.title_clean)
                     video_type = ".mp4"
                     break
-                except:
+                except Exception as e:
                     save_attempts_video_mp4 += 1
-                    print("Some MP4 Video Error!")
+                    print("Some MP4 Video Error: ", e)
             save_attempts_audio = 0
             save_attempts_audio_mp4 = 0
             # downloading the audio
@@ -381,9 +373,9 @@ class YouTubeDownloader:
                     webm_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
                     save_attempts_audio_mp4 = 3
                     break
-                except:
+                except Exception as e:
                     save_attempts_audio += 1
-                    print("Some WEBM Audio Error!")
+                    print("Some WEBM Audio Error: ", e)
 
             while save_attempts_audio_mp4 < 3:
                 try:
@@ -391,9 +383,9 @@ class YouTubeDownloader:
                     mp4_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename="_audio_dl", filename_prefix=self.title_clean)
                     audio_type = ".mp4"
                     break
-                except:
+                except Exception as e:
                     save_attempts_audio_mp4 += 1
-                    print("Some MP4 Audio Error!")
+                    print("Some MP4 Audio Error: ", e)
             if (save_attempts_video >= 3 and save_attempts_video_mp4 >= 3) or (
                     save_attempts_audio >= 3 and save_attempts_audio_mp4 >= 3):
                 print("Failed to download Video or Audio or Both")
@@ -405,18 +397,18 @@ class YouTubeDownloader:
                         old_video_file = old_video_file.replace('/', os.sep)
                         os.remove(old_video_file)
                         print("Removed Video")
-                    except:
-                        print("Could not Remove Source Video")
+                    except Exception as e:
+                        print("Could not Remove Source Video: ", e)
                     try:
                         old_audio_file = str(self.CHANNEL_SAVE_PATH) + "/" + str(self.title_clean) + "_audio_dl" + str(audio_type)
                         old_audio_file = old_audio_file.replace('/', os.sep)
                         os.remove(old_audio_file)
                         print("Removed Audio")
-                    except:
-                        print("Could not Remove Source Audio")
+                    except Exception as e:
+                        print("Could not Remove Source Audio: ", e)
                 else:
                     print("Could not Merge Two Source Files with FFMpeg")
-            self.author_clean=""
+            self.author_clean = ""
         print('Video Downloaded!')
     '''
     def download_videos_720p(self):
@@ -486,9 +478,9 @@ class YouTubeDownloader:
                         self.author_clean = re.sub(r'[^A-Za-z0-9_ ]', '', self.yt.author.replace("\n", ""))
                         print("Clean Title ", self.title_clean)
                         break
-                except:
+                except Exception as e:
                     attempts += 1
-                    print("Connection Error: Attempt ", attempts)  # to handle exception
+                    print(f"Connection Error: Attempt {attempts}\nError: {e}")  # to handle exception
 
             self.make_channel_directory()
             self.album_art_dir = str(self.CHANNEL_SAVE_PATH) + "/album_art.jpg"
@@ -502,7 +494,7 @@ class YouTubeDownloader:
             urllib.request.urlretrieve(self.yt.thumbnail_url, self.album_art_dir)
             # Filters out all the files with "mp4" extension and media with audio and video combined.
             # Progressive - Audio and Video merged vs Adaptive - Audio and Video Separate
-            mp4files = self.yt.streams.filter(progressive=True, file_extension='mp4')
+            # mp4files = self.yt.streams.filter(progressive=True, file_extension='mp4')
 
             # This version downloads the 720p Video with Audio
             d_video = self.yt.streams.filter(only_audio=True).order_by("bitrate").last()
@@ -521,9 +513,9 @@ class YouTubeDownloader:
                     print("Audio Type: ", d_video.parse_codecs())
                     d_video.download(output_path=self.CHANNEL_SAVE_PATH, filename=self.title_clean)
                     break
-                except:
+                except Exception as e:
                     save_attempts += 1
-                    print("Some Error!")
+                    print("Some Error: ", e)
 
             webm_audio = self.yt.streams.filter(progressive=False, file_extension='webm', only_audio=True).order_by(
                 "bitrate").last()
@@ -541,9 +533,9 @@ class YouTubeDownloader:
                     audio_type = ".webm"
                     save_attempts_audio_mp4 = 3
                     break
-                except:
+                except Exception as e:
                     save_attempts_audio += 1
-                    print("Some WEBM Audio Error!")
+                    print("Some WEBM Audio Error: ", e)
 
             while save_attempts_audio_mp4 < 3:
                 try:
@@ -551,9 +543,9 @@ class YouTubeDownloader:
                     mp4_audio.download(output_path=self.CHANNEL_SAVE_PATH, filename=self.title_clean)
                     audio_type = ".mp4"
                     break
-                except:
+                except Exception as e:
                     save_attempts_audio_mp4 += 1
-                    print("Some MP4 Audio Error!")
+                    print("Some MP4 Audio Error!: ", e)
             if save_attempts_audio >= 3 and save_attempts_audio_mp4 >= 3:
                 print("Failed to download Video or Audio or Both")
             else:
@@ -566,15 +558,9 @@ class YouTubeDownloader:
                         old_audio_art = old_audio_art.replace('/', os.sep)
                         os.remove(old_audio_file)
                         os.remove(old_audio_art)
-                        '''if platform.system() == "Linux":
-                            os.remove(str(self.SAVE_PATH) + "/" + str(self.title_clean) + str(audio_type))
-                            os.remove(str(self.SAVE_PATH) + "/album_art.jpg")
-                        else:
-                            os.remove(str(self.SAVE_PATH) + "\\" + str(self.title_clean) + str(audio_type))
-                            os.remove(str(self.SAVE_PATH) + "\\album_art.jpg")'''
                         print("Removed Audio")
-                    except:
-                        print("Could not Remove Source Audio")
+                    except Exception as e:
+                        print("Could not Remove Source Audio: ", e)
                 else:
                     print("Could not Merge Two Source Files with FFMpeg")
         print('Task Completed!')
@@ -590,10 +576,10 @@ class YouTubeDownloader:
             item = 'href="/watch?'
             vids = [line.replace('href="', 'youtube.com') for line in data if
                     item in line]  # list of all videos listed twice
-            #print(vids)  # index the latest video
+            # print(vids)  # index the latest video
             x = 0
             if vids:
-                #print("Link Set")
+                # print("Link Set")
                 for vid in vids:
                     if limit < 0:
                         self.link.append(vid)
@@ -610,10 +596,10 @@ class YouTubeDownloader:
                 item = 'href="/watch?'
                 vids = [line.replace('href="', 'youtube.com') for line in data if
                         item in line]  # list of all videos listed twice
-                #print(vids)  # index the latest video
+                # print(vids)  # index the latest video
                 x = 0
                 if vids:
-                    #print("Link Set")
+                    # print("Link Set")
                     for vid in vids:
                         if limit < 0:
                             self.link.append(vid)
@@ -622,11 +608,11 @@ class YouTubeDownloader:
                         else:
                             self.link.append(vid)
                         x += 1
-                        #print("Length of Links: ", len(self.link))
+                        # print("Length of Links: ", len(self.link))
                 else:
                     print("Could not find User or Channel")
             attempts += 1
-'''
+    '''
     def download_hd_videos_parallel(self):
         link_list = self.get_link()
         # Clean Duplicates First
