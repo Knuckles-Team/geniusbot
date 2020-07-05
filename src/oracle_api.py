@@ -4,6 +4,7 @@
 import warnings
 import cx_Oracle
 import sqlalchemy as sqla
+import sqlalchemy.exc
 import pandas as pd
 import time
 
@@ -112,7 +113,8 @@ class OracleAPI:
         return df
 
     # Obtain Data Types of Current Data Frame
-    def df_dtype(self, df):
+    @staticmethod
+    def df_dtype(df):
         print("Determining Data Types for Columns")
         return df.dtypes
 

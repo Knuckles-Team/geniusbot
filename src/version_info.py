@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 # Python - GeniusBot Version
-geniusbot_version = "1.8.4"
+geniusbot_version = "1.8.5"

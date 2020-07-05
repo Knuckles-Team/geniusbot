@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import urllib.error
-import urllib.parse
-import urllib.request
 import time
-import platform
 import os
 import math
 import re
@@ -17,20 +13,11 @@ from PIL import Image
 import piexif
 
 from twitter_scraper import get_tweets
-# from Screenshot import Screenshot_Clipping #https://github.com/PyWizards/Selenium_Screenshot
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.utils import ChromeType
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.chrome.options import Options
 
 
 class WebPageArchive:
@@ -54,7 +41,7 @@ class WebPageArchive:
         if logger:
             self.log = logger
         else:
-            self.log = None # Replace with log call in logger class
+            self.log = None  # Replace with log call in logger class
         self.log.info("Initializing Web Archive Complete!")
         self.capabilities = {
             'self.browserName': 'chrome',
@@ -76,25 +63,22 @@ class WebPageArchive:
         self.chrome_options.add_extension(adblock_path)
         # self.screenshotter = Screenshot_Clipping.Screenshot()
         # This option does not support opening with extensions. Comment it out.
-        #self.chrome_options.add_argument('--headless')
+        # self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--disable-gpu')
         self.chrome_options.add_argument('--start-maximized')
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument('--disable-notifications')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
         # This will now disable the extension I add so Comment it out
-        #self.chrome_options.add_argument('--disable-extensions')
+        # self.chrome_options.add_argument('--disable-extensions')
 
     def launch_browser(self):
-            try:
-                # If not installed, run:
-                # wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-                # sudo apt install ./google-chrome-stable_current_amd64.deb
-                self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
-                                               desired_capabilities=self.capabilities,
-                                               chrome_options=self.chrome_options)
-            except Exception as e:
-                print("Could not open with Latest Chrome Version", e)
+        try:
+            self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
+                                           desired_capabilities=self.capabilities,
+                                           chrome_options=self.chrome_options)
+        except Exception as e:
+            print("Could not open with Latest Chrome Version", e)
 
     def append_link(self, url):
         print("URL Appended: ", url)
@@ -108,7 +92,8 @@ class WebPageArchive:
         print("Links Reset")
         self.urls = []
 
-    def twitter_archiver(self, search, export=True, filename="twitter_export", filetype='csv', screenshot=False, pages=None):
+    def twitter_archiver(self, search, export=True, filename="twitter_export", filetype='csv', screenshot=False,
+                         pages=None):
         self.twitter_df = pd.DataFrame()
         counter = 0
         if screenshot:
@@ -144,7 +129,7 @@ class WebPageArchive:
 
     def read_url(self, url):
         # Comment out fullscreen_window, it will actually make it un-fullscreen
-        #self.driver.fullscreen_window()
+        # self.driver.fullscreen_window()
         try:
             self.driver.get(url)
             self.driver.execute_script('return document.readyState;')
@@ -152,14 +137,14 @@ class WebPageArchive:
             print("Could not access website: ", e)
         # Tries to Remove any alerts that may appear on the page
         try:
-            WebDriverWait(self.driver, 3).until(EC.alert_is_present(),
+            WebDriverWait(self.driver, 3).until(ec.alert_is_present(),
                                                 'Timed out waiting for any notification alerts')
             alert = self.driver.switch_to.alert
             alert.accept()
             print("alert accepted")
         except TimeoutException:
             print("no alert")
-
+        time.sleep(2)
         # Tries to remove any persistent scrolling headers/fixed/sticky'd elements on the page
         inner_height = self.get_inner_height()
         scroll_height = self.get_scroll_height()
@@ -167,19 +152,20 @@ class WebPageArchive:
 
     def screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url)
+        print("Quality: ", quality)
         if filename:
-            title = re.sub('[\\/:"*?<>|]', '', filename)
+            title = re.sub('[\\\\/:"*?<>|]', '', filename)
             self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
         else:
             print("driver title ", self.driver.title)
             print("Url, ", url)
             if self.driver.title:
-                title = re.sub('[\\/:"*?<>|]', '', self.driver.title)
+                title = re.sub('[\\\\/:"*?<>|]', '', self.driver.title)
                 title = title.replace(" ", "_")
                 print("Title: ", title)
                 self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
             else:
-                title = re.sub('[\\/:"*?<>|.,]', '', url)
+                title = re.sub('[\\\\/:"*?<>|.,]', '', url)
                 title = title.replace(" ", "_")
                 print("Title: ", title)
                 self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
@@ -187,18 +173,18 @@ class WebPageArchive:
     def fullpage_screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url)
         if filename:
-            title = re.sub('[\\/:"*?<>|.,]', '', filename)
+            title = re.sub('[\\\\/:"*?<>|.,]', '', filename)
             self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
         else:
             print("driver title ", self.driver.title)
             print("Url, ", url)
             if self.driver.title:
-                title = re.sub('[\\/:"*?<>|.,]', '', self.driver.title)
+                title = re.sub('[\\\\/:"*?<>|.,]', '', self.driver.title)
                 title = title.replace(" ", "_")
                 print("Title: ", title)
                 self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
             else:
-                title = re.sub('[\\/:"*?<>.,|]', '', url)
+                title = re.sub('[\\\\/:"*?<>.,|]', '', url)
                 title = title.replace(" ", "_")
                 print("Title: ", title)
                 self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
@@ -216,221 +202,32 @@ class WebPageArchive:
         self.driver.quit()
 
     def save_webpage(self, file_name, url="", hide_scrollbar=True, **kwargs):
-        '''
-        11 = ProcessingSoftware
-        18246 = Rating
-        18249 = RatingPercent
-        254 = NewSubfileType
-        255 = SubfileType
-        256 = ImageWidth
-        257 = ImageLength
-        258 = BitsPerSample
-        259 = Compression
-        262 = PhotometricInterpretation
-        263 = Threshholding
-        264 = CellWidth
-        265 = CellLength
-        266 = FillOrder
-        269 = DocumentName
-        270 = ImageDescription
-        271 = Make
-        272 = Model
-        273 = StripOffsets
-        274 = Orientation
-        277 = SamplesPerPixel
-        278 = RowsPerStrip
-        279 = StripByteCounts
-        282 = XResolution
-        283 = YResolution
-        284 = PlanarConfiguration
-        290 = GrayResponseUnit
-        291 = GrayResponseCurve
-        292 = T4Options
-        293 = T6Options
-        296 = ResolutionUnit
-        301 = TransferFunction
-        305 = Software
-        306 = DateTime
-        315 = Artist
-        316 = HostComputer
-        317 = Predictor
-        318 = WhitePoint
-        319 = PrimaryChromaticities
-        320 = ColorMap
-        321 = HalftoneHints
-        322 = TileWidth
-        323 = TileLength
-        324 = TileOffsets
-        325 = TileByteCounts
-        32781 = ImageID
-        330 = SubIFDs
-        332 = InkSet
-        333 = InkNames
-        334 = NumberOfInks
-        33421 = CFARepeatPatternDim
-        33422 = CFAPattern
-        33423 = BatteryLevel
-        33432 = Copyright
-        33434 = ExposureTime
-        336 = DotRange
-        337 = TargetPrinter
-        338 = ExtraSamples
-        339 = SampleFormat
-        340 = SMinSampleValue
-        341 = SMaxSampleValue
-        342 = TransferRange
-        343 = ClipPath
-        34377 = ImageResources
-        344 = XClipPathUnits
-        345 = YClipPathUnits
-        346 = Indexed
-        34665 = ExifTag
-        34675 = InterColorProfile
-        347 = JPEGTables
-        34853 = GPSTag
-        34857 = Interlace
-        34858 = TimeZoneOffset
-        34859 = SelfTimerMode
-        351 = OPIProxy
-        37387 = FlashEnergy
-        37388 = SpatialFrequencyResponse
-        37389 = Noise
-        37390 = FocalPlaneXResolution
-        37391 = FocalPlaneYResolution
-        37392 = FocalPlaneResolutionUnit
-        37393 = ImageNumber
-        37394 = SecurityClassification
-        37395 = ImageHistory
-        37397 = ExposureIndex
-        37398 = TIFFEPStandardID
-        37399 = SensingMethod
-        40091 = XPTitle
-        40092 = XPComment
-        40093 = XPAuthor
-        40094 = XPKeywords
-        40095 = XPSubject
-        50341 = PrintImageMatching
-        50706 = DNGVersion
-        50707 = DNGBackwardVersion
-        50708 = UniqueCameraModel
-        50709 = LocalizedCameraModel
-        50710 = CFAPlaneColor
-        50711 = CFALayout
-        50712 = LinearizationTable
-        50713 = BlackLevelRepeatDim
-        50714 = BlackLevel
-        50715 = BlackLevelDeltaH
-        50716 = BlackLevelDeltaV
-        50717 = WhiteLevel
-        50718 = DefaultScale
-        50719 = DefaultCropOrigin
-        50720 = DefaultCropSize
-        50721 = ColorMatrix1
-        50722 = ColorMatrix2
-        50723 = CameraCalibration1
-        50724 = CameraCalibration2
-        50725 = ReductionMatrix1
-        50726 = ReductionMatrix2
-        50727 = AnalogBalance
-        50728 = AsShotNeutral
-        50729 = AsShotWhiteXY
-        50730 = BaselineExposure
-        50731 = BaselineNoise
-        50732 = BaselineSharpness
-        50733 = BayerGreenSplit
-        50734 = LinearResponseLimit
-        50735 = CameraSerialNumber
-        50736 = LensInfo
-        50737 = ChromaBlurRadius
-        50738 = AntiAliasStrength
-        50739 = ShadowScale
-        50740 = DNGPrivateData
-        50741 = MakerNoteSafety
-        50778 = CalibrationIlluminant1
-        50779 = CalibrationIlluminant2
-        50780 = BestQualityScale
-        50781 = RawDataUniqueID
-        50827 = OriginalRawFileName
-        50828 = OriginalRawFileData
-        50829 = ActiveArea
-        50830 = MaskedAreas
-        50831 = AsShotICCProfile
-        50832 = AsShotPreProfileMatrix
-        50833 = CurrentICCProfile
-        50834 = CurrentPreProfileMatrix
-        50879 = ColorimetricReference
-        50931 = CameraCalibrationSignature
-        50932 = ProfileCalibrationSignature
-        50934 = AsShotProfileName
-        50935 = NoiseReductionApplied
-        50936 = ProfileName
-        50937 = ProfileHueSatMapDims
-        50938 = ProfileHueSatMapData1
-        50939 = ProfileHueSatMapData2
-        50940 = ProfileToneCurve
-        50941 = ProfileEmbedPolicy
-        50942 = ProfileCopyright
-        50964 = ForwardMatrix1
-        50965 = ForwardMatrix2
-        50966 = PreviewApplicationName
-        50967 = PreviewApplicationVersion
-        50968 = PreviewSettingsName
-        50969 = PreviewSettingsDigest
-        50970 = PreviewColorSpace
-        50971 = PreviewDateTime
-        50972 = RawImageDigest
-        50973 = OriginalRawFileDigest
-        50974 = SubTileBlockSize
-        50975 = RowInterleaveFactor
-        50981 = ProfileLookTableDims
-        50982 = ProfileLookTableData
-        51008 = OpcodeList1
-        51009 = OpcodeList2
-        51022 = OpcodeList3
-        51041 = NoiseProfile
-        512 = JPEGProc
-        513 = JPEGInterchangeFormat
-        514 = JPEGInterchangeFormatLength
-        515 = JPEGRestartInterval
-        517 = JPEGLosslessPredictors
-        518 = JPEGPointTransforms
-        519 = JPEGQTables
-        520 = JPEGDCTables
-        521 = JPEGACTables
-        529 = YCbCrCoefficients
-        530 = YCbCrSubSampling
-        531 = YCbCrPositioning
-        532 = ReferenceBlackWhite
-        60606 = ZZZTestSlong1
-        60607 = ZZZTestSlong2
-        700 = XMLPacket
-        '''
         zeroth_ifd = {
             piexif.ImageIFD.Make: u"GeniusBot",
-            #piexif.ImageIFD.XResolution: (96, 1),
-            #piexif.ImageIFD.YResolution: (96, 1),
+            # piexif.ImageIFD.XResolution: (96, 1),
+            # piexif.ImageIFD.YResolution: (96, 1),
             piexif.ImageIFD.Software: u"GeniusBot",
             piexif.ImageIFD.ImageDescription: f"{url}".encode('utf-8'),
         }
         exif_ifd = {
             piexif.ExifIFD.DateTimeOriginal: u"Today",
             piexif.ExifIFD.UserComment: f"{url}".encode('utf-8'),
-            #piexif.ExifIFD.LensMake: u"LensMake",
-            #piexif.ExifIFD.Sharpness: 65535,
-            #piexif.ExifIFD.LensSpecification: ((1, 1), (1, 1), (1, 1), (1, 1)),
+            # piexif.ExifIFD.LensMake: u"LensMake",
+            # piexif.ExifIFD.Sharpness: 65535,
+            # piexif.ExifIFD.LensSpecification: ((1, 1), (1, 1), (1, 1), (1, 1)),
         }
         gps_ifd = {
             piexif.GPSIFD.GPSVersionID: (2, 0, 0, 0),
-            #piexif.GPSIFD.GPSAltitudeRef: 1,
+            # piexif.GPSIFD.GPSAltitudeRef: 1,
             piexif.GPSIFD.GPSDateStamp: u"1999:99:99 99:99:99",
         }
         first_ifd = {
             piexif.ImageIFD.Make: u"GeniusBot",
-            #piexif.ImageIFD.XResolution: (40, 1),
-            #piexif.ImageIFD.YResolution: (40, 1),
+            # piexif.ImageIFD.XResolution: (40, 1),
+            # piexif.ImageIFD.YResolution: (40, 1),
             piexif.ImageIFD.Software: u"GeniusBot"
         }
-        exif_dict = {"0th": zeroth_ifd, "Exif": exif_ifd, "GPS": gps_ifd, "1st": first_ifd}#, "thumbnail": thumbnail}
+        exif_dict = {"0th": zeroth_ifd, "Exif": exif_ifd, "GPS": gps_ifd, "1st": first_ifd}  # , "thumbnail": thumbnail}
         exif_bytes = piexif.dump(exif_dict)
         # define necessary image properties
         image_options = dict()
@@ -439,10 +236,11 @@ class WebPageArchive:
         image_options['format'] = kwargs.get('format') or self.DEFAULT_IMAGE_FORMAT
         image_options['quality'] = kwargs.get('quality') or self.DEFAULT_IMAGE_QUALITY
 
+        # Changes the ratio of the screen of the device.
         device_pixel_ratio = self.get_device_pixel_ratio()
-        # print("Pixel Ratio: ", device_pixel_ratio)
-        # if device_pixel_ratio > 1:
-        #     resize_window(driver, device_pixel_ratio)
+        print("Pixel Ratio: ", device_pixel_ratio)
+        if device_pixel_ratio > 1:
+            self.resize_window(device_pixel_ratio)
 
         inner_height = self.get_inner_height()
         scroll_height = self.get_scroll_height()
@@ -452,7 +250,7 @@ class WebPageArchive:
             self.set_scrollbar(self.HIDDEN_SCROLL_BAR)
 
         # Remove Sticky and Fixed Elements First
-        #self.remove_fixed_elements(inner_height, scroll_height)
+        # self.remove_fixed_elements(inner_height, scroll_height)
         print("Inner Scroll Height After: ", inner_height)
         print("Scroll Height After: ", scroll_height)
         # Get New Screensize after removing fixed elements
