@@ -17,6 +17,8 @@ class Log:
     def __init__(self):
         # print("Test")
         if not os.path.exists(f"{os.pardir}/logs/log.log"):
+            if not os.path.exists(f"{os.pardir}/logs/"):
+                os.makedirs(f"{os.pardir}/logs/")
             with open(f"{os.pardir}/logs/log.log", 'w'):
                 pass
         self.logging_file = f"{os.pardir}/logs/log.log"
