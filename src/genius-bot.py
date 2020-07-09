@@ -624,6 +624,9 @@ class WebArchiveFrame(tk.Frame):
     web_screenshot_quality_title = None
     web_screenshot_quality_value = None
     web_screenshot_quality = None
+    web_zoom_title = None
+    web_zoom_value = None
+    web_zoom = None
     web_config_html_dl_value = None
     web_config_html_dl = None
     web_config_compress_value = None
@@ -755,21 +758,28 @@ class WebArchiveFrame(tk.Frame):
         self.web_screenshot_quality = tk.Scale(web_archive_config_frame, from_=10, to=100,
                                                variable=self.web_screenshot_quality_value, orient=tk.HORIZONTAL)
         self.web_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_zoom_title = ttk.Label(web_archive_config_frame, text="Zoom %", style="Notes.TLabel")
+        self.web_zoom_title.grid(column=0, row=5, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_zoom_value = tk.IntVar()
+        self.web_zoom_value.set(100)
+        self.web_zoom = tk.Scale(web_archive_config_frame, from_=25, to=500,
+                                 variable=self.web_zoom_value, command=self.zoom_increment_value, orient=tk.HORIZONTAL)
+        self.web_zoom.grid(column=1, row=5, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_config_html_dl_value = tk.IntVar()
         self.web_config_html_dl = ttk.Checkbutton(web_archive_config_frame, text="Archive Website",
                                                   variable=self.web_config_html_dl_value, onvalue=1, offvalue=0,
                                                   style="TCheckbutton")
-        self.web_config_html_dl.grid(column=0, row=5, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_config_html_dl.grid(column=0, row=6, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_config_compress_value = tk.IntVar()
         self.web_config_compress = ttk.Checkbutton(web_archive_config_frame, text="Compress/Zip",
                                                    variable=self.web_config_compress_value, onvalue=1, offvalue=0,
                                                    style="TCheckbutton")
-        self.web_config_compress.grid(column=0, row=6, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_config_compress.grid(column=0, row=7, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_config_twitter_value = tk.IntVar()
         self.web_config_twitter = ttk.Checkbutton(web_archive_config_frame, text="Twitter to CSV",
                                                   variable=self.web_config_twitter_value, onvalue=1, offvalue=0,
                                                   style="TCheckbutton")
-        self.web_config_twitter.grid(column=0, row=7, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.web_config_twitter.grid(column=0, row=8, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
         self.web_links_text = tk.StringVar()
         self.web_links_text.set(r'Enter Web Link(s) ⮟')
         self.web_links_label = ttk.Label(top_web_frame, textvariable=self.web_links_text, style="Notes.TLabel")
@@ -811,6 +821,11 @@ class WebArchiveFrame(tk.Frame):
         middle_web_frame.grid(row=3, column=0, sticky='NSEW')
         bottom_web_frame.grid(row=4, column=0, sticky='NSEW')
 
+    def zoom_increment_value(self, value):
+        value_list = [25,33,50,67,75,80,90,100,110,125,150,175,200,250,300,400,500]
+        new_value = min(value_list, key=lambda x:abs(x-float(value)))
+        self.web_zoom.set(new_value)
+
     def archive_sites(self):
         self.url_list_web_archive = list(filter(None, self.url_list_web_archive))
         self.url_list_web_archive = list(dict.fromkeys(self.url_list_web_archive))
@@ -840,10 +855,12 @@ class WebArchiveFrame(tk.Frame):
                 if self.web_config_screenshot_value.get() == 1:
                     if self.web_screenshot_size.get() == "Full":
                         self.web_archive.fullpage_screenshot(url=url,
+                                                             zoom_percentage=self.web_zoom_value.get(),
                                                              filetype=self.web_screenshot_filetype.get(),
                                                              quality=self.web_screenshot_quality.get())
                     elif self.web_screenshot_size.get() == "Normal":
                         self.web_archive.screenshot(url=url,
+                                                    zoom_percentage=self.web_zoom_value.get(),
                                                     filetype=self.web_screenshot_filetype.get(),
                                                     quality=self.web_screenshot_quality.get())
                 self.web_archive.reset_links()
