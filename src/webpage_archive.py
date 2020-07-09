@@ -127,31 +127,35 @@ class WebPageArchive:
         if export:
             self.twitter_df.to_csv(f"./{filename}.{filetype}", index=False)
 
-    def read_url(self, url):
+    def set_zoom_level(self, zoom_percentage=100):
+        print("Setting Zoom to: ", zoom_percentage)
+        self.driver.execute_script(f"document.body.style.zoom='{zoom_percentage}%'")
+
+    def read_url(self, url, zoom_percentage):
         # Comment out fullscreen_window, it will actually make it un-fullscreen
         # self.driver.fullscreen_window()
         try:
             self.driver.get(url)
+            self.set_zoom_level(zoom_percentage)
             self.driver.execute_script('return document.readyState;')
         except Exception as e:
             print("Could not access website: ", e)
         # Tries to Remove any alerts that may appear on the page
         try:
-            WebDriverWait(self.driver, 3).until(ec.alert_is_present(),
-                                                'Timed out waiting for any notification alerts')
+            WebDriverWait(self.driver, 4).until(ec.alert_is_present(), 'Timed out waiting for any notification alerts')
             alert = self.driver.switch_to.alert
             alert.accept()
             print("alert accepted")
         except TimeoutException:
             print("no alert")
-        time.sleep(2)
+        time.sleep(1)
         # Tries to remove any persistent scrolling headers/fixed/sticky'd elements on the page
         inner_height = self.get_inner_height()
         scroll_height = self.get_scroll_height()
         self.remove_fixed_elements(inner_height, scroll_height)
 
-    def screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
-        self.read_url(url)
+    def screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
+        self.read_url(url, zoom_percentage)
         print("Quality: ", quality)
         if filename:
             title = re.sub('[\\\\/:"*?<>|]', '', filename)
@@ -170,10 +174,11 @@ class WebPageArchive:
                 print("Title: ", title)
                 self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
 
-    def fullpage_screenshot(self, url, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
-        self.read_url(url)
+    def fullpage_screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
+        self.read_url(url, zoom_percentage)
         if filename:
             title = re.sub('[\\\\/:"*?<>|.,]', '', filename)
+            title = (title[:140]) if len(title) > 140 else title
             self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
         else:
             print("driver title ", self.driver.title)
@@ -181,11 +186,13 @@ class WebPageArchive:
             if self.driver.title:
                 title = re.sub('[\\\\/:"*?<>|.,]', '', self.driver.title)
                 title = title.replace(" ", "_")
+                title = (title[:140]) if len(title) > 140 else title
                 print("Title: ", title)
                 self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
             else:
                 title = re.sub('[\\\\/:"*?<>.,|]', '', url)
                 title = title.replace(" ", "_")
+                title = (title[:140]) if len(title) > 140 else title
                 print("Title: ", title)
                 self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
 
