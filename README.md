@@ -11,7 +11,7 @@ Features Coming Soon
 - Chat Rooms
 - Video/Audio Converter
 
-[Download GeniusBot v1.8.2 Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.2/GeniusBot-1.8.2-amd64.msi)
+[Download GeniusBot Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.2/GeniusBot-1.8.2-amd64.msi)
 
 #### YouTube Archiving
 Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities. 
