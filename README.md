@@ -5,11 +5,11 @@ The Ever-learning and ever-improving tool!
 - YouTube Archiving
 - Web Page Archiving
 - Report Merging
+- Analytic Profiler
 
 Features Coming Soon
-- Analytic Profiler
-- Chat Rooms
 - Video/Audio Converter
+- Chat Rooms
 
 [Download GeniusBot Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.2/GeniusBot-1.8.2-amd64.msi)
 
