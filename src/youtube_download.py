@@ -592,11 +592,30 @@ class YouTubeDownloader:
                 url = f"https://www.youtube.com/channel/{channel}/videos"
                 print("URL: ", url)
                 page = requests.get(url).content
+                print("Page: ", page)
                 data = str(page).split(' ')
+                print("Data: ", data)
+                '''
                 item = 'href="/watch?'
+                print("Item: ", item)
                 vids = [line.replace('href="', 'youtube.com') for line in data if
                         item in line]  # list of all videos listed twice
-                # print(vids)  # index the latest video
+                '''
+                item = 'https://i.ytimg.com/vi/'
+                vids = []
+                for line in data:
+                    if item in line:
+                        vid = line
+                        #vid = line.replace('https://i.ytimg.com/vi/', '')
+                        try:
+                            found = re.search('https://i.ytimg.com/vi/(.+?)/hqdefault.', vid).group(1)
+                        except AttributeError:
+                            # AAA, ZZZ not found in the original string
+                            found = ''  # apply your error handling
+                        print("Vid, ", vid)
+                        vid = f"https://www.youtube.com/watch?v={found}"
+                        vids.append(vid)
+                print(vids)  # index the latest video
                 x = 0
                 if vids:
                     # print("Link Set")
@@ -610,7 +629,21 @@ class YouTubeDownloader:
                         x += 1
                         # print("Length of Links: ", len(self.link))
                 else:
-                    print("Could not find User or Channel")
+                    print("Trying Old Method")
+                    vids = [line.replace('href="', 'youtube.com') for line in data if
+                            item in line]  # list of all videos listed twice
+                    if vids:
+                        for vid in vids:
+                            if limit < 0:
+                                self.link.append(vid)
+                            elif x >= limit:
+                                break
+                            else:
+                                self.link.append(vid)
+                            x += 1
+                            # print("Length of Links: ", len(self.link))
+                    else:
+                        print("Could not find User or Channel")
             attempts += 1
     '''
     def download_hd_videos_parallel(self):
