@@ -1,5 +1,6 @@
 setuptools
 wheel
+autoconf
 pytube3
 regex
 requests
@@ -21,7 +22,6 @@ pyglet
 shapely
 piexif
 webdriver-manager
-cx-Freeze
 pandas_profiling
 ipython-genutils
 traitlets
@@ -63,3 +63,4 @@ cx_oracle
 pypyodbc
 sqlalchemy
 pyhive
+cx-Freeze

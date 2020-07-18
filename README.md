@@ -56,25 +56,25 @@ These instructions will get you a copy of the project up and running on your loc
 ## Repository
 [genius-bot](https://github.com/Knucklessg1/genius-bot.git)
 
-## Instructions to Run in PyCharm:
-#### Pre-requisites:
+### Instructions to Install & Configure Python Environment:
+#### CentOS: 
+Simply navigate to the repository root directory and run:
+```
+sudo ./centos_python_env_install.sh
+```
+Done!
+#### Windows:
+Pre-requisites:
 ```
 1. PyCharm installed
 2. Python 3.8 installed
 3. pip install cx_freeze
-4. Google Chrome (For Selenium WebDriver) Chromium & FireFox support coming soon!
-5. (Optional) From root repository directory, run: pip install -r requirements.txt
+4. From root repository directory, run: pip install -r requirements.txt
 ```
-#### Instructions:
+###Instructions to Configure PyCharm Environment:
 ```
 1. In PyCharm, configure interpreter to use the virtual environment located in the repository (point it to the /venv/ folder)
 2. In PyCharm, run geniusbot.py to open the GUI.
-```
-## Instructions to Compile: 
-#### Pre-requisites:
-```
-1. pip install cx_freeze
-2. (Optional) From root repository directory, run: pip install -r requirements.txt
 ```
 #### Instructions to Compile Portable Version:
 ```
@@ -208,9 +208,13 @@ pip install --upgrade pip
 ```
 ../venv/Scripts/python.exe -m pip freeze | %{$_.split('==')[0]} | %{../venv/Scripts/python.exe -m pip install --upgrade $_}
 ```
-#### To update all python packages:
+#### To update all python packages in Windows:
 ```
 pip freeze | %{$_.split('==')[0]} | %{pip install --upgrade $_}
+```
+#### To update all python packages in Linux:
+```
+pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
 ```
 #### To generate requirements file from venv:
 ```
