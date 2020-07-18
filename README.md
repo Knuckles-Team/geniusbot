@@ -71,7 +71,7 @@ Pre-requisites:
 3. pip install cx_freeze
 4. From root repository directory, run: pip install -r requirements.txt
 ```
-###Instructions to Configure PyCharm Environment:
+### Instructions to Configure PyCharm Environment:
 ```
 1. In PyCharm, configure interpreter to use the virtual environment located in the repository (point it to the /venv/ folder)
 2. In PyCharm, run geniusbot.py to open the GUI.
