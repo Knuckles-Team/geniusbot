@@ -1831,7 +1831,7 @@ class MediaConverterFrame(tk.Frame):
     web_archive_frame = None
     status = None
     save_location = None
-    
+
     def __init__(self, tkt_main, tab_control, status, logger=None):
         if logger:
             self.log = logger
