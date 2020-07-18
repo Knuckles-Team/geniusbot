@@ -1822,7 +1822,7 @@ class AnalyticalProfilerFrame(tk.Frame):
         print("Implement this")
 
 
-# WebArchive Class
+# Media Converter Class
 class MediaConverterFrame(tk.Frame):
     progress_bar_web_archive = None
     progress_bar_value_web_archive = 0
