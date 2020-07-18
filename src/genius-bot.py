@@ -2230,6 +2230,7 @@ class MediaConverterFrame(tk.Frame):
         event.widget.tk_focusNext().focus()
         return "break"
 
+
 # Call Main Function
 def main():
     if __name__ == "__main__":
