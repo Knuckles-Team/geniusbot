@@ -12,11 +12,6 @@ import shutil
 
 
 class TwitterDownloader:
-    """
-    tw-dl offers the ability to download videos from Twitter feeds.
-    **Disclaimer** I wrote this to recover a video for which the original was lost. Consider copyright before downloading
-    content you do not own.
-    """
     video_player_prefix = 'https://twitter.com/i/videos/tweet/'
     video_api = 'https://api.twitter.com/1.1/videos/tweet/config/'
     tweet_data = {}
@@ -162,9 +157,8 @@ class TwitterDownloader:
         return [video_host, m3u8_parse]
 
     """
-	Thanks to @devkarim for this fix: https://github.com/h4ckninja/twitter-video-downloader/issues/2#issuecomment-538773026
-	"""
-
+    Thanks to @devkarim for this fix: https://github.com/h4ckninja/twitter-video-downloader/issues/2#issuecomment-538773026
+    """
     def __get_guest_token(self):
         res = self.requests.post("https://api.twitter.com/1.1/guest/activate.json")
         res_json = json.loads(res.text)
