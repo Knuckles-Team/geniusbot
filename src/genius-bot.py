@@ -11,6 +11,7 @@ import tkthread as tkt  # TkThread
 # from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from youtube_download import YouTubeDownloader
 from webpage_archive import WebPageArchive
+from twitter_archive import TwitterDownloader
 from report_merger import ReportMerge
 from analytic_profiler import ReportAnalyzer
 from log import Log
@@ -167,6 +168,7 @@ class GeniusBot:
         self.init_home_frame()
         YouTubeFrame(self.tkt, self.tabControl, self.status, self.log)
         WebArchiveFrame(self.tkt, self.tabControl, self.status, self.log)
+        TwitterArchiveFrame(self.tkt, self.tabControl, self.status, self.log)
         ReportMergeFrame(self.tkt, self.tabControl, self.status, self.log)
         AnalyticalProfilerFrame(self.tkt, self.tabControl, self.status, self.log)
         MediaConverterFrame(self.tkt, self.tabControl, self.status, self.log)
@@ -824,7 +826,7 @@ class WebArchiveFrame(tk.Frame):
 
     def zoom_increment_value(self, value):
         value_list = [25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500]
-        new_value = min(value_list, key=lambda x: abs(x-float(value)))
+        new_value = min(value_list, key=lambda x: abs(x - float(value)))
         self.web_zoom.set(new_value)
 
     def archive_sites(self):
@@ -1820,6 +1822,393 @@ class AnalyticalProfilerFrame(tk.Frame):
 
     def export_analysis(self):
         print("Implement this")
+
+
+# Twitter Archive Class
+class TwitterArchiveFrame(tk.Frame):
+    url_list_twitter_archive = []
+    log = None
+    tabControl = None
+    twitter_archive_frame = None
+    status = None
+    save_location = None
+    progress_bar_twitter_archive = None
+    progress_bar_value_twitter_archive = 0
+    progress_bar_max_value_twitter_archive = 0
+    twitter_add_url_button = None
+    twitter_remove_url_button = None
+    twitter_openfile_button = None
+    twitter_save_location_button = None
+    twitter_archive_button = None
+    twitter_queue_title = None
+    twitter_queue_title_label = None
+    twitter_config_title = None
+    twitter_config_title_label = None
+    twitter_config_screenshot_value = None
+    twitter_config_screenshot = None
+    twitter_screenshot_filetype_title = None
+    twitter_screenshot_filetype = None
+    twitter_screenshot_filetype_menu = None
+    twitter_screenshot_size_title = None
+    twitter_screenshot_size = None
+    twitter_screenshot_size_menu = None
+    twitter_screenshot_quality_title = None
+    twitter_screenshot_quality_value = None
+    twitter_screenshot_quality = None
+    twitter_zoom_title = None
+    twitter_zoom_value = None
+    twitter_zoom = None
+    twitter_config_html_dl_value = None
+    twitter_config_html_dl = None
+    twitter_config_compress_value = None
+    twitter_config_compress = None
+    twitter_config_twitter_value = None
+    twitter_config_twitter = None
+    twitter_links_text = None
+    twitter_links_label = None
+    twitter_url_listbox = None
+    twitter_url_entry = None
+    twitter_percentage_text = None
+    twitter_percentage_title = None
+    twitter_percentage_label = None
+    twitter_percentage_title_label = None
+
+    def __init__(self, tkt_main, tab_control, status, logger=None):
+        if logger:
+            self.log = logger
+        else:
+            self.log = Log()
+        self.tkt = tkt_main
+        self.tabControl = tab_control
+        self.status = status
+        # self.twitter_archive = TwitterDownloader(self.log)
+        self.draw_frame()
+        self.tabControl.add(self.twitter_archive_frame, text="Twitter Archive")
+        tk.Frame.__init__(self, self.twitter_archive_frame)  # , bg="red")
+
+    @staticmethod
+    def run(func, name=None):
+        threading.Thread(target=func, name=name).start()
+
+    def draw_frame(self):
+        self.twitter_archive_frame = tk.Frame(self.tabControl)
+        tk.Grid.rowconfigure(self.twitter_archive_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(self.twitter_archive_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(self.twitter_archive_frame, 1, minsize=1, weight=1)
+        twitter_archive_selection_frame = ttk.Frame(self.twitter_archive_frame)
+        tk.Grid.rowconfigure(twitter_archive_selection_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(twitter_archive_selection_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(twitter_archive_selection_frame, 2, minsize=1, weight=0)
+        tk.Grid.rowconfigure(twitter_archive_selection_frame, 3, minsize=1, weight=1)
+        tk.Grid.rowconfigure(twitter_archive_selection_frame, 4, minsize=1, weight=0)
+        tk.Grid.rowconfigure(twitter_archive_selection_frame, 5, minsize=1, weight=0)
+        tk.Grid.columnconfigure(twitter_archive_selection_frame, 0, minsize=1, weight=1)
+        twitter_archive_config_frame = ttk.Frame(self.twitter_archive_frame)
+        tk.Grid.rowconfigure(twitter_archive_config_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(twitter_archive_config_frame, 0, minsize=1, weight=0)
+        top_twitter_frame = ttk.Frame(twitter_archive_selection_frame)
+        # self.tabControl.pack(expand=1, fill="both")
+        tk.Grid.rowconfigure(top_twitter_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_twitter_frame, 1, minsize=1, weight=0)
+        tk.Grid.rowconfigure(top_twitter_frame, 2, minsize=1, weight=0)
+        tk.Grid.columnconfigure(top_twitter_frame, 0, minsize=1, weight=1)
+        middle_twitter_button_frame = ttk.Frame(twitter_archive_selection_frame)
+        tk.Grid.rowconfigure(middle_twitter_button_frame, 0, minsize=1, weight=0)
+        tk.Grid.columnconfigure(middle_twitter_button_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_twitter_button_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_twitter_button_frame, 2, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_twitter_button_frame, 3, minsize=1, weight=1)
+        middle_twitter_frame = ttk.Frame(twitter_archive_selection_frame)
+        tk.Grid.rowconfigure(middle_twitter_frame, 0, minsize=1, weight=0)
+        tk.Grid.rowconfigure(middle_twitter_frame, 1, minsize=1, weight=1)
+        tk.Grid.columnconfigure(middle_twitter_frame, 0, minsize=1, weight=1)
+        bottom_twitter_frame = ttk.Frame(twitter_archive_selection_frame)
+        tk.Grid.rowconfigure(bottom_twitter_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(bottom_twitter_frame, 0, minsize=1, weight=1)
+        tk.Grid.columnconfigure(bottom_twitter_frame, 1, minsize=1, weight=1)
+        # tk.Grid.rowconfigure(self.notification_frame, 0, minsize=1, weight=1)
+        # tk.Grid.columnconfigure(self.notification_frame, 0, minsize=1, weight=1)
+        # Buttons
+        self.twitter_add_url_button = ttk.Button(middle_twitter_button_frame, text="Add", style='Add.TButton', width=9,
+                                                 command=self.add_webarchive_url)
+        self.twitter_add_url_button.grid(column=0, row=1, sticky='NSEW', padx=5, pady=10)
+        self.twitter_remove_url_button = ttk.Button(middle_twitter_button_frame, text="Remove", style='Remove.TButton',
+                                                    width=9, command=self.remove_webarchive_url)
+        self.twitter_remove_url_button.grid(column=1, row=1, sticky='NSEW', padx=5, pady=10)
+        self.twitter_openfile_button = ttk.Button(middle_twitter_button_frame, text="Open File", style='Open.TButton',
+                                                  width=9, command=self.open_file_webarchive)
+        self.twitter_openfile_button.grid(column=2, row=1, sticky='NSEW', padx=5, pady=10)
+        self.twitter_save_location_button = ttk.Button(middle_twitter_button_frame, text="Save Location", width=15,
+                                                       command=self.choose_save_location_twitter)
+        self.twitter_save_location_button.grid(column=3, row=1, sticky='NSEW', padx=5, pady=10)
+        self.twitter_archive_button = ttk.Button(bottom_twitter_frame, text="Begin Archive",
+                                                 command=lambda: self.run(lambda: self.download_tweets(),
+                                                                          name='NoSync'))
+        self.twitter_archive_button.grid(column=0, row=3, columnspan=2, sticky='NSEW', padx=15, pady=10)
+
+        # Labels
+        # self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
+        self.twitter_queue_title = tk.StringVar()
+        self.twitter_queue_title.set("Download Queue")
+        self.twitter_queue_title_label = ttk.Label(middle_twitter_frame,
+                                                   textvariable=self.twitter_queue_title,
+                                                   style="Notes.TLabel")
+        self.twitter_queue_title_label.grid(column=0, row=0, columnspan=1)
+        self.twitter_config_title = tk.StringVar()
+        self.twitter_config_title.set("Configure Archive")
+        self.twitter_config_title_label = ttk.Label(twitter_archive_config_frame,
+                                                    textvariable=self.twitter_config_title,
+                                                    style="Notes.TLabel")
+        self.twitter_config_title_label.grid(column=0, row=0, columnspan=2, pady=(5, 5), sticky='NSEW')
+        self.twitter_config_screenshot_value = tk.IntVar()
+        self.twitter_config_screenshot_value.set(1)
+        self.twitter_config_screenshot = ttk.Checkbutton(twitter_archive_config_frame, text="Capture Screenshot",
+                                                         variable=self.twitter_config_screenshot_value, onvalue=1,
+                                                         offvalue=0,
+                                                         style="TCheckbutton", command=self.onclick_capture_screenshot)
+        self.twitter_config_screenshot.grid(column=0, row=1, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.twitter_screenshot_filetype_title = ttk.Label(twitter_archive_config_frame, text="File Type",
+                                                           style="Notes.TLabel")
+        self.twitter_screenshot_filetype_title.grid(column=0, row=2, columnspan=1, padx=(5, 5), pady=(5, 5),
+                                                    sticky='NSEW')
+        self.twitter_screenshot_filetype = tk.StringVar()
+        self.twitter_screenshot_filetype.set("PNG")  # default value
+        self.twitter_screenshot_filetype_menu = ttk.OptionMenu(twitter_archive_config_frame,
+                                                               self.twitter_screenshot_filetype,
+                                                               "PNG", "PNG", "JPEG")
+        self.twitter_screenshot_filetype_menu.grid(column=1, row=2, columnspan=1, padx=(5, 5), pady=(5, 5),
+                                                   sticky='NSEW')
+        self.twitter_screenshot_size_title = ttk.Label(twitter_archive_config_frame, text="Size",
+                                                       style="Notes.TLabel")
+        self.twitter_screenshot_size_title.grid(column=0, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.twitter_screenshot_size = tk.StringVar()
+        self.twitter_screenshot_size.set("Full")  # default value
+        self.twitter_screenshot_size_menu = ttk.OptionMenu(twitter_archive_config_frame, self.twitter_screenshot_size,
+                                                           "Full", "Full", "Normal")
+        self.twitter_screenshot_size_menu.grid(column=1, row=3, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.twitter_screenshot_quality_title = ttk.Label(twitter_archive_config_frame, text="Quality",
+                                                          style="Notes.TLabel")
+        self.twitter_screenshot_quality_title.grid(column=0, row=4, columnspan=1, padx=(5, 5), pady=(5, 5),
+                                                   sticky='NSEW')
+        self.twitter_screenshot_quality_value = tk.IntVar()
+        self.twitter_screenshot_quality_value.set(100)
+        self.twitter_screenshot_quality = tk.Scale(twitter_archive_config_frame, from_=10, to=100,
+                                                   variable=self.twitter_screenshot_quality_value, orient=tk.HORIZONTAL)
+        self.twitter_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.twitter_config_html_dl_value = tk.IntVar()
+        self.twitter_config_html_dl = ttk.Checkbutton(twitter_archive_config_frame, text="Archive Website",
+                                                      variable=self.twitter_config_html_dl_value, onvalue=1, offvalue=0,
+                                                      style="TCheckbutton")
+        self.twitter_config_html_dl.grid(column=0, row=6, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.twitter_config_compress_value = tk.IntVar()
+        self.twitter_config_compress = ttk.Checkbutton(twitter_archive_config_frame, text="Compress/Zip",
+                                                       variable=self.twitter_config_compress_value, onvalue=1,
+                                                       offvalue=0,
+                                                       style="TCheckbutton")
+        self.twitter_config_compress.grid(column=0, row=7, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.twitter_config_twitter_value = tk.IntVar()
+        self.twitter_config_twitter = ttk.Checkbutton(twitter_archive_config_frame, text="Twitter to CSV",
+                                                      variable=self.twitter_config_twitter_value, onvalue=1, offvalue=0,
+                                                      style="TCheckbutton")
+        self.twitter_config_twitter.grid(column=0, row=8, columnspan=2, padx=(5, 5), pady=(5, 5), sticky='NSEW')
+        self.twitter_links_text = tk.StringVar()
+        self.twitter_links_text.set(r'Enter Web Link(s) ⮟')
+        self.twitter_links_label = ttk.Label(top_twitter_frame, textvariable=self.twitter_links_text,
+                                             style="Notes.TLabel")
+        self.twitter_links_label.grid(column=0, row=0, columnspan=1, sticky='W')
+        self.twitter_percentage_text = tk.StringVar()
+        self.twitter_percentage_text.set((
+            f"{self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive} | ",
+            f"{(self.progress_bar_value_twitter_archive / (self.progress_bar_max_value_twitter_archive + 1)) * 100}%"))
+        self.twitter_percentage_label = ttk.Label(bottom_twitter_frame, textvariable=self.twitter_percentage_text,
+                                                  style="Notes.TLabel")
+        self.twitter_percentage_label.grid(column=0, row=2, columnspan=2)
+        self.twitter_percentage_title = tk.StringVar()
+        self.twitter_percentage_title.set("Percentage")
+        self.twitter_percentage_title_label = ttk.Label(bottom_twitter_frame,
+                                                        textvariable=self.twitter_percentage_title,
+                                                        style="Notes.TLabel")
+        self.twitter_percentage_title_label.grid(column=0, row=0, columnspan=2)
+
+        # ListBox
+        self.twitter_url_listbox = tk.Listbox(middle_twitter_frame, height=12, selectmode='multiple', exportselection=0)
+        self.twitter_url_listbox.grid(column=0, row=1, columnspan=2, rowspan=3, sticky='NSEW')
+        tk.Grid.columnconfigure(self.twitter_url_listbox, 0, weight=1)
+
+        # Entries
+        self.twitter_url_entry = tk.Text(top_twitter_frame, height=9)
+        self.twitter_url_entry.bind("<Tab>", self.focus_next_widget)
+        self.refresh_webarchive_list()
+        self.twitter_url_entry.grid(column=0, row=2, columnspan=2, sticky='NSEW')
+
+        # Progress Bar
+        self.progress_bar_twitter_archive = ttk.Progressbar(
+            bottom_twitter_frame, orient="horizontal",
+            mode="determinate"
+        )
+        twitter_archive_selection_frame.grid(column=1, row=0, columnspan=1, sticky='NSEW')
+        twitter_archive_config_frame.grid(column=0, row=0, columnspan=1, sticky='NSEW')
+        self.progress_bar_twitter_archive.grid(column=0, row=1, padx=15, pady=10, columnspan=2, sticky='NSEW')
+        top_twitter_frame.grid(row=1, column=0, sticky='NSEW')
+        middle_twitter_button_frame.grid(row=2, column=0, sticky='NSEW')
+        middle_twitter_frame.grid(row=3, column=0, sticky='NSEW')
+        bottom_twitter_frame.grid(row=4, column=0, sticky='NSEW')
+
+    def download_tweets(self):
+        self.url_list_twitter_archive = list(filter(None, self.url_list_twitter_archive))
+        self.url_list_twitter_archive = list(dict.fromkeys(self.url_list_twitter_archive))
+        self.progress_bar_max_value_twitter_archive = len(self.url_list_twitter_archive)
+        if self.progress_bar_max_value_twitter_archive > 0:
+            self.status.set(f'Downloading {len(self.url_list_twitter_archive)} URL(s)')
+            self.twitter_archive_button["state"] = "disabled"
+            self.twitter_add_url_button["state"] = "disabled"
+            self.twitter_remove_url_button["state"] = "disabled"
+            self.twitter_openfile_button["state"] = "disabled"
+            self.twitter_save_location_button["state"] = "disabled"
+            self.progress_bar_value_twitter_archive = 0
+            self.progress_bar_twitter_archive['maximum'] = self.progress_bar_max_value_twitter_archive
+            self.progress_bar_twitter_archive['value'] = 0
+            print(f'{self.progress_bar_max_value_twitter_archive}:MAX VALUE')
+            self.twitter_percentage_text.set((
+                f"{self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive} | ",
+                f"{math.ceil((self.progress_bar_value_twitter_archive / self.progress_bar_max_value_twitter_archive) * 100)}%"))
+            i = 0
+            for url in self.url_list_twitter_archive:
+                TwitterDownloader(tweet_url=url, output_dir=self.save_location, logger=self.log).download()
+                self.progress_bar_value_twitter_archive = i + 1
+                self.twitter_percentage_text.set((
+                    f"{self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive} | ",
+                    f"{math.ceil((self.progress_bar_value_twitter_archive / self.progress_bar_max_value_twitter_archive) * 100)}",
+                    f"%"))
+                self.progress_bar_twitter_archive['value'] = i + 1
+                print("Value: ", self.progress_bar_value_twitter_archive)
+                print("Max Value: ", self.progress_bar_max_value_twitter_archive)
+                self.status.set(
+                    f'Completed {self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive}')
+                i += 1
+            self.tabControl.tab(1, state="normal")
+            self.tabControl.tab(2, state="normal")
+            self.twitter_archive_button["state"] = "enabled"
+            self.twitter_add_url_button["state"] = "enabled"
+            self.twitter_remove_url_button["state"] = "enabled"
+            self.twitter_openfile_button["state"] = "enabled"
+            self.twitter_save_location_button["state"] = "enabled"
+            self.status.set(f'Downloaded {self.progress_bar_value_twitter_archive} website screenshot(s)!')
+        else:
+            print("No Website Links Added")
+            self.status.set(f'Add Some Website Links First!')
+
+    def onclick_capture_screenshot(self):
+        value = self.twitter_config_screenshot_value.get()
+        if value == 0:
+            self.twitter_screenshot_filetype_title.grid_forget()
+            self.twitter_screenshot_filetype_menu.grid_forget()
+            self.twitter_screenshot_size_title.grid_forget()
+            self.twitter_screenshot_size_menu.grid_forget()
+            self.twitter_screenshot_quality_title.grid_forget()
+            self.twitter_screenshot_quality.grid_forget()
+        elif value == 1:
+            self.twitter_screenshot_filetype_title.grid(column=0, row=2, columnspan=1, padx=(5, 0), pady=(5, 5),
+                                                        sticky='NSEW')
+            self.twitter_screenshot_filetype_menu.grid(column=1, row=2, columnspan=1, padx=(5, 5), pady=(5, 5),
+                                                       sticky='NSEW')
+            self.twitter_screenshot_size_title.grid(column=0, row=3, columnspan=1, padx=(5, 0), pady=(0, 5),
+                                                    sticky='NSEW')
+            self.twitter_screenshot_size_menu.grid(column=1, row=3, columnspan=1, padx=(5, 5), pady=(0, 5),
+                                                   sticky='NSEW')
+            self.twitter_screenshot_quality_title.grid(column=0, row=4, columnspan=1, padx=(5, 0), pady=(0, 5),
+                                                       sticky='NSEW')
+            self.twitter_screenshot_quality.grid(column=1, row=4, columnspan=1, padx=(5, 5), pady=(0, 5), sticky='NSEW')
+
+    def choose_save_location_twitter(self):
+        self.save_location = tk.filedialog.askdirectory()
+        print("Save Filepath: ", self.save_location)
+        # self.twitter_archive.set_save_path(self.save_location)
+
+    def open_file_webarchive(self):
+        name = tk.filedialog.askopenfilename(initialdir=os.getcwd(),
+                                             filetypes=(("Text File", "*.txt"), ("All Files", "*.*")),
+                                             title="Choose a file."
+                                             )
+        # Using try in case user types in unknown file or closes without choosing a file.
+        try:
+            webarchive_urls = open(name, 'r')
+            print("webarchive_urls", webarchive_urls)
+            print("Length of Links Before Open File: ", len(self.url_list_twitter_archive))
+            for url in webarchive_urls:
+                self.url_list_twitter_archive.append(url)
+            self.refresh_webarchive_list()
+            self.progress_bar_max_value_twitter_archive = len(self.url_list_twitter_archive)
+            self.twitter_percentage_text.set((
+                f"{self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive} | ",
+                f"{(self.progress_bar_value_twitter_archive / self.progress_bar_max_value_twitter_archive) * 100}%"))
+            self.status.set(f'Queued {self.progress_bar_max_value_twitter_archive} videos from file: {name}')
+        except Exception as e:
+            print("No file exists: ", e)
+            self.status.set(f'File Not Found')
+
+    def refresh_webarchive_list(self):
+        self.twitter_url_listbox.delete(0, tk.END)
+        self.url_list_twitter_archive = list(dict.fromkeys(self.url_list_twitter_archive))
+        for items in self.url_list_twitter_archive:
+            self.twitter_url_listbox.insert(tk.END, items)
+
+    def add_webarchive_url(self):
+        # Get Web Links
+        parse_addition = self.twitter_url_entry.get("1.0", tk.END)
+        if re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', parse_addition) != "":
+            parse_addition_array = parse_addition.splitlines()
+            for url in parse_addition_array:
+                if re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url) != "":
+                    self.status.set(f'Added URLs to Queue')
+                    temp = re.sub(r'[^A-Za-z0-9_./:&?!=-]', '', url)
+                    self.url_list_twitter_archive.append(temp)
+                else:
+                    print("Bad URL: ", url)
+                    self.status.set(f'Paste Some Website Links First! (CTRL+V) {url}')
+            self.url_list_twitter_archive = list(dict.fromkeys(self.url_list_twitter_archive))
+            self.twitter_url_entry.delete("1.0", tk.END)
+            self.refresh_webarchive_list()
+            self.progress_bar_max_value_twitter_archive = len(self.url_list_twitter_archive)
+            print((
+                f'URL: {self.url_list_twitter_archive} AND AND MAXVAL: {self.progress_bar_max_value_twitter_archive} AND LEN: '
+                f' {len(self.url_list_twitter_archive)}'))
+            self.twitter_percentage_text.set((
+                f"{self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive} | ",
+                f"{(self.progress_bar_value_twitter_archive / self.progress_bar_max_value_twitter_archive) * 100}%"))
+            self.status.set(f'Queued {self.progress_bar_max_value_twitter_archive} url(s)')
+
+    def remove_webarchive_url(self):
+        if self.twitter_url_listbox.curselection():
+            selected_text_list = [self.twitter_url_listbox.get(i) for i in self.twitter_url_listbox.curselection()]
+            x = 0
+            for url in selected_text_list:
+                self.url_list_twitter_archive.remove(url)
+                x += 1
+            self.refresh_webarchive_list()
+            self.progress_bar_max_value_twitter_archive = len(self.url_list_twitter_archive)
+            if self.progress_bar_max_value_twitter_archive == 0:
+                self.twitter_percentage_text.set(
+                    f"{self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive} | {0 * 100}%")
+                self.progress_bar_twitter_archive['value'] = 0
+                self.progress_bar_value_twitter_archive = 0
+            else:
+                self.twitter_percentage_text.set((
+                    f"{self.progress_bar_value_twitter_archive}/{self.progress_bar_max_value_twitter_archive} | ",
+                    f"{(self.progress_bar_value_twitter_archive / self.progress_bar_max_value_twitter_archive) * 100}%"))
+                self.progress_bar_twitter_archive['value'] = self.progress_bar_max_value_twitter_archive
+                self.progress_bar_twitter_archive['maximum'] = self.progress_bar_max_value_twitter_archive
+                self.progress_bar_value_twitter_archive = self.progress_bar_max_value_twitter_archive
+            self.status.set(f'Queued {self.progress_bar_max_value_twitter_archive} videos')
+        else:
+            print("Click on a link to remove")
+            self.status.set(f'Click on a URL to remove')
+
+    # This class handles [TAB] Key to move to next Widget
+    @staticmethod
+    def focus_next_widget(event):
+        event.widget.tk_focusNext().focus()
+        return "break"
 
 
 # Media Converter Class

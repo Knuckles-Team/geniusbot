@@ -64,3 +64,6 @@ pypyodbc
 sqlalchemy
 pyhive
 cx-Freeze
+ffmpeg-python
+m3u8
+aiohttp
