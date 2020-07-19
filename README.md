@@ -6,6 +6,7 @@ The Ever-learning and ever-improving tool!
 - Web Page Archiving
 - Report Merging
 - Analytic Profiler
+- Twitter Archiving
 
 Features Coming Soon
 - Video/Audio Converter

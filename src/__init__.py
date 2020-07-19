@@ -7,3 +7,4 @@ from report_merger import ReportMerge
 from analytic_profiler import ReportAnalyzer
 from log import Log
 from version_info import geniusbot_version
+from twitter_archive import TwitterDownloader
