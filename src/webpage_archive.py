@@ -157,22 +157,26 @@ class WebPageArchive:
     def screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url, zoom_percentage)
         print("Quality: ", quality)
+        self.set_scrollbar(self.HIDDEN_SCROLL_BAR)
         if filename:
             title = re.sub('[\\\\/:"*?<>|]', '', filename)
-            self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
+            title = (title[:140]) if len(title) > 140 else title
+            self.driver.save_screenshot(f'{self.SAVE_PATH}/{title}.{filetype}')
         else:
             print("driver title ", self.driver.title)
             print("Url, ", url)
             if self.driver.title:
                 title = re.sub('[\\\\/:"*?<>|]', '', self.driver.title)
                 title = title.replace(" ", "_")
+                title = (title[:140]) if len(title) > 140 else title
                 print("Title: ", title)
-                self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
+                self.driver.save_screenshot(f'{self.SAVE_PATH}/{title}.{filetype}')
             else:
                 title = re.sub('[\\\\/:"*?<>|.,]', '', url)
                 title = title.replace(" ", "_")
+                title = (title[:140]) if len(title) > 140 else title
                 print("Title: ", title)
-                self.save_webpage(f'{title}.{filetype}', hide_scrollbar=True)
+                self.driver.save_screenshot(f'{self.SAVE_PATH}/{title}.{filetype}')
 
     def fullpage_screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url, zoom_percentage)
