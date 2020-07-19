@@ -51,13 +51,10 @@ class GeniusBot:
         self.root = root_main
         self.root.minsize(width=500, height=700)
         self.root.title(f"GeniusBot")
-        self.root.geometry("500x700")
-        self.root.minsize(500, 700)
+        self.root.geometry("700x700")
         self.tkt = tkt_main
         self.init_font()
         self.init_icon()
-        self.root.geometry("500x700")
-        self.root.minsize(500, 700)
         self.title = tk.StringVar()
         self.title_version = tk.StringVar()
         self.home_title = tk.StringVar()
