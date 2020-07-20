@@ -1,0 +1,2 @@
+class PriorException(Exception):
+    pass
