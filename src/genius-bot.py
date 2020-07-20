@@ -27,6 +27,7 @@ import math
 from PIL import ImageTk, Image
 
 
+# GeniusBot Classs
 class GeniusBot:
     version = geniusbot_version
     tkt = None
@@ -51,7 +52,7 @@ class GeniusBot:
         self.root = root_main
         self.root.minsize(width=500, height=700)
         self.root.title(f"GeniusBot")
-        self.root.geometry("700x700")
+        self.root.geometry("600x700")
         self.tkt = tkt_main
         self.init_font()
         self.init_icon()

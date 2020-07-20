@@ -47,7 +47,7 @@ includes = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json
             'tkinter.ttk', 'selenium', 'PIL', 'numpy', 'pandas', 'time', 'piexif', 'webdriver_manager', 'appdirs',
             'pandas_profiling', 'sklearn', 'scipy', 'seaborn', 'math', 'xlsxwriter', 'multiprocessing',
             'astropy.constants.codata2018', 'astropy.constants.iau2015', 'matplotlib', 'matplotlib.pyplot', 'm3u8',
-            'pkg_resources', 'paramiko', 'pyhive', 'sqlalchemy', 'pypyodbc', 'cx_oracle', 'ffmpeg-python', 'aiohttp']
+            'pkg_resources', 'paramiko', 'pyhive', 'sqlalchemy', 'pypyodbc', 'cx_oracle', 'ffmpeg', 'aiohttp']
 
 packages = includes
 
