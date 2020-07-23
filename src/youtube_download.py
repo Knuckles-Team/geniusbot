@@ -14,9 +14,13 @@ from pytube import YouTube
 
 
 class YouTubeDownloader:
-    # Save Location
-    SAVE_PATH = None
-    OS_SAVE_PATH = None
+    if os.name == 'nt':
+        SAVE_PATH = f'C:\\Users\\{os.getlogin()}\\Downloads'
+    else:
+        home = os.path.expanduser("~")
+        SAVE_PATH = os.path.join(home, "Downloads")
+    SAVE_PATH = os.getcwd()
+    OS_SAVE_PATH = SAVE_PATH
     CHANNEL_SAVE_PATH = None
     num_cores = None
     inputs = None

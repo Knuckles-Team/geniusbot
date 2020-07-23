@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.8
 # -*- coding: utf-8 -*-
 
+import os
 import requests
 import json
 import urllib.parse
@@ -17,9 +18,16 @@ class TwitterDownloader:
     tweet_data = {}
     log = None
 
-    def __init__(self, tweet_url, output_dir='./output', debug=0, logger=None):
+    def __init__(self, tweet_url, output_dir=None, debug=0, logger=None):
         self.tweet_url = tweet_url
-        self.output_dir = output_dir
+        if output_dir:
+            self.output_dir = output_dir
+        else:
+            if os.name == 'nt':
+                self.output_dir = f'C:\\Users\\{os.getlogin()}\\Downloads'
+            else:
+                home = os.path.expanduser("~")
+                self.output_dir = os.path.join(home, "Downloads")
         self.debug = debug
 
         if debug > 2:

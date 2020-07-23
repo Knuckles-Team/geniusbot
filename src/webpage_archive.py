@@ -21,8 +21,12 @@ from selenium.common.exceptions import TimeoutException
 
 
 class WebPageArchive:
-    SAVE_PATH = os.getcwd()
-    OS_SAVE_PATH = os.getcwd()
+    if os.name == 'nt':
+        SAVE_PATH = f'C:\\Users\\{os.getlogin()}\\Downloads'
+    else:
+        home = os.path.expanduser("~")
+        SAVE_PATH = os.path.join(home, "Downloads")
+    OS_SAVE_PATH = SAVE_PATH
     driver = None
     capabilities = None
     chrome_options = webdriver.ChromeOptions()
