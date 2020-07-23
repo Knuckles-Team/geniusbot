@@ -298,7 +298,10 @@ class WebPageArchive:
             image_file.paste(img, (0, math.ceil(i * inner_height * device_pixel_ratio)))
         else:
             image_file.paste(slices[-1], (0, math.ceil((scroll_height - inner_height) * device_pixel_ratio)))
-        image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
+        try:
+            image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
+        except Exception as e:
+            print("Could not save image error: ", e)
 
     def remove_fixed_elements(self, inner_height, scroll_height):
         for offset in range(0, scroll_height + 1, inner_height):
