@@ -16,6 +16,7 @@ class TwitterDownloader:
     video_player_prefix = 'https://twitter.com/i/videos/tweet/'
     video_api = 'https://api.twitter.com/1.1/videos/tweet/config/'
     tweet_data = {}
+    output_dir = None
     log = None
 
     def __init__(self, tweet_url, output_dir=None, debug=0, logger=None):
@@ -45,11 +46,7 @@ class TwitterDownloader:
         self.tweet_data['tweet_url'] = self.tweet_url.split('?', 1)[0]
         self.tweet_data['user'] = self.tweet_data['tweet_url'].split('/')[3]
         self.tweet_data['id'] = self.tweet_data['tweet_url'].split('/')[5]
-        if output_dir is None:
-            output_path = Path('./output')
-        else:
-            output_path = Path(output_dir)
-        storage_dir = output_path / self.tweet_data['user'] / self.tweet_data['id']
+        storage_dir = Path(self.output_dir) / self.tweet_data['user'] / self.tweet_data['id']
         Path.mkdir(storage_dir, parents=True, exist_ok=True)
         self.storage = str(storage_dir)
 
