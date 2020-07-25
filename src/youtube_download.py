@@ -19,7 +19,6 @@ class YouTubeDownloader:
     else:
         home = os.path.expanduser("~")
         SAVE_PATH = os.path.join(home, "Downloads")
-    SAVE_PATH = os.getcwd()
     OS_SAVE_PATH = SAVE_PATH
     CHANNEL_SAVE_PATH = None
     num_cores = None
@@ -47,7 +46,7 @@ class YouTubeDownloader:
 
         self.log.info("YouTube Download: Initialized")
         self.num_cores = 2
-        self.set_save_path(os.getcwd())
+        self.set_save_path(self.SAVE_PATH)
         print("INIT CWD: ", self.SAVE_PATH)
         self.import_ffmpeg()
 
