@@ -1,0 +1,3 @@
+[console_scripts]
+pytubeX = pytube.cli:main
+

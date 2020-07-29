@@ -402,7 +402,10 @@ class YouTubeDownloader:
                 try:
                     # object creation using YouTube which was imported in the beginning
                     print("Downloading Link: ", i)
-                    self.yt = YouTube(i)
+                    #print("YouTube Obj: ", YouTube(i))
+                    self.yt, test = YouTube(i)
+                    print("YouTube Object: ", self.yt)
+                    print("TEST OBJ: ", test)
                     if self.yt.title == "YouTube":
                         print("Title is YouTube, retrying")
                     else:
