@@ -201,9 +201,13 @@ See also the list of [contributors](https://github.com/your/project/contributors
 * tkthread - tclthread
 * FFMPEG - All credits to the FFMPEG team for the audio/video conversions
 ## Pip Tips
-#### To update pip:
+#### To update pip in Windows:
 ```
 pip install --upgrade pip
+```
+#### To update pip in Linux:
+```
+/bin/python3.8 -m pip install --upgrade pip
 ```
 #### To update all python packages in venv:
 ```
@@ -215,7 +219,7 @@ pip freeze | %{$_.split('==')[0]} | %{pip install --upgrade $_}
 ```
 #### To update all python packages in Linux:
 ```
-pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
+/bin/python3.8 -m pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
 ```
 #### To generate requirements file from venv:
 ```
