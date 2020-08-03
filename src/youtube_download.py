@@ -220,7 +220,9 @@ class YouTubeDownloader:
                         print("Title is YouTube, retrying")
                     else:
                         print("Saving Video: ", self.yt.title)
-                        self.title_clean = re.sub(r"[^A-Za-z0-9_']", '', self.yt.title.replace(" ", "_"))
+                        self.title_clean = re.sub(r"[^A-Za-z0-9_]", '', self.yt.title.replace(" ", "_"))
+                        self.title_clean = self.title_clean.replace("'", "")
+                        self.title_clean = self.title_clean.replace('"', '')
                         self.description_clean = re.sub(r'[^A-Za-z0-9_ ]', '', self.yt.description.replace("\n", ""))
                         self.author_clean = re.sub(r'[^A-Za-z0-9_ ]', '', self.yt.author.replace("\n", ""))
                         print("Clean Author: ", self.author_clean)
