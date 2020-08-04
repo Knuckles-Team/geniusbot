@@ -51,7 +51,8 @@ includes = ['os', 'sys', 'ctypes', 'pathlib', 'logging', 'urllib.request', 'json
 
 packages = includes
 
-excludes = ['PyQt4', 'PyQt5', 'Tkinter',  'cryptography',  'packaging', 'spaCy', 'scipy.spatial.cKDTree']
+excludes = ['PyQt4', 'PyQt5', 'Tkinter',  'cryptography',  'packaging', 'spaCy', 'scipy.spatial.cKDTree',
+            'matplotlib.tests', 'numpy.random._examples', 'cytpes.test']
 build_exe_options = {
     'packages': packages,
     'includes': includes,
