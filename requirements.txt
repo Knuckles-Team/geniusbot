@@ -37,10 +37,10 @@ parso
 jedi
 backcall
 pygments
-ipython
+#ipython
 pyzmq
-jupyter-client
-ipykernel
+#jupyter-client
+#ipykernel
 Send2Trash
 prometheus-client
 pywinpty
