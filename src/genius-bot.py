@@ -848,7 +848,7 @@ class WebArchiveFrame(tk.Frame):
                 f"{math.ceil((self.progress_bar_value_web_archive / self.progress_bar_max_value_web_archive) * 100)}%"))
             # Check to see if screenshot capture is enabled to launch browser
             if self.web_config_screenshot_value.get() == 1:
-                self.web_archive.launch_browser()
+                self.web_archive.launch_browser(len(self.url_list_web_archive))
             i = 0
             for url in self.url_list_web_archive:
                 self.web_archive.append_link(url=url)

@@ -27,7 +27,7 @@ class WebPageArchive:
         home = os.path.expanduser("~")
         SAVE_PATH = os.path.join(home, "Downloads")
     OS_SAVE_PATH = SAVE_PATH
-    driver = None
+    driver = []
     capabilities = None
     chrome_options = webdriver.ChromeOptions()
     # screenshotter = None
@@ -76,11 +76,15 @@ class WebPageArchive:
         # This will now disable the extension I add so Comment it out
         # self.chrome_options.add_argument('--disable-extensions')
 
-    def launch_browser(self):
+    def launch_browser(self, browser_count):
         try:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
                                            desired_capabilities=self.capabilities,
                                            chrome_options=self.chrome_options)
+            #for browser in browser_count:
+            #    self.driver.append(webdriver.Chrome(executable_path=ChromeDriverManager().install(),
+            #                               desired_capabilities=self.capabilities,
+            #                               chrome_options=self.chrome_options))
         except Exception as e:
             print("Could not open with Latest Chrome Version", e)
 

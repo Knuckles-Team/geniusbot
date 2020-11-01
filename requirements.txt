@@ -1,7 +1,7 @@
 setuptools
 wheel
 autoconf
-pytubeX
+git+https://github.com/nficano/pytube
 regex
 requests
 tqdm
