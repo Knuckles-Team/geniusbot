@@ -7,6 +7,7 @@ requests
 tqdm
 selenium
 mutagen
+pyriscope
 tkthread
 pillow
 twitter_scraper

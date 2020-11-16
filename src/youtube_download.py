@@ -131,13 +131,9 @@ class YouTubeDownloader:
 
     # This will make a directory for the videos being Downloaded
     def make_channel_directory(self):
-        self.set_channel_save_path(self.author_clean)
-        '''if platform.system() == "Linux":
-            self.SAVE_PATH = f'{str(self.SAVE_PATH)}/{str(self.author_clean)}'
-        else:
-            self.SAVE_PATH = f'{str(self.SAVE_PATH)}\\{str(self.author_clean)}'''
         print("Directory to be created: ", self.CHANNEL_SAVE_PATH)
         if self.author_clean != "":
+            self.set_channel_save_path(self.author_clean)
             try:
                 # Create target Directory
                 os.mkdir(self.CHANNEL_SAVE_PATH)
