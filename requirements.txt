@@ -5,6 +5,7 @@ git+https://github.com/nficano/pytube
 regex
 requests
 tqdm
+git+https://github.com/jiangwen365/pypyodbc@044227a7c67e5322f4ec4368c92680d9a696bc44
 selenium
 mutagen
 pyriscope
@@ -26,7 +27,6 @@ webdriver-manager
 pandas_profiling
 ipython-genutils
 traitlets
-jupyter-core
 pyrsistent
 jsonschema
 nbformat
@@ -38,10 +38,7 @@ parso
 jedi
 backcall
 pygments
-#ipython
 pyzmq
-#jupyter-client
-#ipykernel
 Send2Trash
 prometheus-client
 pywinpty
@@ -61,7 +58,6 @@ phik
 xlsxwriter
 paramiko
 cx_oracle
-pypyodbc
 sqlalchemy
 pyhive
 cx-Freeze
