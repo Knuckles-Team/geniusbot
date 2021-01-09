@@ -85,6 +85,7 @@ class WebPageArchive:
             #    self.driver.append(webdriver.Chrome(executable_path=ChromeDriverManager().install(),
             #                               desired_capabilities=self.capabilities,
             #                               chrome_options=self.chrome_options))
+
         except Exception as e:
             print("Could not open with Latest Chrome Version", e)
 
@@ -141,7 +142,7 @@ class WebPageArchive:
 
     def read_url(self, url, zoom_percentage):
         # Comment out fullscreen_window, it will actually make it un-fullscreen
-        # self.driver.fullscreen_window()
+        #self.driver.fullscreen_window()
         try:
             self.driver.get(url)
             self.set_zoom_level(zoom_percentage)
