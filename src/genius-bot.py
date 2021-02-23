@@ -1212,13 +1212,16 @@ class ReportMergeFrame(tk.Frame):
         self.join_type_outer_image_path = f'{os.curdir}/img/img_fulljoin.png'
         self.join_type_append_image_path = f'{os.curdir}/img/img_append.png'
         if os.path.isfile(self.join_type_inner_image_path):
-            print("File Found")
-        else:
+            print("File Found in current directory: " + self.join_type_inner_image_path)
+        elif os.path.isfile(f'{os.pardir}/img/img_innerjoin.png'):
+            print("File Found in parent directory: " + f'{os.pardir}/img/img_innerjoin.png')
             self.join_type_inner_image_path = f'{os.pardir}/img/img_innerjoin.png'
             self.join_type_left_image_path = f'{os.pardir}/img/img_leftjoin.png'
             self.join_type_right_image_path = f'{os.pardir}/img/img_rightjoin.png'
             self.join_type_outer_image_path = f'{os.pardir}/img/img_fulljoin.png'
             self.join_type_append_image_path = f'{os.pardir}/img/img_append.png'
+        else:
+            print("Could not find image directory")
         self.join_type_inner_image = Image.open(self.join_type_inner_image_path)
         self.join_type_left_image = Image.open(self.join_type_left_image_path)
         self.join_type_right_image = Image.open(self.join_type_right_image_path)
@@ -1234,8 +1237,15 @@ class ReportMergeFrame(tk.Frame):
         self.join_type_right_image_widget = ImageTk.PhotoImage(self.join_type_right_image)
         self.join_type_outer_image_widget = ImageTk.PhotoImage(self.join_type_outer_image)
         self.join_type_append_image_widget = ImageTk.PhotoImage(self.join_type_append_image)
+
+        # image_open = Image.open(self.join_type_inner_image_path)
+        # image_open.thumbnail((128, 93))
+        # image = ImageTk.PhotoImage(image_open)
+        # self.join_type_inner_image_panel = ttk.Label(lower_rm_frame, image=image,
+        #                                              anchor='center')
+
         self.join_type_inner_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_inner_image_widget,
-                                                     anchor='center')
+                                                    anchor='center')
         self.join_type_left_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_left_image_widget,
                                                     anchor='center')
         self.join_type_right_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_right_image_widget,

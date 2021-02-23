@@ -8,9 +8,8 @@ tqdm
 git+https://github.com/jiangwen365/pypyodbc@044227a7c67e5322f4ec4368c92680d9a696bc44
 selenium
 mutagen
-pyriscope
 tkthread
-pillow
+Pillow
 twitter_scraper
 matplotlib
 numpy
