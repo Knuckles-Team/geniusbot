@@ -1232,17 +1232,11 @@ class ReportMergeFrame(tk.Frame):
         self.join_type_right_image = self.join_type_right_image.resize((128, 93), Image.ANTIALIAS)
         self.join_type_outer_image = self.join_type_outer_image.resize((128, 93), Image.ANTIALIAS)
         self.join_type_append_image = self.join_type_append_image.resize((128, 93), Image.ANTIALIAS)
-        self.join_type_inner_image_widget = ImageTk.PhotoImage(self.join_type_inner_image)
-        self.join_type_left_image_widget = ImageTk.PhotoImage(self.join_type_left_image)
-        self.join_type_right_image_widget = ImageTk.PhotoImage(self.join_type_right_image)
-        self.join_type_outer_image_widget = ImageTk.PhotoImage(self.join_type_outer_image)
-        self.join_type_append_image_widget = ImageTk.PhotoImage(self.join_type_append_image)
-
-        # image_open = Image.open(self.join_type_inner_image_path)
-        # image_open.thumbnail((128, 93))
-        # image = ImageTk.PhotoImage(image_open)
-        # self.join_type_inner_image_panel = ttk.Label(lower_rm_frame, image=image,
-        #                                              anchor='center')
+        self.join_type_inner_image_widget = ImageTk.PhotoImage(self.join_type_inner_image, master=lower_rm_frame)
+        self.join_type_left_image_widget = ImageTk.PhotoImage(self.join_type_left_image, master=lower_rm_frame)
+        self.join_type_right_image_widget = ImageTk.PhotoImage(self.join_type_right_image, master=lower_rm_frame)
+        self.join_type_outer_image_widget = ImageTk.PhotoImage(self.join_type_outer_image, master=lower_rm_frame)
+        self.join_type_append_image_widget = ImageTk.PhotoImage(self.join_type_append_image, master=lower_rm_frame)
 
         self.join_type_inner_image_panel = ttk.Label(lower_rm_frame, image=self.join_type_inner_image_widget,
                                                     anchor='center')
