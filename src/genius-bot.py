@@ -376,6 +376,7 @@ class YouTubeFrame(tk.Frame):
         bottom_frame.grid(row=4, column=0, sticky='NSEW')
 
     def youtube_download(self):
+        print("FileType="+self.file_type.get())
         if self.file_type.get() == "Video":
             self.download_video(quality=self.video_quality_type.get())
         elif self.file_type.get() == "Audio":
@@ -833,6 +834,7 @@ class WebArchiveFrame(tk.Frame):
         self.url_list_web_archive = list(dict.fromkeys(self.url_list_web_archive))
         self.progress_bar_max_value_web_archive = len(self.url_list_web_archive)
         if self.progress_bar_max_value_web_archive > 0:
+            print(f'Downloading {len(self.url_list_web_archive)} URL(s)')
             self.status.set(f'Downloading {len(self.url_list_web_archive)} URL(s)')
             self.web_archive_button["state"] = "disabled"
             self.web_add_url_button["state"] = "disabled"
