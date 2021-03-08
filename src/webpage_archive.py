@@ -32,7 +32,7 @@ class WebPageArchive:
     capabilities = None
     chrome_options = webdriver.ChromeOptions()
     # screenshotter = None
-    DEFAULT_IMAGE_FORMAT = 'JPEG'
+    DEFAULT_IMAGE_FORMAT = 'PNG'
     DEFAULT_IMAGE_QUALITY = 80
     urls = []
     twitter_urls = []
