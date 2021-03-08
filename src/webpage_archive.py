@@ -14,6 +14,7 @@ import piexif
 
 from twitter_scraper import get_tweets
 from selenium import webdriver
+from log import Log
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
@@ -45,7 +46,8 @@ class WebPageArchive:
         if logger:
             self.log = logger
         else:
-            self.log = None  # Replace with log call in logger class
+            self.log = Log()
+            self.log.init_logging()
         self.log.info("Initializing Web Archive Complete!")
         self.capabilities = {
             'self.browserName': 'chrome',
@@ -76,7 +78,7 @@ class WebPageArchive:
         # This will now disable the extension I add so Comment it out
         # self.chrome_options.add_argument('--disable-extensions')
 
-    def launch_browser(self, browser_count):
+    def launch_browser(self, browser_count=None):
         try:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
                                            desired_capabilities=self.capabilities,
@@ -362,18 +364,17 @@ class WebPageArchive:
         old_height = self.driver.get_window_size()['height']
         self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
 
+# Usage
+if __name__ == "__main__":
+    # Create Object
+    filename="./links.txt"
+    webarchive_urls = open(f'{filename}', 'r')
+    test = WebPageArchive()
+    test.launch_browser()
+    for url in webarchive_urls:
+        test.fullpage_screenshot(f'{url}')
+    test.quit_driver()
 
-'''
-test = WebPageArchive()
-test.twitter_archiver("realdonaldtrump", export=True, filename="twitter_export", filetype="csv", screenshot=True, pages=1)
-'''
-# test.twitter_archiver("realdonaldtrump", filename="twitter_export", filetype="csv", screenshot=False, pages=1)
-'''
-test = WebPageArchive()
-test.launch_browser()
-test.fullpage_screenshot('https://www.geeksforgeeks.org/how-to-get-title-of-a-webpage-using-selenium-in-python/')
-test.quit_driver()
-'''
 # test.read_url('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/')
 # test.save_webpage('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/', 'TEST_Q')
 # test.test_fullpage_screenshot()
