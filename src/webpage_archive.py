@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
+import getopt
+import fileinput
 import time
 import os
 import math
@@ -83,13 +86,18 @@ class WebPageArchive:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
                                            desired_capabilities=self.capabilities,
                                            chrome_options=self.chrome_options)
-            #for browser in browser_count:
+            # for browser in browser_count:
             #    self.driver.append(webdriver.Chrome(executable_path=ChromeDriverManager().install(),
             #                               desired_capabilities=self.capabilities,
             #                               chrome_options=self.chrome_options))
 
         except Exception as e:
             print("Could not open with Latest Chrome Version", e)
+
+    def open_file(self, file):
+        webarchive_urls = open(file, 'r')
+        for url in webarchive_urls:
+            self.append_link(url)
 
     def append_link(self, url):
         print("URL Appended: ", url)
@@ -144,7 +152,7 @@ class WebPageArchive:
 
     def read_url(self, url, zoom_percentage):
         # Comment out fullscreen_window, it will actually make it un-fullscreen
-        #self.driver.fullscreen_window()
+        # self.driver.fullscreen_window()
         try:
             self.driver.get(url)
             self.set_zoom_level(zoom_percentage)
@@ -165,7 +173,31 @@ class WebPageArchive:
         scroll_height = self.get_scroll_height()
         self.remove_fixed_elements(inner_height, scroll_height)
 
-    def screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
+    def clean_url(self):
+        for url_index in range(0, len(self.urls)):
+            self.urls[url_index] = re.sub('^chrome:.*$', '', self.urls[url_index])
+            self.urls[url_index] = re.sub('^chrome-native:.*$', '', self.urls[url_index])
+            self.urls[url_index] = re.sub('^.*facebook.*$', '', self.urls[url_index])
+            self.urls[url_index] = re.sub('m.youtube', 'www.youtube', self.urls[url_index])
+            self.urls[url_index] = re.sub('mobile.twitter', 'twitter', self.urls[url_index])
+            self.urls[url_index] = re.sub('//m.', 'www.', self.urls[url_index])
+            self.urls[url_index] = self.urls[url_index].rstrip(os.linesep)
+        try:
+            self.urls.remove('\n')
+        except ValueError:
+            print("No Newlines Found")
+        try:
+            self.urls.remove('')
+        except ValueError:
+            print("No Empty Strings Found")
+
+        self.urls = list(dict.fromkeys(filter(None, self.urls)))
+        print(f'URLS #: {len(self.urls)}')
+        for url_index in range(0, len(self.urls)):
+            print(f'# {url_index} URL: {self.urls[url_index]}')
+
+    def screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT,
+                   quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url, zoom_percentage)
         print("Quality: ", quality)
         self.set_scrollbar(self.HIDDEN_SCROLL_BAR)
@@ -189,7 +221,8 @@ class WebPageArchive:
                 print("Title: ", title)
                 self.driver.save_screenshot(f'{self.SAVE_PATH}/{title}.{filetype}')
 
-    def fullpage_screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT, quality=DEFAULT_IMAGE_QUALITY):
+    def fullpage_screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT,
+                            quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url, zoom_percentage)
         if filename:
             title = re.sub('[\\\\/:"*?<>|.,\']', '', filename)
@@ -364,17 +397,53 @@ class WebPageArchive:
         old_height = self.driver.get_window_size()['height']
         self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
 
-# Usage
-if __name__ == "__main__":
-    # Create Object
-    filename="./links.txt"
-    webarchive_urls = open(f'{filename}', 'r')
-    test = WebPageArchive()
-    test.launch_browser()
-    for url in webarchive_urls:
-        test.fullpage_screenshot(f'{url}')
-    test.quit_driver()
 
-# test.read_url('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/')
-# test.save_webpage('https://waveguide.blog/tesla-hairpin-circuit-stout-copper-bars-replication/', 'TEST_Q')
-# test.test_fullpage_screenshot()
+def main(argv):
+    filename = "./links.txt"
+    archive = WebPageArchive()
+    clean_flag = False
+    file_flag = False
+
+    try:
+        opts, args = getopt.getopt(argv, "hcd:f:l:t:", ["help", "clean", "directory", "file=", "links=", "type="])
+    except getopt.GetoptError:
+        print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d ~/Downloads')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads"')
+            sys.exit()
+        elif opt in ("-c", "--clean"):
+            clean_flag = True
+        elif opt in ("-d", "--directory"):
+            archive.set_save_path(arg)
+        elif opt in ("-f", "--file"):
+            file_flag = True
+            filename = arg
+        elif opt in ("-l", "--links"):
+            url_list = arg.split(",")
+            for url in url_list:
+                archive.append_link(url)
+        elif opt in ("-t", "--type"):
+            if arg == "PNG" or arg == "png" or arg == "JPG" or arg == "jpg" or arg == "JPEG" or arg == "jpeg":
+                archive.DEFAULT_IMAGE_FORMAT = f'{arg}'
+
+    if file_flag:
+        print(f"Opening File: {filename}")
+        archive.open_file(filename)
+
+    if clean_flag:
+        print(f"Cleaning Links")
+        archive.clean_url()
+
+    archive.launch_browser()
+    for url in archive.urls:
+        archive.fullpage_screenshot(f'{url}')
+    archive.quit_driver()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print('Main Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads"')
+        sys.exit(2)
+    main(sys.argv[1:])
