@@ -316,8 +316,9 @@ class WebPageArchive:
         actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
 
         # Screenshot all slices
+        print("Making Screen Slices")
         slices = self.make_screen_slices(inner_height, scroll_height)
-
+        print("Glueing Slices")
         self.glue_slices_into_image(slices, file_name, image_options, actual_page_size, device_pixel_ratio,
                                     inner_height,
                                     scroll_height)
@@ -346,6 +347,20 @@ class WebPageArchive:
             image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
         except Exception as e:
             print("Could not save image error: ", e)
+            device_pixel_ratio = self.get_device_pixel_ratio()
+            initial_offset = self.get_y_offset()
+            inner_height = self.get_inner_height()
+            scroll_height = self.get_scroll_height()
+            actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
+            image_file = Image.new('RGB', (slices[0].size[0], actual_page_size))
+            for i, img in enumerate(slices[:-1]):
+                image_file.paste(img, (0, math.ceil(i * inner_height * device_pixel_ratio)))
+            else:
+                image_file.paste(slices[-1], (0, math.ceil((scroll_height - inner_height) * device_pixel_ratio)))
+            try:
+                image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
+            except Exception as e:
+                print("Could not save image error: ", e)
 
     def remove_fixed_elements(self, inner_height, scroll_height):
         for offset in range(0, scroll_height + 1, inner_height):
@@ -403,15 +418,16 @@ def main(argv):
     archive = WebPageArchive()
     clean_flag = False
     file_flag = False
+    zoom_level = 100
 
     try:
-        opts, args = getopt.getopt(argv, "hcd:f:l:t:", ["help", "clean", "directory", "file=", "links=", "type="])
+        opts, args = getopt.getopt(argv, "hcd:f:l:t:z:", ["help", "clean", "directory", "file=", "links=", "type=", "zoom"])
     except getopt.GetoptError:
-        print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d ~/Downloads')
+        print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d ~/Downloads -z 150')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads"')
+            print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 150')
             sys.exit()
         elif opt in ("-c", "--clean"):
             clean_flag = True
@@ -427,6 +443,8 @@ def main(argv):
         elif opt in ("-t", "--type"):
             if arg == "PNG" or arg == "png" or arg == "JPG" or arg == "jpg" or arg == "JPEG" or arg == "jpeg":
                 archive.DEFAULT_IMAGE_FORMAT = f'{arg}'
+        elif opt in ("-z", "--zoom"):
+            zoom_level = arg
 
     if file_flag:
         print(f"Opening File: {filename}")
@@ -437,13 +455,14 @@ def main(argv):
         archive.clean_url()
 
     archive.launch_browser()
+
     for url in archive.urls:
-        archive.fullpage_screenshot(f'{url}')
+        archive.fullpage_screenshot(url=f'{url}', zoom_percentage=zoom_level)
     archive.quit_driver()
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print('Main Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads"')
+        print('Main Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 100')
         sys.exit(2)
     main(sys.argv[1:])
