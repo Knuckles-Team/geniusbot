@@ -12,7 +12,7 @@ import pandas as pd
 
 from io import BytesIO
 
-from PIL import Image
+from PIL import Image, ImageChops
 import piexif
 
 from twitter_scraper import get_tweets
@@ -43,6 +43,10 @@ class WebPageArchive:
     log = None
     HIDDEN_SCROLL_BAR = 'hidden'
     DEFAULT_SCROLL_BAR = 'visible'
+    screenshot_success = False
+    screenshot_success_alt = False
+    zoom_level = 100
+    dpi = 1.0
 
     def __init__(self, logger=None):
         print("test")
@@ -78,6 +82,9 @@ class WebPageArchive:
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument('--disable-notifications')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
+        self.chrome_options.add_argument('--dns-prefetch-disable')
+        self.chrome_options.add_argument(f'--force-device-scale-factor={self.dpi}')
+        self.chrome_options.add_argument(f'--high-dpi-support={self.dpi}')
         # This will now disable the extension I add so Comment it out
         # self.chrome_options.add_argument('--disable-extensions')
 
@@ -150,6 +157,12 @@ class WebPageArchive:
         print("Setting Zoom to: ", zoom_percentage)
         self.driver.execute_script(f"document.body.style.zoom='{zoom_percentage}%'")
 
+    def save_zoom_level(self, zoom_percentage=100):
+        self.zoom_level = zoom_percentage
+
+    def save_dpi_level(self, dpi=1):
+        self.dpi = dpi
+
     def read_url(self, url, zoom_percentage):
         # Comment out fullscreen_window, it will actually make it un-fullscreen
         # self.driver.fullscreen_window()
@@ -180,7 +193,7 @@ class WebPageArchive:
             self.urls[url_index] = re.sub('^.*facebook.*$', '', self.urls[url_index])
             self.urls[url_index] = re.sub('m.youtube', 'www.youtube', self.urls[url_index])
             self.urls[url_index] = re.sub('mobile.twitter', 'twitter', self.urls[url_index])
-            self.urls[url_index] = re.sub('//m.', 'www.', self.urls[url_index])
+            self.urls[url_index] = re.sub('//m\.', 'www.', self.urls[url_index])
             self.urls[url_index] = self.urls[url_index].rstrip(os.linesep)
         try:
             self.urls.remove('\n')
@@ -227,7 +240,6 @@ class WebPageArchive:
         if filename:
             title = re.sub('[\\\\/:"*?<>|.,\']', '', filename)
             title = (title[:140]) if len(title) > 140 else title
-            self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
         else:
             print("driver title ", self.driver.title)
             print("Url, ", url)
@@ -235,14 +247,99 @@ class WebPageArchive:
                 title = re.sub('[\\\\/:"*?<>|.,\']', '', self.driver.title)
                 title = title.replace(" ", "_")
                 title = (title[:140]) if len(title) > 140 else title
-                print("Title: ", title)
-                self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
             else:
                 title = re.sub('[\\\\/:"*?<>.,|\']', '', url)
                 title = title.replace(" ", "_")
                 title = (title[:140]) if len(title) > 140 else title
-                print("Title: ", title)
-                self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
+            print("Title: ", title)
+        self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
+        if not self.screenshot_success:
+            self.fullpage_screenshot_alternative(url=f'{url}', zoom_percentage=zoom_percentage, filename=f'{title}',
+                                                 filetype=filetype, quality=quality)
+
+    def fullpage_screenshot_alternative(self, url, zoom_percentage=100, filename=None, **kwargs):
+        zeroth_ifd = {
+            piexif.ImageIFD.Make: u"GeniusBot",
+            # piexif.ImageIFD.XResolution: (96, 1),
+            # piexif.ImageIFD.YResolution: (96, 1),
+            piexif.ImageIFD.Software: u"GeniusBot",
+            piexif.ImageIFD.ImageDescription: f"{url}".encode('utf-8'),
+        }
+        exif_ifd = {
+            piexif.ExifIFD.DateTimeOriginal: u"Today",
+            piexif.ExifIFD.UserComment: f"{url}".encode('utf-8'),
+            # piexif.ExifIFD.LensMake: u"LensMake",
+            # piexif.ExifIFD.Sharpness: 65535,
+            # piexif.ExifIFD.LensSpecification: ((1, 1), (1, 1), (1, 1), (1, 1)),
+        }
+        gps_ifd = {
+            piexif.GPSIFD.GPSVersionID: (2, 0, 0, 0),
+            # piexif.GPSIFD.GPSAltitudeRef: 1,
+            piexif.GPSIFD.GPSDateStamp: u"1999:99:99 99:99:99",
+        }
+        first_ifd = {
+            piexif.ImageIFD.Make: u"GeniusBot",
+            # piexif.ImageIFD.XResolution: (40, 1),
+            # piexif.ImageIFD.YResolution: (40, 1),
+            piexif.ImageIFD.Software: u"GeniusBot"
+        }
+        exif_dict = {"0th": zeroth_ifd, "Exif": exif_ifd, "GPS": gps_ifd, "1st": first_ifd}  # , "thumbnail": thumbnail}
+        exif_bytes = piexif.dump(exif_dict)
+        # define necessary image properties
+        image_options = dict()
+        # This will add the URL of the webite to the description
+        image_options['exif'] = exif_bytes
+        image_options['format'] = kwargs.get('format') or self.DEFAULT_IMAGE_FORMAT
+        image_options['quality'] = kwargs.get('quality') or self.DEFAULT_IMAGE_QUALITY
+        filetype = kwargs.get('format') or self.DEFAULT_IMAGE_FORMAT
+        quality = kwargs.get('quality') or self.DEFAULT_IMAGE_QUALITY
+        print("Attempting alternative screenshot method")
+        self.driver.execute_script(f"window.scrollTo({0}, {0})")
+        total_width = self.driver.execute_script("return document.body.offsetWidth")
+        total_height = self.driver.execute_script("return document.body.parentNode.scrollHeight")
+        viewport_width = self.driver.execute_script("return document.body.clientWidth")
+        viewport_height = self.driver.execute_script("return window.innerHeight")
+        rectangles = []
+        i = 0
+        while i < total_height:
+            ii = 0
+            top_height = i + viewport_height
+            if top_height > total_height:
+                top_height = total_height
+            while ii < total_width:
+                top_width = ii + viewport_width
+                if top_width > total_width:
+                    top_width = total_width
+                rectangles.append((ii, i, top_width, top_height))
+                ii = ii + viewport_width
+            i = i + viewport_height
+        stitched_image = Image.new('RGB', (total_width, total_height))
+        previous = None
+        part = 0
+
+        for rectangle in rectangles:
+            if not previous is None:
+                self.driver.execute_script("window.scrollTo({0}, {1})".format(rectangle[0], rectangle[1]))
+            file_name = "part_{0}.png".format(part)
+            self.driver.get_screenshot_as_file(file_name)
+            screenshot = Image.open(file_name)
+
+            if rectangle[1] + viewport_height > total_height:
+                offset = (rectangle[0], total_height - viewport_height)
+            else:
+                offset = (rectangle[0], rectangle[1])
+            stitched_image.paste(screenshot, offset)
+            del screenshot
+            os.remove(file_name)
+            part = part + 1
+            previous = rectangle
+        print(f"Saving image to: {self.SAVE_PATH}/{filename}.{filetype}'")
+        stitched_image.save(f"{self.SAVE_PATH}/{filename}.{filetype}", **image_options)
+        print("Finishing chrome full page screenshot workaround...")
+        if not ImageChops.invert(stitched_image).getbbox() or not stitched_image.getbbox():
+            print("Could not save full page screenshot, saving single page screenshot instead")
+            self.screenshot(url=f'{url}', zoom_percentage=zoom_percentage, filename=filename, filetype=filetype,
+                            quality=quality)
 
     def set_save_path(self, save_path):
         self.SAVE_PATH = save_path
@@ -297,22 +394,12 @@ class WebPageArchive:
         if device_pixel_ratio > 1:
             self.resize_window(device_pixel_ratio)
 
-        inner_height = self.get_inner_height()
-        scroll_height = self.get_scroll_height()
-        print("Inner Scroll Height Before: ", inner_height)
-        print("Scroll Height Before: ", scroll_height)
         if hide_scrollbar:
             self.set_scrollbar(self.HIDDEN_SCROLL_BAR)
 
-        # Remove Sticky and Fixed Elements First
-        # self.remove_fixed_elements(inner_height, scroll_height)
-        print("Inner Scroll Height After: ", inner_height)
-        print("Scroll Height After: ", scroll_height)
-        # Get New Screensize after removing fixed elements
-        device_pixel_ratio = self.get_device_pixel_ratio()
-        initial_offset = self.get_y_offset()
         inner_height = self.get_inner_height()
         scroll_height = self.get_scroll_height()
+        initial_offset = self.get_y_offset()
         actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
 
         # Screenshot all slices
@@ -345,22 +432,14 @@ class WebPageArchive:
             image_file.paste(slices[-1], (0, math.ceil((scroll_height - inner_height) * device_pixel_ratio)))
         try:
             image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
+            self.screenshot_success = True
         except Exception as e:
             print("Could not save image error: ", e)
-            device_pixel_ratio = self.get_device_pixel_ratio()
-            initial_offset = self.get_y_offset()
-            inner_height = self.get_inner_height()
-            scroll_height = self.get_scroll_height()
-            actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
-            image_file = Image.new('RGB', (slices[0].size[0], actual_page_size))
-            for i, img in enumerate(slices[:-1]):
-                image_file.paste(img, (0, math.ceil(i * inner_height * device_pixel_ratio)))
-            else:
-                image_file.paste(slices[-1], (0, math.ceil((scroll_height - inner_height) * device_pixel_ratio)))
             try:
-                image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
+                os.remove(f'{self.SAVE_PATH}/{file_name}')
             except Exception as e:
-                print("Could not save image error: ", e)
+                print (f"Could not remove file, does it exist? {e}")
+            self.screenshot_success = False
 
     def remove_fixed_elements(self, inner_height, scroll_height):
         for offset in range(0, scroll_height + 1, inner_height):
@@ -388,6 +467,8 @@ class WebPageArchive:
         return slices
 
     def get_scroll_height(self):
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.driver.execute_script("window.scrollTo(0, 0)")
         scroll_height_js = 'return document.body.scrollHeight;'
         return self.driver.execute_script(scroll_height_js)
 
@@ -421,7 +502,8 @@ def main(argv):
     zoom_level = 100
 
     try:
-        opts, args = getopt.getopt(argv, "hcd:f:l:t:z:", ["help", "clean", "directory", "file=", "links=", "type=", "zoom"])
+        opts, args = getopt.getopt(argv, "hcd:f:l:t:z:", ["help", "clean", "directory", "dpi=", "file=", "links=", "type=",
+                                                          "zoom="])
     except getopt.GetoptError:
         print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d ~/Downloads -z 150')
         sys.exit(2)
@@ -433,6 +515,8 @@ def main(argv):
             clean_flag = True
         elif opt in ("-d", "--directory"):
             archive.set_save_path(arg)
+        elif opt == "--dpi":
+            archive.save_dpi_level(arg)
         elif opt in ("-f", "--file"):
             file_flag = True
             filename = arg
@@ -457,6 +541,7 @@ def main(argv):
     archive.launch_browser()
 
     for url in archive.urls:
+        archive.save_zoom_level(zoom_level)
         archive.fullpage_screenshot(url=f'{url}', zoom_percentage=zoom_level)
     archive.quit_driver()
 
