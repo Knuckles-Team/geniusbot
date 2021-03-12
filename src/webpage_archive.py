@@ -88,16 +88,11 @@ class WebPageArchive:
         # This will now disable the extension I add so Comment it out
         # self.chrome_options.add_argument('--disable-extensions')
 
-    def launch_browser(self, browser_count=None):
+    def launch_browser(self):
         try:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
                                            desired_capabilities=self.capabilities,
                                            chrome_options=self.chrome_options)
-            # for browser in browser_count:
-            #    self.driver.append(webdriver.Chrome(executable_path=ChromeDriverManager().install(),
-            #                               desired_capabilities=self.capabilities,
-            #                               chrome_options=self.chrome_options))
-
         except Exception as e:
             print("Could not open with Latest Chrome Version", e)
 
@@ -171,15 +166,15 @@ class WebPageArchive:
             self.set_zoom_level(zoom_percentage)
             self.driver.execute_script('return document.readyState;')
         except Exception as e:
-            print("Could not access website: ", e)
+            self.log.info(f"Could not access website: {e}")
         # Tries to Remove any alerts that may appear on the page
         try:
             WebDriverWait(self.driver, 4).until(ec.alert_is_present(), 'Timed out waiting for any notification alerts')
             alert = self.driver.switch_to.alert
             alert.accept()
-            print("alert accepted")
+            self.log.info("WebPage Alert Accepted!")
         except TimeoutException:
-            print("no alert")
+            self.log.info("No WebPage Alert!")
         time.sleep(1)
         # Tries to remove any persistent scrolling headers/fixed/sticky'd elements on the page
         inner_height = self.get_inner_height()
@@ -212,26 +207,24 @@ class WebPageArchive:
     def screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT,
                    quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url, zoom_percentage)
-        print("Quality: ", quality)
+        self.log.info(f"Quality: {quality}")
         self.set_scrollbar(self.HIDDEN_SCROLL_BAR)
         if filename:
             title = re.sub('[\\\\/:"*?<>|\']', '', filename)
             title = (title[:140]) if len(title) > 140 else title
             self.driver.save_screenshot(f'{self.SAVE_PATH}/{title}.{filetype}')
         else:
-            print("driver title ", self.driver.title)
-            print("Url, ", url)
+            self.log.info(f"driver title {self.driver.title}")
+            self.log.info(f"URL, {url}")
             if self.driver.title:
                 title = re.sub('[\\\\/:"*?<>|\']', '', self.driver.title)
                 title = title.replace(" ", "_")
                 title = (title[:140]) if len(title) > 140 else title
-                print("Title: ", title)
                 self.driver.save_screenshot(f'{self.SAVE_PATH}/{title}.{filetype}')
             else:
                 title = re.sub('[\\\\/:"*?<>|.,\']', '', url)
                 title = title.replace(" ", "_")
                 title = (title[:140]) if len(title) > 140 else title
-                print("Title: ", title)
                 self.driver.save_screenshot(f'{self.SAVE_PATH}/{title}.{filetype}')
 
     def fullpage_screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT,
@@ -241,8 +234,6 @@ class WebPageArchive:
             title = re.sub('[\\\\/:"*?<>|.,\']', '', filename)
             title = (title[:140]) if len(title) > 140 else title
         else:
-            print("driver title ", self.driver.title)
-            print("Url, ", url)
             if self.driver.title:
                 title = re.sub('[\\\\/:"*?<>|.,\']', '', self.driver.title)
                 title = title.replace(" ", "_")
@@ -251,7 +242,6 @@ class WebPageArchive:
                 title = re.sub('[\\\\/:"*?<>.,|\']', '', url)
                 title = title.replace(" ", "_")
                 title = (title[:140]) if len(title) > 140 else title
-            print("Title: ", title)
         self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
         if not self.screenshot_success:
             self.fullpage_screenshot_alternative(url=f'{url}', zoom_percentage=zoom_percentage, filename=f'{title}',
@@ -318,7 +308,7 @@ class WebPageArchive:
         part = 0
 
         for rectangle in rectangles:
-            if not previous is None:
+            if previous is not None:
                 self.driver.execute_script("window.scrollTo({0}, {1})".format(rectangle[0], rectangle[1]))
             file_name = "part_{0}.png".format(part)
             self.driver.get_screenshot_as_file(file_name)
@@ -390,7 +380,7 @@ class WebPageArchive:
 
         # Changes the ratio of the screen of the device.
         device_pixel_ratio = self.get_device_pixel_ratio()
-        print("Pixel Ratio: ", device_pixel_ratio)
+        self.log.info(f"Pixel Ratio: {device_pixel_ratio}")
         if device_pixel_ratio > 1:
             self.resize_window(device_pixel_ratio)
 
@@ -403,9 +393,9 @@ class WebPageArchive:
         actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
 
         # Screenshot all slices
-        print("Making Screen Slices")
+        self.log.info("Making Screen Slices")
         slices = self.make_screen_slices(inner_height, scroll_height)
-        print("Glueing Slices")
+        self.log.info("Glueing Slices")
         self.glue_slices_into_image(slices, file_name, image_options, actual_page_size, device_pixel_ratio,
                                     inner_height,
                                     scroll_height)
@@ -438,7 +428,7 @@ class WebPageArchive:
             try:
                 os.remove(f'{self.SAVE_PATH}/{file_name}')
             except Exception as e:
-                print (f"Could not remove file, does it exist? {e}")
+                print(f"Could not remove file, does it exist? {e}")
             self.screenshot_success = False
 
     def remove_fixed_elements(self, inner_height, scroll_height):
@@ -502,14 +492,16 @@ def main(argv):
     zoom_level = 100
 
     try:
-        opts, args = getopt.getopt(argv, "hcd:f:l:t:z:", ["help", "clean", "directory", "dpi=", "file=", "links=", "type=",
-                                                          "zoom="])
+        opts, args = getopt.getopt(argv, "hcd:f:l:t:z:", ["help", "clean", "directory", "dpi=", "file=", "links=",
+                                                          "type=", "zoom="])
     except getopt.GetoptError:
-        print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d ~/Downloads -z 150')
+        print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> '
+              '-l "<link1,link2,link3>" -t <JPEG/PNG> -d ~/Downloads -z 150')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 150')
+            print('Usage:\npython3 webpage_archive.py -c -f <links_file.txt> '
+                  '-l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 150')
             sys.exit()
         elif opt in ("-c", "--clean"):
             clean_flag = True
@@ -548,6 +540,7 @@ def main(argv):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print('Main Usage:\npython3 webpage_archive.py -c -f <links_file.txt> -l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 100')
+        print('Main Usage:\npython3 webpage_archive.py -c -f <links_file.txt> '
+              '-l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 100')
         sys.exit(2)
     main(sys.argv[1:])
