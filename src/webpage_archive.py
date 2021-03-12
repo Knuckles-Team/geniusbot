@@ -99,7 +99,7 @@ class WebPageArchive:
             self.append_link(url)
 
     def append_link(self, url):
-        print("URL Appended: ", url)
+        self.log.info("URL Appended: ", url)
         self.urls.append(url)
         self.urls = list(dict.fromkeys(self.urls))
 
@@ -107,7 +107,7 @@ class WebPageArchive:
         return self.urls
 
     def reset_links(self):
-        print("Links Reset")
+        self.log.info("Links Reset")
         self.urls = []
 
     def twitter_archiver(self, search, export=True, filename="twitter_export", filetype='csv', screenshot=False,
@@ -186,16 +186,12 @@ class WebPageArchive:
         try:
             self.urls.remove('\n')
         except ValueError:
-            print("No Newlines Found")
+            self.log.info("No Newlines Found")
         try:
             self.urls.remove('')
         except ValueError:
-            print("No Empty Strings Found")
-
+            self.log.info("No Empty Strings Found")
         self.urls = list(dict.fromkeys(filter(None, self.urls)))
-        print(f'URLS #: {len(self.urls)}')
-        for url_index in range(0, len(self.urls)):
-            print(f'# {url_index} URL: {self.urls[url_index]}')
 
     def screenshot(self, url, zoom_percentage=100, filename=None, filetype=DEFAULT_IMAGE_FORMAT,
                    quality=DEFAULT_IMAGE_QUALITY):
