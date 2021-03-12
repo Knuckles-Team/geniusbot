@@ -333,6 +333,8 @@ class WebPageArchive:
     def set_save_path(self, save_path):
         self.SAVE_PATH = save_path
         self.SAVE_PATH = self.SAVE_PATH.replace(os.sep, '/')
+        if not os.path.exists(self.SAVE_PATH):
+            os.makedirs(self.SAVE_PATH)
         self.set_os_save_path()
 
     def set_os_save_path(self):
