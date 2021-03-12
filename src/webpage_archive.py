@@ -3,18 +3,15 @@
 
 import sys
 import getopt
-import fileinput
 import time
 import os
 import math
 import re
 import pandas as pd
-
-from io import BytesIO
-
-from PIL import Image, ImageChops
 import piexif
 
+from io import BytesIO
+from PIL import Image, ImageChops
 from twitter_scraper import get_tweets
 from selenium import webdriver
 from log import Log
@@ -149,13 +146,9 @@ class WebPageArchive:
             self.twitter_df.to_csv(f"./{filename}.{filetype}", index=False)
 
     def set_zoom_level(self, zoom_percentage=100):
-        print("Setting Zoom to: ", zoom_percentage)
-        self.driver.execute_script(f"document.body.style.zoom='{zoom_percentage}%'")
-
-    def save_zoom_level(self, zoom_percentage=100):
         self.zoom_level = zoom_percentage
 
-    def save_dpi_level(self, dpi=1):
+    def set_dpi_level(self, dpi=1):
         self.dpi = dpi
 
     def read_url(self, url, zoom_percentage):
@@ -163,7 +156,7 @@ class WebPageArchive:
         # self.driver.fullscreen_window()
         try:
             self.driver.get(url)
-            self.set_zoom_level(zoom_percentage)
+            self.driver.execute_script(f"document.body.style.zoom='{zoom_percentage}%'")
             self.driver.execute_script('return document.readyState;')
         except Exception as e:
             self.log.info(f"Could not access website: {e}")
@@ -508,7 +501,7 @@ def main(argv):
         elif opt in ("-d", "--directory"):
             archive.set_save_path(arg)
         elif opt == "--dpi":
-            archive.save_dpi_level(arg)
+            archive.set_dpi_level(arg)
         elif opt in ("-f", "--file"):
             file_flag = True
             filename = arg
@@ -533,7 +526,7 @@ def main(argv):
     archive.launch_browser()
 
     for url in archive.urls:
-        archive.save_zoom_level(zoom_level)
+        archive.set_zoom_level(zoom_level)
         archive.fullpage_screenshot(url=f'{url}', zoom_percentage=zoom_level)
     archive.quit_driver()
 
