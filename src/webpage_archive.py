@@ -99,7 +99,7 @@ class WebPageArchive:
             self.append_link(url)
 
     def append_link(self, url):
-        self.log.info("URL Appended: ", url)
+        self.log.info(f"URL Appended: {url}")
         self.urls.append(url)
         self.urls = list(dict.fromkeys(self.urls))
 
@@ -313,9 +313,19 @@ class WebPageArchive:
             part = part + 1
             previous = rectangle
         print(f"Saving image to: {self.SAVE_PATH}/{filename}.{filetype}'")
-        stitched_image.save(f"{self.SAVE_PATH}/{filename}.{filetype}", **image_options)
+        try:
+            stitched_image.save(f"{self.SAVE_PATH}/{filename}.{filetype}", **image_options)
+            self.screenshot_success_alt = True
+        except Exception as e:
+            print("Could not save image error in alternative form: ", e)
+            try:
+                os.remove(f'{self.SAVE_PATH}/{filename}.{filetype}')
+            except Exception as e:
+                print(f"Could not remove file, does it exist? {e}")
+            self.screenshot_success_alt = False
+
         print("Finishing chrome full page screenshot workaround...")
-        if not ImageChops.invert(stitched_image).getbbox() or not stitched_image.getbbox():
+        if not ImageChops.invert(stitched_image).getbbox() or not stitched_image.getbbox() or self.screenshot_success_alt is False:
             print("Could not save full page screenshot, saving single page screenshot instead")
             self.screenshot(url=f'{url}', zoom_percentage=zoom_percentage, filename=filename, filetype=filetype,
                             quality=quality)
@@ -378,6 +388,7 @@ class WebPageArchive:
 
         inner_height = self.get_inner_height()
         scroll_height = self.get_scroll_height()
+        #print(f"Scroll Height: {scroll_height}")
         initial_offset = self.get_y_offset()
         actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
 
@@ -449,7 +460,14 @@ class WebPageArchive:
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         self.driver.execute_script("window.scrollTo(0, 0)")
         scroll_height_js = 'return document.body.scrollHeight;'
-        return self.driver.execute_script(scroll_height_js)
+        scroll_height = self.driver.execute_script(scroll_height_js)
+        if scroll_height <= 0:
+            self.driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
+            self.driver.execute_script("window.scrollTo(0, 0)")
+            scroll_height_js = 'return document.documentElement.scrollHeight;'
+            scroll_height = self.driver.execute_script(scroll_height_js)
+            self.log.info(f"Scroll Height read as 0, Reading scroll height with alternative method. New height: {scroll_height}")
+        return scroll_height
 
     def get_inner_height(self):
         inner_height_js = 'return window.innerHeight;'
