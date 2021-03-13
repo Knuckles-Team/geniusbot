@@ -45,6 +45,7 @@ class WebPageArchive:
     screenshot_success_alt = False
     zoom_level = 100
     dpi = 1.0
+    max_scroll_height = 369369
 
     def __init__(self, logger=None):
         print("test")
@@ -289,10 +290,10 @@ class WebPageArchive:
             scroll_height = self.driver.execute_script(scroll_height_js)
             self.log.info(
                 f"Scroll Height read as 0, Reading scroll height with alternative method. New height: {scroll_height}")
-        max_scroll_height = 900000
-        if scroll_height > max_scroll_height:
-            self.log.info(f"Original scroll height: {scroll_height} Maximum: {max_scroll_height}")
-            scroll_height = max_scroll_height
+
+        if scroll_height > self.max_scroll_height:
+            self.log.info(f"Original scroll height: {scroll_height} Maximum: {self.max_scroll_height}")
+            scroll_height = self.max_scroll_height
         print(f"Scroll Height: {scroll_height}")
         y_offset_js = 'return window.pageYOffset;'
         initial_offset = self.driver.execute_script(y_offset_js)
@@ -461,6 +462,10 @@ class WebPageArchive:
         scroll_to_js = 'window.scrollTo(0, {});'
         scroll_height_js = 'return document.body.scrollHeight;'
         scroll_height = self.driver.execute_script(scroll_height_js)
+        if scroll_height > self.max_scroll_height:
+            self.log.info(f"Original scroll height: {scroll_height} Maximum: {self.max_scroll_height}")
+            scroll_height = self.max_scroll_height
+        print(f"Scroll Height: {scroll_height}")
         inner_height_js = 'return window.innerHeight;'
         inner_height = self.driver.execute_script(inner_height_js)
         for offset in range(0, scroll_height + 1, inner_height):
