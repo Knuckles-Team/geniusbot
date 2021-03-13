@@ -175,6 +175,9 @@ class WebPageArchive:
             self.log.info("No WebPage Alert!")
         time.sleep(1)
         # Tries to remove any persistent scrolling headers/fixed/sticky'd elements on the page
+        print("Removing Fixed Elements Scrub 1")
+        self.remove_fixed_elements()
+        print("Removing Fixed Elements Scrub 2")
         self.remove_fixed_elements()
 
     def clean_url(self):
@@ -294,7 +297,7 @@ class WebPageArchive:
         if scroll_height > self.max_scroll_height:
             self.log.info(f"Original scroll height: {scroll_height} Maximum: {self.max_scroll_height}")
             scroll_height = self.max_scroll_height
-        print(f"Scroll Height: {scroll_height}")
+        #print(f"Scroll Height: {scroll_height}")
         y_offset_js = 'return window.pageYOffset;'
         initial_offset = self.driver.execute_script(y_offset_js)
         actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
@@ -309,8 +312,8 @@ class WebPageArchive:
             slices.append(img)
             percentage = '%.3f' % ((offset / scroll_height) * 100)
             slice_count = slice_count + 1
-            print(f"Slice: {slice_count}\nPercentage: {percentage}\nTotal: {offset}/{scroll_height}\n")
-        print(f"Slice: {slice_count + 1}\nPercentage: 100%\nTotal: {scroll_height}/{scroll_height}\n")
+            print(f"Screenshot Processed: {slice_count} | Percentage: {percentage} | Total: {offset}/{scroll_height}")
+        print(f"Screenshot Processed: {slice_count + 1} | Percentage: 100% | Total: {scroll_height}/{scroll_height}")
         # Glue Slices together
         self.log.info("Glueing Slices")
         image_file = Image.new('RGB', (slices[0].size[0], actual_page_size))
@@ -448,24 +451,20 @@ class WebPageArchive:
         ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
         #time.sleep(0.2)
         ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
-        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        # for x in range(0, 100):
+        #     ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        #     print(f"Page Key Down: {x}")
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
         self.driver.execute_script("window.scrollTo(0, 0)")
-        print("Starting to remove elements")
+        #print("Starting to remove elements")
         scroll_to_js = 'window.scrollTo(0, {});'
         scroll_height_js = 'return document.body.scrollHeight;'
         scroll_height = self.driver.execute_script(scroll_height_js)
         if scroll_height > self.max_scroll_height:
             self.log.info(f"Original scroll height: {scroll_height} Maximum: {self.max_scroll_height}")
             scroll_height = self.max_scroll_height
-        print(f"Scroll Height: {scroll_height}")
+        #print(f"Scroll Height: {scroll_height}")
         inner_height_js = 'return window.innerHeight;'
         inner_height = self.driver.execute_script(inner_height_js)
         for offset in range(0, scroll_height + 1, inner_height):
@@ -485,7 +484,7 @@ class WebPageArchive:
             except Exception as e:
                 self.log.info(e)
             self.log.info("Removed elements from body")
-            print("Removed elements from body")
+            #print("Removed elements from body")
             try:
                 # Removes Any Fixed Elements from any div at top of page
                 # Removed  || getComputedStyle(elements[i]).display === 'inline-block' condition as it was removed body blocks that were inline-block
@@ -501,7 +500,7 @@ class WebPageArchive:
             except Exception as e:
                 self.log.info(e)
             self.log.info("Removed elements from all divs")
-            print("Removed elements from all divs")
+            #print("Removed elements from all divs")
             try:
                 # Removes Any Fixed Elements from any html main at top of page
                 self.driver.execute_script("""(function () { 
@@ -516,10 +515,10 @@ class WebPageArchive:
             except Exception as e:
                 self.log.info(e)
             self.log.info("Removed elements from html")
-            print("Removed elements from html")
+            #print("Removed elements from html")
             percentage = '%.3f' % ((offset / scroll_height) * 100)
-            print(f"Percentage: {percentage}\nTotal: {offset}/{scroll_height}\n")
-        print(f"Percentage: 100%\nTotal: {scroll_height}/{scroll_height}\n")
+            print(f"Web Elements Processed | Percentage: {percentage} | Total: {offset}/{scroll_height}")
+        print(f"Web Elements Processed | Percentage: 100% | Total: {scroll_height}/{scroll_height}")
         self.driver.execute_script("window.scrollTo(0, 0)")
 
     def enable_scroll(self):
@@ -582,10 +581,13 @@ def main(argv):
         archive.clean_url()
 
     archive.launch_browser()
-
+    url_count = 0
     for url in archive.urls:
         archive.set_zoom_level(zoom_level)
         archive.fullpage_screenshot(url=f'{url}', zoom_percentage=zoom_level)
+        url_count = url_count + 1
+        print(f"URLs Processed: {url_count} | Percentage: {url_count/len(archive.urls)} | Total: {url_count}/{len(archive.urls)}\n")
+
     archive.quit_driver()
 
 
