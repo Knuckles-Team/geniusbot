@@ -24,11 +24,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 
 class WebPageArchive:
-    if os.name == 'nt':
-        SAVE_PATH = f'C:\\Users\\{os.getlogin()}\\Downloads'
-    else:
-        home = os.path.expanduser("~")
-        SAVE_PATH = os.path.join(home, "Downloads")
+    home = os.path.expanduser("~")
+    SAVE_PATH = os.path.join(home, "Downloads")
     driver = []
     capabilities = None
     chrome_options = webdriver.ChromeOptions()
