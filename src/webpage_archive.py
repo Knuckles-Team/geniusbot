@@ -19,6 +19,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class WebPageArchive:
@@ -27,7 +29,6 @@ class WebPageArchive:
     else:
         home = os.path.expanduser("~")
         SAVE_PATH = os.path.join(home, "Downloads")
-    OS_SAVE_PATH = SAVE_PATH
     driver = []
     capabilities = None
     chrome_options = webdriver.ChromeOptions()
@@ -90,6 +91,9 @@ class WebPageArchive:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
                                            desired_capabilities=self.capabilities,
                                            chrome_options=self.chrome_options)
+            # Hide the scrollbar
+            scrollbar_js = 'document.documentElement.style.overflow = \"{}\"'.format(self.HIDDEN_SCROLL_BAR)
+            self.driver.execute_script(scrollbar_js)
         except Exception as e:
             print("Could not open with Latest Chrome Version", e)
 
@@ -170,9 +174,7 @@ class WebPageArchive:
             self.log.info("No WebPage Alert!")
         time.sleep(1)
         # Tries to remove any persistent scrolling headers/fixed/sticky'd elements on the page
-        inner_height = self.get_inner_height()
-        scroll_height = self.get_scroll_height()
-        self.remove_fixed_elements(inner_height, scroll_height)
+        self.remove_fixed_elements()
 
     def clean_url(self):
         for url_index in range(0, len(self.urls)):
@@ -197,7 +199,6 @@ class WebPageArchive:
                    quality=DEFAULT_IMAGE_QUALITY):
         self.read_url(url, zoom_percentage)
         self.log.info(f"Quality: {quality}")
-        self.set_scrollbar(self.HIDDEN_SCROLL_BAR)
         if filename:
             title = re.sub('[\\\\/:"*?<>|\']', '', filename)
             title = (title[:140]) if len(title) > 140 else title
@@ -231,7 +232,104 @@ class WebPageArchive:
                 title = re.sub('[\\\\/:"*?<>.,|\']', '', url)
                 title = title.replace(" ", "_")
                 title = (title[:140]) if len(title) > 140 else title
-        self.save_webpage(f'{title}.{filetype}', url=url, hide_scrollbar=True, format=filetype, quality=quality)
+        zeroth_ifd = {
+            piexif.ImageIFD.Make: u"GeniusBot",
+            # piexif.ImageIFD.XResolution: (96, 1),
+            # piexif.ImageIFD.YResolution: (96, 1),
+            piexif.ImageIFD.Software: u"GeniusBot",
+            piexif.ImageIFD.ImageDescription: f"{url}".encode('utf-8'),
+        }
+        exif_ifd = {
+            piexif.ExifIFD.DateTimeOriginal: u"Today",
+            piexif.ExifIFD.UserComment: f"{url}".encode('utf-8'),
+            # piexif.ExifIFD.LensMake: u"LensMake",
+            # piexif.ExifIFD.Sharpness: 65535,
+            # piexif.ExifIFD.LensSpecification: ((1, 1), (1, 1), (1, 1), (1, 1)),
+        }
+        gps_ifd = {
+            piexif.GPSIFD.GPSVersionID: (2, 0, 0, 0),
+            # piexif.GPSIFD.GPSAltitudeRef: 1,
+            piexif.GPSIFD.GPSDateStamp: u"1999:99:99 99:99:99",
+        }
+        first_ifd = {
+            piexif.ImageIFD.Make: u"GeniusBot",
+            # piexif.ImageIFD.XResolution: (40, 1),
+            # piexif.ImageIFD.YResolution: (40, 1),
+            piexif.ImageIFD.Software: u"GeniusBot"
+        }
+        exif_dict = {"0th": zeroth_ifd, "Exif": exif_ifd, "GPS": gps_ifd, "1st": first_ifd}  # , "thumbnail": thumbnail}
+        exif_bytes = piexif.dump(exif_dict)
+        # define necessary image properties
+        image_options = dict()
+        # This will add the URL of the webite to the description
+        image_options['exif'] = exif_bytes
+        image_options['format'] = filetype
+        image_options['quality'] = quality
+        # Changes the ratio of the screen of the device.
+        device_pixel_ratio_js = 'return window.devicePixelRatio;'
+        device_pixel_ratio = self.driver.execute_script(device_pixel_ratio_js)
+        self.log.info(f"Pixel Ratio: {device_pixel_ratio}")
+        if device_pixel_ratio > 1:
+            self.resize_window(device_pixel_ratio)
+
+        inner_height_js = 'return window.innerHeight;'
+        inner_height = self.driver.execute_script(inner_height_js)
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.driver.execute_script("window.scrollTo(0, 0)")
+        scroll_height_js = 'return document.body.scrollHeight;'
+        scroll_height = self.driver.execute_script(scroll_height_js)
+        if scroll_height <= 0:
+            self.log.info("Getting alternative scroll height")
+            self.driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
+            self.driver.execute_script("window.scrollTo(0, 0)")
+            scroll_height_js = 'return document.documentElement.scrollHeight;'
+            scroll_height = self.driver.execute_script(scroll_height_js)
+            self.log.info(
+                f"Scroll Height read as 0, Reading scroll height with alternative method. New height: {scroll_height}")
+        max_scroll_height = 100000000000
+        if scroll_height > max_scroll_height:
+            self.log.info(f"Original scroll height: {scroll_height} Maximum: {max_scroll_height}")
+            scroll_height = max_scroll_height
+        print(f"Scroll Height: {scroll_height}")
+        y_offset_js = 'return window.pageYOffset;'
+        initial_offset = self.driver.execute_script(y_offset_js)
+        actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
+        # Screenshot all slices
+        self.log.info("Making Screen Slices")
+        slices = []
+        slice_count = 0
+        for offset in range(0, scroll_height + 1, inner_height):
+            self.scroll_to(offset)
+            img = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
+            slices.append(img)
+            percentage = '%.3f' % ((offset / scroll_height) * 100)
+            slice_count = slice_count + 1
+            print(f"Slice: {slice_count}\nPercentage: {percentage}\nTotal: {offset}/{scroll_height}\n")
+        print(f"Slice: {slice_count + 1}\nPercentage: 100%\nTotal: {scroll_height}/{scroll_height}\n")
+        # Glue Slices together
+        self.log.info("Glueing Slices")
+        image_file = Image.new('RGB', (slices[0].size[0], actual_page_size))
+        for i, img in enumerate(slices[:-1]):
+            image_file.paste(img, (0, math.ceil(i * inner_height * device_pixel_ratio)))
+        else:
+            image_file.paste(slices[-1], (0, math.ceil((scroll_height - inner_height) * device_pixel_ratio)))
+        try:
+            image_file.save(f'{self.SAVE_PATH}/{title}.{filetype}', **image_options)
+            self.screenshot_success = True
+        except Exception as e:
+            print("Could not save image error: ", e)
+            try:
+                os.remove(f'{self.SAVE_PATH}/{title}.{filetype}')
+            except Exception as e:
+                print(f"Could not remove file, does it exist? {e}")
+            self.screenshot_success = False
+
+        y_offset_js = 'return window.pageYOffset;'
+        new_offset = self.driver.execute_script(y_offset_js)
+
+        if initial_offset != new_offset:
+            self.scroll_to(initial_offset)
+
         if not self.screenshot_success:
             self.fullpage_screenshot_alternative(url=f'{url}', zoom_percentage=zoom_percentage, filename=f'{title}',
                                                  filetype=filetype, quality=quality)
@@ -335,16 +433,12 @@ class WebPageArchive:
         self.SAVE_PATH = self.SAVE_PATH.replace(os.sep, '/')
         if not os.path.exists(self.SAVE_PATH):
             os.makedirs(self.SAVE_PATH)
-        self.set_os_save_path()
-
-    def set_os_save_path(self):
-        self.OS_SAVE_PATH = self.SAVE_PATH.replace('/', os.sep)
 
     def quit_driver(self):
         print("Chrome Driver Closed")
         self.driver.quit()
 
-    def save_webpage(self, file_name, url="", hide_scrollbar=True, **kwargs):
+    def save_webpage(self, file_name, url="", **kwargs):
         zeroth_ifd = {
             piexif.ImageIFD.Make: u"GeniusBot",
             # piexif.ImageIFD.XResolution: (96, 1),
@@ -378,45 +472,50 @@ class WebPageArchive:
         image_options['exif'] = exif_bytes
         image_options['format'] = kwargs.get('format') or self.DEFAULT_IMAGE_FORMAT
         image_options['quality'] = kwargs.get('quality') or self.DEFAULT_IMAGE_QUALITY
-
         # Changes the ratio of the screen of the device.
-        device_pixel_ratio = self.get_device_pixel_ratio()
+        device_pixel_ratio_js = 'return window.devicePixelRatio;'
+        device_pixel_ratio = self.driver.execute_script(device_pixel_ratio_js)
         self.log.info(f"Pixel Ratio: {device_pixel_ratio}")
         if device_pixel_ratio > 1:
             self.resize_window(device_pixel_ratio)
 
-        if hide_scrollbar:
-            self.set_scrollbar(self.HIDDEN_SCROLL_BAR)
 
-        inner_height = self.get_inner_height()
-        scroll_height = self.get_scroll_height()
-        #print(f"Scroll Height: {scroll_height}")
-        initial_offset = self.get_y_offset()
+        inner_height_js = 'return window.innerHeight;'
+        inner_height = self.driver.execute_script(inner_height_js)
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.driver.execute_script("window.scrollTo(0, 0)")
+        scroll_height_js = 'return document.body.scrollHeight;'
+        scroll_height = self.driver.execute_script(scroll_height_js)
+        if scroll_height <= 0:
+            self.log.info("Getting alternative scroll height")
+            self.driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
+            self.driver.execute_script("window.scrollTo(0, 0)")
+            scroll_height_js = 'return document.documentElement.scrollHeight;'
+            scroll_height = self.driver.execute_script(scroll_height_js)
+            self.log.info(
+                f"Scroll Height read as 0, Reading scroll height with alternative method. New height: {scroll_height}")
+        max_scroll_height = 100000000000
+        if scroll_height > max_scroll_height:
+            self.log.info(f"Original scroll height: {scroll_height} Maximum: {max_scroll_height}")
+            scroll_height = max_scroll_height
+        print(f"Scroll Height: {scroll_height}")
+        y_offset_js = 'return window.pageYOffset;'
+        initial_offset = self.driver.execute_script(y_offset_js)
         actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
-
         # Screenshot all slices
         self.log.info("Making Screen Slices")
-        slices = self.make_screen_slices(inner_height, scroll_height)
+        slices = []
+        slice_count = 0
+        for offset in range(0, scroll_height + 1, inner_height):
+            self.scroll_to(offset)
+            img = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
+            slices.append(img)
+            percentage = '%.3f' % ((offset/scroll_height)*100)
+            slice_count = slice_count + 1
+            print(f"Slice: {slice_count}\nPercentage: {percentage}\nTotal: {offset}/{scroll_height}\n")
+        print(f"Slice: {slice_count+1}\nPercentage: 100%\nTotal: {scroll_height}/{scroll_height}\n")
+        # Glue Slices together
         self.log.info("Glueing Slices")
-        self.glue_slices_into_image(slices, file_name, image_options, actual_page_size, device_pixel_ratio,
-                                    inner_height,
-                                    scroll_height)
-
-        # state of driver after script should to be the same as before
-        if hide_scrollbar:
-            self.set_scrollbar(self.DEFAULT_SCROLL_BAR)
-
-        if initial_offset != self.get_y_offset():
-            self.scroll_to(initial_offset)
-
-        return file_name
-
-    def get_y_offset(self):
-        y_offset_js = 'return window.pageYOffset;'
-        return self.driver.execute_script(y_offset_js)
-
-    def glue_slices_into_image(self, slices, file_name, image_options, actual_page_size, device_pixel_ratio,
-                               inner_height, scroll_height):
         image_file = Image.new('RGB', (slices[0].size[0], actual_page_size))
         for i, img in enumerate(slices[:-1]):
             image_file.paste(img, (0, math.ceil(i * inner_height * device_pixel_ratio)))
@@ -433,59 +532,122 @@ class WebPageArchive:
                 print(f"Could not remove file, does it exist? {e}")
             self.screenshot_success = False
 
-    def remove_fixed_elements(self, inner_height, scroll_height):
-        for offset in range(0, scroll_height + 1, inner_height):
-            self.scroll_to(offset)
-            try:
-                # Removes Any Fixed Elements
-                self.driver.execute_script("""(function () { 
-                  var i, elements = document.querySelectorAll('body *');
+        y_offset_js = 'return window.pageYOffset;'
+        new_offset = self.driver.execute_script(y_offset_js)
 
-                  for (i = 0; i < elements.length; i++) {
-                    if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky') {
-                      elements[i].parentNode.removeChild(elements[i]);
-                    }
-                  }
-                })();""")
-            except Exception as e:
-                print(e)
+        if initial_offset != new_offset:
+            self.scroll_to(initial_offset)
 
-    def make_screen_slices(self, inner_height, scroll_height):
-        slices = []
-        for offset in range(0, scroll_height + 1, inner_height):
-            self.scroll_to(offset)
-            img = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
-            slices.append(img)
-        return slices
+        return file_name
 
-    def get_scroll_height(self):
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    def remove_fixed_elements(self):
         self.driver.execute_script("window.scrollTo(0, 0)")
-        scroll_height_js = 'return document.body.scrollHeight;'
-        scroll_height = self.driver.execute_script(scroll_height_js)
-        if scroll_height <= 0:
-            self.driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
-            self.driver.execute_script("window.scrollTo(0, 0)")
-            scroll_height_js = 'return document.documentElement.scrollHeight;'
-            scroll_height = self.driver.execute_script(scroll_height_js)
-            self.log.info(f"Scroll Height read as 0, Reading scroll height with alternative method. New height: {scroll_height}")
-        return scroll_height
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.log.info("Clicking Escape to clear popups")
+        ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+        time.sleep(0.2)
+        ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+        time.sleep(0.2)
+        ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+        self.driver.execute_script("window.scrollTo(0, 0)")
+        try:
+            # Removes Any Fixed Elements from body at top of page
+            self.driver.execute_script("""(function () { 
+              var i, elements = document.querySelectorAll('body *');
 
-    def get_inner_height(self):
-        inner_height_js = 'return window.innerHeight;'
-        return self.driver.execute_script(inner_height_js)
+              for (i = 0; i < elements.length; i++) {
+                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
+                  elements[i].parentNode.removeChild(elements[i]);
+                }
+              }
+            })();""")
+        except Exception as e:
+            self.log.info(e)
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        try:
+            # Removes Any Fixed Elements from body at bottom of page
+            self.driver.execute_script("""(function () { 
+              var i, elements = document.querySelectorAll('body *');
 
-    def get_device_pixel_ratio(self):
-        device_pixel_ratio_js = 'return window.devicePixelRatio;'
-        return self.driver.execute_script(device_pixel_ratio_js)
+              for (i = 0; i < elements.length; i++) {
+                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
+                  elements[i].parentNode.removeChild(elements[i]);
+                }
+              }
+            })();""")
+        except Exception as e:
+            self.log.info(e)
+        self.log.info("Removed elements from body")
+        self.driver.execute_script("window.scrollTo(0, 0)")
+        try:
+            # Removes Any Fixed Elements from any div at top of page
+            self.driver.execute_script("""(function () { 
+              var i, elements = document.querySelectorAll('div *');
 
-    def set_scrollbar(self, style):
-        scrollbar_js = 'document.documentElement.style.overflow = \"{}\"'.format(style)
-        self.driver.execute_script(scrollbar_js)
+              for (i = 0; i < elements.length; i++) {
+                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
+                  elements[i].parentNode.removeChild(elements[i]);
+                }
+              }
+            })();""")
+        except Exception as e:
+            self.log.info(e)
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        try:
+            # Removes Any Fixed Elements from any div at bottom of page
+            self.driver.execute_script("""(function () { 
+              var i, elements = document.querySelectorAll('div *');
+
+              for (i = 0; i < elements.length; i++) {
+                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
+                  elements[i].parentNode.removeChild(elements[i]);
+                }
+              }
+            })();""")
+        except Exception as e:
+            self.log.info(e)
+        self.log.info("Removed elements from all divs")
+        self.driver.execute_script("window.scrollTo(0, 0)")
+        try:
+            # Removes Any Fixed Elements from any html main at top of page
+            self.driver.execute_script("""(function () { 
+                     var i, elements = document.querySelectorAll('html *');
+
+                     for (i = 0; i < elements.length; i++) {
+                       if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
+                         elements[i].parentNode.removeChild(elements[i]);
+                       }
+                     }
+                   })();""")
+        except Exception as e:
+            self.log.info(e)
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        try:
+            # Removes Any Fixed Elements from any html main at bottom of page
+            self.driver.execute_script("""(function () { 
+                     var i, elements = document.querySelectorAll('html *');
+
+                     for (i = 0; i < elements.length; i++) {
+                       if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
+                         elements[i].parentNode.removeChild(elements[i]);
+                       }
+                     }
+                   })();""")
+        except Exception as e:
+            self.log.info(e)
+        self.log.info("Removed elements from html")
 
     def scroll_to(self, offset):
         scroll_to_js = 'window.scrollTo(0, {});'
         self.driver.execute_script(scroll_to_js.format(offset))
+
+    def enable_scroll(self):
+        print("Attempting to re-enable scroll bar")
+        body = self.driver.find_element_by_xpath('/html/body')
+        self.driver.execute_script("arguments[0].setAttribute('style', 'overflow: scroll; overflow-x: scroll')", body)
+        html = self.driver.find_element_by_xpath('/html')
+        self.driver.execute_script("arguments[0].setAttribute('style', 'overflow: scroll; overflow-x: scroll')", html)
+        print("Set scrolls override")
 
     def resize_window(self, device_pixel_ratio):
         old_width = self.driver.get_window_size()['width']
