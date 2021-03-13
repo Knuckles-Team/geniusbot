@@ -91,7 +91,7 @@ class WebPageArchive:
         try:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
                                            desired_capabilities=self.capabilities,
-                                           chrome_options=self.chrome_options)
+                                           options=self.chrome_options)
             # Hide the scrollbar
             scrollbar_js = 'document.documentElement.style.overflow = \"{}\"'.format(self.HIDDEN_SCROLL_BAR)
             self.driver.execute_script(scrollbar_js)
