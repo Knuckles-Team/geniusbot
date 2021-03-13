@@ -289,7 +289,7 @@ class WebPageArchive:
             scroll_height = self.driver.execute_script(scroll_height_js)
             self.log.info(
                 f"Scroll Height read as 0, Reading scroll height with alternative method. New height: {scroll_height}")
-        max_scroll_height = 100000000000
+        max_scroll_height = 900000
         if scroll_height > max_scroll_height:
             self.log.info(f"Original scroll height: {scroll_height} Maximum: {max_scroll_height}")
             scroll_height = max_scroll_height
@@ -303,6 +303,7 @@ class WebPageArchive:
         slice_count = 0
         for offset in range(0, scroll_height + 1, inner_height):
             self.driver.execute_script(scroll_to_js.format(offset))
+            ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
             img = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
             slices.append(img)
             percentage = '%.3f' % ((offset / scroll_height) * 100)
@@ -442,97 +443,79 @@ class WebPageArchive:
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         self.log.info("Clicking Escape to clear popups")
         ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
-        time.sleep(0.2)
+        #time.sleep(0.2)
         ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
-        time.sleep(0.2)
+        #time.sleep(0.2)
         ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+        ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
         self.driver.execute_script("window.scrollTo(0, 0)")
-        try:
-            # Removes Any Fixed Elements from body at top of page
-            self.driver.execute_script("""(function () { 
-              var i, elements = document.querySelectorAll('body *');
+        print("Starting to remove elements")
+        scroll_to_js = 'window.scrollTo(0, {});'
+        scroll_height_js = 'return document.body.scrollHeight;'
+        scroll_height = self.driver.execute_script(scroll_height_js)
+        inner_height_js = 'return window.innerHeight;'
+        inner_height = self.driver.execute_script(inner_height_js)
+        for offset in range(0, scroll_height + 1, inner_height):
+            self.driver.execute_script(scroll_to_js.format(offset))
+            ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+            try:
+                # Removes Any Fixed Elements from body at top of page
+                self.driver.execute_script("""(function () { 
+                  var i, elements = document.querySelectorAll('body *');
 
-              for (i = 0; i < elements.length; i++) {
-                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
-                  elements[i].parentNode.removeChild(elements[i]);
-                }
-              }
-            })();""")
-        except Exception as e:
-            self.log.info(e)
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        try:
-            # Removes Any Fixed Elements from body at bottom of page
-            self.driver.execute_script("""(function () { 
-              var i, elements = document.querySelectorAll('body *');
+                  for (i = 0; i < elements.length; i++) {
+                    if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky') {
+                      elements[i].parentNode.removeChild(elements[i]);
+                    }
+                  }
+                })();""")
+            except Exception as e:
+                self.log.info(e)
+            self.log.info("Removed elements from body")
+            print("Removed elements from body")
+            try:
+                # Removes Any Fixed Elements from any div at top of page
+                # Removed  || getComputedStyle(elements[i]).display === 'inline-block' condition as it was removed body blocks that were inline-block
+                self.driver.execute_script("""(function () { 
+                          var i, elements = document.querySelectorAll('div *');
 
-              for (i = 0; i < elements.length; i++) {
-                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
-                  elements[i].parentNode.removeChild(elements[i]);
-                }
-              }
-            })();""")
-        except Exception as e:
-            self.log.info(e)
-        self.log.info("Removed elements from body")
+                          for (i = 0; i < elements.length; i++) {
+                            if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky') {
+                              elements[i].parentNode.removeChild(elements[i]);
+                            }
+                          }
+                        })();""")
+            except Exception as e:
+                self.log.info(e)
+            self.log.info("Removed elements from all divs")
+            print("Removed elements from all divs")
+            try:
+                # Removes Any Fixed Elements from any html main at top of page
+                self.driver.execute_script("""(function () { 
+                                 var i, elements = document.querySelectorAll('html *');
+
+                                 for (i = 0; i < elements.length; i++) {
+                                   if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky') {
+                                     elements[i].parentNode.removeChild(elements[i]);
+                                   }
+                                 }
+                               })();""")
+            except Exception as e:
+                self.log.info(e)
+            self.log.info("Removed elements from html")
+            print("Removed elements from html")
+            percentage = '%.3f' % ((offset / scroll_height) * 100)
+            print(f"Percentage: {percentage}\nTotal: {offset}/{scroll_height}\n")
+        print(f"Percentage: 100%\nTotal: {scroll_height}/{scroll_height}\n")
         self.driver.execute_script("window.scrollTo(0, 0)")
-        try:
-            # Removes Any Fixed Elements from any div at top of page
-            self.driver.execute_script("""(function () { 
-              var i, elements = document.querySelectorAll('div *');
-
-              for (i = 0; i < elements.length; i++) {
-                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
-                  elements[i].parentNode.removeChild(elements[i]);
-                }
-              }
-            })();""")
-        except Exception as e:
-            self.log.info(e)
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        try:
-            # Removes Any Fixed Elements from any div at bottom of page
-            self.driver.execute_script("""(function () { 
-              var i, elements = document.querySelectorAll('div *');
-
-              for (i = 0; i < elements.length; i++) {
-                if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
-                  elements[i].parentNode.removeChild(elements[i]);
-                }
-              }
-            })();""")
-        except Exception as e:
-            self.log.info(e)
-        self.log.info("Removed elements from all divs")
-        self.driver.execute_script("window.scrollTo(0, 0)")
-        try:
-            # Removes Any Fixed Elements from any html main at top of page
-            self.driver.execute_script("""(function () { 
-                     var i, elements = document.querySelectorAll('html *');
-
-                     for (i = 0; i < elements.length; i++) {
-                       if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
-                         elements[i].parentNode.removeChild(elements[i]);
-                       }
-                     }
-                   })();""")
-        except Exception as e:
-            self.log.info(e)
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        try:
-            # Removes Any Fixed Elements from any html main at bottom of page
-            self.driver.execute_script("""(function () { 
-                     var i, elements = document.querySelectorAll('html *');
-
-                     for (i = 0; i < elements.length; i++) {
-                       if (getComputedStyle(elements[i]).position === 'fixed' || getComputedStyle(elements[i]).position === 'sticky' || getComputedStyle(elements[i]).position === '-webkit-sticky' || getComputedStyle(elements[i]).display === 'inline-block' || getComputedStyle(elements[i]).style === 'overflow: hidden') {
-                         elements[i].parentNode.removeChild(elements[i]);
-                       }
-                     }
-                   })();""")
-        except Exception as e:
-            self.log.info(e)
-        self.log.info("Removed elements from html")
 
     def enable_scroll(self):
         print("Attempting to re-enable scroll bar")
