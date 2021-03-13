@@ -257,6 +257,7 @@ class WebPageArchive:
             # piexif.ImageIFD.YResolution: (40, 1),
             piexif.ImageIFD.Software: u"GeniusBot"
         }
+        scroll_to_js = 'window.scrollTo(0, {});'
         exif_dict = {"0th": zeroth_ifd, "Exif": exif_ifd, "GPS": gps_ifd, "1st": first_ifd}  # , "thumbnail": thumbnail}
         exif_bytes = piexif.dump(exif_dict)
         # define necessary image properties
@@ -270,7 +271,9 @@ class WebPageArchive:
         device_pixel_ratio = self.driver.execute_script(device_pixel_ratio_js)
         self.log.info(f"Pixel Ratio: {device_pixel_ratio}")
         if device_pixel_ratio > 1:
-            self.resize_window(device_pixel_ratio)
+            old_width = self.driver.get_window_size()['width']
+            old_height = self.driver.get_window_size()['height']
+            self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
 
         inner_height_js = 'return window.innerHeight;'
         inner_height = self.driver.execute_script(inner_height_js)
@@ -299,7 +302,7 @@ class WebPageArchive:
         slices = []
         slice_count = 0
         for offset in range(0, scroll_height + 1, inner_height):
-            self.scroll_to(offset)
+            self.driver.execute_script(scroll_to_js.format(offset))
             img = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
             slices.append(img)
             percentage = '%.3f' % ((offset / scroll_height) * 100)
@@ -328,7 +331,7 @@ class WebPageArchive:
         new_offset = self.driver.execute_script(y_offset_js)
 
         if initial_offset != new_offset:
-            self.scroll_to(initial_offset)
+            self.driver.execute_script(scroll_to_js.format(initial_offset))
 
         if not self.screenshot_success:
             self.fullpage_screenshot_alternative(url=f'{url}', zoom_percentage=zoom_percentage, filename=f'{title}',
@@ -434,112 +437,6 @@ class WebPageArchive:
         if not os.path.exists(self.SAVE_PATH):
             os.makedirs(self.SAVE_PATH)
 
-    def quit_driver(self):
-        print("Chrome Driver Closed")
-        self.driver.quit()
-
-    def save_webpage(self, file_name, url="", **kwargs):
-        zeroth_ifd = {
-            piexif.ImageIFD.Make: u"GeniusBot",
-            # piexif.ImageIFD.XResolution: (96, 1),
-            # piexif.ImageIFD.YResolution: (96, 1),
-            piexif.ImageIFD.Software: u"GeniusBot",
-            piexif.ImageIFD.ImageDescription: f"{url}".encode('utf-8'),
-        }
-        exif_ifd = {
-            piexif.ExifIFD.DateTimeOriginal: u"Today",
-            piexif.ExifIFD.UserComment: f"{url}".encode('utf-8'),
-            # piexif.ExifIFD.LensMake: u"LensMake",
-            # piexif.ExifIFD.Sharpness: 65535,
-            # piexif.ExifIFD.LensSpecification: ((1, 1), (1, 1), (1, 1), (1, 1)),
-        }
-        gps_ifd = {
-            piexif.GPSIFD.GPSVersionID: (2, 0, 0, 0),
-            # piexif.GPSIFD.GPSAltitudeRef: 1,
-            piexif.GPSIFD.GPSDateStamp: u"1999:99:99 99:99:99",
-        }
-        first_ifd = {
-            piexif.ImageIFD.Make: u"GeniusBot",
-            # piexif.ImageIFD.XResolution: (40, 1),
-            # piexif.ImageIFD.YResolution: (40, 1),
-            piexif.ImageIFD.Software: u"GeniusBot"
-        }
-        exif_dict = {"0th": zeroth_ifd, "Exif": exif_ifd, "GPS": gps_ifd, "1st": first_ifd}  # , "thumbnail": thumbnail}
-        exif_bytes = piexif.dump(exif_dict)
-        # define necessary image properties
-        image_options = dict()
-        # This will add the URL of the webite to the description
-        image_options['exif'] = exif_bytes
-        image_options['format'] = kwargs.get('format') or self.DEFAULT_IMAGE_FORMAT
-        image_options['quality'] = kwargs.get('quality') or self.DEFAULT_IMAGE_QUALITY
-        # Changes the ratio of the screen of the device.
-        device_pixel_ratio_js = 'return window.devicePixelRatio;'
-        device_pixel_ratio = self.driver.execute_script(device_pixel_ratio_js)
-        self.log.info(f"Pixel Ratio: {device_pixel_ratio}")
-        if device_pixel_ratio > 1:
-            self.resize_window(device_pixel_ratio)
-
-
-        inner_height_js = 'return window.innerHeight;'
-        inner_height = self.driver.execute_script(inner_height_js)
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        self.driver.execute_script("window.scrollTo(0, 0)")
-        scroll_height_js = 'return document.body.scrollHeight;'
-        scroll_height = self.driver.execute_script(scroll_height_js)
-        if scroll_height <= 0:
-            self.log.info("Getting alternative scroll height")
-            self.driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
-            self.driver.execute_script("window.scrollTo(0, 0)")
-            scroll_height_js = 'return document.documentElement.scrollHeight;'
-            scroll_height = self.driver.execute_script(scroll_height_js)
-            self.log.info(
-                f"Scroll Height read as 0, Reading scroll height with alternative method. New height: {scroll_height}")
-        max_scroll_height = 100000000000
-        if scroll_height > max_scroll_height:
-            self.log.info(f"Original scroll height: {scroll_height} Maximum: {max_scroll_height}")
-            scroll_height = max_scroll_height
-        print(f"Scroll Height: {scroll_height}")
-        y_offset_js = 'return window.pageYOffset;'
-        initial_offset = self.driver.execute_script(y_offset_js)
-        actual_page_size = math.ceil(scroll_height * device_pixel_ratio)
-        # Screenshot all slices
-        self.log.info("Making Screen Slices")
-        slices = []
-        slice_count = 0
-        for offset in range(0, scroll_height + 1, inner_height):
-            self.scroll_to(offset)
-            img = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
-            slices.append(img)
-            percentage = '%.3f' % ((offset/scroll_height)*100)
-            slice_count = slice_count + 1
-            print(f"Slice: {slice_count}\nPercentage: {percentage}\nTotal: {offset}/{scroll_height}\n")
-        print(f"Slice: {slice_count+1}\nPercentage: 100%\nTotal: {scroll_height}/{scroll_height}\n")
-        # Glue Slices together
-        self.log.info("Glueing Slices")
-        image_file = Image.new('RGB', (slices[0].size[0], actual_page_size))
-        for i, img in enumerate(slices[:-1]):
-            image_file.paste(img, (0, math.ceil(i * inner_height * device_pixel_ratio)))
-        else:
-            image_file.paste(slices[-1], (0, math.ceil((scroll_height - inner_height) * device_pixel_ratio)))
-        try:
-            image_file.save(f'{self.SAVE_PATH}/{file_name}', **image_options)
-            self.screenshot_success = True
-        except Exception as e:
-            print("Could not save image error: ", e)
-            try:
-                os.remove(f'{self.SAVE_PATH}/{file_name}')
-            except Exception as e:
-                print(f"Could not remove file, does it exist? {e}")
-            self.screenshot_success = False
-
-        y_offset_js = 'return window.pageYOffset;'
-        new_offset = self.driver.execute_script(y_offset_js)
-
-        if initial_offset != new_offset:
-            self.scroll_to(initial_offset)
-
-        return file_name
-
     def remove_fixed_elements(self):
         self.driver.execute_script("window.scrollTo(0, 0)")
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -637,10 +534,6 @@ class WebPageArchive:
             self.log.info(e)
         self.log.info("Removed elements from html")
 
-    def scroll_to(self, offset):
-        scroll_to_js = 'window.scrollTo(0, {});'
-        self.driver.execute_script(scroll_to_js.format(offset))
-
     def enable_scroll(self):
         print("Attempting to re-enable scroll bar")
         body = self.driver.find_element_by_xpath('/html/body')
@@ -649,10 +542,9 @@ class WebPageArchive:
         self.driver.execute_script("arguments[0].setAttribute('style', 'overflow: scroll; overflow-x: scroll')", html)
         print("Set scrolls override")
 
-    def resize_window(self, device_pixel_ratio):
-        old_width = self.driver.get_window_size()['width']
-        old_height = self.driver.get_window_size()['height']
-        self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
+    def quit_driver(self):
+        print("Chrome Driver Closed")
+        self.driver.quit()
 
 
 def main(argv):
