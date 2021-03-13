@@ -55,6 +55,8 @@ class WebPageArchive:
             self.log = Log()
             self.log.init_logging()
         self.log.info("Initializing Web Archive Complete!")
+
+    def launch_browser(self):
         self.capabilities = {
             'self.browserName': 'chrome',
             'chromeOptions': {
@@ -82,12 +84,11 @@ class WebPageArchive:
         self.chrome_options.add_argument('--disable-notifications')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
         self.chrome_options.add_argument('--dns-prefetch-disable')
-        self.chrome_options.add_argument(f'--force-device-scale-factor={self.dpi}')
-        self.chrome_options.add_argument(f'--high-dpi-support={self.dpi}')
+        if self.dpi != 1:
+            self.chrome_options.add_argument(f'--force-device-scale-factor={self.dpi}')
+            self.chrome_options.add_argument(f'--high-dpi-support={self.dpi}')
         # This will now disable the extension I add so Comment it out
         # self.chrome_options.add_argument('--disable-extensions')
-
-    def launch_browser(self):
         try:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
                                            desired_capabilities=self.capabilities,
@@ -274,10 +275,11 @@ class WebPageArchive:
         device_pixel_ratio_js = 'return window.devicePixelRatio;'
         device_pixel_ratio = self.driver.execute_script(device_pixel_ratio_js)
         self.log.info(f"Pixel Ratio: {device_pixel_ratio}")
-        if device_pixel_ratio > 1:
-            old_width = self.driver.get_window_size()['width']
-            old_height = self.driver.get_window_size()['height']
-            self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
+        # Uncomment this to enable automatic device window resizing. (Not needed in 99% of cases)
+        # if device_pixel_ratio > 1:
+        #     old_width = self.driver.get_window_size()['width']
+        #     old_height = self.driver.get_window_size()['height']
+        #     self.driver.set_window_size(old_width // device_pixel_ratio, old_height // device_pixel_ratio)
 
         inner_height_js = 'return window.innerHeight;'
         inner_height = self.driver.execute_script(inner_height_js)
