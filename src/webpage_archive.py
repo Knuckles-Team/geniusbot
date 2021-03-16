@@ -585,7 +585,7 @@ def main(argv):
         archive.set_zoom_level(zoom_level)
         archive.fullpage_screenshot(url=f'{url}', zoom_percentage=zoom_level)
         url_count = url_count + 1
-        print(f"URLs Processed: {url_count} | Percentage: {url_count/len(archive.urls)} | Total: {url_count}/{len(archive.urls)}\n")
+        print(f"URLs Processed: {url_count} | Percentage: {(url_count/len(archive.urls))*100} | Total: {url_count}/{len(archive.urls)}\n")
 
     archive.quit_driver()
 
