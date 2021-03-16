@@ -311,8 +311,9 @@ class WebPageArchive:
             slices.append(img)
             percentage = '%.3f' % ((offset / scroll_height) * 100)
             slice_count = slice_count + 1
-            print(f"Screenshot Processed: {slice_count} | Percentage: {percentage} | Total: {offset}/{scroll_height}")
-        print(f"Screenshot Processed: {slice_count + 1} | Percentage: 100% | Total: {scroll_height}/{scroll_height}")
+            print(f"Screenshot Processed: {slice_count} | Percentage: {percentage}% | Total: {offset}/{scroll_height}")
+        percentage = '%.3f' % 100
+        print(f"Screenshot Processed: {slice_count + 1} | Percentage: {percentage}% | Total: {scroll_height}/{scroll_height}")
         # Glue Slices together
         self.log.info("Glueing Slices")
         image_file = Image.new('RGB', (slices[0].size[0], actual_page_size))
@@ -516,8 +517,9 @@ class WebPageArchive:
             self.log.info("Removed elements from html")
             #print("Removed elements from html")
             percentage = '%.3f' % ((offset / scroll_height) * 100)
-            print(f"Web Elements Processed | Percentage: {percentage} | Total: {offset}/{scroll_height}")
-        print(f"Web Elements Processed | Percentage: 100% | Total: {scroll_height}/{scroll_height}")
+            print(f"Web Elements Processed | Percentage: {percentage}% | Total: {offset}/{scroll_height}")
+        percentage = '%.3f' % 100
+        print(f"Web Elements Processed | Percentage: {percentage}% | Total: {scroll_height}/{scroll_height}")
         self.driver.execute_script("window.scrollTo(0, 0)")
 
     def enable_scroll(self):
@@ -585,7 +587,8 @@ def main(argv):
         archive.set_zoom_level(zoom_level)
         archive.fullpage_screenshot(url=f'{url}', zoom_percentage=zoom_level)
         url_count = url_count + 1
-        print(f"URLs Processed: {url_count} | Percentage: {(url_count/len(archive.urls))*100} | Total: {url_count}/{len(archive.urls)}\n")
+        percentage = '%.3f' % ((url_count/len(archive.urls))*100)
+        print(f"URLs Processed: {url_count} | Percentage: {percentage}% | Total: {url_count}/{len(archive.urls)}\n")
 
     archive.quit_driver()
 
