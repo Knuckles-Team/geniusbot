@@ -596,6 +596,6 @@ def main(argv):
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print('Main Usage:\npython3 webpage_archive.py -c -f <links_file.txt> '
-              '-l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 100')
+              '-l "<link1,link2,link3>" -t <JPEG/PNG> -d "~/Downloads" -z 100 --dpi 1')
         sys.exit(2)
     main(sys.argv[1:])
