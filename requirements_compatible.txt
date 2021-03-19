@@ -159,7 +159,7 @@ traitlets==5.0.5
 twitter-scraper==0.4.4
 typing-extensions==3.7.4.3
 update==0.0.1
-urllib3==1.26.2
+urllib3==1.26.3
 visions==0.6.0
 w3lib==1.22.0
 wcwidth==0.2.5
