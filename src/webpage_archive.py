@@ -174,9 +174,9 @@ class WebPageArchive:
         time.sleep(1)
         # Tries to remove any persistent scrolling headers/fixed/sticky'd elements on the page
         print("Removing Fixed Elements Scrub 1")
-        self.remove_fixed_elements()
+        self.remove_fixed_elements(url)
         print("Removing Fixed Elements Scrub 2")
-        self.remove_fixed_elements()
+        self.remove_fixed_elements(url)
 
     def clean_url(self):
         for url_index in range(0, len(self.urls)):
@@ -442,9 +442,17 @@ class WebPageArchive:
         if not os.path.exists(self.SAVE_PATH):
             os.makedirs(self.SAVE_PATH)
 
-    def remove_fixed_elements(self):
+    def remove_fixed_elements(self, url):
         self.driver.execute_script("window.scrollTo(0, 0)")
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        try:
+            # Try to scroll to bottom of page.
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        except Exception as e:
+            print("Unable to remove fixed elements")
+            self.log.info(e)
+            self.driver.get(url)
+            self.driver.execute_script('return document.readyState;')
+
         self.log.info("Clicking Escape to clear popups")
         ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
         #time.sleep(0.2)
