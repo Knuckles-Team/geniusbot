@@ -68,10 +68,17 @@ class WebPageArchive:
         # Add Ublock Origin to Chrome
         adblock_path = f'{os.pardir}/lib/uBlock-Origin_v1.27.0.crx'
         if os.path.isfile(adblock_path):
-            print("uBlock Origin Found")
-        else:
+            print(f"uBlock Origin Found: {adblock_path}")
+            self.chrome_options.add_extension(adblock_path)
+        elif os.path.isfile(f'{os.curdir}/lib/uBlock-Origin_v1.27.0.crx'):
             adblock_path = f'{os.curdir}/lib/uBlock-Origin_v1.27.0.crx'
-        self.chrome_options.add_extension(adblock_path)
+            print(f"uBlock Origin Found: {adblock_path}")
+            self.chrome_options.add_extension(adblock_path)
+        else:
+            adblock_path = f'{os.path.dirname(sys.path[0])}/lib/uBlock-Origin_v1.27.0.crx'
+            print(f"uBlock Origin Found: {adblock_path}")
+            self.chrome_options.add_extension(adblock_path)
+
         # self.screenshotter = Screenshot_Clipping.Screenshot()
         # This option does not support opening with extensions. Comment it out.
         # self.chrome_options.add_argument('--headless')
