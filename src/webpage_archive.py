@@ -84,6 +84,7 @@ class WebPageArchive:
         # self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--disable-gpu')
         self.chrome_options.add_argument('--start-maximized')
+        self.chrome_options.add_argument('--hide-scrollbars')
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument('--disable-notifications')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
@@ -287,7 +288,10 @@ class WebPageArchive:
 
         inner_height_js = 'return window.innerHeight;'
         inner_height = self.driver.execute_script(inner_height_js)
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        try:
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        except Exception as e:
+            print(f"Error reading scroll height. {e}")
         self.driver.execute_script("window.scrollTo(0, 0)")
         scroll_height_js = 'return document.body.scrollHeight;'
         scroll_height = self.driver.execute_script(scroll_height_js)
@@ -470,7 +474,6 @@ class WebPageArchive:
         #     ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
         #     print(f"Page Key Down: {x}")
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
         self.driver.execute_script("window.scrollTo(0, 0)")
         #print("Starting to remove elements")
         scroll_to_js = 'window.scrollTo(0, {});'
@@ -479,14 +482,32 @@ class WebPageArchive:
         if scroll_height > self.max_scroll_height:
             self.log.info(f"Original scroll height: {scroll_height} Maximum: {self.max_scroll_height}")
             scroll_height = self.max_scroll_height
+        elif scroll_height == 0:
+            scroll_height = 1080
         #print(f"Scroll Height: {scroll_height}")
         inner_height_js = 'return window.innerHeight;'
         inner_height = self.driver.execute_script(inner_height_js)
         for offset in range(0, scroll_height + 1, inner_height):
             self.driver.execute_script(scroll_to_js.format(offset))
             ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+
+            # Convert overflow to scroll and position to relative.
             try:
-                # Removes Any Fixed Elements from body at top of page
+                # Removes Any Scroll bars
+                self.driver.execute_script("""(function () {
+                  for (let e of document.getElementsByClassName("Scroll--locked")) { 
+                      e.style.overflow = "hidden"; 
+                      e.style.position = "relative"; 
+                  }                  
+                  document.querySelector('html').style.overflow = 'hidden';
+                  document.querySelector('html').style.position = 'relative';
+                })();""")
+            except Exception as e:
+                self.log.info(e)
+            self.log.info("Changed elements from to overflow scroll")
+
+            # Removes Any Fixed Elements from body at top of page
+            try:
                 self.driver.execute_script("""(function () { 
                   var i, elements = document.querySelectorAll('body *');
 
@@ -500,10 +521,11 @@ class WebPageArchive:
                 self.log.info(e)
             self.log.info("Removed elements from body")
             #print("Removed elements from body")
+
+            # Removes Any Fixed Elements from any div at top of page
             try:
-                # Removes Any Fixed Elements from any div at top of page
                 # Removed  || getComputedStyle(elements[i]).display === 'inline-block' condition as it was removed body blocks that were inline-block
-                self.driver.execute_script("""(function () { 
+                self.driver.execute_script("""(function () {
                           var i, elements = document.querySelectorAll('div *');
 
                           for (i = 0; i < elements.length; i++) {
@@ -518,7 +540,7 @@ class WebPageArchive:
             #print("Removed elements from all divs")
             try:
                 # Removes Any Fixed Elements from any html main at top of page
-                self.driver.execute_script("""(function () { 
+                self.driver.execute_script("""(function () {
                                  var i, elements = document.querySelectorAll('html *');
 
                                  for (i = 0; i < elements.length; i++) {
@@ -530,6 +552,7 @@ class WebPageArchive:
             except Exception as e:
                 self.log.info(e)
             self.log.info("Removed elements from html")
+
             #print("Removed elements from html")
             percentage = '%.3f' % ((offset / scroll_height) * 100)
             print(f"Web Elements Processed | Percentage: {percentage}% | Total: {offset}/{scroll_height}")
