@@ -166,7 +166,7 @@ wcwidth==0.2.5
 webdriver-manager==3.2.2
 webencodings==0.5.1
 websocket-client==0.57.0
-websockets==8.1
+websockets==9.1
 widgetsnbextension==3.5.1
 XlsxWriter==1.3.7
 yarl==1.6.3
