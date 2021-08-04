@@ -89,6 +89,8 @@ class WebPageArchive:
         self.chrome_options.add_argument('--disable-notifications')
         self.chrome_options.add_argument('--disable-dev-shm-usage')
         self.chrome_options.add_argument('--dns-prefetch-disable')
+        # self.chrome_options.add_argument('--disable-dev-shm-usage')
+        # self.chrome_options.add_argument('--no-sandbox')
         if self.dpi != 1:
             self.chrome_options.add_argument(f'--force-device-scale-factor={self.dpi}')
             self.chrome_options.add_argument(f'--high-dpi-support={self.dpi}')
@@ -177,8 +179,8 @@ class WebPageArchive:
             alert = self.driver.switch_to.alert
             alert.accept()
             self.log.info("WebPage Alert Accepted!")
-        except TimeoutException:
-            self.log.info("No WebPage Alert!")
+        except Exception as e:
+            self.log.info(f"No WebPage Alert! {e}")
         time.sleep(1)
         # Tries to remove any persistent scrolling headers/fixed/sticky'd elements on the page
         print("Removing Fixed Elements Scrub 1")
@@ -454,7 +456,11 @@ class WebPageArchive:
             os.makedirs(self.SAVE_PATH)
 
     def remove_fixed_elements(self, url):
-        self.driver.execute_script("window.scrollTo(0, 0)")
+        try:
+            self.driver.execute_script("window.scrollTo(0, 0)")
+        except Exception as e:
+            print(f"Unable to remove fixed elements {e}")
+
         try:
             # Try to scroll to bottom of page.
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")

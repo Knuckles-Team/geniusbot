@@ -21,8 +21,9 @@ class Log:
                 os.makedirs(f"{os.pardir}/logs/")
             with open(f"{os.pardir}/logs/log.log", 'w'):
                 pass
-        self.logging_file = f"{os.pardir}/logs/log.log"
-        self.logging_dir = f"{os.pardir}/logs/"
+
+        self.logging_dir = f"{os.path.dirname(os.path.realpath(__file__))}../logs"
+        self.logging_file = f"{self.logging_dir}/log.log"
         # print("attempt one: ", self.logging_dir)
         if os.path.isdir(self.logging_dir):
             print("Log File: ", self.logging_file)
