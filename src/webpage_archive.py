@@ -104,7 +104,8 @@ class WebPageArchive:
             scrollbar_js = 'document.documentElement.style.overflow = \"{}\"'.format(self.HIDDEN_SCROLL_BAR)
             self.driver.execute_script(scrollbar_js)
         except Exception as e:
-            print("Could not open with Latest Chrome Version", e)
+            print("Could not open with Latest Chrome Version. PLEASE ENSURE YOU'RE NOT RUNNING WITH SUDO", e)
+            exit()
 
     def open_file(self, file):
         webarchive_urls = open(file, 'r')

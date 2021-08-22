@@ -22,14 +22,14 @@ class Log:
             with open(f"{os.pardir}/logs/log.log", 'w'):
                 pass
 
-        self.logging_dir = f"{os.path.dirname(os.path.realpath(__file__))}../logs"
+        self.logging_dir = f"{os.path.dirname(os.path.realpath(__file__))}/../logs"
         self.logging_file = f"{self.logging_dir}/log.log"
-        # print("attempt one: ", self.logging_dir)
+        print("Original Log File Location: ", self.logging_dir)
         if os.path.isdir(self.logging_dir):
             print("Log File: ", self.logging_file)
         else:
             self.logging_file = f"{os.curdir}/logs/log.log"
-            # print("Log File: ", self.logging_file)
+            print("Second Attempt Log File: ", self.logging_file)
         logging.basicConfig(filename=self.logging_file, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
                             filemode='w', level=logging.DEBUG)
 
