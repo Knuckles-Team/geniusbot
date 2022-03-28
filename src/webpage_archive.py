@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# coding: utf-8
 
 import sys
 import getopt
@@ -18,7 +18,6 @@ from log import Log
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -604,7 +603,7 @@ def main(argv):
         elif opt in ("-d", "--directory"):
             archive.set_save_path(arg)
         elif opt == "--dpi":
-            archive.set_dpi_level(arg)
+            archive.set_dpi_level(int(arg))
         elif opt in ("-f", "--file"):
             file_flag = True
             filename = arg
