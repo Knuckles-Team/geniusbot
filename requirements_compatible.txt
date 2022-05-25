@@ -110,7 +110,7 @@ pyglet==1.5.14
 Pygments==2.7.3
 PyGObject==3.38.0
 PyHive==0.6.3
-PyJWT==2.0.0
+PyJWT==2.4.0
 PyNaCl==1.4.0
 pyparsing==2.4.7
 pyppeteer==0.2.5
