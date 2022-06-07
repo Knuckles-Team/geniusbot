@@ -10,7 +10,7 @@ import youtube_dl
 
 
 class VideoDownloader:
-    SAVE_PATH = "~/"
+    SAVE_PATH = f'{os.path.expanduser("~")}/Downloads'
     # Link of the video to be downloaded stored in this file path
     links = []
 
@@ -34,15 +34,18 @@ class VideoDownloader:
         print("Links Reset")
         self.links = []
 
-    def extend_link(self, urls):
+    def extend_links(self, urls):
         print("URL Extended: ", urls)
         self.links.extend(urls)
         self.links = list(dict.fromkeys(self.links))
 
-    def append_link(self, url):
+    def append_links(self, url):
         print("URL Appended: ", url)
         self.links.append(url)
         self.links = list(dict.fromkeys(self.links))
+
+    def get_links(self):
+        return self.links
 
     def download_video(self, link):
         ydl_opts = {
@@ -91,7 +94,7 @@ class VideoDownloader:
                         self.links.append(vid)
                     x += 1
             else:
-                url = f"https://www.youtube.com/channel/{channel}/videos"
+                url = f"https://www.youtube.com/c/{channel}/videos"
                 print("URL: ", url)
                 page = requests.get(url).content
                 print("Page: ", page)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
+import os
 import sys
 from time import sleep
 from videodownloader import VideoDownloader
@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QTabWidget,
     QGridLayout, QFormLayout, QHBoxLayout, QRadioButton, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
+    QFileDialog,
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
@@ -96,12 +97,17 @@ class GeniusBot(QMainWindow):
         # Video Download Widgets
         self.video_links_label = QLabel("Video Link(s) ▼")
         self.video_links_editor = QPlainTextEdit()
-        self.channel_field_label = QLabel("YouTube Channel/User ►")
+        self.channel_field_label = QPushButton("Channel/User")
+        self.channel_field_label.clicked.connect(self.add_channel_videos)
         self.channel_field_editor = QLineEdit()
         self.download_button = QPushButton("Download")
         self.download_button.clicked.connect(self.download_videos)
         self.open_file_button = QPushButton("Open File")
+        self.open_file_button.clicked.connect(self.open_file)
+        self.open_file_label = QLabel("None")
         self.save_location_button = QPushButton("Save Location")
+        self.save_location_button.clicked.connect(self.save_location)
+        self.save_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
         self.video_progress_bar = QProgressBar()
 
         # Set the tab layout
@@ -111,9 +117,11 @@ class GeniusBot(QMainWindow):
         layout.addWidget(self.channel_field_label, 2, 0, 1, 1)
         layout.addWidget(self.channel_field_editor, 2, 1, 1, 1)
         layout.addWidget(self.open_file_button, 3, 0, 1, 1)
-        layout.addWidget(self.save_location_button, 3, 1, 1, 1)
-        layout.addWidget(self.download_button, 4, 0, 1, 2)
-        layout.addWidget(self.video_progress_bar, 5, 0, 1, 2)
+        layout.addWidget(self.open_file_label, 3, 1, 1, 2)
+        layout.addWidget(self.save_location_button, 4, 0, 1, 1)
+        layout.addWidget(self.save_location_label, 4, 1, 1, 2)
+        layout.addWidget(self.download_button, 5, 0, 1, 2)
+        layout.addWidget(self.video_progress_bar, 6, 0, 1, 2)
         self.tabwidget.setTabText(1, "Video Downloader")
         self.tab2.setLayout(layout)
 
@@ -157,23 +165,51 @@ class GeniusBot(QMainWindow):
     def download_videos(self):
         self.video_progress_bar.setValue(0)
         videos = self.video_links_editor.toPlainText()
-        videos = videos.rstrip()
+        videos = videos.strip()
         videos = videos.split('\n')
 
-        self.thread = QThread()
-        self.worker = VideoWorker(self.video_downloader, videos)
-        self.worker.moveToThread(self.thread)
-        self.thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-        self.worker.progress.connect(self.report_video_progress_bar)
-        self.thread.start()
-        self.download_button.setEnabled(False)
-        self.thread.finished.connect(
-            lambda: self.download_button.setEnabled(True)
-        )
+        if videos[0] != '':
+            self.thread = QThread()
+            self.worker = VideoWorker(self.video_downloader, videos)
+            self.worker.moveToThread(self.thread)
+            self.thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
+            self.worker.progress.connect(self.report_video_progress_bar)
+            self.thread.start()
+            self.download_button.setEnabled(False)
+            self.thread.finished.connect(
+                lambda: self.download_button.setEnabled(True)
+            )
 
+    def add_channel_videos(self):
+        print("Adding Channel videos")
+        self.video_downloader.get_channel_videos(self.channel_field_editor.text())
+        videos = self.video_links_editor.toPlainText()
+        videos = videos.strip()
+        videos = videos.split('\n')
+        videos = videos + self.video_downloader.get_links()
+        videos = '\n'.join(videos)
+        self.video_links_editor.setPlainText(videos)
+
+    def open_file(self):
+        print("Opening Video URL file")
+        video_file_name = QFileDialog.getOpenFileName(self, 'File with Video URL(s)')
+        print(video_file_name[0])
+        self.open_file_label.setText(video_file_name[0])
+
+        with open(video_file_name[0], 'r') as file:
+            videos = file.read()
+        videos = videos + self.video_links_editor.toPlainText()
+        videos = videos.strip()
+        self.video_links_editor.setPlainText(videos)
+
+    def save_location(self):
+        print("Setting save location for videos")
+        directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        self.save_location_label.setText(directory_name)
+        self.video_downloader.set_save_path(directory_name)
 
 def geniusbot(argv):
     app = QApplication(sys.argv)
