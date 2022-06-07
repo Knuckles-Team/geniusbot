@@ -24,20 +24,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 
-# Step 1: Create a worker class
-class Worker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def run(self):
-        """Long-running task."""
-        for i in range(5):
-            sleep(1)
-            self.progress.emit(i + 1)
-        self.finished.emit()
-
-
-class VideoWorker2(QObject):
+class VideoWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
@@ -52,22 +39,6 @@ class VideoWorker2(QObject):
             self.video_downloader.download_video(self.videos[video_index])
             self.progress.emit(int(((1 + video_index) / len(self.videos)) * 100))
         self.finished.emit()
-
-
-class VideoWorker(QThread):
-
-    def __init__(self, video_downloader, videos, progress_bar, download_button):
-        super().__init__()
-        self.video_downloader = video_downloader
-        self.videos = videos
-        self.progress_bar = progress_bar
-        self.download_button = download_button
-
-    def run(self):
-        for video_index in range(0, len(self.videos)):
-            self.video_downloader.download_video(self.videos[video_index])
-            self.progress_bar.setValue(int(((1 + video_index) / len(self.videos)) * 100))
-        self.download_button.setEnabled(True)
 
 
 class GeniusBot(QMainWindow):
@@ -154,10 +125,6 @@ class GeniusBot(QMainWindow):
         layout.addWidget(self.save_location_button, 3, 1, 1, 1)
         layout.addWidget(self.download_button, 4, 0, 1, 2)
         layout.addWidget(self.video_progress_bar, 5, 0, 1, 2)
-        # layout.addWidget(self.clicksLabel)
-        # layout.addWidget(self.countBtn)
-        # layout.addWidget(self.stepLabel)
-        # layout.addWidget(self.longRunningBtn)
         self.tabwidget.setTabText(1, "Video Downloader")
         self.tab2.setLayout(layout)
 
@@ -195,14 +162,6 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(5, "Subshift")
         self.tab6.setLayout(layout)
 
-
-    def countClicks(self):
-        self.clicksCount += 1
-        self.clicksLabel.setText(f"Counting: {self.clicksCount} clicks")
-
-    def reportProgress(self, n):
-        self.stepLabel.setText(f"Long-Running Step: {n}")
-
     def report_video_progress_bar(self, n):
         self.video_progress_bar.setValue(n)
 
@@ -213,7 +172,7 @@ class GeniusBot(QMainWindow):
         videos = videos.split('\n')
 
         self.thread = QThread()
-        self.worker = VideoWorker2(self.video_downloader, videos)
+        self.worker = VideoWorker(self.video_downloader, videos)
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.worker.finished.connect(self.thread.quit)
@@ -224,35 +183,6 @@ class GeniusBot(QMainWindow):
         self.download_button.setEnabled(False)
         self.thread.finished.connect(
             lambda: self.download_button.setEnabled(True)
-        )
-        # self.worker = VideoWorker(self.video_downloader, videos, self.video_progress_bar, self.download_button)
-        # self.worker.start()
-        # self.download_button.setEnabled(False)
-
-
-    def runLongTask(self):
-        # Step 2: Create a QThread object
-        self.thread = QThread()
-        # Step 3: Create a worker object
-        self.worker = Worker()
-        # Step 4: Move worker to the thread
-        self.worker.moveToThread(self.thread)
-        # Step 5: Connect signals and slots
-        self.thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-        self.worker.progress.connect(self.reportProgress)
-        # Step 6: Start the thread
-        self.thread.start()
-
-        # Final resets
-        self.longRunningBtn.setEnabled(False)
-        self.thread.finished.connect(
-            lambda: self.longRunningBtn.setEnabled(True)
-        )
-        self.thread.finished.connect(
-            lambda: self.stepLabel.setText("Long-Running Step: 0")
         )
 
 
