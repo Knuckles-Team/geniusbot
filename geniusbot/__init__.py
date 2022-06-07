@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
-from webarchiver.version import __version__, __author__, __credits__
-
+from geniusbot.version import __version__, __author__, __credits__
+from geniusbot.videodownloader import VideoDownloader
 """
 webarchiver
 

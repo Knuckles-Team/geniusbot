@@ -15,7 +15,7 @@ class VideoDownloader:
     links = []
 
     def __init__(self):
-        print("init")
+        self.links = []
 
     def open_file(self):
         youtube_urls = open('links_file.txt', 'r')

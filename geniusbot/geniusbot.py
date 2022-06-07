@@ -4,11 +4,11 @@
 import os
 import sys
 from time import sleep
-from videodownloader import VideoDownloader
+from geniusbot.videodownloader import VideoDownloader
 from webarchiver import Webarchiver
 # from report_merger import ReportMerge
 # from analytic_profiler import ReportAnalyzer
-from version import __version__, __author__, __credits__
+from geniusbot.version import __version__, __author__, __credits__
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
