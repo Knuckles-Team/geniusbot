@@ -2,7 +2,7 @@
 # coding: utf-8
 
 from setuptools import setup
-from subshift.version import __version__, __author__
+from geniusbot.version import __version__, __author__
 from pathlib import Path
 import re
 
