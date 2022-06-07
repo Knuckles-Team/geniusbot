@@ -19,7 +19,7 @@ colorama==0.4.4
 configparser==5.0.1
 confuse==1.4.0
 crayons==0.4.0
-cryptography==3.3.1
+cryptography==3.3.2
 cssselect==1.1.0
 cx-Freeze==6.5
 cx-Oracle==8.1.0
