@@ -85,7 +85,7 @@ netifaces==0.10.9
 networkx==2.5
 notebook==6.1.6
 numba==0.52.0
-numpy==1.19.5
+numpy==1.21.0
 packaging==20.8
 pandas==1.2.0
 pandas-profiling==2.10.0
