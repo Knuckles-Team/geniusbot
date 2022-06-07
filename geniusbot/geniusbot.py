@@ -37,6 +37,23 @@ class Worker(QObject):
         self.finished.emit()
 
 
+class VideoWorker2(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, video_downloader, videos):
+        super().__init__()
+        self.video_downloader = video_downloader
+        self.videos = videos
+
+    def run(self):
+        """Long-running task."""
+        for video_index in range(0, len(self.videos)):
+            self.video_downloader.download_video(self.videos[video_index])
+            self.progress.emit(int(((1 + video_index) / len(self.videos)) * 100))
+        self.finished.emit()
+
+
 class VideoWorker(QThread):
 
     def __init__(self, video_downloader, videos, progress_bar, download_button):
@@ -186,17 +203,31 @@ class GeniusBot(QMainWindow):
     def reportProgress(self, n):
         self.stepLabel.setText(f"Long-Running Step: {n}")
 
-    def update_progress_bar(self, video_index, total_videos):
-        self.video_progress_bar.setValue(int(((video_index + 1) / total_videos) * 100))
+    def report_video_progress_bar(self, n):
+        self.video_progress_bar.setValue(n)
 
     def download_videos(self):
+        self.video_progress_bar.setValue(0)
         videos = self.video_links_editor.toPlainText()
         videos = videos.rstrip()
         videos = videos.split('\n')
 
-        self.worker = VideoWorker(self.video_downloader, videos, self.video_progress_bar, self.download_button)
-        self.worker.start()
+        self.thread = QThread()
+        self.worker = VideoWorker2(self.video_downloader, videos)
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.worker.progress.connect(self.report_video_progress_bar)
+        self.thread.start()
         self.download_button.setEnabled(False)
+        self.thread.finished.connect(
+            lambda: self.download_button.setEnabled(True)
+        )
+        # self.worker = VideoWorker(self.video_downloader, videos, self.video_progress_bar, self.download_button)
+        # self.worker.start()
+        # self.download_button.setEnabled(False)
 
 
     def runLongTask(self):
