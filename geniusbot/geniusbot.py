@@ -52,6 +52,7 @@ class GeniusBot(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.video_downloader = VideoDownloader()
+        self.webarchiver = Webarchiver()
         self.setupUi()
 
     def setupUi(self):
@@ -88,11 +89,11 @@ class GeniusBot(QMainWindow):
     def tab1UI(self):
         self.homelabel = QLabel(f"""GeniusBot is a world class tool that allows you to do a lot of useful\n
                     things from a compact and portable application\n
-                    1. YouTube Archive\n
-                    2. Web Archive\n            
-                    3. Analytical Profiler (Coming Soon)\n
-                    4. Report Merger (Coming Soon)\n
-                    5. FFMPEG Video/Audio Converter (Coming Soon)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+                    1. Video Downloader\n
+                    2. Web Archiver\n            
+                    3. Analytical Profiler\n
+                    4. Report Merger
+                    5. Subtitle Shifter\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
                     """)
         layout = QVBoxLayout()
         layout.addWidget(self.homelabel)
