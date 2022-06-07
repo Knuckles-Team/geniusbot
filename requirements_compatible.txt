@@ -90,7 +90,7 @@ packaging==20.8
 pandas==1.2.0
 pandas-profiling==2.10.0
 pandocfilters==1.4.3
-paramiko==2.7.2
+paramiko==2.10.1
 parse==1.18.0
 parso==0.8.1
 patsy==0.5.1
