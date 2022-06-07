@@ -3,12 +3,18 @@
 
 import os
 import sys
-from time import sleep
-from geniusbot.videodownloader import VideoDownloader
 from webarchiver import Webarchiver
+try:
+    from geniusbot.videodownloader import VideoDownloader
+except Exception as e:
+    from videodownloader import VideoDownloader
+try:
+    from geniusbot.version import __version__, __author__, __credits__
+except Exception as e:
+    from version import __version__, __author__, __credits__
 # from report_merger import ReportMerge
 # from analytic_profiler import ReportAnalyzer
-from geniusbot.version import __version__, __author__, __credits__
+
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
