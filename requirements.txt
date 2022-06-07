@@ -1,3 +1,5 @@
+webarchiver
+subshift
 setuptools
 wheel
 autoconf

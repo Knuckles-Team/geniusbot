@@ -1,5 +1,6 @@
 # GeniusBot 
-![Alt text](img/geniusbot-small.png?raw=true "GeniusBot") 
+*Version: 2.0.0*
+![Alt text](geniusbot/img/geniusbot-small.png?raw=true "GeniusBot") 
 
 The Ever-learning and ever-improving tool!
 - YouTube Archiving
@@ -56,6 +57,19 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Repository
 [genius-bot](https://github.com/Knucklessg1/genius-bot.git)
+
+#### Build Instructions
+Build Python Package
+
+```bash
+sudo chmod +x ./*.py
+pip install .
+python setup.py bdist_wheel --universal
+# Test Pypi
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+# Prod Pypi
+twine upload dist/*
+```
 
 ### Instructions to Install & Configure Python Environment:
 #### CentOS: 
@@ -198,8 +212,6 @@ See also the list of [contributors](https://github.com/your/project/contributors
 
 ## Acknowledgments
 
-* tkthread - tclthread
-* FFMPEG - All credits to the FFMPEG team for the audio/video conversions
 ## Pip Tips
 #### To update pip in Windows:
 ```
