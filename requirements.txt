@@ -1,7 +1,3 @@
-matplotlib
 pandas
-chardet
-selenium
-Pillow
-webdriver-manager
-piexif
+subshift
+webarchiver
