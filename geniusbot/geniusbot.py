@@ -44,7 +44,6 @@ class VideoWorker(QObject):
 class GeniusBot(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.clicksCount = 0
         self.video_downloader = VideoDownloader()
         self.setupUi()
 
@@ -104,16 +103,6 @@ class GeniusBot(QMainWindow):
         self.open_file_button = QPushButton("Open File")
         self.save_location_button = QPushButton("Save Location")
         self.video_progress_bar = QProgressBar()
-
-        # Create and connect widgets
-        self.clicksLabel = QLabel("Counting: 0 clicks")
-        self.clicksLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.stepLabel = QLabel("Long-Running Step: 0")
-        self.stepLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.countBtn = QPushButton("Click me!")
-        self.countBtn.clicked.connect(self.countClicks)
-        self.longRunningBtn = QPushButton("Long-Running Task!")
-        self.longRunningBtn.clicked.connect(self.runLongTask)
 
         # Set the tab layout
         layout = QGridLayout()
