@@ -71,15 +71,15 @@ class GeniusBot(QMainWindow):
         self.tabwidget.addTab(self.tab1, "Tab 1")
         self.tabwidget.addTab(self.tab2, "Tab 2")
         self.tabwidget.addTab(self.tab3, "Tab 3")
-        self.tabwidget.addTab(self.tab4, "Tab 4")
-        self.tabwidget.addTab(self.tab5, "Tab 5")
-        self.tabwidget.addTab(self.tab6, "Tab 6")
+        # self.tabwidget.addTab(self.tab4, "Tab 4")
+        # self.tabwidget.addTab(self.tab5, "Tab 5")
+        # self.tabwidget.addTab(self.tab6, "Tab 6")
         self.tab1UI()
         self.tab2UI()
         self.tab3UI()
-        self.tab4UI()
-        self.tab5UI()
-        self.tab6UI()
+        # self.tab4UI()
+        # self.tab5UI()
+        # self.tab6UI()
 
         # Set the main gui layout
         layout = QVBoxLayout()
@@ -133,13 +133,30 @@ class GeniusBot(QMainWindow):
         self.tab2.setLayout(layout)
 
     def tab3UI(self):
-        layout = QFormLayout()
-        sex = QHBoxLayout()
-        sex.addWidget(QRadioButton("Male"))
-        sex.addWidget(QRadioButton("Female"))
-        layout.addRow(QLabel("Sex"), sex)
-        layout.addRow("Date of Birth", QLineEdit())
-        self.tabwidget.setTabText(2, "Webarchiver")
+        # Video Download Widgets
+        self.web_links_label = QLabel("Web Link(s) ▼")
+        self.web_links_editor = QPlainTextEdit()
+        self.archive_button = QPushButton("Screenshot")
+        self.archive_button.clicked.connect(self.screenshot_websites)
+        self.open_webfile_button = QPushButton("Open File")
+        self.open_webfile_button.clicked.connect(self.open_webfile)
+        self.open_webfile_label = QLabel("None")
+        self.save_web_location_button = QPushButton("Save Location")
+        self.save_web_location_button.clicked.connect(self.save_web_location)
+        self.save_web_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.web_progress_bar = QProgressBar()
+
+        # Set the tab layout
+        layout = QGridLayout()
+        layout.addWidget(self.web_links_label, 0, 0, 1, 2)
+        layout.addWidget(self.web_links_editor, 1, 0, 1, 2)
+        layout.addWidget(self.open_webfile_button, 2, 0, 1, 1)
+        layout.addWidget(self.open_webfile_label, 2, 1, 1, 1)
+        layout.addWidget(self.save_web_location_button, 3, 0, 1, 1)
+        layout.addWidget(self.save_web_location_label, 3, 1, 1, 1)
+        layout.addWidget(self.archive_button, 4, 0, 1, 2)
+        layout.addWidget(self.web_progress_bar, 5, 0, 1, 2)
+        self.tabwidget.setTabText(2, "Web Archiver")
         self.tab3.setLayout(layout)
 
     def tab4UI(self):
@@ -165,6 +182,48 @@ class GeniusBot(QMainWindow):
         layout.addWidget(QCheckBox("Maths"))
         self.tabwidget.setTabText(5, "Subshift")
         self.tab6.setLayout(layout)
+
+    def report_web_progress_bar(self, n):
+        self.web_progress_bar.setValue(n)
+
+    def screenshot_websites(self):
+        self.web_progress_bar.setValue(0)
+        websites = self.websites_links_editor.toPlainText()
+        websites = websites.strip()
+        websites = websites.split('\n')
+
+        # if websites[0] != '':
+        #     self.thread = QThread()
+        #     self.worker = VideoWorker(self.video_downloader, videos)
+        #     self.worker.moveToThread(self.thread)
+        #     self.thread.started.connect(self.worker.run)
+        #     self.worker.finished.connect(self.thread.quit)
+        #     self.worker.finished.connect(self.worker.deleteLater)
+        #     self.thread.finished.connect(self.thread.deleteLater)
+        #     self.worker.progress.connect(self.report_video_progress_bar)
+        #     self.thread.start()
+        #     self.download_button.setEnabled(False)
+        #     self.thread.finished.connect(
+        #         lambda: self.download_button.setEnabled(True)
+        #     )
+
+    def open_webfile(self):
+        print("Opening Website URL file")
+        website_file_name = QFileDialog.getOpenFileName(self, 'File with URL(s)')
+        print(website_file_name[0])
+        self.open_file_label.setText(website_file_name[0])
+
+        with open(website_file_name[0], 'r') as file:
+            websites = file.read()
+        websites = websites + self.web_links_editor.toPlainText()
+        websites = websites.strip()
+        self.web_links_editor.setPlainText(websites)
+
+    def save_web_location(self):
+        print("Setting save location for screenshots")
+        directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        self.save_location_label.setText(directory_name)
+        self.webarchiver.set_save_path(directory_name)
 
     def report_video_progress_bar(self, n):
         self.video_progress_bar.setValue(n)
