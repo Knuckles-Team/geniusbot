@@ -2,3 +2,4 @@ pandas
 subshift
 webarchiver
 PyQt5
+youtube-dl

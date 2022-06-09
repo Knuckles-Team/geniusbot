@@ -27,7 +27,7 @@ setup(
     license='Unlicense',
     packages=['geniusbot'],
     include_package_data=True,
-    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5'],
+    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl'],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
     classifiers=[
