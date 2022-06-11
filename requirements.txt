@@ -3,3 +3,4 @@ subshift
 webarchiver
 PyQt5
 youtube-dl
+pywin32
