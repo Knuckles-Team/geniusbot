@@ -48,11 +48,12 @@ class SubshiftWorker(QObject):
         old_stdout = sys.stdout
         result = StringIO()
         sys.stdout = result
+        print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
         subshift.subshift([f"-f", f"{self.subtitle_file}", f"-m", f"{self.mode}", f"-t", f"{self.time}"])
         sys.stdout = old_stdout
         result_string = result.getvalue()
         self.progress.emit(100)
-        self.console.setText(f"{self.console.text()}\n{result_string}\n[Genius Bot] Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
+        self.console.setText(f"{self.console.text()}\n{result_string}\n[Genius Bot] Subtitle {self.subtitle_file} was shifted {self.mode}{self.time} seconds")
         self.finished.emit()
 
 class WebarchiverWorker(QObject):
@@ -132,7 +133,6 @@ class ScrollLabel(QScrollArea):
         self.setStyleSheet("background-color: #211f1f;")
 
         self.scroll_bar = self.verticalScrollBar()
-        self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(self.scroll_bar.maximum()))
         # making widget resizable
         self.setWidgetResizable(True)
 
@@ -171,12 +171,11 @@ class ScrollLabel(QScrollArea):
         # setting text to the label
         self.label.setText(text)
 
-
     def setScrollWheel(self, location="Top"):
         if location == "Bottom":
-            self.scroll_bar.setValue(self.scroll_bar.maximum())
+            self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(self.scroll_bar.maximum()))
         else:
-            self.scroll_bar.setValue(0)
+            self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(0))
 
     # the text() method
     def text(self):
@@ -240,6 +239,7 @@ class GeniusBot(QMainWindow):
         self.buttonsWidgetLayout.setStretch(1, 1)
         self.buttonsWidgetLayout.setContentsMargins(0, 0, 0, 0)
         self.console = ScrollLabel(self)
+        self.console.setScrollWheel(location="Bottom")
         self.console.setText(f"[Genius Bot] Console Output of Running Tasks")
         layout.addWidget(self.buttonsWidget)
         layout.addWidget(self.console)
@@ -361,6 +361,7 @@ class GeniusBot(QMainWindow):
         self.subtitle_label.setText(f"Subtitle file contents will be shown here\n")
         self.subtitle_label.setFont("Arial")
         self.subtitle_label.setFontColor(background_color="white", color="black")
+        self.subtitle_label.setScrollWheel("Top")
         self.open_subtitlefile_label = QLabel("None")
         self.shift_time_label = QLabel("Shift Time")
         self.sub_time_spin_box = QSpinBox(self)
@@ -417,7 +418,7 @@ class GeniusBot(QMainWindow):
         else:
             mode = "-"
         time = abs(self.sub_time_spin_box.value())
-        self.subshift_worker = SubshiftWorker(self.open_subtitlefile_button.text(), mode, time, self.console)
+        self.subshift_worker = SubshiftWorker(self.open_subtitlefile_label.text(), mode, time, self.console)
         self.subshift_worker.moveToThread(self.subshift_thread)
         self.subshift_thread.started.connect(self.subshift_worker.run)
         self.subshift_worker.finished.connect(self.subshift_thread.quit)
@@ -430,8 +431,15 @@ class GeniusBot(QMainWindow):
             lambda: self.shift_subtitle_button.setEnabled(True)
         )
         self.subshift_thread.finished.connect(
-            lambda: self.open_subtitlefile()
+            lambda: self.refresh_subtitlefile()
         )
+
+    def refresh_subtitlefile(self):
+        with open(self.open_subtitlefile_label.text(), 'r') as file:
+            self.subtitles = file.read()
+        self.subtitles = self.subtitles + self.subtitle_label.text()
+        self.subtitles = self.subtitles.strip()
+        self.subtitle_label.setText(self.subtitles)
 
     def open_subtitlefile(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Subtitle file")
@@ -444,7 +452,6 @@ class GeniusBot(QMainWindow):
         self.subtitles = self.subtitles + self.subtitle_label.text()
         self.subtitles = self.subtitles.strip()
         self.subtitle_label.setText(self.subtitles)
-        self.subtitle_label.setScrollWheel("Top")
 
     def report_web_progress_bar(self, n):
         self.web_progress_bar.setValue(n)
