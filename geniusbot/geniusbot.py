@@ -3,6 +3,7 @@
 
 import os
 import sys
+import subshift
 from io import StringIO
 from PyQt5.QtGui import QIcon, QFont
 from webarchiver import Webarchiver
@@ -30,6 +31,29 @@ from PyQt5.QtWidgets import (
     QFileDialog, QScrollArea, QComboBox, QSpinBox,
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
+
+class SubshiftWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, subtitle_file, mode, time, console):
+        super().__init__()
+        self.subtitle_file = subtitle_file
+        self.mode = mode
+        self.console = console
+        self.time = time
+
+    def run(self):
+        """Long-running task."""
+        old_stdout = sys.stdout
+        result = StringIO()
+        sys.stdout = result
+        subshift.subshift([f"-f", f"{self.subtitle_file}", f"-m", f"{self.mode}", f"-t", f"{self.time}"])
+        sys.stdout = old_stdout
+        result_string = result.getvalue()
+        self.progress.emit(100)
+        self.console.setText(f"{self.console.text()}\n{result_string}\n[Genius Bot] Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
+        self.finished.emit()
 
 class WebarchiverWorker(QObject):
     finished = pyqtSignal()
@@ -68,6 +92,7 @@ class WebarchiverWorker(QObject):
             self.progress.emit(int(((1 + website_index) / len(self.websites)) * 100))
             self.webarchiver.reset_links()
 
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Screenshots captured successfully")
         self.webarchiver.quit_driver()
 
         self.finished.emit()
@@ -94,6 +119,7 @@ class VideoWorker(QObject):
             result_string = result.getvalue()
             self.console.setText(f"{self.console.text()}\n{result_string}")
             self.progress.emit(int(((1 + video_index) / len(self.videos)) * 100))
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] All videos downloaded successfully")
         self.finished.emit()
 
 
@@ -133,11 +159,24 @@ class ScrollLabel(QScrollArea):
 
         self.setHidden(True)
 
+    def setFont(self, font="Monospace"):
+        self.label.setFont(QFont(font, 10))
+
+    def setFontColor(self, background_color="#211f1f", color="white"):
+        self.label.setStyleSheet(f"background-color: {background_color}; color: {color};")
+        self.setStyleSheet(f"background-color: {background_color};")
 
     # the setText method
     def setText(self, text):
         # setting text to the label
         self.label.setText(text)
+
+
+    def setScrollWheel(self, location="Top"):
+        if location == "Bottom":
+            self.scroll_bar.setValue(self.scroll_bar.maximum())
+        else:
+            self.scroll_bar.setValue(0)
 
     # the text() method
     def text(self):
@@ -176,7 +215,7 @@ class GeniusBot(QMainWindow):
         self.tabwidget.addTab(self.tab1, "Tab 1")
         self.tabwidget.addTab(self.tab2, "Tab 2")
         self.tabwidget.addTab(self.tab3, "Tab 3")
-        # self.tabwidget.addTab(self.tab4, "Tab 4")
+        self.tabwidget.addTab(self.tab4, "Tab 4")
         # self.tabwidget.addTab(self.tab5, "Tab 5")
         # self.tabwidget.addTab(self.tab6, "Tab 6")
         self.tab1_home()
@@ -191,16 +230,17 @@ class GeniusBot(QMainWindow):
         layout.addWidget(self.tabwidget)
         self.buttonsWidget = QWidget()
         self.buttonsWidgetLayout = QHBoxLayout(self.buttonsWidget)
-        self.console_label = QLabel("Console")
-        self.hide_console_button = QPushButton("+")
+        #self.console_label = QLabel("Console")
+        self.hide_console_button = QPushButton("Console ◳")
+        self.hide_console_button.setStyleSheet("background-color: #211f1f; color: white;")
         self.hide_console_button.clicked.connect(self.hide_console)
-        self.buttonsWidgetLayout.addWidget(self.console_label)
+        #self.buttonsWidgetLayout.addWidget(self.console_label)
         self.buttonsWidgetLayout.addWidget(self.hide_console_button)
         self.buttonsWidgetLayout.setStretch(0, 24)
         self.buttonsWidgetLayout.setStretch(1, 1)
         self.buttonsWidgetLayout.setContentsMargins(0, 0, 0, 0)
         self.console = ScrollLabel(self)
-        self.console.setText(f"""Genius Bot Console:\n""")
+        self.console.setText(f"[Genius Bot] Console Output of Running Tasks")
         layout.addWidget(self.buttonsWidget)
         layout.addWidget(self.console)
         layout.setStretch(0, 24)
@@ -306,15 +346,36 @@ class GeniusBot(QMainWindow):
         webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 6)
         webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
         webarchiver_layout.setContentsMargins(3, 3, 3, 3)
-        self.tabwidget.setTabText(2, "Web Archiver")
+        self.tabwidget.setTabText(2, "Website Archive")
         self.tab3.setLayout(webarchiver_layout)
 
     def tab4_subshift(self):
-        layout = QHBoxLayout()
-        layout.addWidget(QLabel("subjects"))
-        layout.addWidget(QCheckBox("Physics"))
-        layout.addWidget(QCheckBox("Maths"))
-        self.tabwidget.setTabText(3, "Report Manager")
+        self.open_subtitlefile_button = QPushButton("Open File")
+        self.open_subtitlefile_button.clicked.connect(self.open_subtitlefile)
+        self.shift_subtitle_button = QPushButton("Shift File")
+        self.shift_subtitle_button.clicked.connect(self.shift_subtitle)
+
+        #self.subtitle_label = QLabel(self)
+        self.subtitle_label = ScrollLabel(self)
+        self.subtitle_label.hide()
+        self.subtitle_label.setText(f"Subtitle file contents will be shown here\n")
+        self.subtitle_label.setFont("Arial")
+        self.subtitle_label.setFontColor(background_color="white", color="black")
+        self.open_subtitlefile_label = QLabel("None")
+        self.shift_time_label = QLabel("Shift Time")
+        self.sub_time_spin_box = QSpinBox(self)
+        self.sub_time_spin_box.setRange(-2147483646, 2147483646)
+        self.sub_time_spin_box.setValue(0)
+        self.sub_time_spin_box.valueChanged.connect(self.check_subtitle_seconds)
+        self.shift_subtitle_button.setEnabled(False)
+        layout = QGridLayout()
+        layout.addWidget(self.open_subtitlefile_button, 0, 0, 1, 1)
+        layout.addWidget(self.open_subtitlefile_label, 0, 1, 1, 1)
+        layout.addWidget(self.shift_time_label, 1, 0, 1, 1)
+        layout.addWidget(self.sub_time_spin_box, 1, 1, 1, 1)
+        layout.addWidget(self.shift_subtitle_button, 2, 0, 1, 2)
+        layout.addWidget(self.subtitle_label, 3, 0, 1, 2)
+        self.tabwidget.setTabText(3, "Shift Subtitles")
         self.tab4.setLayout(layout)
 
     def tab5UI(self):
@@ -330,20 +391,66 @@ class GeniusBot(QMainWindow):
         layout.addWidget(QLabel("subjects"))
         layout.addWidget(QCheckBox("Physics"))
         layout.addWidget(QCheckBox("Maths"))
-        self.tabwidget.setTabText(5, "Subshift")
+        self.tabwidget.setTabText(5, "Report Manager")
         self.tab6.setLayout(layout)
 
     def hide_console(self):
-        if self.hide_console_button.text() == "+":
-            self.hide_console_button.setText("-")
+        if self.hide_console_button.text() == "Console ◳":
+            self.hide_console_button.setText("Console _")
         else:
-            self.hide_console_button.setText("+")
+            self.hide_console_button.setText("Console ◳")
         self.console.hide()
+
+    def check_subtitle_seconds(self):
+        if self.sub_time_spin_box.value() > 0:
+            self.shift_subtitle_button.setEnabled(True)
+        elif self.sub_time_spin_box.value() == 0:
+            self.shift_subtitle_button.setEnabled(False)
+        else:
+            self.shift_subtitle_button.setEnabled(True)
+
+    def shift_subtitle(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Shifting Subtitles...")
+        self.subshift_thread = QThread()
+        if self.sub_time_spin_box.value() > 0:
+            mode = "+"
+        else:
+            mode = "-"
+        time = abs(self.sub_time_spin_box.value())
+        self.subshift_worker = SubshiftWorker(self.open_subtitlefile_button.text(), mode, time, self.console)
+        self.subshift_worker.moveToThread(self.subshift_thread)
+        self.subshift_thread.started.connect(self.subshift_worker.run)
+        self.subshift_worker.finished.connect(self.subshift_thread.quit)
+        self.subshift_worker.finished.connect(self.subshift_worker.deleteLater)
+        self.subshift_thread.finished.connect(self.subshift_thread.deleteLater)
+        self.subshift_worker.progress.connect(self.report_web_progress_bar)
+        self.subshift_thread.start()
+        self.shift_subtitle_button.setEnabled(False)
+        self.subshift_thread.finished.connect(
+            lambda: self.shift_subtitle_button.setEnabled(True)
+        )
+        self.subshift_thread.finished.connect(
+            lambda: self.open_subtitlefile()
+        )
+
+    def open_subtitlefile(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Subtitle file")
+        self.subtitle_label.setText("")
+        subtitle_file_name = QFileDialog.getOpenFileName(self, 'Subtitle File')
+        print(subtitle_file_name[0])
+        self.open_subtitlefile_label.setText(subtitle_file_name[0])
+        with open(subtitle_file_name[0], 'r') as file:
+            self.subtitles = file.read()
+        self.subtitles = self.subtitles + self.subtitle_label.text()
+        self.subtitles = self.subtitles.strip()
+        self.subtitle_label.setText(self.subtitles)
+        self.subtitle_label.setScrollWheel("Top")
 
     def report_web_progress_bar(self, n):
         self.web_progress_bar.setValue(n)
 
     def screenshot_websites(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Taking screenshots...")
         self.web_progress_bar.setValue(0)
         websites = self.web_links_editor.toPlainText()
         websites = websites.strip()
@@ -365,10 +472,10 @@ class GeniusBot(QMainWindow):
 
 
     def open_webfile(self):
-        print("Opening Website URL file")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Website URL file")
         website_file_name = QFileDialog.getOpenFileName(self, 'File with URL(s)')
         print(website_file_name[0])
-        self.open_webfile_button.setText(website_file_name[0])
+        self.open_webfile_label.setText(website_file_name[0])
 
         with open(website_file_name[0], 'r') as file:
             websites = file.read()
@@ -377,7 +484,7 @@ class GeniusBot(QMainWindow):
         self.web_links_editor.setPlainText(websites)
 
     def save_web_location(self):
-        print("Setting save location for screenshots")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots")
         web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.save_web_location_label.setText(web_directory_name)
         self.webarchiver.set_save_path(web_directory_name)
@@ -386,6 +493,7 @@ class GeniusBot(QMainWindow):
         self.video_progress_bar.setValue(n)
 
     def download_videos(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Downloading videos...")
         self.video_progress_bar.setValue(0)
         videos = self.video_links_editor.toPlainText()
         videos = videos.strip()
@@ -407,7 +515,7 @@ class GeniusBot(QMainWindow):
             )
 
     def add_channel_videos(self):
-        print("Adding Channel videos")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Adding Channel videos")
         self.video_downloader.get_channel_videos(self.channel_field_editor.text())
         videos = self.video_links_editor.toPlainText()
         videos = videos.strip()
@@ -417,7 +525,7 @@ class GeniusBot(QMainWindow):
         self.video_links_editor.setPlainText(videos)
 
     def open_video_file(self):
-        print("Opening Video URL file")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Video URL file")
         video_file_name = QFileDialog.getOpenFileName(self, 'File with Video URL(s)')
         print(video_file_name[0])
         self.video_open_file_label.setText(video_file_name[0])
@@ -429,7 +537,7 @@ class GeniusBot(QMainWindow):
         self.video_links_editor.setPlainText(videos)
 
     def save_location(self):
-        print("Setting save location for videos")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos")
         video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.video_save_location_label.setText(video_directory_name)
         self.video_downloader.set_save_path(video_directory_name)
