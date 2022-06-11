@@ -182,7 +182,7 @@ class GeniusBot(QMainWindow):
         self.tab1_home()
         self.tab2_video_downloader()
         self.tab3_webarchiver()
-        # self.tab4UI()
+        self.tab4_subshift()
         # self.tab5UI()
         # self.tab6UI()
 
@@ -221,10 +221,10 @@ class GeniusBot(QMainWindow):
         self.homelabel.setText(
             f"""GeniusBot at your service! What can we help you with?\n
             1. Video Downloader\n
-            2. Web Archiver\n            
-            3. Analytical Profiler\n
-            4. Report Merger\n
-            5. Subtitle Shifter\n
+            2. Web Archiver\n
+            3. Subtitle Shifter\n                        
+            4. Analytical Profiler\n
+            5. Report Merger\n
         """)
         layout = QVBoxLayout()
         layout.addWidget(self.homelabel)
@@ -260,6 +260,7 @@ class GeniusBot(QMainWindow):
         video_layout.addWidget(self.video_save_location_label, 4, 1, 1, 2)
         video_layout.addWidget(self.video_download_button, 5, 0, 1, 2)
         video_layout.addWidget(self.video_progress_bar, 6, 0, 1, 2)
+        video_layout.setContentsMargins(3, 3, 3, 3)
         self.tabwidget.setTabText(1, "Video Downloader")
         self.tab2.setLayout(video_layout)
 
@@ -304,10 +305,11 @@ class GeniusBot(QMainWindow):
         webarchiver_layout.addWidget(self.save_web_location_label, 4, 1, 1, 4)
         webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 6)
         webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
+        webarchiver_layout.setContentsMargins(3, 3, 3, 3)
         self.tabwidget.setTabText(2, "Web Archiver")
         self.tab3.setLayout(webarchiver_layout)
 
-    def tab4UI(self):
+    def tab4_subshift(self):
         layout = QHBoxLayout()
         layout.addWidget(QLabel("subjects"))
         layout.addWidget(QCheckBox("Physics"))
