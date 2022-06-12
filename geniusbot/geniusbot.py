@@ -32,6 +32,13 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
+yellow = "#FFA500"
+green = "#2E8B57"
+orange = "#FF7518"
+blue = "#4682B4"
+red = ""
+purple = ""
+
 class SubshiftWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
@@ -231,7 +238,7 @@ class GeniusBot(QMainWindow):
         self.buttonsWidgetLayout = QHBoxLayout(self.buttonsWidget)
         #self.console_label = QLabel("Console")
         self.hide_console_button = QPushButton("Console ◳")
-        self.hide_console_button.setStyleSheet("background-color: #211f1f; color: white;")
+        self.hide_console_button.setStyleSheet("background-color: #211f1f; color: white; font: bold;")
         self.hide_console_button.clicked.connect(self.hide_console)
         #self.buttonsWidgetLayout.addWidget(self.console_label)
         self.buttonsWidgetLayout.addWidget(self.hide_console_button)
@@ -273,17 +280,22 @@ class GeniusBot(QMainWindow):
 
     def tab2_video_downloader(self):
         # Video Download Widgets
-        self.video_links_label = QLabel("Video Link(s) ▼")
+        self.video_links_label = QLabel("Paste Video Link(s) Below ↴")
+        self.video_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
         self.video_links_editor = QPlainTextEdit()
         self.channel_field_label = QPushButton("Channel/User")
+        self.channel_field_label.setStyleSheet(f"background-color: {yellow}; color: white; font: bold;")
         self.channel_field_label.clicked.connect(self.add_channel_videos)
         self.channel_field_editor = QLineEdit()
-        self.video_download_button = QPushButton("Download")
+        self.video_download_button = QPushButton("Download ￬")
+        self.video_download_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.video_download_button.clicked.connect(self.download_videos)
         self.open_video_file_button = QPushButton("Open File")
+        self.open_video_file_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.open_video_file_button.clicked.connect(self.open_video_file)
         self.video_open_file_label = QLabel("None")
         self.video_save_location_button = QPushButton("Save Location")
+        self.video_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.video_save_location_button.clicked.connect(self.save_location)
         self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
         self.video_progress_bar = QProgressBar()
@@ -306,14 +318,18 @@ class GeniusBot(QMainWindow):
 
     def tab3_webarchiver(self):
         # Video Download Widgets
-        self.web_links_label = QLabel("Web Link(s) ▼")
+        self.web_links_label = QLabel("Paste Website Link(s) Below ↴")
+        self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
         self.web_links_editor = QPlainTextEdit()
-        self.archive_button = QPushButton("Screenshot")
+        self.archive_button = QPushButton("Archive ￬")
+        self.archive_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.archive_button.clicked.connect(self.screenshot_websites)
         self.open_webfile_button = QPushButton("Open File")
+        self.open_webfile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.open_webfile_button.clicked.connect(self.open_webfile)
         self.open_webfile_label = QLabel("None")
         self.save_web_location_button = QPushButton("Save Location")
+        self.save_web_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.save_web_location_button.clicked.connect(self.save_web_location)
         self.save_web_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
         self.web_dpi_label = QLabel("DPI")
@@ -351,8 +367,10 @@ class GeniusBot(QMainWindow):
 
     def tab4_subshift(self):
         self.open_subtitlefile_button = QPushButton("Open File")
+        self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.open_subtitlefile_button.clicked.connect(self.open_subtitlefile)
-        self.shift_subtitle_button = QPushButton("Shift File")
+        self.shift_subtitle_button = QPushButton("Shift Subtitles ↹")
+        self.shift_subtitle_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.shift_subtitle_button.clicked.connect(self.shift_subtitle)
 
         #self.subtitle_label = QLabel(self)
@@ -362,6 +380,8 @@ class GeniusBot(QMainWindow):
         self.subtitle_label.setFont("Arial")
         self.subtitle_label.setFontColor(background_color="white", color="black")
         self.subtitle_label.setScrollWheel("Top")
+        self.subtitle_menu_widget = QWidget(self)
+        menu_layout = QHBoxLayout()
         self.open_subtitlefile_label = QLabel("None")
         self.shift_time_label = QLabel("Shift Time")
         self.sub_time_spin_box = QSpinBox(self)
@@ -370,12 +390,19 @@ class GeniusBot(QMainWindow):
         self.sub_time_spin_box.valueChanged.connect(self.check_subtitle_seconds)
         self.shift_subtitle_button.setEnabled(False)
         layout = QGridLayout()
-        layout.addWidget(self.open_subtitlefile_button, 0, 0, 1, 1)
-        layout.addWidget(self.open_subtitlefile_label, 0, 1, 1, 1)
-        layout.addWidget(self.shift_time_label, 1, 0, 1, 1)
-        layout.addWidget(self.sub_time_spin_box, 1, 1, 1, 1)
-        layout.addWidget(self.shift_subtitle_button, 2, 0, 1, 2)
-        layout.addWidget(self.subtitle_label, 3, 0, 1, 2)
+        menu_layout.addWidget(self.shift_time_label)
+        menu_layout.addWidget(self.sub_time_spin_box)
+        menu_layout.addWidget(self.open_subtitlefile_button)
+        menu_layout.addWidget(self.open_subtitlefile_label)
+        menu_layout.setStretch(0, 1)
+        menu_layout.setStretch(1, 1)
+        menu_layout.setStretch(2, 3)
+        menu_layout.setStretch(3, 24)
+
+        self.subtitle_menu_widget.setLayout(menu_layout)
+        layout.addWidget(self.subtitle_menu_widget, 0, 0, 1, 1)
+        layout.addWidget(self.shift_subtitle_button, 2, 0, 1, 1)
+        layout.addWidget(self.subtitle_label, 3, 0, 1, 1)
         self.tabwidget.setTabText(3, "Shift Subtitles")
         self.tab4.setLayout(layout)
 
