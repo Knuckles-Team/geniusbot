@@ -61,6 +61,7 @@ setup(
     install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl'],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
+    data_files=[("geniusbot",  ["geniusbot/img/geniusbot.ico", "geniusbot/img/geniusbot.png"])],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: Public Domain',
@@ -68,6 +69,7 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     entry_points={'console_scripts': ['geniusbot = geniusbot.geniusbot:main']},
 )
