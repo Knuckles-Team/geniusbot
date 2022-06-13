@@ -203,7 +203,7 @@ class GeniusBot(QMainWindow):
         self.setupUi()
 
     def setupUi(self):
-        self.setWindowTitle("Genius Bot")
+        self.setWindowTitle(f"Genius Bot")
         self.setWindowIcon(QIcon(f'{os.path.dirname(os.path.realpath(__file__))}/img/geniusbot.ico'))
         self.setStyleSheet("background-color: #bfc3c9;")
         self.resize(690, 960)
@@ -247,7 +247,7 @@ class GeniusBot(QMainWindow):
         self.buttonsWidgetLayout.setContentsMargins(0, 0, 0, 0)
         self.console = ScrollLabel(self)
         self.console.setScrollWheel(location="Bottom")
-        self.console.setText(f"[Genius Bot] Console Output of Running Tasks")
+        self.console.setText(f"[Genius Bot] Version: {__version__}\n[Genius Bot] Console Output of Running Tasks")
         layout.addWidget(self.buttonsWidget)
         layout.addWidget(self.console)
         layout.setStretch(0, 24)
@@ -266,7 +266,7 @@ class GeniusBot(QMainWindow):
         # """)
         self.homelabel = QLabel(self)
         self.homelabel.setText(
-            f"""GeniusBot at your service! What can we help you with?\n
+            f"""Genius Bot at your service! What can we help you with?\n
             1. Video Downloader\n
             2. Web Archiver\n
             3. Subtitle Shifter\n                        
