@@ -110,11 +110,12 @@ class VideoWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, video_downloader, videos, console):
+    def __init__(self, video_downloader, videos, audio, console):
         super().__init__()
         self.video_downloader = video_downloader
         self.videos = videos
         self.console = console
+        self.audio = audio
 
     def run(self):
         """Long-running task."""
@@ -122,7 +123,7 @@ class VideoWorker(QObject):
             old_stdout = sys.stdout
             result = StringIO()
             sys.stdout = result
-            self.video_downloader.download_video(self.videos[video_index])
+            self.video_downloader.download_video(self.videos[video_index], audio=self.audio)
             sys.stdout = old_stdout
             result_string = result.getvalue()
             self.console.setText(f"{self.console.text()}\n{result_string}")
@@ -298,20 +299,26 @@ class GeniusBot(QMainWindow):
         self.video_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.video_save_location_button.clicked.connect(self.save_location)
         self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.video_type_label = QLabel("Filetype")
+        self.video_type_combobox = QComboBox()
+        self.video_type_combobox.addItems(['Video', 'Audio'])
+        self.video_type_combobox.setItemText(0, "Video")
         self.video_progress_bar = QProgressBar()
 
         # Set the tab layout
         video_layout = QGridLayout()
         video_layout.addWidget(self.video_links_label, 0, 0, 1, 2)
         video_layout.addWidget(self.video_links_editor, 1, 0, 1, 2)
-        video_layout.addWidget(self.channel_field_label, 2, 0, 1, 1)
-        video_layout.addWidget(self.channel_field_editor, 2, 1, 1, 1)
-        video_layout.addWidget(self.open_video_file_button, 3, 0, 1, 1)
-        video_layout.addWidget(self.video_open_file_label, 3, 1, 1, 2)
-        video_layout.addWidget(self.video_save_location_button, 4, 0, 1, 1)
-        video_layout.addWidget(self.video_save_location_label, 4, 1, 1, 2)
-        video_layout.addWidget(self.video_download_button, 5, 0, 1, 2)
-        video_layout.addWidget(self.video_progress_bar, 6, 0, 1, 2)
+        video_layout.addWidget(self.video_type_label, 2, 0, 1, 1)
+        video_layout.addWidget(self.video_type_combobox, 2, 1, 1, 2)
+        video_layout.addWidget(self.channel_field_label, 3, 0, 1, 1)
+        video_layout.addWidget(self.channel_field_editor, 3, 1, 1, 1)
+        video_layout.addWidget(self.open_video_file_button, 4, 0, 1, 1)
+        video_layout.addWidget(self.video_open_file_label, 4, 1, 1, 2)
+        video_layout.addWidget(self.video_save_location_button, 5, 0, 1, 1)
+        video_layout.addWidget(self.video_save_location_label, 5, 1, 1, 2)
+        video_layout.addWidget(self.video_download_button, 6, 0, 1, 2)
+        video_layout.addWidget(self.video_progress_bar, 7, 0, 1, 2)
         video_layout.setContentsMargins(3, 3, 3, 3)
         self.tabwidget.setTabText(1, "Video Downloader")
         self.tab2.setLayout(video_layout)
@@ -534,8 +541,12 @@ class GeniusBot(QMainWindow):
         videos = videos.split('\n')
 
         if videos[0] != '':
+            if self.video_type_combobox.text() == "Audio":
+                audio_boolean = True
+            else:
+                audio_boolean = False
             self.video_thread = QThread()
-            self.video_worker = VideoWorker(self.video_downloader, videos, self.console)
+            self.video_worker = VideoWorker(self.video_downloader, videos, audio_boolean, self.console)
             self.video_worker.moveToThread(self.video_thread)
             self.video_thread.started.connect(self.video_worker.run)
             self.video_worker.finished.connect(self.video_thread.quit)
