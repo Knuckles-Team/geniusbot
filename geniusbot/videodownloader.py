@@ -47,11 +47,22 @@ class VideoDownloader:
     def get_links(self):
         return self.links
 
-    def download_video(self, link):
-        ydl_opts = {
-           #'format': '22',
-           'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
-        }
+    def download_video(self, link, audio=False):
+        if audio:
+            ydl_opts = {
+               'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '320',
+                }],
+               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+            }
+        else:
+            ydl_opts = {
+               'format': 'best',
+               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+            }
         try:
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([link])
@@ -59,11 +70,22 @@ class VideoDownloader:
         except Exception as e:
             print(f"Unable to download video: {link}")
 
-    def download_videos(self):
-        ydl_opts = {
-           'format': '22',
-           'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
-        }
+    def download_videos(self, audio=False):
+        if audio:
+            ydl_opts = {
+               'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '320',
+                }],
+               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+            }
+        else:
+            ydl_opts = {
+               'format': 'best',
+               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+            }
         for link in self.links:
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([link])
