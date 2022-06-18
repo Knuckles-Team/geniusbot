@@ -4,3 +4,6 @@ webarchiver
 PyQt5
 youtube-dl
 pywin32
+torchvision
+torchaudio
+torch
