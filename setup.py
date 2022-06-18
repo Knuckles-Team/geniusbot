@@ -63,10 +63,11 @@ setup(
         'chatterbot.logic',
         'chatterbot.ext',
         'chatterbot.ext.sqlalchemy_app',
+        'chatterbot_corpus',
     ],
     include_package_data=True,
     install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'en_core_web_sm', 'sqlalchemy',
-                      'pytz', 'python-dateutil', 'mathparse',],
+                      'pytz', 'python-dateutil', 'mathparse'],
     dependency_links=[
         'https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.3.0/en_core_web_sm-3.3.0.tar.gz#egg=en_core_web_sm'
     ],
@@ -82,6 +83,7 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
+    keywords=['genius', 'geniusbot', 'download', 'video', 'subtitle', 'website', 'screenshot'],
     entry_points={'console_scripts': ['geniusbot = geniusbot.geniusbot:main']},
 )
 
