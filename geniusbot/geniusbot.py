@@ -5,7 +5,7 @@ import os
 import sys
 import subshift
 from io import StringIO
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
 try:
     from geniusbot.videodownloader import VideoDownloader
@@ -39,39 +39,61 @@ blue = "#4682B4"
 red = ""
 purple = ""
 
+class OutputWrapper(QObject):
+    outputWritten = pyqtSignal(object, object)
+
+    def __init__(self, parent, stdout=True):
+        super().__init__(parent)
+        if stdout:
+            self._stream = sys.stdout
+            sys.stdout = self
+        else:
+            self._stream = sys.stderr
+            sys.stderr = self
+        self._stdout = stdout
+
+    def write(self, text):
+        self._stream.write(text)
+        self.outputWritten.emit(text, self._stdout)
+
+    def __getattr__(self, name):
+        return getattr(self._stream, name)
+
+    def __del__(self):
+        try:
+            if self._stdout:
+                sys.stdout = self._stream
+            else:
+                sys.stderr = self._stream
+        except AttributeError:
+            pass
+
+
 class SubshiftWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, subtitle_file, mode, time, console):
+    def __init__(self, subtitle_file, mode, time):
         super().__init__()
         self.subtitle_file = subtitle_file
         self.mode = mode
-        self.console = console
         self.time = time
 
     def run(self):
         """Long-running task."""
-        old_stdout = sys.stdout
-        result = StringIO()
-        sys.stdout = result
         print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
         subshift.subshift([f"-f", f"{self.subtitle_file}", f"-m", f"{self.mode}", f"-t", f"{self.time}"])
-        sys.stdout = old_stdout
-        result_string = result.getvalue()
         self.progress.emit(100)
-        self.console.setText(f"{self.console.text()}\n{result_string}\n[Genius Bot] Subtitle {self.subtitle_file} was shifted {self.mode}{self.time} seconds")
         self.finished.emit()
 
 class WebarchiverWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, webarchiver, websites, console, zoom=100, dpi=1, filetype="png"):
+    def __init__(self, webarchiver, websites, zoom=100, dpi=1, filetype="png"):
         super().__init__()
         self.webarchiver = webarchiver
         self.websites = websites
-        self.console = console
         self.zoom = zoom
         self.dpi = dpi
         self.filetype = filetype
@@ -86,21 +108,13 @@ class WebarchiverWorker(QObject):
         self.webarchiver.set_dpi_level(self.dpi)
         sys.stdout = old_stdout
         result_string = result.getvalue()
-        self.console.setText(f"{self.console.text()}\n{result_string}")
 
         for website_index in range(0, len(self.websites)):
             self.webarchiver.append_link(self.websites[website_index])
-            old_stdout = sys.stdout
-            result = StringIO()
-            sys.stdout = result
             self.webarchiver.fullpage_screenshot(url=self.websites[website_index], zoom_percentage=self.zoom, filetype=self.filetype)
-            sys.stdout = old_stdout
-            result_string = result.getvalue()
-            self.console.setText(f"{self.console.text()}\n{result_string}")
             self.progress.emit(int(((1 + website_index) / len(self.websites)) * 100))
             self.webarchiver.reset_links()
 
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Screenshots captured successfully")
         self.webarchiver.quit_driver()
 
         self.finished.emit()
@@ -110,25 +124,17 @@ class VideoWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, video_downloader, videos, audio, console):
+    def __init__(self, video_downloader, videos, audio):
         super().__init__()
         self.video_downloader = video_downloader
         self.videos = videos
-        self.console = console
         self.audio = audio
 
     def run(self):
         """Long-running task."""
         for video_index in range(0, len(self.videos)):
-            old_stdout = sys.stdout
-            result = StringIO()
-            sys.stdout = result
             self.video_downloader.download_video(self.videos[video_index], audio=self.audio)
-            sys.stdout = old_stdout
-            result_string = result.getvalue()
-            self.console.setText(f"{self.console.text()}\n{result_string}")
             self.progress.emit(int(((1 + video_index) / len(self.videos)) * 100))
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] All videos downloaded successfully")
         self.finished.emit()
 
 
@@ -248,7 +254,11 @@ class GeniusBot(QMainWindow):
         self.buttonsWidgetLayout.setContentsMargins(0, 0, 0, 0)
         self.console = ScrollLabel(self)
         self.console.setScrollWheel(location="Bottom")
-        self.console.setText(f"[Genius Bot] Version: {__version__}\n[Genius Bot] Console Output of Running Tasks")
+        self.console.setText(f"[Genius Bot] Version: {__version__}\n[Genius Bot] Console Output of Running Tasks\n")
+        stdout = OutputWrapper(self, True)
+        stdout.outputWritten.connect(self.console_output)
+        stderr = OutputWrapper(self, False)
+        stderr.outputWritten.connect(self.console_output)
         layout.addWidget(self.buttonsWidget)
         layout.addWidget(self.console)
         layout.setStretch(0, 24)
@@ -429,6 +439,13 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(5, "Report Manager")
         self.tab6.setLayout(layout)
 
+    def console_output(self, text, stdout):
+        #color = self.console.textColor()
+        #self.console.moveCursor(QTextCursor.End)
+        #self.console.setTextColor(color if stdout else self._err_color)
+        self.console.setText(f"{self.console.text()}{text}")
+        #self.console.setTextColor(color)
+
     def hide_console(self):
         if self.hide_console_button.text() == "Console ◳":
             self.hide_console_button.setText("Console _")
@@ -445,14 +462,14 @@ class GeniusBot(QMainWindow):
             self.shift_subtitle_button.setEnabled(True)
 
     def shift_subtitle(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Shifting Subtitles...")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Shifting Subtitles...\n")
         self.subshift_thread = QThread()
         if self.sub_time_spin_box.value() > 0:
             mode = "+"
         else:
             mode = "-"
         time = abs(self.sub_time_spin_box.value())
-        self.subshift_worker = SubshiftWorker(self.open_subtitlefile_label.text(), mode, time, self.console)
+        self.subshift_worker = SubshiftWorker(self.open_subtitlefile_label.text(), mode, time)
         self.subshift_worker.moveToThread(self.subshift_thread)
         self.subshift_thread.started.connect(self.subshift_worker.run)
         self.subshift_worker.finished.connect(self.subshift_thread.quit)
@@ -467,6 +484,7 @@ class GeniusBot(QMainWindow):
         self.subshift_thread.finished.connect(
             lambda: self.refresh_subtitlefile()
         )
+        self.console.setText(f"[Genius Bot] Subtitle Shift Completed!\n")
 
     def refresh_subtitlefile(self):
         with open(self.open_subtitlefile_label.text(), 'r') as file:
@@ -476,7 +494,7 @@ class GeniusBot(QMainWindow):
         self.subtitle_label.setText(self.subtitles)
 
     def open_subtitlefile(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Subtitle file")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Subtitle file\n")
         self.subtitle_label.setText("")
         subtitle_file_name = QFileDialog.getOpenFileName(self, 'Subtitle File')
         print(subtitle_file_name[0])
@@ -491,14 +509,14 @@ class GeniusBot(QMainWindow):
         self.web_progress_bar.setValue(n)
 
     def screenshot_websites(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Taking screenshots...")
-        self.web_progress_bar.setValue(0)
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Taking screenshots...\n")
+        self.web_progress_bar.setValue(1)
         websites = self.web_links_editor.toPlainText()
         websites = websites.strip()
         websites = websites.split('\n')
         if websites[0] != '':
             self.webarchiver_thread = QThread()
-            self.webarchiver_worker = WebarchiverWorker(self.webarchiver, websites, self.console, self.web_zoom_spin_box.value(), dpi=self.web_dpi_spin_box.value(), filetype=self.web_links_file_type.currentText())
+            self.webarchiver_worker = WebarchiverWorker(self.webarchiver, websites, self.web_zoom_spin_box.value(), dpi=self.web_dpi_spin_box.value(), filetype=self.web_links_file_type.currentText())
             self.webarchiver_worker.moveToThread(self.webarchiver_thread)
             self.webarchiver_thread.started.connect(self.webarchiver_worker.run)
             self.webarchiver_worker.finished.connect(self.webarchiver_thread.quit)
@@ -510,10 +528,10 @@ class GeniusBot(QMainWindow):
             self.webarchiver_thread.finished.connect(
                 lambda: self.archive_button.setEnabled(True)
             )
-
+            self.console.setText(f"[Genius Bot] Screenshots captured!\n")
 
     def open_webfile(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Website URL file")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Website URL file\n")
         website_file_name = QFileDialog.getOpenFileName(self, 'File with URL(s)')
         print(website_file_name[0])
         self.open_webfile_label.setText(website_file_name[0])
@@ -525,7 +543,7 @@ class GeniusBot(QMainWindow):
         self.web_links_editor.setPlainText(websites)
 
     def save_web_location(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n")
         web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.save_web_location_label.setText(web_directory_name)
         self.webarchiver.set_save_path(web_directory_name)
@@ -534,19 +552,19 @@ class GeniusBot(QMainWindow):
         self.video_progress_bar.setValue(n)
 
     def download_videos(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Downloading videos...")
-        self.video_progress_bar.setValue(0)
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Downloading videos...\n")
+        self.video_progress_bar.setValue(1)
         videos = self.video_links_editor.toPlainText()
         videos = videos.strip()
         videos = videos.split('\n')
 
         if videos[0] != '':
-            if self.video_type_combobox.text() == "Audio":
+            if self.video_type_combobox.currentText() == "Audio":
                 audio_boolean = True
             else:
                 audio_boolean = False
             self.video_thread = QThread()
-            self.video_worker = VideoWorker(self.video_downloader, videos, audio_boolean, self.console)
+            self.video_worker = VideoWorker(self.video_downloader, videos, audio_boolean)
             self.video_worker.moveToThread(self.video_thread)
             self.video_thread.started.connect(self.video_worker.run)
             self.video_worker.finished.connect(self.video_thread.quit)
@@ -558,9 +576,10 @@ class GeniusBot(QMainWindow):
             self.video_thread.finished.connect(
                 lambda: self.video_download_button.setEnabled(True)
             )
+            self.console.setText(f"[Genius Bot] Videos downloaded!\n")
 
     def add_channel_videos(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Adding Channel videos")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Adding Channel videos\n")
         self.video_downloader.get_channel_videos(self.channel_field_editor.text())
         videos = self.video_links_editor.toPlainText()
         videos = videos.strip()
@@ -570,7 +589,7 @@ class GeniusBot(QMainWindow):
         self.video_links_editor.setPlainText(videos)
 
     def open_video_file(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Video URL file")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Video URL file\n")
         video_file_name = QFileDialog.getOpenFileName(self, 'File with Video URL(s)')
         print(video_file_name[0])
         self.video_open_file_label.setText(video_file_name[0])
@@ -582,7 +601,7 @@ class GeniusBot(QMainWindow):
         self.video_links_editor.setPlainText(videos)
 
     def save_location(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
         video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.video_save_location_label.setText(video_directory_name)
         self.video_downloader.set_save_path(video_directory_name)
