@@ -58,7 +58,7 @@ setup(
     license='Unlicense',
     packages=['geniusbot'],
     include_package_data=True,
-    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl'],
+    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'torchvision', 'torchaudio', 'torch'],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
     data_files=[("geniusbot",  ["geniusbot/img/geniusbot.ico", "geniusbot/img/geniusbot.png"])],
