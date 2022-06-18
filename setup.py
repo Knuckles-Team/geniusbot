@@ -56,9 +56,19 @@ setup(
     author=__author__,
     author_email='knucklessg1@gmail.com',
     license='Unlicense',
-    packages=['geniusbot'],
+    packages=[
+        'geniusbot',
+        'chatterbot',
+        'chatterbot.storage',
+        'chatterbot.logic',
+        'chatterbot.ext',
+        'chatterbot.ext.sqlalchemy_app',
+    ],
     include_package_data=True,
-    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'torchvision', 'torchaudio', 'torch'],
+    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'en_core_web_sm'],
+    dependency_links=[
+        'https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.3.0/en_core_web_sm-3.3.0.tar.gz#egg=en_core_web_sm'
+    ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
     data_files=[("geniusbot",  ["geniusbot/img/geniusbot.ico", "geniusbot/img/geniusbot.png"])],
