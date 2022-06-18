@@ -8,6 +8,16 @@ import getopt
 import requests
 import youtube_dl
 
+class StdOutLogger(object):
+    def debug(self, msg):
+        print(f'{msg}')
+
+    def warning(self, msg):
+        print(f'{msg}')
+
+    def error(self, msg):
+        print(f'{msg}')
+
 
 class VideoDownloader:
     SAVE_PATH = f'{os.path.expanduser("~")}/Downloads'
@@ -50,41 +60,48 @@ class VideoDownloader:
     def download_video(self, link, audio=False):
         if audio:
             ydl_opts = {
-               'format': 'bestaudio/best',
+                'format': 'bestaudio/best',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
                     'preferredquality': '320',
                 }],
-               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+                'progress_with_newline': True,
+                'logger': StdOutLogger(),
+                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
             }
         else:
             ydl_opts = {
-               'format': 'best',
-               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+                'format': 'best',
+                'progress_with_newline': True,
+                'logger': StdOutLogger(),
+                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
             }
         try:
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([link])
-            print('Video Downloaded!')
+                print(ydl.download([link]))
         except Exception as e:
             print(f"Unable to download video: {link}")
 
     def download_videos(self, audio=False):
         if audio:
             ydl_opts = {
-               'format': 'bestaudio/best',
+                'format': 'bestaudio/best',
+                'progress_with_newline': True,
+                'logger': StdOutLogger(),
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
                     'preferredquality': '320',
                 }],
-               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
             }
         else:
             ydl_opts = {
-               'format': 'best',
-               'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+                'format': 'best',
+                'progress_with_newline': True,
+                'logger': StdOutLogger(),
+                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
             }
         for link in self.links:
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
