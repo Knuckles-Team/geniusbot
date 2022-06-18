@@ -535,6 +535,7 @@ class GeniusBot(QMainWindow):
         self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_train_button.hide())
         self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.show())
         self.geniusbot_train_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
+        self.geniusbot_train_thread.finished.connect(lambda: self.console.setText(f"{self.console.text().strip()}\n[Genius Bot] Training complete!"))
         self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_chat.setText(
                 f"""{self.geniusbot_chat.text()}\n[Genius Bot] Why hello there {user}! I apologize for the delay, I was definitely not taking a cat nap. Anyways, how can I be of service?\nI can perform the following tasks:\n"""
                 f"""- Chat\n"""
