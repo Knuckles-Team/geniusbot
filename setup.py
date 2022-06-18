@@ -65,7 +65,8 @@ setup(
         'chatterbot.ext.sqlalchemy_app',
     ],
     include_package_data=True,
-    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'en_core_web_sm'],
+    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'en_core_web_sm', 'sqlalchemy',
+                      'pytz', 'python-dateutil', 'mathparse',],
     dependency_links=[
         'https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.3.0/en_core_web_sm-3.3.0.tar.gz#egg=en_core_web_sm'
     ],
