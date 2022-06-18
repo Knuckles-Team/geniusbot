@@ -7,6 +7,8 @@ import subshift
 from io import StringIO
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
+from chatterbot import ChatBot
+from chatterbot.trainers import ListTrainer, ChatterBotCorpusTrainer
 try:
     from geniusbot.videodownloader import VideoDownloader
 except Exception as e:
@@ -15,10 +17,11 @@ try:
     from geniusbot.version import __version__, __author__, __credits__
 except Exception as e:
     from version import __version__, __author__, __credits__
+
 # from report_merger import ReportMerge
 # from analytic_profiler import ReportAnalyzer
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
     QApplication,
     QLabel,
@@ -28,10 +31,12 @@ from PyQt5.QtWidgets import (
     QWidget,
     QTabWidget,
     QGridLayout, QFormLayout, QHBoxLayout, QRadioButton, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
-    QFileDialog, QScrollArea, QComboBox, QSpinBox,
+    QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit,
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
+chatbot = None
+user = str(os.getlogin())
 yellow = "#FFA500"
 green = "#2E8B57"
 orange = "#FF7518"
@@ -67,6 +72,65 @@ class OutputWrapper(QObject):
                 sys.stderr = self._stream
         except AttributeError:
             pass
+
+
+class GeniusBotWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, geniusbot_chat, text):
+        super().__init__()
+        global chatbot
+        self.geniusbot_chat = geniusbot_chat
+        self.text = text
+
+    def run(self):
+        """Long-running task."""
+        global chatbot
+        old_text = self.geniusbot_chat.text()
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] ...""")
+        response = chatbot.get_response(self.text)
+        self.geniusbot_chat.setText(f"""{old_text}\n[Genius Bot] {response}""")
+        self.progress.emit(100)
+        self.finished.emit()
+
+
+class GeniusBotTrainWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, geniusbot_chat):
+        super().__init__()
+        global chatbot
+        if chatbot is None:
+            chatbot = ChatBot("Genius Bot")
+
+        self.geniusbot_chat = geniusbot_chat
+
+    def run(self):
+        global chatbot
+        """Long-running task."""
+        #print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
+        conversation = [
+            "Hello",
+            "Hi there!",
+            "How are you doing?",
+            "I'm doing great.",
+            "That is good to hear",
+            "Thank you.",
+            "You're welcome.",
+            "Hello?",
+            "Apologies for the delay, I was definitely not taking a cat nap.",
+            "What can you do?"
+            "Currently, I can download videos, archive websites by screenshotting them, and shift subtitles so they align with your videos"
+        ]
+        greeting_trainer = ListTrainer(chatbot)
+        greeting_trainer.train(conversation)
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] ....Huh?!....""")
+        general_trainer = ChatterBotCorpusTrainer(chatbot)
+        general_trainer.train('chatterbot.corpus.english')
+        self.progress.emit(100)
+        self.finished.emit()
 
 
 class SubshiftWorker(QObject):
@@ -275,18 +339,30 @@ class GeniusBot(QMainWindow):
         #     4. Report Merger\n
         #     5. Subtitle Shifter\n
         # """)
-        self.homelabel = QLabel(self)
-        self.homelabel.setText(
-            f"""Genius Bot at your service! What can we help you with?\n
-            1. Video Downloader\n
-            2. Web Archiver\n
-            3. Subtitle Shifter\n                        
-            4. Analytical Profiler\n
-            5. Report Merger\n
-        """)
+        self.geniusbot_chat = ScrollLabel(self)
+        self.geniusbot_chat.hide()
+        self.geniusbot_chat.setFontColor(background_color="white", color="black")
+        self.geniusbot_chat.setText(f"""[Genius Bot] ZzzzZzzz... (It appears Genius Bot is sleeping, click "Wake Up!")""")
+        self.chat_editor = QTextEdit()
+        self.chat_editor.installEventFilter(self)
+
+        self.geniusbot_train_button = QPushButton("Wake Up!")
+        self.geniusbot_train_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.geniusbot_train_button.clicked.connect(self.chattybot_train)
+        self.geniusbot_send_button = QPushButton("Send")
+        self.geniusbot_send_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.geniusbot_send_button.clicked.connect(self.chattybot_response)
+        self.geniusbot_send_button.hide()
+        self.chat_editor.setDisabled(True)
         layout = QVBoxLayout()
-        layout.addWidget(self.homelabel)
-        self.tabwidget.setTabText(0, "Home")
+        layout.addWidget(self.geniusbot_chat)
+        layout.addWidget(self.chat_editor)
+        layout.addWidget(self.geniusbot_train_button)
+        layout.addWidget(self.geniusbot_send_button)
+        layout.setStretch(0, 24)
+        layout.setStretch(1, 3)
+        layout.setStretch(2, 1)
+        self.tabwidget.setTabText(0, "Genius Bot Chat")
         self.tab1.setLayout(layout)
 
     def tab2_video_downloader(self):
@@ -439,11 +515,60 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(5, "Report Manager")
         self.tab6.setLayout(layout)
 
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.KeyPress and obj is self.chat_editor:
+            if event.key() == Qt.Key_Return and self.chat_editor.hasFocus():
+                self.chat_editor.setDisabled(True)
+                self.chattybot_response()
+        return super().eventFilter(obj, event)
+
+    def chattybot_train(self):
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Zzzz....""")
+        self.geniusbot_train_button.setEnabled(False)
+        self.geniusbot_train_thread = QThread()
+        self.geniusbot_train_worker = GeniusBotTrainWorker(self.geniusbot_chat)
+        self.geniusbot_train_worker.moveToThread(self.geniusbot_train_thread)
+        self.geniusbot_train_thread.started.connect(self.geniusbot_train_worker.run)
+        self.geniusbot_train_worker.finished.connect(self.geniusbot_train_thread.quit)
+        self.geniusbot_train_worker.finished.connect(self.geniusbot_train_worker.deleteLater)
+        self.geniusbot_train_thread.finished.connect(self.geniusbot_train_thread.deleteLater)
+        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_train_button.hide())
+        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.show())
+        self.geniusbot_train_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
+        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_chat.setText(
+                f"""{self.geniusbot_chat.text()}\n[Genius Bot] Why hello there {user}! I apologize for the delay, I was definitely not taking a cat nap. Anyways, how can I be of service?\nI can perform the following tasks:\n"""
+                f"""- Chat\n"""
+                f"""- Video Downloader\n"""
+                f"""- Web Archiver\n"""
+                f"""- Subtitle Shifter"""
+            )
+        )
+        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.setText("Send"))
+        self.geniusbot_train_thread.start()
+
+    def chattybot_response(self):
+        self.geniusbot_send_button.setEnabled(False)
+        text = str(self.chat_editor.toPlainText().strip())
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[{user}] {text}""")
+        self.chat_editor.setText("")
+        self.geniusbot_thread = QThread()
+        self.geniusbot_worker = GeniusBotWorker(self.geniusbot_chat, text)
+        self.geniusbot_worker.moveToThread(self.geniusbot_thread)
+        self.geniusbot_thread.started.connect(self.geniusbot_worker.run)
+        self.geniusbot_worker.finished.connect(self.geniusbot_thread.quit)
+        self.geniusbot_worker.finished.connect(self.geniusbot_worker.deleteLater)
+        self.geniusbot_thread.finished.connect(self.geniusbot_thread.deleteLater)
+        self.geniusbot_thread.finished.connect(lambda: self.geniusbot_send_button.setDisabled(False))
+        self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
+        self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setText(""))
+        self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setFocus())
+        self.geniusbot_thread.start()
+
     def console_output(self, text, stdout):
         #color = self.console.textColor()
         #self.console.moveCursor(QTextCursor.End)
         #self.console.setTextColor(color if stdout else self._err_color)
-        self.console.setText(f"{self.console.text()}{text}")
+        self.console.setText(f"{self.console.text().strip()}\n{text.strip()}")
         #self.console.setTextColor(color)
 
     def hide_console(self):
@@ -528,7 +653,9 @@ class GeniusBot(QMainWindow):
             self.webarchiver_thread.finished.connect(
                 lambda: self.archive_button.setEnabled(True)
             )
-            self.console.setText(f"[Genius Bot] Screenshots captured!\n")
+            self.webarchiver_thread.finished.connect(
+                lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Screenshots captured!\n")
+            )
 
     def open_webfile(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Website URL file\n")
@@ -576,7 +703,9 @@ class GeniusBot(QMainWindow):
             self.video_thread.finished.connect(
                 lambda: self.video_download_button.setEnabled(True)
             )
-            self.console.setText(f"[Genius Bot] Videos downloaded!\n")
+            self.video_thread.finished.connect(
+                lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Videos downloaded!\n")
+            )
 
     def add_channel_videos(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Adding Channel videos\n")

@@ -1,28 +1,20 @@
 # GeniusBot 
-*Version: 2.0.2*
+*Version: 2.0.3*
 
-## Install
-```bash
-pip install geniusbot
-```
 ![Alt text](geniusbot/img/geniusbot-small.png?raw=true "GeniusBot") 
 
 The Ever-learning and ever-improving tool!
-- YouTube Archiving
-- Web Page Archiving
-- Report Merging
-- Analytic Profiler
-- Twitter Archiving
+- Genius Bot Chat
+- Video Download
+- Website Screenshot
+- Subtitle Shift
 
-Features Coming Soon
-- Video/Audio Converter
-- Chat Rooms
-
-[Download GeniusBot Installer for Windows](https://github.com/Knucklessg1/genius-bot/releases/download/v1.8.2/GeniusBot-1.8.2-amd64.msi)
+#### Genius Bot Chat
+![Genius Bot Chat](screenshots/geniusbot_home.png?raw=true "Genius Bot Chat")
 
 #### Video Download
-Download any YouTube video(s) as MP3 or Webm/MP4 in a few different qualities. 
-![YouTube Archive Image](screenshots/YouTubeArchive-small.png?raw=true "YouTube Archive")
+Download any YouTube, Twitter, or Rumble video(s) as MP3 or Webm/MP4 in a few different qualities. 
+![Video Download](screenshots/geniusbot_video.png?raw=true "Video Download")
 
 Examples for how to find user & channel.
 ![User Entry Image](screenshots/user.PNG?raw=true "User Entry")
@@ -40,30 +32,24 @@ Archive any website by taking screenshots of any website entered.
 
 Choose from a variety of options like file type, quality, and image size.
 
-More to come...
+![Web Archiver](screenshots/geniusbot_website.png?raw=true "Web Archiver")
 
-![Web Archive Image](screenshots/WebArchive-small.png?raw=true "Web Archive")
+#### Subtitle Shift
+Shift a subtitle forward or backward a few seconds so it aligns with your video!
 
-#### Report Merging
-Take two CSV/Excel files and join them on whatever columns and whatever join type necessary. 
+![Subtitle Shift](screenshots/geniusbot_subshift.png?raw=true "Subtitle Shift")
 
-Additionally, data can be appended from one file to the other.
+## Install
+```bash
+pip install geniusbot
+```
 
-When the columns are chosen, ensure you are:
-* Choosing the correct data type for that column
-* Lining up the ordering of the columns from the drop-downs on the bottom half of the screen so both files match each other.
-* Choosing the correct join type, the safe bet for testing purposes is always a left/right join.
+## Development Environment
+```bash
+bash ./build_container.sh
+```
 
-![Report Merge Image](screenshots/ReportMerge-small.png?raw=true "Report Merge")
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See Instructions for how to deploy the project on a live system.
-
-## Repository
-[genius-bot](https://github.com/Knucklessg1/genius-bot.git)
-
-#### Build Instructions
+## Build Instructions
 Build Python Package
 
 ```bash
@@ -75,6 +61,9 @@ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 # Prod Pypi
 twine upload dist/*
 ```
+
+## Repository
+[genius-bot](https://github.com/Knucklessg1/genius-bot.git)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
@@ -91,3 +80,4 @@ All credits to the FFMPEG team for the audio/video conversions
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## Acknowledgments
+ChatterBot
