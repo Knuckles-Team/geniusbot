@@ -7,10 +7,6 @@ from pathlib import Path
 from glob import glob
 import re
 import os
-import sys
-import platform
-if sys.platform == 'win32':
-    import winshell
 
 readme = Path('README.md').read_text()
 version = __version__
@@ -18,39 +14,7 @@ readme = re.sub(r"Version: [0-9]*\.[0-9]*\.[0-9][0-9]*", f"Version: {version}", 
 print(f"README: {readme}")
 with open("README.md", "w") as readme_file:
     readme_file.write(readme)
-description = 'Synchronize your subtitle files by shifting the subtitle time (+/-)'
-
-
-# Creates a Desktop shortcut to the installed software
-def post_install():
-    desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
-    script_parent_dir = Path( __file__ ).parent.absolute().parent.absolute()
-    icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
-    working_directory = str(Path(script_parent_dir))
-    if sys.platform == 'win32':
-        win32_cmd = str(Path(winshell.folder('CSIDL_SYSTEM')) / 'cmd.exe')
-        link_filepath = str(desktop + "/Genius Bot.lnk")
-        arg_str = "/K " + str("geniusbot")
-        with winshell.shortcut(link_filepath) as link:
-            link.path = win32_cmd
-            link.description = "Genius Bot"
-            link.arguments = arg_str
-            link.icon_location = (icon, 0)
-            link.working_directory = working_directory
-    elif sys.platform == 'linux':
-        with open(f"{desktop}/Genius Bot.desktop", "w") as desktop_icon:
-            desktop_icon.write(
-                f"[Desktop Entry]\n"
-                f"Version={__version__}\n"
-                f"Name=Genius Bot\n"
-                f"Comment=Genius Bot\n"
-                f"Exec=geniusbot\n"
-                f"Icon={icon}\n"
-                f"Path={working_directory}\n"
-                f"Terminal=false\n"
-                f"Type=Application\n"
-                f"Categories=Utility;Application;\n"
-            )
+description = 'The Ever-learning and ever-improving tool!'
 
 root = 'en_core_web_sm'
 en_core_web_sm_list = []
@@ -102,6 +66,3 @@ setup(
     keywords=['genius', 'geniusbot', 'download', 'video', 'subtitle', 'website', 'screenshot'],
     entry_points={'console_scripts': ['geniusbot = geniusbot.geniusbot:main']},
 )
-
-if sys.argv[1] == 'install':
-    post_install()

@@ -4,7 +4,10 @@
 import os
 import sys
 import subshift
+if sys.platform == 'win32':
+    import winshell
 from io import StringIO
+from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
 from chatterbot import ChatBot
@@ -287,20 +290,23 @@ class GeniusBot(QMainWindow):
         self.tab4 = QWidget()
         self.tab5 = QWidget()
         self.tab6 = QWidget()
+        self.tab7 = QWidget()
         self.tabwidget = QTabWidget()
         self.tabwidget.setStyleSheet("background-color: #f5f5f5;")
         self.tabwidget.addTab(self.tab1, "Tab 1")
         self.tabwidget.addTab(self.tab2, "Tab 2")
         self.tabwidget.addTab(self.tab3, "Tab 3")
         self.tabwidget.addTab(self.tab4, "Tab 4")
-        # self.tabwidget.addTab(self.tab5, "Tab 5")
-        # self.tabwidget.addTab(self.tab6, "Tab 6")
+        self.tabwidget.addTab(self.tab5, "Tab 5")
+        self.tabwidget.addTab(self.tab6, "Tab 6")
+        self.tabwidget.addTab(self.tab7, "Tab 7")
         self.tab1_home()
         self.tab2_video_downloader()
         self.tab3_webarchiver()
         self.tab4_subshift()
-        # self.tab5UI()
-        # self.tab6UI()
+        self.tab5_analytic_profiler()
+        self.tab6_report_manager()
+        self.tab7_settings()
 
         # Set the main gui layout
         layout = QVBoxLayout()
@@ -499,7 +505,7 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(3, "Shift Subtitles")
         self.tab4.setLayout(layout)
 
-    def tab5UI(self):
+    def tab5_analytic_profiler(self):
         layout = QHBoxLayout()
         layout.addWidget(QLabel("subjects"))
         layout.addWidget(QCheckBox("Physics"))
@@ -507,13 +513,62 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(4, "Analytic Profiler")
         self.tab5.setLayout(layout)
 
-    def tab6UI(self):
+    def tab6_report_manager(self):
         layout = QHBoxLayout()
         layout.addWidget(QLabel("subjects"))
         layout.addWidget(QCheckBox("Physics"))
         layout.addWidget(QCheckBox("Maths"))
         self.tabwidget.setTabText(5, "Report Manager")
         self.tab6.setLayout(layout)
+
+    def tab7_settings(self):
+        layout = QHBoxLayout()
+        self.desktop_icon_checkbox = QCheckBox("Create Desktop Icon")
+        self.desktop_icon_checkbox.stateChanged.connect(self.create_desktop_icon)
+        layout.addWidget(self.desktop_icon_checkbox)
+        self.tabwidget.setTabText(6, "⚙")
+        self.tab7.setLayout(layout)
+
+    def create_desktop_icon(self):
+        desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
+        script_parent_dir = Path( __file__ ).parent.absolute().parent.absolute()
+        icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
+        working_directory = str(Path(script_parent_dir))
+        if sys.platform == 'win32':
+            win32_cmd = str(Path(winshell.folder('CSIDL_SYSTEM')) / 'cmd.exe')
+            link_filepath = str(desktop + "/Genius Bot.lnk")
+            arg_str = "/K " + str("geniusbot")
+            if self.desktop_icon_checkbox.isChecked():
+                with winshell.shortcut(link_filepath) as link:
+                    link.path = win32_cmd
+                    link.description = "Genius Bot"
+                    link.arguments = arg_str
+                    link.icon_location = (icon, 0)
+                    link.working_directory = working_directory
+                    print("Desktop Shortcut Created!")
+            else:
+                os.remove(link_filepath)
+            #print(f"Desktop: {desktop}\nScript Parent Directory: {script_parent_dir}\nwin32 Command: {win32_cmd}\nIcon: {icon}\nWorking Path: {working_directory}\nLink Path {link_filepath}\nArgs: {arg_str}")
+        elif sys.platform == 'linux':
+            link_filepath = str(f"{desktop}/Genius Bot.desktop")
+            if self.desktop_icon_checkbox.isChecked():
+                with open(link_filepath, "w") as desktop_icon:
+                    desktop_icon.write(
+                        f"[Desktop Entry]\n"
+                        f"Version={__version__}\n"
+                        f"Name=Genius Bot\n"
+                        f"Comment=Genius Bot\n"
+                        f"Exec=geniusbot\n"
+                        f"Icon={icon}\n"
+                        f"Path={working_directory}\n"
+                        f"Terminal=false\n"
+                        f"Type=Application\n"
+                        f"Categories=Utility;Application;\n"
+                    )
+                print("Desktop Shortcut Created!")
+            else:
+                os.remove(link_filepath)
+
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.KeyPress and obj is self.chat_editor:
