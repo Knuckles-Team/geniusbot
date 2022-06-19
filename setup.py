@@ -28,7 +28,6 @@ def post_install():
     icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
     working_directory = str(Path(script_parent_dir))
     if sys.platform == 'win32':
-        python_version = re.sub("\.", "", re.sub("\.[0-9][0-9]*$", "", platform.python_version()))
         win32_cmd = str(Path(winshell.folder('CSIDL_SYSTEM')) / 'cmd.exe')
         link_filepath = str(desktop + "/Genius Bot.lnk")
         arg_str = "/K " + str("geniusbot")

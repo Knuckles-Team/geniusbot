@@ -1,5 +1,5 @@
 # GeniusBot 
-*Version: 2.0.9*
+*Version: 2.1.0*
 
 ![Alt text](geniusbot/img/geniusbot-small.png?raw=true "GeniusBot") 
 
