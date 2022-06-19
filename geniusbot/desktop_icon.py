@@ -1,11 +1,18 @@
 import winshell
 from pathlib import Path
+import os
 import platform
 import re
+try:
+    from geniusbot.version import __version__, __author__, __credits__
+except Exception as e:
+    from version import __version__, __author__, __credits__
 
+# WINDOWS
 # Define all the file paths needed for the shortcut
 # Assumes default miniconda install
-desktop = Path(winshell.desktop())
+#desktop = Path(winshell.desktop())
+desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
 script_parent_dir = Path( __file__ ).parent.absolute().parent.absolute()
 print(platform.python_version())
 python_version = re.sub("\.", "", re.sub("\.[0-9][0-9]*$", "", platform.python_version()))
@@ -18,7 +25,7 @@ icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
 # This will point to My Documents/py_work. Adjust to your preferences
 #my_working = str(Path(winshell.folder('CSIDL_PERSONAL')) / "py_work")
 working_directory = str(Path(script_parent_dir))
-link_filepath = str(desktop / "Genius Bot.lnk")
+link_filepath = str(desktop + "/Genius Bot.lnk")
 
 
 # Build up all the arguments to cmd.exe
@@ -42,3 +49,21 @@ with winshell.shortcut(link_filepath) as link:
     link.arguments = arg_str
     link.icon_location = (icon, 0)
     link.working_directory = working_directory
+
+# LINUX
+with open(f"{desktop}/Genius Bot.desktop", "w") as desktop_icon:
+    # Writing data to a file
+    desktop_icon.write(
+        f"[Desktop Entry]\n"
+        f"Version={__version__}\n"
+        f"Name=Genius Bot\n"
+        f"Comment=Genius Bot\n"
+        f"Exec=geniusbot\n"
+        f"Icon={icon}\n"
+        f"Path={working_directory}\n"
+        f"Terminal=false\n"
+        f"Type=Application\n"
+        f"Categories=Utility;Application;\n"
+    )
+
+
