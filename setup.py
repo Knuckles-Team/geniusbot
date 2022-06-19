@@ -8,9 +8,9 @@ from glob import glob
 import re
 import os
 import sys
-import sysconfig
+import platform
 if sys.platform == 'win32':
-    from win32com.client import Dispatch
+    import winshell
 
 readme = Path('README.md').read_text()
 version = __version__
@@ -21,31 +21,37 @@ with open("README.md", "w") as readme_file:
 description = 'Synchronize your subtitle files by shifting the subtitle time (+/-)'
 
 
-# # Creates a Desktop shortcut to the installed software
-# def post_install():
-#     # Package name
-#     packageName = 'Genius Bot'
-#
-#     # Scripts directory (location of launcher script)
-#     scriptsDir = sysconfig.get_path('scripts')
-#
-#     # Target of shortcut
-#     target = os.path.join(scriptsDir, packageName + '.exe')
-#
-#     # Name of link file
-#     linkName = packageName + '.lnk'
-#
-#     # Read location of Windows desktop
-#     desktopFolder = f"{Path.home()}/Desktop"
-#
-#     # Path to location of link file
-#     pathLink = os.path.join(desktopFolder, linkName)
-#     shell = Dispatch('WScript.Shell')
-#     shortcut = shell.CreateShortCut(pathLink)
-#     shortcut.Targetpath = target
-#     shortcut.WorkingDirectory = scriptsDir
-#     shortcut.IconLocation = target
-#     shortcut.save()
+# Creates a Desktop shortcut to the installed software
+def post_install():
+    desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
+    script_parent_dir = Path( __file__ ).parent.absolute().parent.absolute()
+    icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
+    working_directory = str(Path(script_parent_dir))
+    if sys.platform == 'win32':
+        python_version = re.sub("\.", "", re.sub("\.[0-9][0-9]*$", "", platform.python_version()))
+        win32_cmd = str(Path(winshell.folder('CSIDL_SYSTEM')) / 'cmd.exe')
+        link_filepath = str(desktop + "/Genius Bot.lnk")
+        arg_str = "/K " + str("geniusbot")
+        with winshell.shortcut(link_filepath) as link:
+            link.path = win32_cmd
+            link.description = "Genius Bot"
+            link.arguments = arg_str
+            link.icon_location = (icon, 0)
+            link.working_directory = working_directory
+    elif sys.platform == 'linux':
+        with open(f"{desktop}/Genius Bot.desktop", "w") as desktop_icon:
+            desktop_icon.write(
+                f"[Desktop Entry]\n"
+                f"Version={__version__}\n"
+                f"Name=Genius Bot\n"
+                f"Comment=Genius Bot\n"
+                f"Exec=geniusbot\n"
+                f"Icon={icon}\n"
+                f"Path={working_directory}\n"
+                f"Terminal=false\n"
+                f"Type=Application\n"
+                f"Categories=Utility;Application;\n"
+            )
 
 root = 'en_core_web_sm'
 en_core_web_sm_list = []
@@ -98,5 +104,5 @@ setup(
     entry_points={'console_scripts': ['geniusbot = geniusbot.geniusbot:main']},
 )
 
-# if sys.argv[1] == 'install' and sys.platform == 'win32':
-#     post_install()
+if sys.argv[1] == 'install':
+    post_install()
