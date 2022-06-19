@@ -550,7 +550,8 @@ class GeniusBot(QMainWindow):
                 os.remove(link_filepath)
             #print(f"Desktop: {desktop}\nScript Parent Directory: {script_parent_dir}\nwin32 Command: {win32_cmd}\nIcon: {icon}\nWorking Path: {working_directory}\nLink Path {link_filepath}\nArgs: {arg_str}")
         elif sys.platform == 'linux':
-            link_filepath = str(f"{desktop}/Genius Bot.desktop")
+            desktop_link_filepath = str(f"{desktop}/Genius Bot.desktop")
+            link_filepath = os.path.join(os.path.join(os.path.expanduser('~')), '.local/share/applications/Genius Bot.desktop')
             if self.desktop_icon_checkbox.isChecked():
                 with open(link_filepath, "w") as desktop_icon:
                     desktop_icon.write(
@@ -565,9 +566,23 @@ class GeniusBot(QMainWindow):
                         f"Type=Application\n"
                         f"Categories=Utility;Application;\n"
                     )
+                    with open(desktop_link_filepath, "w") as desktop_icon:
+                        desktop_icon.write(
+                            f"[Desktop Entry]\n"
+                            f"Version={__version__}\n"
+                            f"Name=Genius Bot\n"
+                            f"Comment=Genius Bot\n"
+                            f"Exec=geniusbot\n"
+                            f"Icon={icon}\n"
+                            f"Path={working_directory}\n"
+                            f"Terminal=false\n"
+                            f"Type=Application\n"
+                            f"Categories=Utility;Application;\n"
+                        )
                 print("Desktop Shortcut Created!")
             else:
                 os.remove(link_filepath)
+                os.remove(desktop_link_filepath)
 
 
     def eventFilter(self, obj, event):
