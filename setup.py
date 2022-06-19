@@ -77,7 +77,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
-        'mathparse', 'pyyaml', 'spacy'
+        'mathparse', 'pyyaml', 'spacy', 'winshell', 'pypiwin32',
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
