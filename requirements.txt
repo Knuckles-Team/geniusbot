@@ -10,3 +10,4 @@ pytz
 python-dateutil
 mathparse
 pyyaml>=6.0
+spacy>=3.3.1

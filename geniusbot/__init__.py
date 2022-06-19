@@ -2,6 +2,7 @@
 # coding: utf-8
 from geniusbot.version import __version__, __author__, __credits__
 from geniusbot.videodownloader import VideoDownloader
+from geniusbot.geniusbot import geniusbot
 """
 webarchiver
 

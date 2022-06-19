@@ -47,6 +47,13 @@ description = 'Synchronize your subtitle files by shifting the subtitle time (+/
 #     shortcut.IconLocation = target
 #     shortcut.save()
 
+root = 'en_core_web_sm'
+en_core_web_sm_list = []
+for path, subdirs, files in os.walk(root):
+    for name in files:
+        en_core_web_sm_list.append(str(os.path.join(path, name)))
+        print("FILE: ", os.path.join(path, name))
+
 setup(
     name='geniusbot',
     version=f"{version}",
@@ -65,16 +72,19 @@ setup(
         'chatterbot.ext',
         'chatterbot.ext.sqlalchemy_app',
         'chatterbot_corpus',
+        'en_core_web_sm'
     ],
     include_package_data=True,
-    install_requires=['webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'en_core_web_sm', 'sqlalchemy',
-                      'pytz', 'python-dateutil', 'mathparse', 'pyyaml'],
-    dependency_links=[
-        'https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.3.0/en_core_web_sm-3.3.0.tar.gz#egg=en_core_web_sm'
+    install_requires=[
+        'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
+        'mathparse', 'pyyaml', 'spacy'
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
-    data_files=[("geniusbot",  ["geniusbot/img/geniusbot.ico", "geniusbot/img/geniusbot.png"]), ('chatterbot_corpus', glob('chatterbot_corpus/data/*/*.yml', recursive=True))],
+    data_files=[
+        ("geniusbot",  ["geniusbot/img/geniusbot.ico", "geniusbot/img/geniusbot.png"]),
+        ('chatterbot_corpus', glob('chatterbot_corpus/data/*/*.yml', recursive=True)),
+    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: Public Domain',
