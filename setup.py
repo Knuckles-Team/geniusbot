@@ -61,6 +61,7 @@ setup(
     package_data={'geniusbot': ['geniusbot']},
     data_files=[
         ("geniusbot",  ["geniusbot/img/geniusbot.ico", "geniusbot/img/geniusbot.png"]),
+        ("en_core_web_sm",  en_core_web_sm_list),
         ('chatterbot_corpus', glob('chatterbot_corpus/data/*/*.yml', recursive=True)),
     ],
     classifiers=[
@@ -68,6 +69,8 @@ setup(
         'License :: Public Domain',
         'Environment :: Console',
         'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
