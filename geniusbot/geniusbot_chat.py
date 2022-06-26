@@ -1,24 +1,28 @@
-from sagemaker.huggingface import HuggingFaceModel
-import sagemaker
+from transformers import AutoTokenizer, GPTJForCausalLM, pipeline, AutoModelForCausalLM
+import torch
 
-# IAM role with permissions to create endpoint
-role = sagemaker.get_execution_role()
+def save_model():
+    # load fp 16 model
+    #model = GPTJForCausalLM.from_pretrained("EleutherAI/gpt-j-6B", revision="float16", torch_dtype=torch.float16)
+    model = AutoModelForCausalLM.from_pretrained("ykilcher/gpt-4chan",  revision="float16", torch_dtype=torch.float16)
+    # save model with torch.save
+    #torch.save(model, "gpt4chan.pt")
+    torch.save(model, "gptj.pt")
 
-# public S3 URI to gpt-j artifact
-model_uri="s3://huggingface-sagemaker-models/transformers/4.12.3/pytorch/1.9.1/gpt-j/model.tar.gz"
 
-# create Hugging Face Model Class
-huggingface_model = HuggingFaceModel(
-    model_data=model_uri,
-    transformers_version='4.12.3',
-    pytorch_version='1.9.1',
-    py_version='py38',
-    role=role,
-)
+def load_model():
+    # load model
+    model = torch.load("gptj.pt")
+    # load tokenizer
+    tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
 
-# deploy model to SageMaker Inference
-predictor = huggingface_model.deploy(
-    initial_instance_count=1, # number of instances
-    instance_type='ml.g4dn.xlarge', #'ml.p3.2xlarge' # ec2 instance type
-    endpoint_name='sm-endpoint-gpt-j-6b'
-)
+    # create pipeline
+    gen = pipeline("text-generation",model=model,tokenizer=tokenizer,device=0)
+
+    # run prediction
+    gen("My Name is philipp")
+    #[{'generated_text': 'My Name is philipp k. and I live just outside of Detroit....
+
+
+save_model()
+load_model()
