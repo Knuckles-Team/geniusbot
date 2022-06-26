@@ -4,8 +4,6 @@
 import os
 import sys
 import subshift
-if sys.platform == 'win32':
-    import winshell
 from io import StringIO
 from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
@@ -535,19 +533,21 @@ class GeniusBot(QMainWindow):
         icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
         working_directory = str(Path(script_parent_dir))
         if sys.platform == 'win32':
-            win32_cmd = str(Path(winshell.folder('CSIDL_SYSTEM')) / 'cmd.exe')
-            link_filepath = str(desktop + "/Genius Bot.lnk")
-            arg_str = "/K " + str("geniusbot")
-            if self.desktop_icon_checkbox.isChecked():
-                with winshell.shortcut(link_filepath) as link:
-                    link.path = win32_cmd
-                    link.description = "Genius Bot"
-                    link.arguments = arg_str
-                    link.icon_location = (icon, 0)
-                    link.working_directory = working_directory
-                    print("Desktop Shortcut Created!")
-            else:
-                os.remove(link_filepath)
+            print("Re-implementing for Windows")
+            # RE-implement without winshell
+            # win32_cmd = str(Path(winshell.folder('CSIDL_SYSTEM')) / 'cmd.exe')
+            # link_filepath = str(desktop + "/Genius Bot.lnk")
+            # arg_str = "/K " + str("geniusbot")
+            # if self.desktop_icon_checkbox.isChecked():
+            #     with winshell.shortcut(link_filepath) as link:
+            #         link.path = win32_cmd
+            #         link.description = "Genius Bot"
+            #         link.arguments = arg_str
+            #         link.icon_location = (icon, 0)
+            #         link.working_directory = working_directory
+            #         print("Desktop Shortcut Created!")
+            # else:
+            #     os.remove(link_filepath)
             #print(f"Desktop: {desktop}\nScript Parent Directory: {script_parent_dir}\nwin32 Command: {win32_cmd}\nIcon: {icon}\nWorking Path: {working_directory}\nLink Path {link_filepath}\nArgs: {arg_str}")
         elif sys.platform == 'linux':
             desktop_link_filepath = str(f"{desktop}/Genius Bot.desktop")
