@@ -33,6 +33,7 @@ setup(
     install_requires=[
         'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
         'mathparse', 'pyyaml', 'winshell; platform_system == "Windows"', 'pypiwin32; platform_system == "Windows"',
+        'torch', 'transformers',
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
