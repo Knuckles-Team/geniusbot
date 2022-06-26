@@ -7,18 +7,6 @@ from pathlib import Path
 from glob import glob
 import re
 import os
-import sys
-
-if sys.platform == 'win32':
-    dependencies = [
-        'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
-        'mathparse', 'pyyaml', 'spacy', 'winshell', 'pypiwin32',
-    ]
-else:
-    dependencies = [
-        'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
-        'mathparse', 'pyyaml', 'spacy',
-    ]
 
 readme = Path('README.md').read_text()
 version = __version__
@@ -56,7 +44,10 @@ setup(
         'en_core_web_sm'
     ],
     include_package_data=True,
-    install_requires=dependencies,
+    install_requires=[
+        'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
+        'mathparse', 'pyyaml', 'spacy',
+    ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
     data_files=[
