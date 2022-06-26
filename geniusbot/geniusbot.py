@@ -10,8 +10,6 @@ from io import StringIO
 from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
-from chatterbot import ChatBot
-from chatterbot.trainers import ListTrainer, ChatterBotCorpusTrainer
 try:
     from geniusbot.videodownloader import VideoDownloader
 except Exception as e:
@@ -98,42 +96,42 @@ class GeniusBotWorker(QObject):
         self.finished.emit()
 
 
-class GeniusBotTrainWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, geniusbot_chat):
-        super().__init__()
-        global chatbot
-        if chatbot is None:
-            chatbot = ChatBot("Genius Bot")
-
-        self.geniusbot_chat = geniusbot_chat
-
-    def run(self):
-        global chatbot
-        """Long-running task."""
-        #print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
-        conversation = [
-            "Hello",
-            "Hi there!",
-            "How are you doing?",
-            "I'm doing great.",
-            "That is good to hear",
-            "Thank you.",
-            "You're welcome.",
-            "Hello?",
-            "Apologies for the delay, I was definitely not taking a cat nap.",
-            "What can you do?"
-            "Currently, I can download videos, archive websites by screenshotting them, and shift subtitles so they align with your videos"
-        ]
-        greeting_trainer = ListTrainer(chatbot)
-        greeting_trainer.train(conversation)
-        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] ....Huh?!....""")
-        general_trainer = ChatterBotCorpusTrainer(chatbot)
-        general_trainer.train('chatterbot.corpus.english')
-        self.progress.emit(100)
-        self.finished.emit()
+# class GeniusBotTrainWorker(QObject):
+#     finished = pyqtSignal()
+#     progress = pyqtSignal(int)
+#
+#     def __init__(self, geniusbot_chat):
+#         super().__init__()
+#         global chatbot
+#         if chatbot is None:
+#             chatbot = ChatBot("Genius Bot")
+#
+#         self.geniusbot_chat = geniusbot_chat
+#
+#     def run(self):
+#         global chatbot
+#         """Long-running task."""
+#         #print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
+#         conversation = [
+#             "Hello",
+#             "Hi there!",
+#             "How are you doing?",
+#             "I'm doing great.",
+#             "That is good to hear",
+#             "Thank you.",
+#             "You're welcome.",
+#             "Hello?",
+#             "Apologies for the delay, I was definitely not taking a cat nap.",
+#             "What can you do?"
+#             "Currently, I can download videos, archive websites by screenshotting them, and shift subtitles so they align with your videos"
+#         ]
+#         greeting_trainer = ListTrainer(chatbot)
+#         greeting_trainer.train(conversation)
+#         self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] ....Huh?!....""")
+#         general_trainer = ChatterBotCorpusTrainer(chatbot)
+#         general_trainer.train('chatterbot.corpus.english')
+#         self.progress.emit(100)
+#         self.finished.emit()
 
 
 class SubshiftWorker(QObject):
@@ -596,7 +594,7 @@ class GeniusBot(QMainWindow):
         self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Zzzz....""")
         self.geniusbot_train_button.setEnabled(False)
         self.geniusbot_train_thread = QThread()
-        self.geniusbot_train_worker = GeniusBotTrainWorker(self.geniusbot_chat)
+        #self.geniusbot_train_worker = GeniusBotTrainWorker(self.geniusbot_chat)
         self.geniusbot_train_worker.moveToThread(self.geniusbot_train_thread)
         self.geniusbot_train_thread.started.connect(self.geniusbot_train_worker.run)
         self.geniusbot_train_worker.finished.connect(self.geniusbot_train_thread.quit)

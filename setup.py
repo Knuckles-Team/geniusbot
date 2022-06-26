@@ -16,13 +16,6 @@ with open("README.md", "w") as readme_file:
     readme_file.write(readme)
 description = 'The Ever-learning and ever-improving tool!'
 
-root = 'en_core_web_sm'
-en_core_web_sm_list = []
-for path, subdirs, files in os.walk(root):
-    for name in files:
-        en_core_web_sm_list.append(str(os.path.join(path, name)))
-        print("FILE: ", os.path.join(path, name))
-
 setup(
     name='geniusbot',
     version=f"{version}",
@@ -35,25 +28,16 @@ setup(
     license='Unlicense',
     packages=[
         'geniusbot',
-        'chatterbot',
-        'chatterbot.storage',
-        'chatterbot.logic',
-        'chatterbot.ext',
-        'chatterbot.ext.sqlalchemy_app',
-        'chatterbot_corpus',
-        'en_core_web_sm'
     ],
     include_package_data=True,
     install_requires=[
         'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
-        'mathparse', 'pyyaml', 'spacy', 'winshell; platform_system == "Windows"', 'pypiwin32; platform_system == "Windows"',
+        'mathparse', 'pyyaml', 'winshell; platform_system == "Windows"', 'pypiwin32; platform_system == "Windows"',
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
     data_files=[
         ("geniusbot",  ["geniusbot/img/geniusbot.ico", "geniusbot/img/geniusbot.png"]),
-        ("en_core_web_sm",  en_core_web_sm_list),
-        ('chatterbot_corpus', glob('chatterbot_corpus/data/*/*.yml', recursive=True)),
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
