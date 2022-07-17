@@ -58,6 +58,15 @@ class VideoDownloader:
         return self.links
 
     def download_video(self, link, audio=False):
+        outtmpl = f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+        if "rumble.com" in link:
+                rumble_url = requests.get(link)
+                for rumble_embedded_url in rumble_url.text.split(","):
+                    if "embedUrl" in rumble_embedded_url:
+                        rumble_embedded_url = re.sub('"', '', re.sub('"embedUrl":', '', rumble_embedded_url))
+                        link = rumble_embedded_url
+                        outtmpl = f'{self.SAVE_PATH}/%(title)s.%(ext)s'
+
         if audio:
             ydl_opts = {
                 'format': 'bestaudio/best',
@@ -68,46 +77,44 @@ class VideoDownloader:
                 }],
                 'progress_with_newline': True,
                 'logger': StdOutLogger(),
-                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+                'outtmpl': outtmpl
             }
         else:
             ydl_opts = {
                 'format': 'best',
                 'progress_with_newline': True,
                 'logger': StdOutLogger(),
-                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
+                'outtmpl': outtmpl
             }
         try:
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 print(ydl.download([link]))
         except Exception as e:
-            print(f"Unable to download video: {link}")
-
-    def download_videos(self, audio=False):
-        if audio:
-            ydl_opts = {
-                'format': 'bestaudio/best',
-                'progress_with_newline': True,
-                'logger': StdOutLogger(),
-                'postprocessors': [{
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '320',
-                }],
-                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
-            }
-        else:
-            ydl_opts = {
-                'format': 'best',
-                'progress_with_newline': True,
-                'logger': StdOutLogger(),
-                'outtmpl': f'{self.SAVE_PATH}/%(uploader)s - %(title)s.%(ext)s'
-            }
-        for link in self.links:
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([link])
-        print('Video Downloaded!')
-
+            try:
+                if audio:
+                    outtmpl = f'{self.SAVE_PATH}/%(id)s.%(ext)s'
+                    ydl_opts = {
+                        'format': 'bestaudio/best',
+                        'progress_with_newline': True,
+                        'logger': StdOutLogger(),
+                        'postprocessors': [{
+                            'key': 'FFmpegExtractAudio',
+                            'preferredcodec': 'mp3',
+                            'preferredquality': '320',
+                        }],
+                        'outtmpl': outtmpl
+                    }
+                else:
+                    ydl_opts = {
+                        'format': 'best',
+                        'progress_with_newline': True,
+                        'logger': StdOutLogger(),
+                        'outtmpl': outtmpl
+                    }
+                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                    print(ydl.download([link]))
+            except Exception as e:
+                print(f"Unable to download video: {link}")
 
     def get_channel_videos(self, channel, limit=-1):
         vids = None
