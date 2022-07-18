@@ -10,7 +10,7 @@ from io import StringIO
 from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
-from video_downloader import VideoDownloader
+from media_downloader import MediaDownloader
 
 try:
     from geniusbot.version import __version__, __author__, __credits__
