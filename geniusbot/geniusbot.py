@@ -268,7 +268,7 @@ class ScrollLabel(QScrollArea):
 class GeniusBot(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.video_downloader = VideoDownloader()
+        self.video_downloader = MediaDownloader()
         self.webarchiver = Webarchiver()
         self.setupUi()
 
