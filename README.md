@@ -57,9 +57,9 @@ sudo chmod +x ./*.py
 pip install .
 python setup.py bdist_wheel --universal
 # Test Pypi
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+twine upload --repository-url https://test.pypi.org/legacy/ dist/* --verbose -u "Username" -p "Password"
 # Prod Pypi
-twine upload dist/*
+twine upload dist/* --verbose -u "Username" -p "Password"
 ```
 
 ## Repository
