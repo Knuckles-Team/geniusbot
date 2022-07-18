@@ -10,10 +10,8 @@ from io import StringIO
 from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
-try:
-    from geniusbot.videodownloader import VideoDownloader
-except Exception as e:
-    from videodownloader import VideoDownloader
+from video_downloader import VideoDownloader
+
 try:
     from geniusbot.version import __version__, __author__, __credits__
 except Exception as e:
