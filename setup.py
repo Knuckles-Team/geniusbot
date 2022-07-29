@@ -33,7 +33,7 @@ setup(
     install_requires=[
         'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
         'mathparse', 'pyyaml', 'winshell; platform_system == "Windows"', 'pypiwin32; platform_system == "Windows"',
-        'torch', 'transformers', 'accelerate', 'media-downloader'
+        'torch', 'transformers', 'accelerate', 'media-downloader', 'media-manager'
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
@@ -51,6 +51,6 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
-    keywords=['genius', 'geniusbot', 'download', 'video', 'subtitle', 'website', 'screenshot'],
+    keywords=['genius', 'geniusbot', 'download', 'video', 'subtitle', 'website', 'screenshot', 'media', 'manage'],
     entry_points={'console_scripts': ['geniusbot = geniusbot.geniusbot:main']},
 )
