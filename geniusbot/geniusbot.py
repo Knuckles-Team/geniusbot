@@ -669,6 +669,7 @@ class GeniusBot(QMainWindow):
                 f"""- Video Downloader\n"""
                 f"""- Web Archiver\n"""
                 f"""- Subtitle Shifter"""
+                f"""- Media Manager"""
             )
         )
         self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.setText("Send"))

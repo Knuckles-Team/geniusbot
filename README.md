@@ -5,9 +5,10 @@
 
 The Ever-learning and ever-improving tool!
 - Genius Bot Chat
-- Video Download
+- Media Download
 - Website Screenshot
 - Subtitle Shift
+- Media Manager
 
 #### Genius Bot Chat
 ![Genius Bot Chat](screenshots/geniusbot_home.png?raw=true "Genius Bot Chat")
