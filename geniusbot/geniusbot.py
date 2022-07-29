@@ -11,6 +11,7 @@ from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
 from media_downloader import MediaDownloader
+from media_manager import MediaManager
 
 try:
     from geniusbot.version import __version__, __author__, __credits__
@@ -201,6 +202,30 @@ class VideoWorker(QObject):
         self.finished.emit()
 
 
+class MediaWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, media_manager, directory, move, destination, subtitle):
+        super().__init__()
+        self.media_manager = media_manager
+        self.directory = directory
+        self.move = move
+        self.destination = destination
+        self.subtitle = subtitle
+
+    def run(self):
+        """Long-running task."""
+        self.media_manager.set_media_directory(media_directory=self.directory)
+        self.media_manager.find_media()
+        self.media_manager.clean_media(subtitle=self.subtitle)
+        if os.path.isdir(self.destination) and self.move is True:
+            self.media_manager.move_media(target_directory=self.destination)
+
+        self.progress.emit(100)
+        self.finished.emit()
+
+
 # class for scrollable label
 class ScrollLabel(QScrollArea):
 
@@ -270,6 +295,7 @@ class GeniusBot(QMainWindow):
         super().__init__(parent)
         self.video_downloader = MediaDownloader()
         self.webarchiver = Webarchiver()
+        self.media_manager = MediaManager()
         self.setupUi()
 
     def setupUi(self):
@@ -287,6 +313,7 @@ class GeniusBot(QMainWindow):
         self.tab5 = QWidget()
         self.tab6 = QWidget()
         self.tab7 = QWidget()
+        self.tab8 = QWidget()
         self.tabwidget = QTabWidget()
         self.tabwidget.setStyleSheet("background-color: #f5f5f5;")
         self.tabwidget.addTab(self.tab1, "Tab 1")
@@ -296,13 +323,15 @@ class GeniusBot(QMainWindow):
         self.tabwidget.addTab(self.tab5, "Tab 5")
         self.tabwidget.addTab(self.tab6, "Tab 6")
         self.tabwidget.addTab(self.tab7, "Tab 7")
+        self.tabwidget.addTab(self.tab8, "Tab 8")
         self.tab1_home()
         self.tab2_video_downloader()
         self.tab3_webarchiver()
         self.tab4_subshift()
-        self.tab5_analytic_profiler()
-        self.tab6_report_manager()
-        self.tab7_settings()
+        self.tab5_media_manager()
+        self.tab6_analytic_profiler()
+        self.tab7_report_manager()
+        self.tab8_settings()
 
         # Set the main gui layout
         layout = QVBoxLayout()
@@ -408,7 +437,7 @@ class GeniusBot(QMainWindow):
         video_layout.addWidget(self.video_download_button, 6, 0, 1, 2)
         video_layout.addWidget(self.video_progress_bar, 7, 0, 1, 2)
         video_layout.setContentsMargins(3, 3, 3, 3)
-        self.tabwidget.setTabText(1, "Video Downloader")
+        self.tabwidget.setTabText(1, "Media Downloader")
         self.tab2.setLayout(video_layout)
 
     def tab3_webarchiver(self):
@@ -501,29 +530,61 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(3, "Shift Subtitles")
         self.tab4.setLayout(layout)
 
-    def tab5_analytic_profiler(self):
-        layout = QHBoxLayout()
-        layout.addWidget(QLabel("subjects"))
-        layout.addWidget(QCheckBox("Physics"))
-        layout.addWidget(QCheckBox("Maths"))
-        self.tabwidget.setTabText(4, "Analytic Profiler")
-        self.tab5.setLayout(layout)
+    def tab5_media_manager(self):
+        media_manager_layout = QGridLayout()
+        self.media_manager_media_location_button = QPushButton("Media Location")
+        self.media_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
+        self.media_manager_media_location_button.clicked.connect(self.media_manager_media_location)
+        self.media_manager_media_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.media_manager_move_location_button = QPushButton("Move Location")
+        self.media_manager_move_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.media_manager_move_location_button.clicked.connect(self.media_manager_move_location)
+        self.media_manager_move_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.subtitle_ticker = QCheckBox("Apply Subtitles")
+        self.move_ticker = QCheckBox("Move Media")
+        self.media_manager_files_label = ScrollLabel(self)
+        self.media_manager_files_label.hide()
+        self.media_manager_files_label.setText(f"Media files found will be shown here\n")
+        self.media_manager_files_label.setFont("Arial")
+        self.media_manager_files_label.setFontColor(background_color="white", color="black")
+        self.media_manager_files_label.setScrollWheel("Top")
+        self.media_manager_run_button = QPushButton("Run")
+        self.media_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.media_manager_run_button.clicked.connect(self.manage_media)
+        media_manager_layout.addWidget(self.media_manager_media_location_button, 0, 0, 1, 1)
+        media_manager_layout.addWidget(self.media_manager_media_location_label, 0, 1, 1, 1)
+        media_manager_layout.addWidget(self.media_manager_move_location_button, 1, 0, 1, 1)
+        media_manager_layout.addWidget(self.media_manager_move_location_label, 1, 1, 1, 1)
+        media_manager_layout.addWidget(self.move_ticker, 2, 0, 1, 1)
+        media_manager_layout.addWidget(self.subtitle_ticker, 2, 1, 1, 1)
+        media_manager_layout.addWidget(self.media_manager_files_label, 3, 0, 1, 2)
+        media_manager_layout.addWidget(self.media_manager_run_button, 4, 0, 1, 2)
+        self.tabwidget.setTabText(4, "Media Manager")
+        self.tab5.setLayout(media_manager_layout)
 
-    def tab6_report_manager(self):
+    def tab6_analytic_profiler(self):
         layout = QHBoxLayout()
         layout.addWidget(QLabel("subjects"))
         layout.addWidget(QCheckBox("Physics"))
         layout.addWidget(QCheckBox("Maths"))
-        self.tabwidget.setTabText(5, "Report Manager")
+        self.tabwidget.setTabText(5, "Analytic Profiler")
         self.tab6.setLayout(layout)
 
-    def tab7_settings(self):
+    def tab7_report_manager(self):
+        layout = QHBoxLayout()
+        layout.addWidget(QLabel("subjects"))
+        layout.addWidget(QCheckBox("Physics"))
+        layout.addWidget(QCheckBox("Maths"))
+        self.tabwidget.setTabText(6, "Report Manager")
+        self.tab7.setLayout(layout)
+
+    def tab8_settings(self):
         layout = QHBoxLayout()
         self.desktop_icon_checkbox = QCheckBox("Create Desktop Icon")
         self.desktop_icon_checkbox.stateChanged.connect(self.create_desktop_icon)
         layout.addWidget(self.desktop_icon_checkbox)
-        self.tabwidget.setTabText(6, "⚙")
-        self.tab7.setLayout(layout)
+        self.tabwidget.setTabText(7, "⚙")
+        self.tab8.setLayout(layout)
 
     def create_desktop_icon(self):
         desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
@@ -745,6 +806,40 @@ class GeniusBot(QMainWindow):
     def report_video_progress_bar(self, n):
         self.video_progress_bar.setValue(n)
 
+    def manage_media(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing media...\n")
+
+        if self.subtitle_ticker.isChecked():
+            subtitle_boolean = True
+        else:
+            subtitle_boolean = False
+
+        if self.move_ticker.isChecked():
+            move_boolean = True
+        else:
+            move_boolean = False
+
+        self.media_manager_thread = QThread()
+        self.media_manager_worker = MediaWorker(media_manager=self.media_manager,
+                                                directory=self.media_manager_media_location_label.text(),
+                                                move=move_boolean,
+                                                destination=self.media_manager_move_location_label.text(),
+                                                subtitle=subtitle_boolean)
+        self.media_manager_worker.moveToThread(self.media_manager_thread)
+        self.media_manager_thread.started.connect(self.media_manager_worker.run)
+        self.media_manager_worker.finished.connect(self.media_manager_thread.quit)
+        self.media_manager_worker.finished.connect(self.media_manager_worker.deleteLater)
+        self.media_manager_thread.finished.connect(self.media_manager_thread.deleteLater)
+        self.media_manager_thread.start()
+        self.media_manager_run_button.setEnabled(False)
+        self.media_manager_thread.finished.connect(
+            lambda: self.media_manager_run_button.setEnabled(True)
+        )
+        self.media_manager_thread.finished.connect(
+            lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing media complete!\n")
+        )
+
+
     def download_videos(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Downloading videos...\n")
         self.video_progress_bar.setValue(1)
@@ -795,6 +890,22 @@ class GeniusBot(QMainWindow):
         videos = videos + self.video_links_editor.toPlainText()
         videos = videos.strip()
         self.video_links_editor.setPlainText(videos)
+
+    def media_manager_media_location(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
+        media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        self.media_manager_media_location_label.setText(media_manager_directory_name)
+        self.media_manager.set_media_directory(media_manager_directory_name)
+        self.media_manager.find_media()
+        files = ""
+        for file in self.media_manager.get_media_list():
+            files = f"{files}\n{file}"
+        self.media_manager_files_label.setText(files.strip())
+
+    def media_manager_move_location(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
+        media_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        self.media_manager_move_location_label.setText(media_manager_move_directory_name)
 
     def save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
