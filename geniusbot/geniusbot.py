@@ -839,7 +839,9 @@ class GeniusBot(QMainWindow):
         self.media_manager_thread.finished.connect(
             lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing media complete!\n")
         )
-
+        self.media_manager_thread.finished.connect(
+            lambda: self.media_manager_refresh_list()
+        )
 
     def download_videos(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Downloading videos...\n")
@@ -897,6 +899,14 @@ class GeniusBot(QMainWindow):
         media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.media_manager_media_location_label.setText(media_manager_directory_name)
         self.media_manager.set_media_directory(media_manager_directory_name)
+        self.media_manager.find_media()
+        files = ""
+        for file in self.media_manager.get_media_list():
+            files = f"{files}\n{file}"
+        self.media_manager_files_label.setText(files.strip())
+
+    def media_manager_refresh_list(self):
+        self.media_manager.set_media_directory(self.media_manager_move_location_label.text())
         self.media_manager.find_media()
         files = ""
         for file in self.media_manager.get_media_list():
