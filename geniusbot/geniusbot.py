@@ -170,7 +170,8 @@ class VideoWorker(QObject):
     def run(self):
         """Long-running task."""
         for video_index in range(0, len(self.videos)):
-            self.video_downloader.download_video(self.videos[video_index], audio=self.audio)
+            self.video_downloader.set_audio(audio=self.audio)
+            self.video_downloader.download_video(self.videos[video_index])
             self.progress.emit(int(((1 + video_index) / len(self.videos)) * 100))
         self.finished.emit()
 
