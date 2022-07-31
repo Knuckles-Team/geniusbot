@@ -617,32 +617,6 @@ class GeniusBot(QMainWindow):
                 self.chattybot_response()
         return super().eventFilter(obj, event)
 
-    # def chattybot_train(self):
-    #     self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Zzzz....""")
-    #     self.geniusbot_train_button.setEnabled(False)
-    #     self.geniusbot_train_thread = QThread()
-    #     self.geniusbot_train_worker = GeniusBotTrainWorker(self.geniusbot_chat)
-    #     self.geniusbot_train_worker.moveToThread(self.geniusbot_train_thread)
-    #     self.geniusbot_train_thread.started.connect(self.geniusbot_train_worker.run)
-    #     self.geniusbot_train_worker.finished.connect(self.geniusbot_train_thread.quit)
-    #     self.geniusbot_train_worker.finished.connect(self.geniusbot_train_worker.deleteLater)
-    #     self.geniusbot_train_thread.finished.connect(self.geniusbot_train_thread.deleteLater)
-    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_train_button.hide())
-    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.show())
-    #     self.geniusbot_train_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
-    #     self.geniusbot_train_thread.finished.connect(lambda: self.console.setText(f"{self.console.text().strip()}\n[Genius Bot] Training complete!"))
-    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_chat.setText(
-    #             f"""{self.geniusbot_chat.text()}\n[Genius Bot] Why hello there {user}! I apologize for the delay, I was definitely not taking a cat nap. Anyways, how can I be of service?\nI can perform the following tasks:\n"""
-    #             f"""- Chat\n"""
-    #             f"""- Video Downloader\n"""
-    #             f"""- Web Archiver\n"""
-    #             f"""- Subtitle Shifter"""
-    #             f"""- Media Manager"""
-    #         )
-    #     )
-    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.setText("Send"))
-    #     self.geniusbot_train_thread.start()
-
     def chattybot_response(self):
         self.geniusbot_send_button.setEnabled(False)
         text = str(self.chat_editor.toPlainText().strip())
