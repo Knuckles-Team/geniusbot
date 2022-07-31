@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 from geniusbot.version import __version__, __author__, __credits__
-from geniusbot.videodownloader import VideoDownloader
+from geniusbot.geniusbot_chat import ChatBot
 from geniusbot.geniusbot import geniusbot
 """
-webarchiver
+geniusbot
 
-A web page full page screenshooting tool.
+A tool that does it all!
 """
 
 __version__ = __version__

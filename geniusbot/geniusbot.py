@@ -12,8 +12,10 @@ from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
 from media_downloader import MediaDownloader
 from media_manager import MediaManager
-from geniusbot_chat import ChatBot
-
+try:
+    from geniusbot.geniusbot_chat import ChatBot
+except Exception as e:
+    from geniusbot_chat import __version__, __author__, __credits__
 try:
     from geniusbot.version import __version__, __author__, __credits__
 except Exception as e:
