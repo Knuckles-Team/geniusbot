@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from transformers import AutoTokenizer, GPTJForCausalLM, pipeline, AutoModelForCausalLM
 from torch.quantization.qconfig import float_qparams_weight_only_qconfig
 import torch
@@ -22,10 +25,10 @@ def load_model():
     tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
     #input_ids = tokenizer(context, return_tensors="pt").input_ids.to("cuda")
     # create pipeline
-    gen = pipeline("text-generation",model=model,tokenizer=tokenizer)
+    gen = pipeline("text-generation", model=model, tokenizer=tokenizer, device=0)
 
     # run prediction
-    gen("My Name is philipp")
+    gen("My Name is GeniusBot")
     #[{'generated_text': 'My Name is philipp k. and I live just outside of Detroit....
     print("Model Loaded")
 
