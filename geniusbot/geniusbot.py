@@ -12,6 +12,7 @@ from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
 from media_downloader import MediaDownloader
 from media_manager import MediaManager
+from geniusbot_chat import ChatBot
 
 try:
     from geniusbot.version import __version__, __author__, __credits__
@@ -35,7 +36,6 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
-chatbot = None
 user = str(os.getlogin())
 yellow = "#FFA500"
 green = "#2E8B57"
@@ -78,59 +78,26 @@ class GeniusBotWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, geniusbot_chat, text):
+    def __init__(self, geniusbot_chatbot, geniusbot_chat, text):
         super().__init__()
-        global chatbot
+        self.geniusbot_chatbot = geniusbot_chatbot
         self.geniusbot_chat = geniusbot_chat
         self.text = text
 
     def run(self):
         """Long-running task."""
-        global chatbot
         old_text = self.geniusbot_chat.text()
         self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] ...""")
-        response = chatbot.get_response(self.text)
+        self.geniusbot_chatbot.check_hardware()
+        self.geniusbot_chatbot.save_model()
+        self.geniusbot_chatbot.load_model()
+        if self.geniusbot_chatbot.get_loaded() == True:
+            response = self.geniusbot_chatbot.chat(self.text)
+        else:
+            response = "You're PC doesn't have enough memory to load my intelligence. Consider upgrading your RAM"
         self.geniusbot_chat.setText(f"""{old_text}\n[Genius Bot] {response}""")
         self.progress.emit(100)
         self.finished.emit()
-
-
-# class GeniusBotTrainWorker(QObject):
-#     finished = pyqtSignal()
-#     progress = pyqtSignal(int)
-#
-#     def __init__(self, geniusbot_chat):
-#         super().__init__()
-#         global chatbot
-#         if chatbot is None:
-#             chatbot = ChatBot("Genius Bot")
-#
-#         self.geniusbot_chat = geniusbot_chat
-#
-#     def run(self):
-#         global chatbot
-#         """Long-running task."""
-#         #print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
-#         conversation = [
-#             "Hello",
-#             "Hi there!",
-#             "How are you doing?",
-#             "I'm doing great.",
-#             "That is good to hear",
-#             "Thank you.",
-#             "You're welcome.",
-#             "Hello?",
-#             "Apologies for the delay, I was definitely not taking a cat nap.",
-#             "What can you do?"
-#             "Currently, I can download videos, archive websites by screenshotting them, and shift subtitles so they align with your videos"
-#         ]
-#         greeting_trainer = ListTrainer(chatbot)
-#         greeting_trainer.train(conversation)
-#         self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] ....Huh?!....""")
-#         general_trainer = ChatterBotCorpusTrainer(chatbot)
-#         general_trainer.train('chatterbot.corpus.english')
-#         self.progress.emit(100)
-#         self.finished.emit()
 
 
 class SubshiftWorker(QObject):
@@ -296,6 +263,7 @@ class GeniusBot(QMainWindow):
         self.video_downloader = MediaDownloader()
         self.webarchiver = Webarchiver()
         self.media_manager = MediaManager()
+        self.geniusbot_chatbot = ChatBot()
         self.setupUi()
 
     def setupUi(self):
@@ -379,7 +347,7 @@ class GeniusBot(QMainWindow):
 
         self.geniusbot_train_button = QPushButton("Wake Up!")
         self.geniusbot_train_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.geniusbot_train_button.clicked.connect(self.chattybot_train)
+        self.geniusbot_train_button.clicked.connect(self.chattybot_response)
         self.geniusbot_send_button = QPushButton("Send")
         self.geniusbot_send_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.geniusbot_send_button.clicked.connect(self.chattybot_response)
@@ -649,31 +617,31 @@ class GeniusBot(QMainWindow):
                 self.chattybot_response()
         return super().eventFilter(obj, event)
 
-    def chattybot_train(self):
-        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Zzzz....""")
-        self.geniusbot_train_button.setEnabled(False)
-        self.geniusbot_train_thread = QThread()
-        #self.geniusbot_train_worker = GeniusBotTrainWorker(self.geniusbot_chat)
-        self.geniusbot_train_worker.moveToThread(self.geniusbot_train_thread)
-        self.geniusbot_train_thread.started.connect(self.geniusbot_train_worker.run)
-        self.geniusbot_train_worker.finished.connect(self.geniusbot_train_thread.quit)
-        self.geniusbot_train_worker.finished.connect(self.geniusbot_train_worker.deleteLater)
-        self.geniusbot_train_thread.finished.connect(self.geniusbot_train_thread.deleteLater)
-        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_train_button.hide())
-        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.show())
-        self.geniusbot_train_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
-        self.geniusbot_train_thread.finished.connect(lambda: self.console.setText(f"{self.console.text().strip()}\n[Genius Bot] Training complete!"))
-        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_chat.setText(
-                f"""{self.geniusbot_chat.text()}\n[Genius Bot] Why hello there {user}! I apologize for the delay, I was definitely not taking a cat nap. Anyways, how can I be of service?\nI can perform the following tasks:\n"""
-                f"""- Chat\n"""
-                f"""- Video Downloader\n"""
-                f"""- Web Archiver\n"""
-                f"""- Subtitle Shifter"""
-                f"""- Media Manager"""
-            )
-        )
-        self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.setText("Send"))
-        self.geniusbot_train_thread.start()
+    # def chattybot_train(self):
+    #     self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Zzzz....""")
+    #     self.geniusbot_train_button.setEnabled(False)
+    #     self.geniusbot_train_thread = QThread()
+    #     self.geniusbot_train_worker = GeniusBotTrainWorker(self.geniusbot_chat)
+    #     self.geniusbot_train_worker.moveToThread(self.geniusbot_train_thread)
+    #     self.geniusbot_train_thread.started.connect(self.geniusbot_train_worker.run)
+    #     self.geniusbot_train_worker.finished.connect(self.geniusbot_train_thread.quit)
+    #     self.geniusbot_train_worker.finished.connect(self.geniusbot_train_worker.deleteLater)
+    #     self.geniusbot_train_thread.finished.connect(self.geniusbot_train_thread.deleteLater)
+    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_train_button.hide())
+    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.show())
+    #     self.geniusbot_train_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
+    #     self.geniusbot_train_thread.finished.connect(lambda: self.console.setText(f"{self.console.text().strip()}\n[Genius Bot] Training complete!"))
+    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_chat.setText(
+    #             f"""{self.geniusbot_chat.text()}\n[Genius Bot] Why hello there {user}! I apologize for the delay, I was definitely not taking a cat nap. Anyways, how can I be of service?\nI can perform the following tasks:\n"""
+    #             f"""- Chat\n"""
+    #             f"""- Video Downloader\n"""
+    #             f"""- Web Archiver\n"""
+    #             f"""- Subtitle Shifter"""
+    #             f"""- Media Manager"""
+    #         )
+    #     )
+    #     self.geniusbot_train_thread.finished.connect(lambda: self.geniusbot_send_button.setText("Send"))
+    #     self.geniusbot_train_thread.start()
 
     def chattybot_response(self):
         self.geniusbot_send_button.setEnabled(False)
@@ -681,7 +649,9 @@ class GeniusBot(QMainWindow):
         self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[{user}] {text}""")
         self.chat_editor.setText("")
         self.geniusbot_thread = QThread()
-        self.geniusbot_worker = GeniusBotWorker(self.geniusbot_chat, text)
+        self.geniusbot_worker = GeniusBotWorker(geniusbot_chatbot=self.geniusbot_chatbot,
+                                                geniusbot_chat=self.geniusbot_chat,
+                                                text=text)
         self.geniusbot_worker.moveToThread(self.geniusbot_thread)
         self.geniusbot_thread.started.connect(self.geniusbot_worker.run)
         self.geniusbot_worker.finished.connect(self.geniusbot_thread.quit)
