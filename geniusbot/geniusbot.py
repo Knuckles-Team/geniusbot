@@ -87,14 +87,18 @@ class GeniusBotWorker(QObject):
     def run(self):
         """Long-running task."""
         old_text = self.geniusbot_chat.text()
-        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] ...""")
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Checking your hardware...""")
         self.geniusbot_chatbot.check_hardware()
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Saving intelligence model...""")
         self.geniusbot_chatbot.save_model()
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Attempting to load intelligence...""")
         self.geniusbot_chatbot.load_model()
         if self.geniusbot_chatbot.get_loaded() == True:
+            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Intelligence loaded!""")
             response = self.geniusbot_chatbot.chat(self.text)
         else:
-            response = "You're PC doesn't have enough memory to load my intelligence. Consider upgrading your RAM"
+            response = "You're PC doesn't have enough memory to load my intelligence. " \
+                       "Consider upgrading your RAM. 50 GB required"
         self.geniusbot_chat.setText(f"""{old_text}\n[Genius Bot] {response}""")
         self.progress.emit(100)
         self.finished.emit()
