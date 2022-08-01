@@ -31,9 +31,9 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        'webarchiver', 'subshift', 'pandas', 'PyQt5', 'youtube-dl', 'sqlalchemy', 'pytz', 'python-dateutil',
-        'mathparse', 'pyyaml', 'winshell; platform_system == "Windows"', 'pypiwin32; platform_system == "Windows"',
-        'torch', 'transformers', 'accelerate', 'media-downloader', 'media-manager'
+        'webarchiver', 'subshift', 'PyQt5', 'winshell; platform_system == "Windows"',
+        'pypiwin32; platform_system == "Windows"', 'torch', 'transformers', 'accelerate', 'media-downloader>=0.0.2',
+        'media-manager>=0.0.4'
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
