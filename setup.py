@@ -33,7 +33,7 @@ setup(
     install_requires=[
         'webarchiver', 'subshift', 'PyQt5', 'winshell; platform_system == "Windows"',
         'pypiwin32; platform_system == "Windows"', 'torch', 'transformers', 'accelerate', 'media-downloader>=0.0.2',
-        'media-manager>=0.0.4'
+        'media-manager>=0.0.4', 'report-manager>=0.0.1',
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
@@ -53,6 +53,6 @@ setup(
         'Programming Language :: Python :: 3.11',
     ],
     keywords=['genius', 'geniusbot', 'download', 'video', 'subtitle', 'website', 'screenshot', 'media', 'manage',
-              'chatbot'],
+              'chatbot', 'report', 'profiling', 'merge'],
     entry_points={'console_scripts': ['geniusbot = geniusbot.geniusbot:main']},
 )
