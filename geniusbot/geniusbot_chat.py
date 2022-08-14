@@ -61,6 +61,8 @@ class ChatBot():
             # self.generator("My Name is GeniusBot")
             # self.loaded = True
 
+
+            # https://www.pragnakalp.com/gpt-j-6b-parameters-model-huggingface/
             self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
             self.model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B",
                                                               revision="float16",
