@@ -18,7 +18,7 @@ class ChatBot():
         self.tokenizer = None
         self.generator = None
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.memory_required = 20 #GB
+        self.memory_required = 10 #GB
         self.bytes = 1073741824
         self.loaded = False
 
@@ -106,6 +106,6 @@ class ChatBot():
 
 if __name__ == "__main__":
     geniusbot_chat = ChatBot()
-    geniusbot_chat.check_hardware()
-    geniusbot_chat.save_model()
+    #geniusbot_chat.check_hardware()
+    #geniusbot_chat.save_model()
     geniusbot_chat.load_model()
