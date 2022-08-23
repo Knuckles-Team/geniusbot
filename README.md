@@ -64,7 +64,7 @@ twine upload dist/* --verbose -u "Username" -p "Password"
 ```
 
 ## Repository
-[genius-bot](https://github.com/Knucklessg1/genius-bot.git)
+[geniusbot](https://github.com/Knucklessg1/geniusbot.git)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
