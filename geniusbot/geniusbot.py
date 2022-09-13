@@ -15,7 +15,7 @@ from media_manager import MediaManager
 try:
     from geniusbot.geniusbot_chat import ChatBot
 except Exception as e:
-    from geniusbot_chat import __version__, __author__, __credits__
+    from geniusbot_chat import ChatBot
 try:
     from geniusbot.version import __version__, __author__, __credits__
 except Exception as e:
@@ -89,18 +89,18 @@ class GeniusBotWorker(QObject):
     def run(self):
         """Long-running task."""
         old_text = self.geniusbot_chat.text()
-        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Checking your hardware...""")
-        self.geniusbot_chatbot.check_hardware()
-        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Saving intelligence model...""")
-        self.geniusbot_chatbot.save_model()
-        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Attempting to load intelligence...""")
-        self.geniusbot_chatbot.load_model()
-        if self.geniusbot_chatbot.get_loaded() == True:
-            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Intelligence loaded!""")
-            response = self.geniusbot_chatbot.chat(self.text)
-        else:
-            response = "You're PC doesn't have enough memory to load my intelligence. " \
-                       "Consider upgrading your RAM. 50 GB required"
+        if self.geniusbot_chatbot.get_loaded() is False:
+            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Attempting to load intelligence...""")
+            self.geniusbot_chatbot.load_model()
+            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Loaded {self.geniusbot_chatbot.get_intelligence_level()} intelligence level!""")
+        response = self.geniusbot_chatbot.chat(self.text, output_length=40)
+        import re
+        if response != self.text:
+            response = re.sub(self.text, "", response)
+            response = re.sub("^\?", "", response)
+            response = re.sub("^\.", "", response)
+            response = re.sub("^\!", "", response)
+            response = response.lstrip()
         self.geniusbot_chat.setText(f"""{old_text}\n[Genius Bot] {response}""")
         self.progress.emit(100)
         self.finished.emit()
@@ -352,18 +352,18 @@ class GeniusBot(QMainWindow):
         self.chat_editor = QTextEdit()
         self.chat_editor.installEventFilter(self)
 
-        self.geniusbot_train_button = QPushButton("Wake Up!")
-        self.geniusbot_train_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.geniusbot_train_button.clicked.connect(self.chattybot_response)
-        self.geniusbot_send_button = QPushButton("Send")
+        # self.geniusbot_train_button = QPushButton("Wake Up!")
+        # self.geniusbot_train_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        # self.geniusbot_train_button.clicked.connect(self.chattybot_response)
+        self.geniusbot_send_button = QPushButton("Wake Up!")
         self.geniusbot_send_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.geniusbot_send_button.clicked.connect(self.chattybot_response)
-        self.geniusbot_send_button.hide()
-        self.chat_editor.setDisabled(True)
+        #self.geniusbot_send_button.hide()
+        self.chat_editor.setDisabled(False)
         layout = QVBoxLayout()
         layout.addWidget(self.geniusbot_chat)
         layout.addWidget(self.chat_editor)
-        layout.addWidget(self.geniusbot_train_button)
+        #layout.addWidget(self.geniusbot_train_button)
         layout.addWidget(self.geniusbot_send_button)
         layout.setStretch(0, 24)
         layout.setStretch(1, 3)
@@ -625,7 +625,8 @@ class GeniusBot(QMainWindow):
         return super().eventFilter(obj, event)
 
     def chattybot_response(self):
-        self.geniusbot_send_button.setEnabled(False)
+        #self.geniusbot_send_button.setEnabled(False)
+        self.geniusbot_send_button.setText("Send")
         text = str(self.chat_editor.toPlainText().strip())
         self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[{user}] {text}""")
         self.chat_editor.setText("")
