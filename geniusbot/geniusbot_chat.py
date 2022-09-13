@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, GPTJForCausalLM, pipeline, AutoModelForC
 import torch
 import psutil
 import os
-import time
+import re
 
 
 class ChatBot():
@@ -16,96 +16,75 @@ class ChatBot():
         self.used_percent = psutil.virtual_memory()[2]
         self.model = None
         self.tokenizer = None
-        self.generator = None
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.memory_required = 10 #GB
         self.bytes = 1073741824
         self.loaded = False
+        if 5 < round(float((self.free_memory) / self.bytes), 0) < 14:
+            self.opt = "facebook/opt-1.3b" #"EleutherAI/gpt-neo-1.3B"
+            self.intelligence_level = "Very Low"
+        elif 14 < round(float((self.free_memory) / self.bytes), 0) < 22:
+            self.opt = "facebook/opt-2.7b"  # "EleutherAI/gpt-neo-2.7B"
+            self.intelligence_level = "Low"
+        elif 22 < round(float((self.free_memory) / self.bytes), 0) < 45:
+            self.opt = "facebook/opt-6.7b" # "EleutherAI/gpt-6j"
+            self.intelligence_level = "Medium"
+        elif 45 < round(float((self.free_memory) / self.bytes), 0) < 100:
+            self.opt = "facebook/opt-13b"
+            self.intelligence_level = "High"
+        elif 200 < round(float((self.free_memory) / self.bytes), 0):
+            self.opt = "facebook/opt-66b"
+            self.intelligence_level = "Very High"
+        self.file_name = f"geniusbot_intelligence_{re.sub('/', '_', self.opt)}.pt"
+        if self.device == "cuda":
+            self.torch_dtype = torch.float16
+        else:
+            self.torch_dtype = torch.float32
 
     def check_hardware(self):
         self.total_memory = psutil.virtual_memory()[0]
         self.used_memory = psutil.virtual_memory()[3]
         self.free_memory = psutil.virtual_memory()[1]
         self.used_percent = psutil.virtual_memory()[2]
-        print(f"Required RAM: {self.memory_required} GB\n"
-              f"Used RAM: {round(float(self.used_memory/self.bytes), 2)} GB\n"
-              f"Free RAM: {round(float((self.free_memory)/self.bytes), 2)} GB\n"
-              f"Total RAM: {round(float(self.total_memory/self.bytes), 2)} GB\n"
-              f"RAM Utilization Percentage: {round(self.used_percent, 2)}%")
-
-    def save_model(self):
-        if os.path.isfile("geniusbot_gptj.pt"):
-            print("Model already downloaded")
-        else:
-            print("Downloading model")
-            # load fp 16 model
-            model = GPTJForCausalLM.from_pretrained("EleutherAI/gpt-j-6B", revision="float16", torch_dtype=torch.float16, low_cpu_mem_usage=True)
-            # save model with torch.save
-            print("Saving model")
-            torch.save(model, "geniusbot_gptj.pt")
-            print("Model Saved")
+        print(f"RAM Utilization: {round(self.used_percent, 2)}%\n"
+              f"\tUsed  RAM: {round(float(self.used_memory / self.bytes), 2)} GB\n"
+              f"\tFree  RAM: {round(float((self.free_memory) / self.bytes), 2)} GB\n"
+              f"\tTotal RAM: {round(float(self.total_memory / self.bytes), 2)} GB\n\n")
 
     def load_model(self):
-        if self.free_memory >= (self.memory_required*self.bytes):
-            print("Loading Model")
-            # # load model
-            # self.model = GPTJForCausalLM.from_pretrained("EleutherAI/gpt-j-6B", revision="float16", torch_dtype=torch.float16, low_cpu_mem_usage=True)
-            # self.model.load_state_dict(torch.load("geniusbot_gptj.pt"))
-            # self.model.device(self.device)
-            # # load tokenizer
-            # self.tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
-            # # create pipeline
-            # self.generator = pipeline("text-generation", model=self.model, tokenizer=self.tokenizer, device=0)
-            # print("Model Loaded")
-            # # run prediction
-            # self.generator("My Name is GeniusBot")
-            # self.loaded = True
-
-
-            # https://www.pragnakalp.com/gpt-j-6b-parameters-model-huggingface/
-            self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
-            self.model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B",
-                                                              revision="float16",
-                                                              torch_dtype=torch.float16,
-                                                              low_cpu_mem_usage=True)
-
-            print("Model Loaded..!")
-
-            start_time = time.time()
-
-            input_text = "My Name is GeniusBot"
-            inputs = self.tokenizer(input_text, return_tensors="pt")
-            input_ids = inputs["input_ids"]
-
-            output = self.model.generate(
-                input_ids,
-                attention_mask=inputs["attention_mask"],
-                do_sample=True,
-                max_length=150,
-                temperature=0.8,
-                use_cache=True,
-                top_p=0.9
-            )
-
-            end_time = time.time() - start_time
-            print("Total Taken => ", end_time)
-            print(self.tokenizer.decode(output[0]))
-            self.loaded = True
+        if self.device == "cuda":
+            self.model = AutoModelForCausalLM.from_pretrained(self.opt, torch_dtype=self.torch_dtype).cuda()
+            self.model.to("cude:0")
         else:
-            print(f"Device doesn't have at least {self.memory_required} GB of RAM. "
-                  f"Available RAM: {round(float(self.free_memory / self.bytes), 2)}")
-            self.loaded = False
+            self.model = AutoModelForCausalLM.from_pretrained(self.opt, torch_dtype=self.torch_dtype, low_cpu_mem_usage=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.opt, use_fast=False)
+        self.loaded = True
 
-    def chat(self, text):
-        generated_response = self.generator(text)
-        return generated_response
+    def chat(self, text, output_length=20):
+        prompt = text
+        if self.device == "cuda":
+            input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.cuda()
+        else:
+            input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
+        generated_ids = self.model.generate(input_ids, tempurature=0.9, do_sample=False, max_length=output_length)
+
+        generated_text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+        return generated_text
 
     def get_loaded(self):
         return self.loaded
 
+    def get_intelligence_level(self):
+        return self.intelligence_level
+    def get_model(self):
+        return self.opt
+
 
 if __name__ == "__main__":
     geniusbot_chat = ChatBot()
-    #geniusbot_chat.check_hardware()
-    #geniusbot_chat.save_model()
+    print("RAM Utilization Before Loading Model")
+    geniusbot_chat.check_hardware()
     geniusbot_chat.load_model()
+    print("RAM Utilization After Loading Model")
+    geniusbot_chat.check_hardware()
+    print(geniusbot_chat.chat("I'm a friendly artificial intelligence designed to help you with your computer", output_length=20))
+    print(geniusbot_chat.chat("I can download videos, manage your media library, take full page screenshots of any website, adjust subtitles, and much more", output_length=40))
