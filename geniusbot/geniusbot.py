@@ -4,14 +4,13 @@
 import os
 import sys
 import subshift
-if sys.platform == 'win32':
-    import winshell
 from io import StringIO
 from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
 from media_downloader import MediaDownloader
 from media_manager import MediaManager
+#from report_manager import ReportManager
 try:
     from geniusbot.geniusbot_chat import ChatBot
 except Exception as e:
@@ -21,8 +20,12 @@ try:
 except Exception as e:
     from version import __version__, __author__, __credits__
 
-# from report_merger import ReportMerge
-# from analytic_profiler import ReportAnalyzer
+if sys.platform == 'win32':
+    import winshell
+    import ctypes
+    myappid = f'knucklesteam.geniusbot.geniusbot.{__version__}'  # arbitrary string
+    myappid.encode("utf-8")
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
