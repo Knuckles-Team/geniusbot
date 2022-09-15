@@ -19,6 +19,8 @@ class ChatBot():
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.bytes = 1073741824
         self.loaded = False
+        self.opt = "facebook/opt-1.3b"
+        self.intelligence_level = "Very Low"
         if 5 < round(float((self.free_memory) / self.bytes), 0) < 14:
             self.opt = "facebook/opt-1.3b" #"EleutherAI/gpt-neo-1.3B"
             self.intelligence_level = "Very Low"
