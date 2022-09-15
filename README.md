@@ -1,21 +1,21 @@
-# GeniusBot 
+# Geniusbot 
 *Version: 2.1.7*
 
-![Alt text](geniusbot/img/geniusbot-small.png?raw=true "GeniusBot") 
+![Geniusbot](geniusbot/img/geniusbot-small.png?raw=true "Geniusbot") 
 
 The Ever-learning and ever-improving tool!
-- Genius Bot Chat
+- Geniusbot Chat
 - Media Download
 - Website Screenshot
 - Subtitle Shift
 - Media Manager
 
-#### Genius Bot Chat
+#### Geniusbot Chat
 Chat with your friendly Geniusbot. 
 
 Powered by Artificial Intelligence scaled to your PC's performance!
 
-![Genius Bot Chat](screenshots/geniusbot_home.png?raw=true "Genius Bot Chat")
+![Geniusbot Chat](screenshots/geniusbot_home.png?raw=true "Geniusbot Chat")
 
 #### Video Download
 Download any YouTube, Twitter, or Rumble video(s) as MP3 or Webm/MP4 in a few different qualities. 
