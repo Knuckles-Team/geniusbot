@@ -15,7 +15,7 @@ Chat with your friendly Geniusbot.
 
 Powered by Artificial Intelligence scaled to your PC's performance!
 
-<img src="screenshots/geniusbot_home.png" /> ![Geniusbot Chat](screenshots/geniusbot_home.png?raw=true "Geniusbot Chat")
+<img src="screenshots/geniusbot_home.png" width="800" /> ![](screenshots/geniusbot_home.png?raw=true "Geniusbot Chat")
 
 #### Video Download
 Download any YouTube, Twitter, or Rumble video(s) as MP3 or Webm/MP4 in a few different qualities. 
