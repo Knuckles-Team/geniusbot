@@ -17,9 +17,17 @@ Powered by Artificial Intelligence scaled to your PC's performance!
 
 ![Geniusbot Chat](screenshots/geniusbot_home.png?raw=true "Geniusbot Chat")
 
-#### Video Download
-Download any YouTube, Twitter, or Rumble video(s) as MP3 or Webm/MP4 in a few different qualities. 
-![Video Download](screenshots/geniusbot_video.png?raw=true "Video Download")
+#### Media Downloader
+Download videos from various websites! 
+
+Supports: 
+
+- YouTube
+- DailyMotion
+- Rumble
+- Twitter
+- BitChute
+- And More!
 
 Examples for how to find user & channel.
 
@@ -34,6 +42,10 @@ https://www.youtube.com/watch?v=75-siCngYCc
 https://www.youtube.com/watch?v=7RSpZkIjK4w
 https://www.youtube.com/watch?v=7qRSAUb96wg
 ```
+
+![Media Downloader](screenshots/geniusbot_media_downloader.png?raw=true "Media Downloader")
+
+
 #### Website Archiving
 Archive any website by taking screenshots of any website entered.
 
@@ -46,20 +58,6 @@ Shift a subtitle forward or backward a few seconds so it aligns with your video!
 
 ![Subtitle Shift](screenshots/geniusbot_shift_subtitles.png?raw=true "Subtitle Shift")
 
-#### Media Downloader
-Download videos from various websites! 
-
-Supports: 
-
-- YouTube
-- DailyMotion
-- Rumble
-- Twitter
-- BitChute
-- And More!
-
-![Media Downloader](screenshots/geniusbot_media_downloader.png?raw=true "Media Downloader")
-
 #### Media Manager
 
 Manage your media library by:
@@ -67,7 +65,9 @@ Manage your media library by:
 - Apply subtitles located in "Sub" folder within each media directory
 - Move files to final destination after processing
 
-![Subtitle Shift](screenshots/geniusbot_shift_subtitles.png?raw=true "Subtitle Shift")
+Download as MP3 or MP4
+
+![Media Manager](screenshots/geniusbot_media_manager.png?raw=true "Media Manager")
 
 
 ## Install
