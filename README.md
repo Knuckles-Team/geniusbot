@@ -5,8 +5,8 @@
 
 The Ever-learning and ever-improving tool!
 - Geniusbot Chat
-- Media Download
-- Website Screenshot
+- Media Downloader
+- Website Archiving
 - Subtitle Shift
 - Media Manager
 
