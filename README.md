@@ -11,6 +11,10 @@ The Ever-learning and ever-improving tool!
 - Media Manager
 
 #### Genius Bot Chat
+Chat with your friendly Geniusbot. 
+
+Powered by Artificial Intelligence scaled to your PC's performance!
+
 ![Genius Bot Chat](screenshots/geniusbot_home.png?raw=true "Genius Bot Chat")
 
 #### Video Download
@@ -33,12 +37,36 @@ Archive any website by taking screenshots of any website entered.
 
 Choose from a variety of options like file type, quality, and image size.
 
-![Web Archiver](screenshots/geniusbot_website.png?raw=true "Web Archiver")
+![Web Archiver](screenshots/geniusbot_website_archive.png?raw=true "Web Archiver")
 
 #### Subtitle Shift
 Shift a subtitle forward or backward a few seconds so it aligns with your video!
 
-![Subtitle Shift](screenshots/geniusbot_subshift.png?raw=true "Subtitle Shift")
+![Subtitle Shift](screenshots/geniusbot_shift_subtitles.png?raw=true "Subtitle Shift")
+
+#### Media Downloader
+Download videos from various websites! 
+
+Supports: 
+
+- YouTube
+- DailyMotion
+- Rumble
+- Twitter
+- BitChute
+- And More!
+
+![Media Downloader](screenshots/geniusbot_media_downloader.png?raw=true "Media Downloader")
+
+#### Media Manager
+
+Manage your media library by:
+- Cleaning up names of files and folders based off pre-built filters. 
+- Apply subtitles located in "Sub" folder within each media directory
+- Move files to final destination after processing
+
+![Subtitle Shift](screenshots/geniusbot_shift_subtitles.png?raw=true "Subtitle Shift")
+
 
 ## Install
 ```bash
@@ -81,4 +109,4 @@ All credits to the FFMPEG team for the audio/video conversions
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## Acknowledgments
-ChatterBot
+Huggingface Models
