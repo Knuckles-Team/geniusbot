@@ -15,15 +15,15 @@ Chat with your friendly Geniusbot.
 
 Powered by Artificial Intelligence scaled to your PC's performance!
 
-![Geniusbot Chat](screenshots/geniusbot_home.png?raw=true "Geniusbot Chat")
+![Geniusbot Chat](screenshots/geniusbot_home.png "Geniusbot Chat")
 
 #### Video Download
 Download any YouTube, Twitter, or Rumble video(s) as MP3 or Webm/MP4 in a few different qualities. 
 ![Video Download](screenshots/geniusbot_video.png?raw=true "Video Download")
 
 Examples for how to find user & channel.
-![User Entry Image](screenshots/user.PNG?raw=true "User Entry")
-![Channel Entry Image](screenshots/channel.PNG?raw=true "Channel Entry")
+![User Entry Image](screenshots/user.png?raw=true "User Entry")
+![Channel Entry Image](screenshots/channel.png?raw=true "Channel Entry")
 
 Open File allows you to browse for a text file that has a list of YouTube links.
 Examples contents:
