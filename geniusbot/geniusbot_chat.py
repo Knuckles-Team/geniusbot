@@ -16,7 +16,8 @@ class ChatBot():
         self.used_percent = psutil.virtual_memory()[2]
         self.model = None
         self.tokenizer = None
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cpu'
+        #self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.bytes = 1073741824
         self.loaded = False
         self.opt = "facebook/opt-1.3b"
@@ -77,6 +78,7 @@ class ChatBot():
 
     def get_intelligence_level(self):
         return self.intelligence_level
+
     def get_model(self):
         return self.opt
 
