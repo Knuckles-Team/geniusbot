@@ -1,7 +1,7 @@
 # Geniusbot 
-*Version: 2.1.7*
+*Version: 2.1.9*
 
-![Geniusbot](geniusbot/img/geniusbot-small.png?raw=true "Geniusbot") 
+![Geniusbot](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot") 
 
 The Ever-learning and ever-improving tool!
 - Geniusbot Chat
@@ -15,7 +15,7 @@ Chat with your friendly Geniusbot.
 
 Powered by Artificial Intelligence scaled to your PC's performance!
 
-![Geniusbot Chat](screenshots/geniusbot_home.png?raw=true "Geniusbot Chat")
+![Geniusbot Chat](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_home.png "Geniusbot Chat")
 
 #### Media Downloader
 Download videos from various websites! 
@@ -31,9 +31,9 @@ Supports:
 
 Examples for how to find user & channel.
 
-![User Entry Image](screenshots/user.png?raw=true "User Entry")
+![User Entry Image](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/user.png "User Entry")
 
-![Channel Entry Image](screenshots/channel.png?raw=true "Channel Entry")
+![Channel Entry Image](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/channel.png "Channel Entry")
 
 Open File allows you to browse for a text file that has a list of YouTube links.
 Examples contents:
@@ -43,7 +43,7 @@ https://www.youtube.com/watch?v=7RSpZkIjK4w
 https://www.youtube.com/watch?v=7qRSAUb96wg
 ```
 
-![Media Downloader](screenshots/geniusbot_media_downloader.png?raw=true "Media Downloader")
+![Media Downloader](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_media_downloader.png "Media Downloader")
 
 
 #### Website Archiving
@@ -51,12 +51,12 @@ Archive any website by taking screenshots of any website entered.
 
 Choose from a variety of options like file type, quality, and image size.
 
-![Web Archiver](screenshots/geniusbot_website_archive.png?raw=true "Web Archiver")
+![Web Archiver](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_website_archive.png "Web Archiver")
 
 #### Subtitle Shift
 Shift a subtitle forward or backward a few seconds so it aligns with your video!
 
-![Subtitle Shift](screenshots/geniusbot_shift_subtitles.png?raw=true "Subtitle Shift")
+![Subtitle Shift](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_shift_subtitles.png "Subtitle Shift")
 
 #### Media Manager
 
@@ -67,7 +67,7 @@ Manage your media library by:
 
 Download as MP3 or MP4
 
-![Media Manager](screenshots/geniusbot_media_manager.png?raw=true "Media Manager")
+![Media Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_media_manager.png "Media Manager")
 
 
 ## Install
