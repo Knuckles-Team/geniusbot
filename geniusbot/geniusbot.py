@@ -284,7 +284,7 @@ class GeniusBot(QMainWindow):
         self.setWindowTitle(f"Genius Bot")
         self.setWindowIcon(QIcon(f'{os.path.dirname(os.path.realpath(__file__))}/img/geniusbot.ico'))
         self.setStyleSheet("background-color: #bfc3c9;")
-        self.resize(690, 960)
+        self.resize(1080, 960)
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
 
@@ -307,10 +307,10 @@ class GeniusBot(QMainWindow):
         self.tabwidget.addTab(self.tab7, "Tab 7")
         self.tabwidget.addTab(self.tab8, "Tab 8")
         self.tab1_home()
-        self.tab2_video_downloader()
-        self.tab3_webarchiver()
-        self.tab4_subshift()
-        self.tab5_media_manager()
+        self.tab2_media_downloader()
+        self.tab3_media_manager()
+        self.tab4_webarchiver()
+        self.tab5_subshift()
         self.tab6_report_manager()
         self.tab7_repository_manager()
         self.tab8_settings()
@@ -378,7 +378,7 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(0, "Genius Bot Chat")
         self.tab1.setLayout(layout)
 
-    def tab2_video_downloader(self):
+    def tab2_media_downloader(self):
         # Video Download Widgets
         self.video_links_label = QLabel("Paste Video Link(s) Below ↴")
         self.video_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
@@ -422,7 +422,7 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(1, "Media Downloader")
         self.tab2.setLayout(video_layout)
 
-    def tab3_webarchiver(self):
+    def tab4_webarchiver(self):
         # Video Download Widgets
         self.web_links_label = QLabel("Paste Website Link(s) Below ↴")
         self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
@@ -468,10 +468,10 @@ class GeniusBot(QMainWindow):
         webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 6)
         webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
         webarchiver_layout.setContentsMargins(3, 3, 3, 3)
-        self.tabwidget.setTabText(2, "Website Archive")
-        self.tab3.setLayout(webarchiver_layout)
+        self.tabwidget.setTabText(3, "Website Archive")
+        self.tab4.setLayout(webarchiver_layout)
 
-    def tab4_subshift(self):
+    def tab5_subshift(self):
         self.open_subtitlefile_button = QPushButton("Open File")
         self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.open_subtitlefile_button.clicked.connect(self.open_subtitlefile)
@@ -509,10 +509,10 @@ class GeniusBot(QMainWindow):
         layout.addWidget(self.subtitle_menu_widget, 0, 0, 1, 1)
         layout.addWidget(self.shift_subtitle_button, 2, 0, 1, 1)
         layout.addWidget(self.subtitle_label, 3, 0, 1, 1)
-        self.tabwidget.setTabText(3, "Shift Subtitles")
-        self.tab4.setLayout(layout)
+        self.tabwidget.setTabText(4, "Shift Subtitles")
+        self.tab5.setLayout(layout)
 
-    def tab5_media_manager(self):
+    def tab3_media_manager(self):
         media_manager_layout = QGridLayout()
         self.media_manager_media_location_button = QPushButton("Media Location")
         self.media_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
@@ -541,8 +541,8 @@ class GeniusBot(QMainWindow):
         media_manager_layout.addWidget(self.subtitle_ticker, 2, 1, 1, 1)
         media_manager_layout.addWidget(self.media_manager_files_label, 3, 0, 1, 2)
         media_manager_layout.addWidget(self.media_manager_run_button, 4, 0, 1, 2)
-        self.tabwidget.setTabText(4, "Media Manager")
-        self.tab5.setLayout(media_manager_layout)
+        self.tabwidget.setTabText(2, "Media Manager")
+        self.tab3.setLayout(media_manager_layout)
 
     def tab6_report_manager(self):
         layout = QHBoxLayout()
