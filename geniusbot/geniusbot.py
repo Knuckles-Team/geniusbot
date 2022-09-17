@@ -274,6 +274,7 @@ class GeniusBot(QMainWindow):
         self.video_downloader = MediaDownloader()
         self.webarchiver = Webarchiver()
         self.media_manager = MediaManager()
+        self.report_manager = ReportManager()
         self.geniusbot_chatbot = ChatBot()
         self.setupUi()
 
@@ -301,16 +302,14 @@ class GeniusBot(QMainWindow):
         self.tabwidget.addTab(self.tab4, "Tab 4")
         self.tabwidget.addTab(self.tab5, "Tab 5")
         self.tabwidget.addTab(self.tab6, "Tab 6")
-        self.tabwidget.addTab(self.tab7, "Tab 7")
-        self.tabwidget.addTab(self.tab8, "Tab 8")
+        self.tabwidget.addTab(self.tab8, "Tab 7")
         self.tab1_home()
         self.tab2_video_downloader()
         self.tab3_webarchiver()
         self.tab4_subshift()
         self.tab5_media_manager()
-        self.tab6_analytic_profiler()
-        self.tab7_report_manager()
-        self.tab8_settings()
+        self.tab6_report_manager()
+        self.tab7_settings()
 
         # Set the main gui layout
         layout = QVBoxLayout()
@@ -541,29 +540,21 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(4, "Media Manager")
         self.tab5.setLayout(media_manager_layout)
 
-    def tab6_analytic_profiler(self):
+    def tab6_report_manager(self):
         layout = QHBoxLayout()
         layout.addWidget(QLabel("subjects"))
         layout.addWidget(QCheckBox("Physics"))
         layout.addWidget(QCheckBox("Maths"))
-        self.tabwidget.setTabText(5, "Analytic Profiler")
+        self.tabwidget.setTabText(5, "Report Manager")
         self.tab6.setLayout(layout)
 
-    def tab7_report_manager(self):
-        layout = QHBoxLayout()
-        layout.addWidget(QLabel("subjects"))
-        layout.addWidget(QCheckBox("Physics"))
-        layout.addWidget(QCheckBox("Maths"))
-        self.tabwidget.setTabText(6, "Report Manager")
-        self.tab7.setLayout(layout)
-
-    def tab8_settings(self):
+    def tab7_settings(self):
         layout = QHBoxLayout()
         self.desktop_icon_checkbox = QCheckBox("Create Desktop Icon")
         self.desktop_icon_checkbox.stateChanged.connect(self.create_desktop_icon)
         layout.addWidget(self.desktop_icon_checkbox)
-        self.tabwidget.setTabText(7, "⚙")
-        self.tab8.setLayout(layout)
+        self.tabwidget.setTabText(6, "⚙")
+        self.tab7.setLayout(layout)
 
     def create_desktop_icon(self):
         desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
