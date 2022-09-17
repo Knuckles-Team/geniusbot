@@ -10,7 +10,8 @@ from PyQt5.QtGui import QIcon, QFont, QTextCursor
 from webarchiver import Webarchiver
 from media_downloader import MediaDownloader
 from media_manager import MediaManager
-#from report_manager import ReportManager
+from report_manager import ReportManager
+
 try:
     from geniusbot.geniusbot_chat import ChatBot
 except Exception as e:

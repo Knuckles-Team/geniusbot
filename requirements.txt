@@ -6,3 +6,4 @@ transformers
 accelerate
 media-downloader>=0.0.2
 media-manager>=0.0.4
+report-manager>=0.0.1
