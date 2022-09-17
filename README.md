@@ -45,6 +45,16 @@ https://www.youtube.com/watch?v=7qRSAUb96wg
 
 ![Media Downloader](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_media_downloader.png "Media Downloader")
 
+#### Media Manager
+
+Manage your media library by:
+- Cleaning up names of files and folders based off pre-built filters. 
+- Apply subtitles located in "Sub" folder within each media directory
+- Move files to final destination after processing
+
+Download as MP3 or MP4
+
+![Media Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_media_manager.png "Media Manager")
 
 #### Website Archiving
 Archive any website by taking screenshots of any website entered.
@@ -57,18 +67,6 @@ Choose from a variety of options like file type, quality, and image size.
 Shift a subtitle forward or backward a few seconds so it aligns with your video!
 
 ![Subtitle Shift](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_shift_subtitles.png "Subtitle Shift")
-
-#### Media Manager
-
-Manage your media library by:
-- Cleaning up names of files and folders based off pre-built filters. 
-- Apply subtitles located in "Sub" folder within each media directory
-- Move files to final destination after processing
-
-Download as MP3 or MP4
-
-![Media Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_media_manager.png "Media Manager")
-
 
 ## Install
 ```bash
