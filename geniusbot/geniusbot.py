@@ -3,6 +3,8 @@
 
 import os
 import sys
+
+import pandas as pd
 import subshift
 from io import StringIO
 from pathlib import Path
@@ -12,6 +14,9 @@ from media_downloader import MediaDownloader
 from media_manager import MediaManager
 from report_manager import ReportManager
 from repository_manager import Git
+pd.set_option('display.max_rows', 250)
+pd.set_option('display.max_columns', 9)
+pd.set_option('display.expand_frame_repr', False)
 
 try:
     from geniusbot.geniusbot_chat import ChatBot
@@ -128,6 +133,7 @@ class SubshiftWorker(QObject):
         self.progress.emit(100)
         self.finished.emit()
 
+
 class WebarchiverWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
@@ -158,6 +164,54 @@ class WebarchiverWorker(QObject):
             self.webarchiver.reset_links()
 
         self.webarchiver.quit_driver()
+
+        self.finished.emit()
+
+
+class ReportManagerWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, report_manager, report_name_editor, custom_report_generate_label, action_type_combobox, pandas_profiling_ticker, custom_report_ticker, file_type_combobox):
+        super().__init__()
+        self.report_manager = report_manager
+        self.report_name_editor = report_name_editor
+        self.custom_report_generate_label = custom_report_generate_label
+        self.action_type_combobox = action_type_combobox
+        self.pandas_profiling_ticker = pandas_profiling_ticker
+        self.custom_report_ticker = custom_report_ticker
+        self.pandas_profiling_ticker = pandas_profiling_ticker
+        self.file_type_combobox = file_type_combobox
+
+    def run(self):
+        """Long-running task."""
+        self.report_manager.set_report_title(self.report_name_editor.text())
+        self.report_manager.set_report_name(self.report_name_editor.text())
+        self.report_manager.set_save_directory(self.custom_report_generate_label.text())
+        if self.action_type_combobox.currentText() == "Generate Report":
+            if self.pandas_profiling_ticker.isChecked:
+                sample_flag = None  # Set to the sample size if you would like to do it on a sample instead.
+                minimal_flag = False  # Quicker run if set to true, but not everything is captured.
+                self.report_manager.create_pandas_profiling_report(sample_flag, minimal_flag)
+                self.report_manager.export_pandas_profiling()
+            if self.custom_report_ticker.isChecked():
+                self.report_manager.run_analysis()
+                self.report_manager.export_data(csv_flag=self.file_type_combobox, report_name=f"{self.report_name_editor.text()} - Dataset")
+        else:
+            print("DO MERGE HERE")
+            self.report_manager.set_files(files[0], "file2")
+            self.report_manager.set_files(files[1], "file3")
+            join_keys = join_keys.replace(" ", "")
+            join_keys = join_keys.split("|")
+            df_1_join_keys = join_keys[0].split(",")
+            df_2_join_keys = join_keys[1].split(",")
+            self.report_manager.set_df1_join_keys(df_1_join_keys=df_1_join_keys)
+            self.report_manager.set_df2_join_keys(df_2_join_keys=df_2_join_keys)
+            self.report_manager.set_join_type(join_type=join_type)
+            self.report_manager.load_dataframe(file_instance=2)
+            self.report_manager.load_dataframe(file_instance=3)
+            self.report_manager.join_data()
+            self.report_manager.export_data(csv_flag=type_flag, report_name=f"{self.report_name_editor.text()} - Merged")
 
         self.finished.emit()
 
@@ -498,7 +552,7 @@ class GeniusBot(QMainWindow):
         self.media_manager_files_label.setFont("Arial")
         self.media_manager_files_label.setFontColor(background_color="white", color="black")
         self.media_manager_files_label.setScrollWheel("Top")
-        self.media_manager_run_button = QPushButton("Run")
+        self.media_manager_run_button = QPushButton("Run ⥀")
         self.media_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.media_manager_run_button.clicked.connect(self.manage_media)
         media_manager_layout.addWidget(self.media_manager_media_location_button, 0, 0, 1, 1)
@@ -603,12 +657,78 @@ class GeniusBot(QMainWindow):
         self.tab5.setLayout(layout)
 
     def tab6_report_manager(self):
-        layout = QHBoxLayout()
-        layout.addWidget(QLabel("subjects"))
-        layout.addWidget(QCheckBox("Physics"))
-        layout.addWidget(QCheckBox("Maths"))
+        self.report_manager_layout = QGridLayout()
+        self.action_type_combobox = QComboBox()
+        self.action_type_combobox.addItems(['Generate Report', 'Merge Reports'])
+        self.action_type_combobox.setItemText(0, "Generate Report")
+        self.action_type_combobox.activated.connect(self.swap_report_layout)
+        self.custom_report_widget = QWidget(self)
+        self.merge_widget = QWidget(self)
+        self.custom_report_layout = QGridLayout()
+        self.merge_report_layout = QGridLayout()
+        self.custom_report_layout.setContentsMargins(0, 0, 0, 0)
+        self.merge_report_layout.setContentsMargins(0, 0, 0, 0)
+        self.custom_report_widget.setLayout(self.custom_report_layout)
+        self.merge_widget.setLayout(self.merge_report_layout)
+        self.report_manager_layout.addWidget(self.action_type_combobox, 0, 0, 1, 1)
+        self.report_manager_layout.addWidget(self.custom_report_widget, 1, 0, 1, 1)
+        self.report_manager_layout.addWidget(self.merge_widget, 2, 0, 1, 1)
+        self.pandas_profiling_ticker = QCheckBox("Pandas Profiling")
+        self.custom_report_ticker = QCheckBox("Custom Report")
+        self.custom_report_generate_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.custom_report_generate_button = QPushButton("Generate ⦽")
+        self.custom_report_generate_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.custom_report_generate_button.clicked.connect(self.report_manage)
+        self.report_file_location_button = QPushButton("Data File")
+        self.custom_data_file_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.report_file_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.report_file_location_button.clicked.connect(self.open_report_manager_file)
+        self.generated_report_save_location_button = QPushButton("Save Location")
+        self.generated_report_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
+        self.generated_report_save_location_button.clicked.connect(self.report_manager_save_location)
+        # report_manager_save_location
+        self.report_name_label = QLabel("Report Name: ")
+        self.report_name_editor = QLineEdit("Report Name")
+        self.file_type_label = QLabel("Export Filetype")
+        self.file_type_combobox = QComboBox()
+        self.file_type_combobox.addItems(['CSV', 'XLSX'])
+        self.file_type_combobox.setItemText(1, "XLSX")
+        self.dataframe_label = ScrollLabel(self)
+        self.dataframe_label.setText(f"Dataframe will appear here\n")
+        self.dataframe_label.setFont("Arial")
+        self.dataframe_label.setFontColor(background_color="white", color="black")
+        self.dataframe_label.setScrollWheel("Top")
+        self.dataframe_label.hide()
+        self.custom_report_layout.addWidget(self.generated_report_save_location_button, 0, 0, 1, 1)
+        self.custom_report_layout.addWidget(self.custom_report_generate_label, 0, 1, 1, 5)
+        self.custom_report_layout.addWidget(self.report_file_location_button, 1, 0, 1, 1)
+        self.custom_report_layout.addWidget(self.custom_data_file_label, 1, 1, 1, 5)
+        self.custom_report_layout.addWidget(self.report_name_label, 2, 0, 1, 1)
+        self.custom_report_layout.addWidget(self.report_name_editor, 2, 1, 1, 1)
+        self.custom_report_layout.addWidget(self.file_type_label , 2, 2, 1, 1)
+        self.custom_report_layout.addWidget(self.file_type_combobox, 2, 3, 1, 1)
+        self.custom_report_layout.addWidget(self.pandas_profiling_ticker, 2, 4, 1, 1)
+        self.custom_report_layout.addWidget(self.custom_report_ticker, 2, 5, 1, 1)
+        self.custom_report_layout.addWidget(self.dataframe_label, 4, 0, 1, 6)
+        self.custom_report_layout.addWidget(self.custom_report_generate_button, 5, 0, 1, 6)
+        # report_custom_report.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
+        # report_custom_report.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 2)
+        # report_custom_report.addWidget(self.repository_manager_repositories_file_location_button, 1, 0, 1, 1)
+        # report_custom_report.addWidget(self.repository_manager_repositories_file_location_label, 1, 1, 1, 2)
+        # report_custom_report.addWidget(self.clone_ticker, 2, 0, 1, 1)
+        # report_custom_report.addWidget(self.pull_ticker, 2, 1, 1, 1)
+        # report_custom_report.addWidget(self.set_default_branch_ticker, 2, 2, 1, 1)
+        # report_custom_report.addWidget(self.repository_git_command_label, 3, 0, 1, 3)
+        # report_custom_report.addWidget(self.repository_git_command, 4, 0, 1, 3)
+        # report_custom_report.addWidget(self.repository_links_editor_label, 5, 0, 1, 3)
+        # report_custom_report.addWidget(self.repository_links_editor, 6, 0, 1, 3)
+        # report_custom_report.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
+        # report_custom_report.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
+        # report_custom_report.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
+        self.merge_widget.hide()
         self.tabwidget.setTabText(5, "Report Manager")
-        self.tab6.setLayout(layout)
+        self.tab6.setLayout(self.report_manager_layout)
+
 
     def tab7_repository_manager(self):
         repository_manager_layout = QGridLayout()
@@ -637,7 +757,7 @@ class GeniusBot(QMainWindow):
         self.repository_manager_files_label.setFont("Arial")
         self.repository_manager_files_label.setFontColor(background_color="white", color="black")
         self.repository_manager_files_label.setScrollWheel("Top")
-        self.repository_manager_run_button = QPushButton("Run")
+        self.repository_manager_run_button = QPushButton("Run ⥀")
         self.repository_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.repository_manager_run_button.clicked.connect(self.manage_repositories)
         self.repositories_progress_bar = QProgressBar()
@@ -721,6 +841,26 @@ class GeniusBot(QMainWindow):
                 os.remove(link_filepath)
                 os.remove(desktop_link_filepath)
 
+    def report_manage(self):
+        self.report_manager_thread = QThread()
+        self.report_manager_worker = ReportManagerWorker(self.report_manager, self.report_name_editor,
+                                                         self.custom_report_generate_label, self.action_type_combobox,
+                                                         self.pandas_profiling_ticker, self.custom_report_ticker,
+                                                         self.file_type_combobox)
+        self.report_manager_worker.moveToThread(self.report_manager_thread)
+        self.report_manager_thread.started.connect(self.report_manager_worker.run)
+        self.report_manager_worker.finished.connect(self.report_manager_thread.quit)
+        self.report_manager_worker.finished.connect(self.report_manager_worker.deleteLater)
+        self.report_manager_thread.finished.connect(self.report_manager_thread.deleteLater)
+        self.report_manager_worker.progress.connect(self.report_web_progress_bar)
+        self.report_manager_thread.start()
+        self.custom_report_generate_button.setEnabled(False)
+        self.report_manager_thread.finished.connect(
+            lambda: self.custom_report_generate_button.setEnabled(True)
+        )
+        self.report_manager_thread.finished.connect(
+            lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Reporting Management Completed!\n")
+        )
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.KeyPress and obj is self.chat_editor:
@@ -763,6 +903,14 @@ class GeniusBot(QMainWindow):
         else:
             self.hide_console_button.setText("Console ◳")
         self.console.hide()
+
+    def swap_report_layout(self):
+        if self.action_type_combobox.currentText() == "Generate Report":
+            self.custom_report_widget.show()
+            self.merge_widget.hide()
+        else:
+            self.custom_report_widget.hide()
+            self.merge_widget.show()
 
     def check_subtitle_seconds(self):
         if self.sub_time_spin_box.value() > 0:
@@ -933,13 +1081,32 @@ class GeniusBot(QMainWindow):
             lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Repository actions complete!\n")
         )
 
+    def open_report_manager_file(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening data!\n")
+        report_manager_data_file = QFileDialog.getOpenFileName(self, 'Open data (CSV/XLSX)')
+        self.report_manager.set_files(report_manager_data_file[0], "file4")
+        self.report_manager.set_files(report_manager_data_file[0], "file1")
+        self.report_manager.load_dataframe(file_instance=1)
+        self.custom_data_file_label.setText(report_manager_data_file[0])
+        dataframe = self.report_manager.get_df()
+        # with pd.option_context(
+        #     'display.max_rows', 120,
+        #     'display.max_columns', 6,
+        #     'display.precision', 2,
+        # ):
+        print(dataframe)
+        dataframe_markdown = dataframe.to_markdown(tablefmt="grid")
+        dataframe_html = dataframe.to_html(max_cols=9)
+
+        self.dataframe_label.setText(f"{dataframe_markdown}")
+
     def open_repository_manager_file(self, projects=None):
         if projects:
             projects = projects
         else:
             projects = []
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
-        repository_manager_file_location_name = QFileDialog.getOpenFileName(self, 'Text File with Repositories)')
+        repository_manager_file_location_name = QFileDialog.getOpenFileName(self, 'Text File with Repositories')
         if repository_manager_file_location_name[0] == None or repository_manager_file_location_name[0] == "":
             repository_manager_file_location_name = os.path.expanduser("~")
         self.repository_manager_repositories_file_location_label.setText(repository_manager_file_location_name[0])
@@ -949,6 +1116,13 @@ class GeniusBot(QMainWindow):
                 projects.append(repository)
             projects = list(dict.fromkeys(projects))
         self.repository_manager.set_git_projects(projects)
+
+    def report_manager_save_location(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for final report!\n")
+        report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        if report_save_directory == None or report_save_directory == "":
+            report_save_directory = os.path.expanduser("~")
+        self.custom_report_generate_label.setText(report_save_directory)
 
     def repository_manager_repositories_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
@@ -1052,6 +1226,7 @@ class GeniusBot(QMainWindow):
             video_directory_name = os.path.expanduser("~")
         self.video_save_location_label.setText(video_directory_name)
         self.video_downloader.set_save_path(video_directory_name)
+
 
 def geniusbot(argv):
     app = QApplication(sys.argv)

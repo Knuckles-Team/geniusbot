@@ -33,7 +33,7 @@ setup(
     install_requires=[
         'webarchiver>=0.2.5', 'subshift', 'PyQt5', 'winshell; platform_system == "Windows"',
         'pypiwin32; platform_system == "Windows"', 'torch', 'transformers', 'accelerate', 'media-downloader>=0.0.4',
-        'media-manager>=0.0.5', 'report-manager>=0.0.2', 'repository-manager>=0.1.2',
+        'media-manager>=0.0.5', 'report-manager>=0.0.2', 'repository-manager>=0.1.2', "tabulate",
     ],
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
