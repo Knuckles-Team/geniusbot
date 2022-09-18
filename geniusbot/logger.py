@@ -20,11 +20,11 @@ class Log:
             self.logging_dir = f"{os.path.expanduser('~')}".replace("\\", "/")
         else:
             self.logging_dir = logging_dir
-        self.logging_file = f"{self.logging_dir}/webarchiver.log"
+        self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace("\\", "/")
         if os.path.isdir(self.logging_dir):
             print("Log File: ", self.logging_file)
         else:
-            self.logging_file = f"{os.curdir}/log.log"
+            self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace("\\", "/")
             print("Log File: ", self.logging_file)
         logging.basicConfig(filename=self.logging_file, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
                             filemode='w', level=logging.DEBUG)
