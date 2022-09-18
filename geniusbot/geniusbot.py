@@ -162,6 +162,64 @@ class WebarchiverWorker(QObject):
         self.finished.emit()
 
 
+class RepositoryManagerWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, repository_manager, clone_ticker, set_default_branch_ticker, pull_ticker, repository_links_editor, repository_git_command, repository_manager_repositories_file_location_label, repository_manager_files_label, repository_manager_repositories_location_label):
+        super().__init__()
+        self.repository_manager = repository_manager
+        self.clone_ticker = clone_ticker
+        self.set_default_branch_ticker = set_default_branch_ticker
+        self.pull_ticker = pull_ticker
+        self.repository_links_editor = repository_links_editor
+        self.repository_git_command = repository_git_command
+        self.repository_manager_repositories_file_location_label = repository_manager_repositories_file_location_label
+        self.repository_manager_files_label = repository_manager_files_label
+        self.repository_manager_repositories_location_label = repository_manager_repositories_location_label
+
+    def run(self):
+        """Long-running task."""
+        if self.clone_ticker.isChecked():
+            projects = self.repository_links_editor.toPlainText()
+            projects = projects.strip()
+            projects = projects.split('\n')
+            if projects[0] == '':
+                projects = []
+            if os.path.exists(self.repository_manager_repositories_file_location_label.text()):
+                try:
+                    file_repositories = open(self.repository_manager_repositories_file_location_label.text(), 'r')
+                    for repository in file_repositories:
+                        projects.append(repository)
+                    projects = list(dict.fromkeys(projects))
+                except Exception as e:
+                    print(f"File not found or unable to parse file contents: {e}")
+            self.repository_manager.set_git_projects(projects)
+            self.repository_manager.clone_projects()
+            self.progress.emit(33)
+        default_branch_flag = self.set_default_branch_ticker.isChecked()
+        if self.pull_ticker.isChecked():
+            self.repository_manager.pull_projects(set_to_default_branch=default_branch_flag)
+            self.progress.emit(66)
+        if self.repository_git_command.text() != "":
+            projects = self.repository_manager_files_label.text()
+            projects = projects.strip()
+            projects = projects.split('\n')
+            print(f"PROJECTS SO FAR: {projects}")
+            if projects[0] == '':
+                projects = []
+            for project in projects:
+                try:
+                    result = self.repository_manager.git_action(command=f"{self.repository_git_command.text()}",
+                                                       directory=f"{self.repository_manager_repositories_location_label.text()}/{project}")
+                    print(result)
+                except Exception as e:
+                    print(f"Unable to execute git command: {self.repository_git_command.text()} for directory: {self.repository_manager_repositories_location_label.text()}/{project}")
+            self.progress.emit(99)
+        self.progress.emit(100)
+        self.finished.emit()
+
+
 class VideoWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
@@ -567,6 +625,9 @@ class GeniusBot(QMainWindow):
         self.clone_ticker.setChecked(True)
         self.pull_ticker.setChecked(True)
         self.set_default_branch_ticker = QCheckBox("Checkout Default Branch")
+        self.repository_git_command_label = QLabel("Git Command: ")
+        self.repository_git_command_label.setStyleSheet(f"color: black; font-size: 11pt;")
+        self.repository_git_command = QLineEdit()
         self.repository_links_editor_label = QLabel("Paste Repository URL(s) Below ↴")
         self.repository_links_editor_label.setStyleSheet(f"color: black; font-size: 11pt;")
         self.repository_links_editor = QPlainTextEdit()
@@ -587,11 +648,13 @@ class GeniusBot(QMainWindow):
         repository_manager_layout.addWidget(self.clone_ticker, 2, 0, 1, 1)
         repository_manager_layout.addWidget(self.pull_ticker, 2, 1, 1, 1)
         repository_manager_layout.addWidget(self.set_default_branch_ticker, 2, 2, 1, 1)
-        repository_manager_layout.addWidget(self.repository_links_editor_label, 3, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_links_editor, 4, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_manager_files_label, 5, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_manager_run_button, 6, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repositories_progress_bar, 7, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_git_command_label, 3, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_git_command, 4, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_links_editor_label, 5, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_links_editor, 6, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
         self.tabwidget.setTabText(6, "Repository Manager")
         self.tab7.setLayout(repository_manager_layout)
 
@@ -753,9 +816,6 @@ class GeniusBot(QMainWindow):
         self.subtitles = self.subtitles.strip()
         self.subtitle_label.setText(self.subtitles)
 
-    def report_web_progress_bar(self, n):
-        self.web_progress_bar.setValue(n)
-
     def screenshot_websites(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Taking screenshots...\n")
         self.web_progress_bar.setValue(1)
@@ -803,6 +863,9 @@ class GeniusBot(QMainWindow):
     def report_video_progress_bar(self, n):
         self.video_progress_bar.setValue(n)
 
+    def report_web_progress_bar(self, n):
+        self.web_progress_bar.setValue(n)
+
     def report_repositories_progress_bar(self, n):
         self.repositories_progress_bar.setValue(n)
 
@@ -843,18 +906,32 @@ class GeniusBot(QMainWindow):
         )
 
     def manage_repositories(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing Repositoriee...\n")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing Repositories...\n")
         self.repositories_progress_bar.setValue(1)
-        repos = self.repository_links_editor.toPlainText()
-        repos = repos.strip()
-        repos = repos.split('\n')
-        self.open_repository_manager_file(projects=repos)
-        if repos[0] != '':
-            if self.clone_ticker.isChecked():
-                self.repository_manager.clone_projects()
-            default_branch_flag = self.set_default_branch_ticker.isChecked()
-            if self.pull_ticker.isChecked():
-                self.repository_manager.pull_projects(set_to_default_branch=default_branch_flag)
+
+        self.repository_manager_thread = QThread()
+        # (self, repository_manager, clone_ticker, set_default_branch_ticker, pull_ticker, repository_links_editor, repository_git_command, repository_manager_repositories_file_location_label, repository_manager_files_label, repository_manager_repositories_location_label)
+        self.repository_manager_worker = RepositoryManagerWorker(self.repository_manager, self.clone_ticker,
+                                                                 self.set_default_branch_ticker, self.pull_ticker,
+                                                                 self.repository_links_editor,
+                                                                 self.repository_git_command,
+                                                                 self.repository_manager_repositories_file_location_label,
+                                                                 self.repository_manager_files_label,
+                                                                 self.repository_manager_repositories_location_label)
+        self.repository_manager_worker.moveToThread(self.repository_manager_thread)
+        self.repository_manager_thread.started.connect(self.repository_manager_worker.run)
+        self.repository_manager_worker.finished.connect(self.repository_manager_thread.quit)
+        self.repository_manager_worker.finished.connect(self.repository_manager_worker.deleteLater)
+        self.repository_manager_thread.finished.connect(self.repository_manager_thread.deleteLater)
+        self.repository_manager_worker.progress.connect(self.report_repositories_progress_bar)
+        self.repository_manager_thread.start()
+        self.repository_manager_run_button.setEnabled(False)
+        self.repository_manager_thread.finished.connect(
+            lambda: self.repository_manager_run_button.setEnabled(True)
+        )
+        self.repository_manager_thread.finished.connect(
+            lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Repository actions complete!\n")
+        )
 
     def open_repository_manager_file(self, projects=None):
         if projects:
@@ -863,11 +940,11 @@ class GeniusBot(QMainWindow):
             projects = []
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
         repository_manager_file_location_name = QFileDialog.getOpenFileName(self, 'Text File with Repositories)')
-        if repository_manager_file_location_name == None or repository_manager_file_location_name == "":
+        if repository_manager_file_location_name[0] == None or repository_manager_file_location_name[0] == "":
             repository_manager_file_location_name = os.path.expanduser("~")
-        self.repository_manager_repositories_file_location_label.setText(repository_manager_file_location_name)
-        if os.path.exists(repository_manager_file_location_name):
-            file_repositories = open(repository_manager_file_location_name, 'r')
+        self.repository_manager_repositories_file_location_label.setText(repository_manager_file_location_name[0])
+        if os.path.exists(repository_manager_file_location_name[0]):
+            file_repositories = open(repository_manager_file_location_name[0], 'r')
             for repository in file_repositories:
                 projects.append(repository)
             projects = list(dict.fromkeys(projects))
