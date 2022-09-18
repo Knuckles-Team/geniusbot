@@ -380,7 +380,7 @@ class GeniusBot(QMainWindow):
 
     def tab2_media_downloader(self):
         # Video Download Widgets
-        self.video_links_label = QLabel("Paste Video Link(s) Below ↴")
+        self.video_links_label = QLabel("Paste Video URL(s) Below ↴")
         self.video_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
         self.video_links_editor = QPlainTextEdit()
         self.channel_field_label = QPushButton("Channel/User")
@@ -397,7 +397,7 @@ class GeniusBot(QMainWindow):
         self.video_save_location_button = QPushButton("Save Location")
         self.video_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.video_save_location_button.clicked.connect(self.save_location)
-        self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.video_type_label = QLabel("Filetype")
         self.video_type_combobox = QComboBox()
         self.video_type_combobox.addItems(['Video', 'Audio'])
@@ -427,11 +427,11 @@ class GeniusBot(QMainWindow):
         self.media_manager_media_location_button = QPushButton("Media Location")
         self.media_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.media_manager_media_location_button.clicked.connect(self.media_manager_media_location)
-        self.media_manager_media_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.media_manager_media_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.media_manager_move_location_button = QPushButton("Move Location")
         self.media_manager_move_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.media_manager_move_location_button.clicked.connect(self.media_manager_move_location)
-        self.media_manager_move_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.media_manager_move_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.subtitle_ticker = QCheckBox("Apply Subtitles")
         self.move_ticker = QCheckBox("Move Media")
         self.media_manager_files_label = ScrollLabel(self)
@@ -456,7 +456,7 @@ class GeniusBot(QMainWindow):
 
     def tab4_webarchiver(self):
         # Video Download Widgets
-        self.web_links_label = QLabel("Paste Website Link(s) Below ↴")
+        self.web_links_label = QLabel("Paste Website URL(s) Below ↴")
         self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
         self.web_links_editor = QPlainTextEdit()
         self.archive_button = QPushButton("Archive ￬")
@@ -469,7 +469,7 @@ class GeniusBot(QMainWindow):
         self.save_web_location_button = QPushButton("Save Location")
         self.save_web_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.save_web_location_button.clicked.connect(self.save_web_location)
-        self.save_web_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.save_web_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.web_dpi_label = QLabel("DPI")
         self.web_dpi_spin_box = QSpinBox(self)
         self.web_dpi_spin_box.setRange(0, 2)
@@ -557,33 +557,41 @@ class GeniusBot(QMainWindow):
         self.repository_manager_repositories_location_button = QPushButton("Repositories Location")
         self.repository_manager_repositories_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.repository_manager_repositories_location_button.clicked.connect(self.repository_manager_repositories_location)
-        self.repository_manager_repositories_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
-        self.repository_manager_move_location_button = QPushButton("Move Location")
-        self.repository_manager_move_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.repository_manager_move_location_button.clicked.connect(self.repository_manager_move_location)
-        self.repository_manager_move_location_label = QLabel(f'{os.path.expanduser("~")}/Downloads')
+        self.repository_manager_repositories_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.repository_manager_repositories_file_location_button = QPushButton("Repositories File Location")
+        self.repository_manager_repositories_file_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.repository_manager_repositories_file_location_button.clicked.connect(self.open_repository_manager_file)
+        self.repository_manager_repositories_file_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.clone_ticker = QCheckBox("Clone")
         self.pull_ticker = QCheckBox("Pull")
+        self.clone_ticker.setChecked(True)
+        self.pull_ticker.setChecked(True)
         self.set_default_branch_ticker = QCheckBox("Checkout Default Branch")
+        self.repository_links_editor_label = QLabel("Paste Repository URL(s) Below ↴")
+        self.repository_links_editor_label.setStyleSheet(f"color: black; font-size: 11pt;")
+        self.repository_links_editor = QPlainTextEdit()
         self.repository_manager_files_label = ScrollLabel(self)
         self.repository_manager_files_label.hide()
-        self.repository_manager_files_label.setText(f"Media files found will be shown here\n")
+        self.repository_manager_files_label.setText(f"Repositories will be shown here\n")
         self.repository_manager_files_label.setFont("Arial")
         self.repository_manager_files_label.setFontColor(background_color="white", color="black")
         self.repository_manager_files_label.setScrollWheel("Top")
         self.repository_manager_run_button = QPushButton("Run")
-        self.repository_manager_run_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.repository_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.repository_manager_run_button.clicked.connect(self.manage_repositories)
+        self.repositories_progress_bar = QProgressBar()
         repository_manager_layout.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
-        repository_manager_layout.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 1)
-        repository_manager_layout.addWidget(self.repository_manager_move_location_button, 1, 0, 1, 1)
-        repository_manager_layout.addWidget(self.repository_manager_move_location_label, 1, 1, 1, 1)
+        repository_manager_layout.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 2)
+        repository_manager_layout.addWidget(self.repository_manager_repositories_file_location_button, 1, 0, 1, 1)
+        repository_manager_layout.addWidget(self.repository_manager_repositories_file_location_label, 1, 1, 1, 2)
         repository_manager_layout.addWidget(self.clone_ticker, 2, 0, 1, 1)
         repository_manager_layout.addWidget(self.pull_ticker, 2, 1, 1, 1)
         repository_manager_layout.addWidget(self.set_default_branch_ticker, 2, 2, 1, 1)
-        repository_manager_layout.addWidget(self.repository_manager_files_label, 3, 0, 1, 2)
-        repository_manager_layout.addWidget(self.repository_manager_run_button, 4, 0, 1, 2)
+        repository_manager_layout.addWidget(self.repository_links_editor_label, 3, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_links_editor, 4, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_manager_files_label, 5, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repository_manager_run_button, 6, 0, 1, 3)
+        repository_manager_layout.addWidget(self.repositories_progress_bar, 7, 0, 1, 3)
         self.tabwidget.setTabText(6, "Repository Manager")
         self.tab7.setLayout(repository_manager_layout)
 
@@ -786,12 +794,17 @@ class GeniusBot(QMainWindow):
 
     def save_web_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n")
-        web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        if web_directory_name == None or web_directory_name == "":
+            web_directory_name = os.path.expanduser("~")
         self.save_web_location_label.setText(web_directory_name)
         self.webarchiver.set_save_path(web_directory_name)
 
     def report_video_progress_bar(self, n):
         self.video_progress_bar.setValue(n)
+
+    def report_repositories_progress_bar(self, n):
+        self.repositories_progress_bar.setValue(n)
 
     def manage_media(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing media...\n")
@@ -828,6 +841,53 @@ class GeniusBot(QMainWindow):
         self.media_manager_thread.finished.connect(
             lambda: self.media_manager_refresh_list()
         )
+
+    def manage_repositories(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing Repositoriee...\n")
+        self.repositories_progress_bar.setValue(1)
+        repos = self.repository_links_editor.toPlainText()
+        repos = repos.strip()
+        repos = repos.split('\n')
+        self.open_repository_manager_file(projects=repos)
+        if repos[0] != '':
+            if self.clone_ticker.isChecked():
+                self.repository_manager.clone_projects()
+            default_branch_flag = self.set_default_branch_ticker.isChecked()
+            if self.pull_ticker.isChecked():
+                self.repository_manager.pull_projects(set_to_default_branch=default_branch_flag)
+
+    def open_repository_manager_file(self, projects=None):
+        if projects:
+            projects = projects
+        else:
+            projects = []
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
+        repository_manager_file_location_name = QFileDialog.getOpenFileName(self, 'Text File with Repositories)')
+        if repository_manager_file_location_name == None or repository_manager_file_location_name == "":
+            repository_manager_file_location_name = os.path.expanduser("~")
+        self.repository_manager_repositories_file_location_label.setText(repository_manager_file_location_name)
+        if os.path.exists(repository_manager_file_location_name):
+            file_repositories = open(repository_manager_file_location_name, 'r')
+            for repository in file_repositories:
+                projects.append(repository)
+            projects = list(dict.fromkeys(projects))
+        self.repository_manager.set_git_projects(projects)
+
+    def repository_manager_repositories_location(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
+        repository_manager_repositories_location_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        if repository_manager_repositories_location_name == None or repository_manager_repositories_location_name == "":
+            repository_manager_repositories_location_name = os.path.expanduser("~")
+        self.repository_manager_repositories_location_label.setText(repository_manager_repositories_location_name)
+        self.repository_manager.set_repository_directory(repository_manager_repositories_location_name)
+        repositories_string = ""
+        for project_directory in os.listdir(repository_manager_repositories_location_name):
+            repositories_string = f"{repositories_string}\n{project_directory}"
+        self.repository_manager_files_label.setText(f"{repositories_string.lstrip()}")
+        # files = ""
+        # for file in self.media_manager.get_media_list():
+        #     files = f"{files}\n{file}"
+        # self.media_manager_files_label.setText(files.strip())
 
     def download_videos(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Downloading videos...\n")
@@ -882,7 +942,9 @@ class GeniusBot(QMainWindow):
 
     def media_manager_media_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting media location to look for media in!\n")
-        media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        if media_manager_directory_name == None or media_manager_directory_name == "":
+            media_manager_directory_name = os.path.expanduser("~")
         self.media_manager_media_location_label.setText(media_manager_directory_name)
         self.media_manager.set_media_directory(media_manager_directory_name)
         self.media_manager.find_media()
@@ -901,12 +963,16 @@ class GeniusBot(QMainWindow):
 
     def media_manager_move_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting move location for media\n")
-        media_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        media_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        if media_manager_move_directory_name == None or media_manager_move_directory_name == "":
+            media_manager_move_directory_name = os.path.expanduser("~")
         self.media_manager_move_location_label.setText(media_manager_move_directory_name)
 
     def save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
-        video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        if video_directory_name == None or video_directory_name == "":
+            video_directory_name = os.path.expanduser("~")
         self.video_save_location_label.setText(video_directory_name)
         self.video_downloader.set_save_path(video_directory_name)
 
