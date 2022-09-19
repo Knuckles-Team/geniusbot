@@ -6,9 +6,11 @@
 The Ever-learning and ever-improving tool!
 - Geniusbot Chat
 - Media Downloader
+- Media Manager
 - Website Archiving
 - Subtitle Shift
-- Media Manager
+- Report Manager
+- Repository Manager
 
 #### Geniusbot Chat
 Chat with your friendly Geniusbot. 
