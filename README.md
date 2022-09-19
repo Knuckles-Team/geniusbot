@@ -68,6 +68,28 @@ Shift a subtitle forward or backward a few seconds so it aligns with your video!
 
 ![Subtitle Shift](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_shift_subtitles.png "Subtitle Shift")
 
+#### Report Manager
+Generate report analysis using:
+- Visualization plots
+- Pandas Profiling
+- Report Analysis Text file
+
+Merge reports with the following methods:
+- Inner
+- Outer
+- Left
+- Right
+- Append
+
+Multiple column selection optional for Inner, Outer, Left, and Right joining
+
+![Report Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_report_manager.png "Report Manager")
+
+#### Repository Manager
+Manage your repositories by cloning, pulling, or running your own set of git commands on a given directory
+
+![Repository Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_repository_manager.png "Repository Manager")
+
 ## Install
 ```bash
 pip install geniusbot
