@@ -44,7 +44,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QTabWidget,
     QGridLayout, QFormLayout, QHBoxLayout, QRadioButton, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
-    QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit,
+    QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit, QListWidget, QAbstractItemView
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
@@ -182,6 +182,10 @@ class ReportManagerWorker(QObject):
         self.custom_report_ticker = custom_report_ticker
         self.pandas_profiling_ticker = pandas_profiling_ticker
         self.file_type_combobox = file_type_combobox
+        if self.file_type_comboox == "CSV":
+            self.csv_flag = True
+        else:
+            self.csv_flag = False
 
     def run(self):
         """Long-running task."""
@@ -196,23 +200,56 @@ class ReportManagerWorker(QObject):
                 self.report_manager.export_pandas_profiling()
             if self.custom_report_ticker.isChecked():
                 self.report_manager.run_analysis()
-                self.report_manager.export_data(csv_flag=self.file_type_combobox, report_name=f"{self.report_name_editor.text()} - Dataset")
+                self.report_manager.export_data(csv_flag=self.csv_flag, report_name=f"{self.report_name_editor.text()} - Dataset")
+        self.finished.emit()
+
+
+class MergeReportWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, report_manager, file1_columns, file2_columns, action_type_combobox, merge_type_combobox, merged_report_save_location_label, merge_file1_label, merge_file2_label, merged_report_name_editor, merge_file_type_combobox):
+        super().__init__()
+        self.report_manager = report_manager
+        self.file1_columns = file1_columns
+        self.file2_columns = file2_columns
+        self.action_type_combobox = action_type_combobox
+        self.merge_type_combobox = merge_type_combobox
+        self.merge_file1_label = merge_file1_label
+        self.merge_file2_label = merge_file2_label
+        self.merged_report_save_location_label = merged_report_save_location_label
+        self.merged_report_name_editor = merged_report_name_editor
+        self.merge_file_type_combobox = merge_file_type_combobox
+        if self.merge_file_type_combobox == "CSV":
+            self.csv_flag = True
         else:
-            print("DO MERGE HERE")
-            self.report_manager.set_files(files[0], "file2")
-            self.report_manager.set_files(files[1], "file3")
-            join_keys = join_keys.replace(" ", "")
-            join_keys = join_keys.split("|")
-            df_1_join_keys = join_keys[0].split(",")
-            df_2_join_keys = join_keys[1].split(",")
-            self.report_manager.set_df1_join_keys(df_1_join_keys=df_1_join_keys)
-            self.report_manager.set_df2_join_keys(df_2_join_keys=df_2_join_keys)
-            self.report_manager.set_join_type(join_type=join_type)
+            self.csv_flag = False
+
+    def run(self):
+        """Long-running task."""
+        self.report_manager.set_report_title(self.merged_report_name_editor.text())
+        self.report_manager.set_report_name(self.merged_report_name_editor.text())
+        self.report_manager.set_df1_join_keys(self.file1_columns.selectedItems())
+        self.report_manager.set_df1_join_keys(self.file2_columns.selectedItems())
+        self.report_manager.set_save_directory(self.merged_report_save_location_label.text())
+        if self.action_type_combobox.currentText() == "Merge Reports" and self.merge_type_combobox.currentText() == "Append":
+            self.report_manager.set_files(self.merge_file1_label.text(), "file2")
+            self.report_manager.set_files(self.merge_file2_label.text(), "file3")
             self.report_manager.load_dataframe(file_instance=2)
             self.report_manager.load_dataframe(file_instance=3)
+            self.report_manager.set_join_type(join_type=self.merge_type_combobox.currentText().lower())
             self.report_manager.join_data()
-            self.report_manager.export_data(csv_flag=type_flag, report_name=f"{self.report_name_editor.text()} - Merged")
-
+            self.report_manager.export_data(csv_flag=self.csv_flag, report_name=f"{self.merged_report_name_editor.text()} - Merged")
+        elif self.action_type_combobox.currentText() == "Merge Reports" and self.merge_type_combobox.currentText() != "Append":
+            self.report_manager.set_files(self.merge_file1_label.text(), "file2")
+            self.report_manager.set_files(self.merge_file2_label.text(), "file3")
+            self.report_manager.load_dataframe(file_instance=2)
+            self.report_manager.load_dataframe(file_instance=3)
+            self.report_manager.set_df1_join_keys(df_1_join_keys=self.file1_columns)
+            self.report_manager.set_df2_join_keys(df_2_join_keys=self.file2_columns)
+            self.report_manager.set_join_type(join_type=self.merge_type_combobox.currentText().lower())
+            self.report_manager.join_data()
+            self.report_manager.export_data(csv_flag=self.csv_flag, report_name=f"{self.merged_report_name_editor.text()} - Merged")
         self.finished.emit()
 
 
@@ -686,7 +723,6 @@ class GeniusBot(QMainWindow):
         self.generated_report_save_location_button = QPushButton("Save Location")
         self.generated_report_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
         self.generated_report_save_location_button.clicked.connect(self.report_manager_save_location)
-        # report_manager_save_location
         self.report_name_label = QLabel("Report Name: ")
         self.report_name_editor = QLineEdit("Report Name")
         self.file_type_label = QLabel("Export Filetype")
@@ -711,20 +747,51 @@ class GeniusBot(QMainWindow):
         self.custom_report_layout.addWidget(self.custom_report_ticker, 2, 5, 1, 1)
         self.custom_report_layout.addWidget(self.dataframe_label, 4, 0, 1, 6)
         self.custom_report_layout.addWidget(self.custom_report_generate_button, 5, 0, 1, 6)
-        # report_custom_report.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
-        # report_custom_report.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 2)
-        # report_custom_report.addWidget(self.repository_manager_repositories_file_location_button, 1, 0, 1, 1)
-        # report_custom_report.addWidget(self.repository_manager_repositories_file_location_label, 1, 1, 1, 2)
-        # report_custom_report.addWidget(self.clone_ticker, 2, 0, 1, 1)
-        # report_custom_report.addWidget(self.pull_ticker, 2, 1, 1, 1)
-        # report_custom_report.addWidget(self.set_default_branch_ticker, 2, 2, 1, 1)
-        # report_custom_report.addWidget(self.repository_git_command_label, 3, 0, 1, 3)
-        # report_custom_report.addWidget(self.repository_git_command, 4, 0, 1, 3)
-        # report_custom_report.addWidget(self.repository_links_editor_label, 5, 0, 1, 3)
-        # report_custom_report.addWidget(self.repository_links_editor, 6, 0, 1, 3)
-        # report_custom_report.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
-        # report_custom_report.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
-        # report_custom_report.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
+
+        self.merged_report_save_location_button = QPushButton("Save Location")
+        self.merged_report_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
+        self.merged_report_save_location_button.clicked.connect(self.report_merger_save_location)
+        self.merged_report_save_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.merged_report_name_label = QLabel("Report Name: ")
+        self.merged_report_name_editor = QLineEdit("Report Name")
+        self.merge_file_type_label = QLabel("Export Filetype")
+        self.merge_file_type_combobox = QComboBox()
+        self.merge_file_type_combobox.addItems(['CSV', 'XLSX'])
+        self.merge_file_type_combobox.setItemText(1, "XLSX")
+        self.merge_file1_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.merge_file2_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.merge_file1_location_button = QPushButton("Open Data File 1")
+        self.merge_file2_location_button = QPushButton("Open Data File 2")
+        self.merge_file1_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.merge_file2_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.merge_file1_location_button.clicked.connect(self.open_data1_file)
+        self.merge_file2_location_button.clicked.connect(self.open_data2_file)
+        self.file1_columns = QListWidget()
+        self.file2_columns = QListWidget()
+        self.file1_columns.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.file2_columns.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.merge_type_label = QLabel("Merge Type: ")
+        self.merge_type_combobox = QComboBox()
+        self.merge_type_combobox.addItems(['Inner', 'Outer', 'Right', 'Left', 'Append'])
+        self.merge_type_combobox.setItemText(0, "Inner")
+        self.merge_button = QPushButton("Merge ⦽")
+        self.merge_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.merge_button.clicked.connect(self.merge_reports)
+        self.merge_report_layout.addWidget(self.merged_report_name_label, 0, 0, 1, 1)
+        self.merge_report_layout.addWidget(self.merged_report_name_editor, 0, 1, 1, 3)
+        self.merge_report_layout.addWidget(self.merge_file_type_label, 1, 0, 1, 1)
+        self.merge_report_layout.addWidget(self.merge_file_type_combobox, 1, 1, 1, 3)
+        self.merge_report_layout.addWidget(self.merged_report_save_location_button, 2, 0, 1, 1)
+        self.merge_report_layout.addWidget(self.merged_report_save_location_label, 2, 1, 1, 3)
+        self.merge_report_layout.addWidget(self.merge_file1_location_button, 3, 0, 1, 1)
+        self.merge_report_layout.addWidget(self.merge_file1_label, 3, 1, 1, 1)
+        self.merge_report_layout.addWidget(self.merge_file2_location_button, 3, 2, 1, 1)
+        self.merge_report_layout.addWidget(self.merge_file2_label, 3, 3, 1, 1)
+        self.merge_report_layout.addWidget(self.file1_columns, 4, 0, 1, 2)
+        self.merge_report_layout.addWidget(self.file2_columns, 4, 2, 1, 2)
+        self.merge_report_layout.addWidget(self.merge_type_label, 5, 0, 1, 1)
+        self.merge_report_layout.addWidget(self.merge_type_combobox, 5, 1, 1, 3)
+        self.merge_report_layout.addWidget(self.merge_button, 6, 0, 1, 4)
         self.merge_widget.hide()
         self.tabwidget.setTabText(5, "Report Manager")
         self.tab6.setLayout(self.report_manager_layout)
@@ -860,6 +927,28 @@ class GeniusBot(QMainWindow):
         )
         self.report_manager_thread.finished.connect(
             lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Reporting Management Completed!\n")
+        )
+
+    def merge_reports(self):
+        self.merge_report_thread = QThread()
+        self.merge_report_worker = MergeReportWorker(self.report_manager, self.file1_columns, self.file2_columns,
+                                                     self.action_type_combobox, self.merge_type_combobox,
+                                                     self.merged_report_save_location_label, self.merge_file1_label,
+                                                     self.merge_file2_label, self.merged_report_name_editor,
+                                                     self.merge_file_type_combobox)
+        self.merge_report_worker.moveToThread(self.merge_report_thread)
+        self.merge_report_thread.started.connect(self.merge_report_worker.run)
+        self.merge_report_worker.finished.connect(self.merge_report_thread.quit)
+        self.merge_report_worker.finished.connect(self.merge_report_worker.deleteLater)
+        self.merge_report_thread.finished.connect(self.merge_report_thread.deleteLater)
+        self.merge_report_worker.progress.connect(self.report_web_progress_bar)
+        self.merge_report_thread.start()
+        self.merge_button.setEnabled(False)
+        self.merge_report_thread.finished.connect(
+            lambda: self.merge_button.setEnabled(True)
+        )
+        self.merge_report_thread.finished.connect(
+            lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Reporting Merging Completed!\n")
         )
 
     def eventFilter(self, obj, event):
@@ -1089,16 +1178,28 @@ class GeniusBot(QMainWindow):
         self.report_manager.load_dataframe(file_instance=1)
         self.custom_data_file_label.setText(report_manager_data_file[0])
         dataframe = self.report_manager.get_df()
-        # with pd.option_context(
-        #     'display.max_rows', 120,
-        #     'display.max_columns', 6,
-        #     'display.precision', 2,
-        # ):
-        print(dataframe)
         dataframe_markdown = dataframe.to_markdown(tablefmt="grid")
         dataframe_html = dataframe.to_html(max_cols=9)
 
         self.dataframe_label.setText(f"{dataframe_markdown}")
+
+    def open_data1_file(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening data file 1!\n")
+        report_manager_data_file = QFileDialog.getOpenFileName(self, 'Open data file 1(CSV/XLSX)')
+        self.merge_file1_label.setText(report_manager_data_file[0])
+        self.report_manager.set_files(report_manager_data_file[0], "file2")
+        self.report_manager.load_dataframe(file_instance=2)
+        dataframe = self.report_manager.get_df1()
+        self.file1_columns.addItems(dataframe.columns)
+
+    def open_data2_file(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening data file 2!\n")
+        report_manager_data_file = QFileDialog.getOpenFileName(self, 'Open data file 2(CSV/XLSX)')
+        self.merge_file2_label.setText(report_manager_data_file[0])
+        self.report_manager.set_files(report_manager_data_file[0], "file3")
+        self.report_manager.load_dataframe(file_instance=3)
+        dataframe = self.report_manager.get_df2()
+        self.file2_columns.addItems(dataframe.columns)
 
     def open_repository_manager_file(self, projects=None):
         if projects:
@@ -1123,6 +1224,13 @@ class GeniusBot(QMainWindow):
         if report_save_directory == None or report_save_directory == "":
             report_save_directory = os.path.expanduser("~")
         self.custom_report_generate_label.setText(report_save_directory)
+
+    def report_merger_save_location(self):
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for final report!\n")
+        report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        if report_save_directory == None or report_save_directory == "":
+            report_save_directory = os.path.expanduser("~")
+        self.merged_report_save_location_label.setText(report_save_directory)
 
     def repository_manager_repositories_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
