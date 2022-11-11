@@ -132,6 +132,14 @@ pip install geniusbot
 bash ./build_container.sh
 ```
 
+#### Install Instructions
+Install Python Package
+
+```bash
+python -m pip install geniusbot
+```
+
+
 ### Build Instructions
 Build Python Package
 
