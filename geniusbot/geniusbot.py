@@ -14,6 +14,7 @@ from media_downloader import MediaDownloader
 from media_manager import MediaManager
 from report_manager import ReportManager
 from repository_manager import Git
+
 pd.set_option('display.max_rows', 250)
 pd.set_option('display.max_columns', 9)
 pd.set_option('display.expand_frame_repr', False)
@@ -27,9 +28,19 @@ try:
 except Exception as e:
     from version import __version__, __author__, __credits__
 
+if os.name == "posix":
+    import pwd
+    user = pwd.getpwuid(os.geteuid()).pw_name
+else:
+    ukn = 'UNKNOWN'
+    user = os.environ.get('USER', os.environ.get('USERNAME', ukn))
+    if user == ukn and hasattr(os, 'getlogin'):
+        user = os.getlogin()
+
 if sys.platform == 'win32':
     import winshell
     import ctypes
+
     myappid = f'knucklesteam.geniusbot.geniusbot.{__version__}'  # arbitrary string
     myappid.encode("utf-8")
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -48,13 +59,13 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
-user = str(os.getlogin())
 yellow = "#FFA500"
 green = "#2E8B57"
 orange = "#FF7518"
 blue = "#4682B4"
 red = ""
 purple = ""
+
 
 class OutputWrapper(QObject):
     outputWritten = pyqtSignal(object, object)
@@ -100,9 +111,11 @@ class GeniusBotWorker(QObject):
         """Long-running task."""
         old_text = self.geniusbot_chat.text()
         if self.geniusbot_chatbot.get_loaded() is False:
-            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Attempting to load intelligence...""")
+            self.geniusbot_chat.setText(
+                f"""{self.geniusbot_chat.text()}\n[Genius Bot] Attempting to load intelligence...""")
             self.geniusbot_chatbot.load_model()
-            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Loaded {self.geniusbot_chatbot.get_intelligence_level()} intelligence level!""")
+            self.geniusbot_chat.setText(
+                f"""{self.geniusbot_chat.text()}\n[Genius Bot] Loaded {self.geniusbot_chatbot.get_intelligence_level()} intelligence level!""")
         response = self.geniusbot_chatbot.chat(self.text, output_length=40)
         import re
         if response != self.text:
@@ -146,7 +159,6 @@ class WebarchiverWorker(QObject):
         self.dpi = dpi
         self.filetype = filetype
 
-
     def run(self):
         """Long-running task."""
         old_stdout = sys.stdout
@@ -159,7 +171,8 @@ class WebarchiverWorker(QObject):
 
         for website_index in range(0, len(self.websites)):
             self.webarchiver.append_link(self.websites[website_index])
-            self.webarchiver.fullpage_screenshot(url=self.websites[website_index], zoom_percentage=self.zoom, filetype=self.filetype)
+            self.webarchiver.fullpage_screenshot(url=self.websites[website_index], zoom_percentage=self.zoom,
+                                                 filetype=self.filetype)
             self.progress.emit(int(((1 + website_index) / len(self.websites)) * 100))
             self.webarchiver.reset_links()
 
@@ -172,7 +185,8 @@ class ReportManagerWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, report_manager, report_name_editor, custom_report_generate_label, action_type_combobox, pandas_profiling_ticker, custom_report_ticker, file_type_combobox):
+    def __init__(self, report_manager, report_name_editor, custom_report_generate_label, action_type_combobox,
+                 pandas_profiling_ticker, custom_report_ticker, file_type_combobox):
         super().__init__()
         self.report_manager = report_manager
         self.report_name_editor = report_name_editor
@@ -200,7 +214,8 @@ class ReportManagerWorker(QObject):
                 self.report_manager.export_pandas_profiling()
             if self.custom_report_ticker.isChecked():
                 self.report_manager.run_analysis()
-                self.report_manager.export_data(csv_flag=self.csv_flag, report_name=f"{self.report_name_editor.text()} - Dataset")
+                self.report_manager.export_data(csv_flag=self.csv_flag,
+                                                report_name=f"{self.report_name_editor.text()} - Dataset")
         self.finished.emit()
 
 
@@ -208,7 +223,9 @@ class MergeReportWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, report_manager, file1_columns, file2_columns, action_type_combobox, merge_type_combobox, merged_report_save_location_label, merge_file1_label, merge_file2_label, merged_report_name_editor, merge_file_type_combobox):
+    def __init__(self, report_manager, file1_columns, file2_columns, action_type_combobox, merge_type_combobox,
+                 merged_report_save_location_label, merge_file1_label, merge_file2_label, merged_report_name_editor,
+                 merge_file_type_combobox):
         super().__init__()
         self.report_manager = report_manager
         self.file1_columns = file1_columns
@@ -239,7 +256,8 @@ class MergeReportWorker(QObject):
             self.report_manager.load_dataframe(file_instance=3)
             self.report_manager.set_join_type(join_type=self.merge_type_combobox.currentText().lower())
             self.report_manager.join_data()
-            self.report_manager.export_data(csv_flag=self.csv_flag, report_name=f"{self.merged_report_name_editor.text()} - Merged")
+            self.report_manager.export_data(csv_flag=self.csv_flag,
+                                            report_name=f"{self.merged_report_name_editor.text()} - Merged")
         elif self.action_type_combobox.currentText() == "Merge Reports" and self.merge_type_combobox.currentText() != "Append":
             self.report_manager.set_files(self.merge_file1_label.text(), "file2")
             self.report_manager.set_files(self.merge_file2_label.text(), "file3")
@@ -249,7 +267,8 @@ class MergeReportWorker(QObject):
             self.report_manager.set_df2_join_keys(df_2_join_keys=self.file2_columns)
             self.report_manager.set_join_type(join_type=self.merge_type_combobox.currentText().lower())
             self.report_manager.join_data()
-            self.report_manager.export_data(csv_flag=self.csv_flag, report_name=f"{self.merged_report_name_editor.text()} - Merged")
+            self.report_manager.export_data(csv_flag=self.csv_flag,
+                                            report_name=f"{self.merged_report_name_editor.text()} - Merged")
         self.finished.emit()
 
 
@@ -257,7 +276,9 @@ class RepositoryManagerWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, repository_manager, clone_ticker, set_default_branch_ticker, pull_ticker, repository_links_editor, repository_git_command, repository_manager_repositories_file_location_label, repository_manager_files_label, repository_manager_repositories_location_label):
+    def __init__(self, repository_manager, clone_ticker, set_default_branch_ticker, pull_ticker,
+                 repository_links_editor, repository_git_command, repository_manager_repositories_file_location_label,
+                 repository_manager_files_label, repository_manager_repositories_location_label):
         super().__init__()
         self.repository_manager = repository_manager
         self.clone_ticker = clone_ticker
@@ -302,10 +323,11 @@ class RepositoryManagerWorker(QObject):
             for project in projects:
                 try:
                     result = self.repository_manager.git_action(command=f"{self.repository_git_command.text()}",
-                                                       directory=f"{self.repository_manager_repositories_location_label.text()}/{project}")
+                                                                directory=f"{self.repository_manager_repositories_location_label.text()}/{project}")
                     print(result)
                 except Exception as e:
-                    print(f"Unable to execute git command: {self.repository_git_command.text()} for directory: {self.repository_manager_repositories_location_label.text()}/{project}")
+                    print(
+                        f"Unable to execute git command: {self.repository_git_command.text()} for directory: {self.repository_manager_repositories_location_label.text()}/{project}")
             self.progress.emit(99)
         self.progress.emit(100)
         self.finished.emit()
@@ -469,11 +491,11 @@ class GeniusBot(QMainWindow):
         layout.addWidget(self.tabwidget)
         self.buttonsWidget = QWidget()
         self.buttonsWidgetLayout = QHBoxLayout(self.buttonsWidget)
-        #self.console_label = QLabel("Console")
+        # self.console_label = QLabel("Console")
         self.hide_console_button = QPushButton("Console ◳")
         self.hide_console_button.setStyleSheet("background-color: #211f1f; color: white; font: bold;")
         self.hide_console_button.clicked.connect(self.hide_console)
-        #self.buttonsWidgetLayout.addWidget(self.console_label)
+        # self.buttonsWidgetLayout.addWidget(self.console_label)
         self.buttonsWidgetLayout.addWidget(self.hide_console_button)
         self.buttonsWidgetLayout.setStretch(0, 24)
         self.buttonsWidgetLayout.setStretch(1, 1)
@@ -504,7 +526,8 @@ class GeniusBot(QMainWindow):
         self.geniusbot_chat = ScrollLabel(self)
         self.geniusbot_chat.hide()
         self.geniusbot_chat.setFontColor(background_color="white", color="black")
-        self.geniusbot_chat.setText(f"""[Genius Bot] ZzzzZzzz... (It appears Genius Bot is sleeping, click "Wake Up!")""")
+        self.geniusbot_chat.setText(
+            f"""[Genius Bot] ZzzzZzzz... (It appears Genius Bot is sleeping, click "Wake Up!")""")
         self.chat_editor = QTextEdit()
         self.chat_editor.installEventFilter(self)
 
@@ -512,14 +535,15 @@ class GeniusBot(QMainWindow):
         # self.geniusbot_train_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         # self.geniusbot_train_button.clicked.connect(self.chattybot_response)
         self.geniusbot_send_button = QPushButton("Wake Up!")
-        self.geniusbot_send_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.geniusbot_send_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.geniusbot_send_button.clicked.connect(self.chattybot_response)
-        #self.geniusbot_send_button.hide()
+        # self.geniusbot_send_button.hide()
         self.chat_editor.setDisabled(False)
         layout = QVBoxLayout()
         layout.addWidget(self.geniusbot_chat)
         layout.addWidget(self.chat_editor)
-        #layout.addWidget(self.geniusbot_train_button)
+        # layout.addWidget(self.geniusbot_train_button)
         layout.addWidget(self.geniusbot_send_button)
         layout.setStretch(0, 24)
         layout.setStretch(1, 3)
@@ -537,7 +561,8 @@ class GeniusBot(QMainWindow):
         self.channel_field_label.clicked.connect(self.add_channel_videos)
         self.channel_field_editor = QLineEdit()
         self.video_download_button = QPushButton("Download ￬")
-        self.video_download_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.video_download_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.video_download_button.clicked.connect(self.download_videos)
         self.open_video_file_button = QPushButton("Open File")
         self.open_video_file_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
@@ -590,7 +615,8 @@ class GeniusBot(QMainWindow):
         self.media_manager_files_label.setFontColor(background_color="white", color="black")
         self.media_manager_files_label.setScrollWheel("Top")
         self.media_manager_run_button = QPushButton("Run ⥀")
-        self.media_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.media_manager_run_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.media_manager_run_button.clicked.connect(self.manage_media)
         media_manager_layout.addWidget(self.media_manager_media_location_button, 0, 0, 1, 1)
         media_manager_layout.addWidget(self.media_manager_media_location_label, 0, 1, 1, 1)
@@ -657,10 +683,11 @@ class GeniusBot(QMainWindow):
         self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.open_subtitlefile_button.clicked.connect(self.open_subtitlefile)
         self.shift_subtitle_button = QPushButton("Shift Subtitles ↹")
-        self.shift_subtitle_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.shift_subtitle_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.shift_subtitle_button.clicked.connect(self.shift_subtitle)
 
-        #self.subtitle_label = QLabel(self)
+        # self.subtitle_label = QLabel(self)
         self.subtitle_label = ScrollLabel(self)
         self.subtitle_label.hide()
         self.subtitle_label.setText(f"Subtitle file contents will be shown here\n")
@@ -714,14 +741,16 @@ class GeniusBot(QMainWindow):
         self.custom_report_ticker = QCheckBox("Custom Report")
         self.custom_report_generate_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.custom_report_generate_button = QPushButton("Generate ⦽")
-        self.custom_report_generate_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.custom_report_generate_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.custom_report_generate_button.clicked.connect(self.report_manage)
         self.report_file_location_button = QPushButton("Data File")
         self.custom_data_file_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.report_file_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.report_file_location_button.clicked.connect(self.open_report_manager_file)
         self.generated_report_save_location_button = QPushButton("Save Location")
-        self.generated_report_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
+        self.generated_report_save_location_button.setStyleSheet(
+            f"background-color: {orange}; color: white; font: bold;")
         self.generated_report_save_location_button.clicked.connect(self.report_manager_save_location)
         self.report_name_label = QLabel("Report Name: ")
         self.report_name_editor = QLineEdit("Report Name")
@@ -741,7 +770,7 @@ class GeniusBot(QMainWindow):
         self.custom_report_layout.addWidget(self.custom_data_file_label, 1, 1, 1, 5)
         self.custom_report_layout.addWidget(self.report_name_label, 2, 0, 1, 1)
         self.custom_report_layout.addWidget(self.report_name_editor, 2, 1, 1, 1)
-        self.custom_report_layout.addWidget(self.file_type_label , 2, 2, 1, 1)
+        self.custom_report_layout.addWidget(self.file_type_label, 2, 2, 1, 1)
         self.custom_report_layout.addWidget(self.file_type_combobox, 2, 3, 1, 1)
         self.custom_report_layout.addWidget(self.pandas_profiling_ticker, 2, 4, 1, 1)
         self.custom_report_layout.addWidget(self.custom_report_ticker, 2, 5, 1, 1)
@@ -796,17 +825,20 @@ class GeniusBot(QMainWindow):
         self.tabwidget.setTabText(5, "Report Manager")
         self.tab6.setLayout(self.report_manager_layout)
 
-
     def tab7_repository_manager(self):
         repository_manager_layout = QGridLayout()
         self.repository_manager_repositories_location_button = QPushButton("Repositories Location")
-        self.repository_manager_repositories_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-        self.repository_manager_repositories_location_button.clicked.connect(self.repository_manager_repositories_location)
+        self.repository_manager_repositories_location_button.setStyleSheet(
+            f"background-color: {orange}; color: white; font: bold;")
+        self.repository_manager_repositories_location_button.clicked.connect(
+            self.repository_manager_repositories_location)
         self.repository_manager_repositories_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.repository_manager_repositories_file_location_button = QPushButton("Repositories File Location")
-        self.repository_manager_repositories_file_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.repository_manager_repositories_file_location_button.setStyleSheet(
+            f"background-color: {green}; color: white; font: bold;")
         self.repository_manager_repositories_file_location_button.clicked.connect(self.open_repository_manager_file)
-        self.repository_manager_repositories_file_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.repository_manager_repositories_file_location_label = QLabel(
+            f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.clone_ticker = QCheckBox("Clone")
         self.pull_ticker = QCheckBox("Pull")
         self.clone_ticker.setChecked(True)
@@ -825,7 +857,8 @@ class GeniusBot(QMainWindow):
         self.repository_manager_files_label.setFontColor(background_color="white", color="black")
         self.repository_manager_files_label.setScrollWheel("Top")
         self.repository_manager_run_button = QPushButton("Run ⥀")
-        self.repository_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.repository_manager_run_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.repository_manager_run_button.clicked.connect(self.manage_repositories)
         self.repositories_progress_bar = QProgressBar()
         repository_manager_layout.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
@@ -855,7 +888,7 @@ class GeniusBot(QMainWindow):
 
     def create_desktop_icon(self):
         desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
-        script_parent_dir = Path( __file__ ).parent.absolute().parent.absolute()
+        script_parent_dir = Path(__file__).parent.absolute().parent.absolute()
         icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
         working_directory = str(Path(script_parent_dir))
         if sys.platform == 'win32':
@@ -872,10 +905,11 @@ class GeniusBot(QMainWindow):
                     print("Desktop Shortcut Created!")
             else:
                 os.remove(link_filepath)
-            #print(f"Desktop: {desktop}\nScript Parent Directory: {script_parent_dir}\nwin32 Command: {win32_cmd}\nIcon: {icon}\nWorking Path: {working_directory}\nLink Path {link_filepath}\nArgs: {arg_str}")
+            # print(f"Desktop: {desktop}\nScript Parent Directory: {script_parent_dir}\nwin32 Command: {win32_cmd}\nIcon: {icon}\nWorking Path: {working_directory}\nLink Path {link_filepath}\nArgs: {arg_str}")
         elif sys.platform == 'linux':
             desktop_link_filepath = str(f"{desktop}/Genius Bot.desktop")
-            link_filepath = os.path.join(os.path.join(os.path.expanduser('~')), '.local/share/applications/Genius Bot.desktop')
+            link_filepath = os.path.join(os.path.join(os.path.expanduser('~')),
+                                         '.local/share/applications/Genius Bot.desktop')
             if self.desktop_icon_checkbox.isChecked():
                 with open(link_filepath, "w") as desktop_icon:
                     desktop_icon.write(
@@ -959,7 +993,7 @@ class GeniusBot(QMainWindow):
         return super().eventFilter(obj, event)
 
     def chattybot_response(self):
-        #self.geniusbot_send_button.setEnabled(False)
+        # self.geniusbot_send_button.setEnabled(False)
         self.geniusbot_send_button.setText("Send")
         text = str(self.chat_editor.toPlainText().strip())
         self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[{user}] {text}""")
@@ -980,11 +1014,11 @@ class GeniusBot(QMainWindow):
         self.geniusbot_thread.start()
 
     def console_output(self, text, stdout):
-        #color = self.console.textColor()
-        #self.console.moveCursor(QTextCursor.End)
-        #self.console.setTextColor(color if stdout else self._err_color)
+        # color = self.console.textColor()
+        # self.console.moveCursor(QTextCursor.End)
+        # self.console.setTextColor(color if stdout else self._err_color)
         self.console.setText(f"{self.console.text().strip()}\n{text.strip()}")
-        #self.console.setTextColor(color)
+        # self.console.setTextColor(color)
 
     def hide_console(self):
         if self.hide_console_button.text() == "Console ◳":
@@ -1061,7 +1095,9 @@ class GeniusBot(QMainWindow):
         websites = websites.split('\n')
         if websites[0] != '':
             self.webarchiver_thread = QThread()
-            self.webarchiver_worker = WebarchiverWorker(self.webarchiver, websites, self.web_zoom_spin_box.value(), dpi=self.web_dpi_spin_box.value(), filetype=self.web_links_file_type.currentText())
+            self.webarchiver_worker = WebarchiverWorker(self.webarchiver, websites, self.web_zoom_spin_box.value(),
+                                                        dpi=self.web_dpi_spin_box.value(),
+                                                        filetype=self.web_links_file_type.currentText())
             self.webarchiver_worker.moveToThread(self.webarchiver_thread)
             self.webarchiver_thread.started.connect(self.webarchiver_worker.run)
             self.webarchiver_worker.finished.connect(self.webarchiver_thread.quit)
@@ -1091,7 +1127,8 @@ class GeniusBot(QMainWindow):
 
     def save_web_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n")
-        web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
+                                                              QFileDialog.ShowDirsOnly)
         if web_directory_name == None or web_directory_name == "":
             web_directory_name = os.path.expanduser("~")
         self.save_web_location_label.setText(web_directory_name)
@@ -1220,21 +1257,25 @@ class GeniusBot(QMainWindow):
 
     def report_manager_save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for final report!\n")
-        report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
+                                                                 QFileDialog.ShowDirsOnly)
         if report_save_directory == None or report_save_directory == "":
             report_save_directory = os.path.expanduser("~")
         self.custom_report_generate_label.setText(report_save_directory)
 
     def report_merger_save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for final report!\n")
-        report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
+                                                                 QFileDialog.ShowDirsOnly)
         if report_save_directory == None or report_save_directory == "":
             report_save_directory = os.path.expanduser("~")
         self.merged_report_save_location_label.setText(report_save_directory)
 
     def repository_manager_repositories_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
-        repository_manager_repositories_location_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        repository_manager_repositories_location_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
+                                                                                         os.path.expanduser("~"),
+                                                                                         QFileDialog.ShowDirsOnly)
         if repository_manager_repositories_location_name == None or repository_manager_repositories_location_name == "":
             repository_manager_repositories_location_name = os.path.expanduser("~")
         self.repository_manager_repositories_location_label.setText(repository_manager_repositories_location_name)
@@ -1301,7 +1342,9 @@ class GeniusBot(QMainWindow):
 
     def media_manager_media_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting media location to look for media in!\n")
-        media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
+                                                                        os.path.expanduser("~"),
+                                                                        QFileDialog.ShowDirsOnly)
         if media_manager_directory_name == None or media_manager_directory_name == "":
             media_manager_directory_name = os.path.expanduser("~")
         self.media_manager_media_location_label.setText(media_manager_directory_name)
@@ -1322,14 +1365,17 @@ class GeniusBot(QMainWindow):
 
     def media_manager_move_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting move location for media\n")
-        media_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        media_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
+                                                                             os.path.expanduser("~"),
+                                                                             QFileDialog.ShowDirsOnly)
         if media_manager_move_directory_name == None or media_manager_move_directory_name == "":
             media_manager_move_directory_name = os.path.expanduser("~")
         self.media_manager_move_location_label.setText(media_manager_move_directory_name)
 
     def save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
-        video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
+                                                                QFileDialog.ShowDirsOnly)
         if video_directory_name == None or video_directory_name == "":
             video_directory_name = os.path.expanduser("~")
         self.video_save_location_label.setText(video_directory_name)
@@ -1349,5 +1395,3 @@ def main():
 
 if __name__ == "__main__":
     geniusbot(sys.argv[1:])
-
-
