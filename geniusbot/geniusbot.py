@@ -109,7 +109,7 @@ class GeniusBotWorker(QObject):
         if self.geniusbot_chatbot.get_loaded() is False:
             self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n
                                         [Genius Bot] Attempting to load intelligence...""")
-            self.geniusbot_chatbot.set_output_length(output_length="1000")
+            self.geniusbot_chatbot.set_output_length(output_length=500)
             self.geniusbot_chatbot.scale_intelligence()
             self.geniusbot_chatbot.load_model()
             self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Loaded 

@@ -7,4 +7,4 @@ repository-manager>=0.2.1
 subshift>=0.6.0
 webarchiver>=0.4.0
 systems-manager>=0.2.0
-genius-chatbot>=0.2.0
+genius-chatbot>=0.3.0
