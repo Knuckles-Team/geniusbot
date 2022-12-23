@@ -1,5 +1,5 @@
 # Geniusbot 
-*Version: 3.9.0*
+*Version: 3.9.1*
 
 ![Geniusbot](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot") 
 
