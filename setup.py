@@ -31,7 +31,7 @@ setup(
     install_requires=[
         'PyQt5>=5.15.7', 'winshell>=0.6; platform_system == "Windows"', 'pypiwin32; platform_system == "Windows"',
         'torch>=1.13.1', 'transformers>=4.25.1', 'accelerate>=0.15.0', "tabulate>=0.9.0", "psutil>=5.9.4",
-        'media-downloader>=0.1.1', 'webarchiver>=0.4.0', 'subshift>=0.6.0', 'genius-chatbot>=0.2.0',
+        'media-downloader>=0.1.1', 'webarchiver>=0.4.0', 'subshift>=0.6.0', 'genius-chatbot>=0.3.0',
         'media-manager>=0.1.1', 'report-manager>=0.6.0', 'repository-manager>=0.2.1', 'systems-manager>=0.2.0',
     ],
     py_modules=['geniusbot'],
