@@ -11,7 +11,7 @@ import getopt
 
 
 class ChatBot:
-    def __init__(self, opt="facebook/opt-125m", model_path=f"{os.curdir}", output_length=1000,
+    def __init__(self, opt='facebook/opt-125m', model_path=f'{os.curdir}', output_length=1000,
                  local_files=False, low_cpu_usage=True, use_fast=False):
         self.total_memory = psutil.virtual_memory()[0]
         self.used_memory = psutil.virtual_memory()[3]
@@ -29,7 +29,7 @@ class ChatBot:
         self.low_cpu_usage = low_cpu_usage
         self.local_files = local_files
         self.use_fast = use_fast
-        self.intelligence_level = "Very Low"
+        self.intelligence_level = 'Very Low'
 
     def set_model_path(self, path):
         self.model_path = path
@@ -52,93 +52,93 @@ class ChatBot:
     def set_device(self, device):
         if device == 'cpu' or device == 'cuda':
             self.device = device
-        if self.device == "cuda":
+        if self.device == 'cuda':
             self.torch_dtype = torch.float16
         else:
             self.torch_dtype = torch.float32
 
     def scale_intelligence(self):
         if round(float(self.free_memory / self.bytes), 0) < 5:
-            self.opt = "facebook/opt-125m"
-            self.intelligence_level = "Lowest"
+            self.opt = 'facebook/opt-125m'
+            self.intelligence_level = 'Lowest'
         elif 5 < round(float(self.free_memory / self.bytes), 0) < 14:
-            self.opt = "facebook/opt-1.3b"
-            self.intelligence_level = "Very Low"
+            self.opt = 'facebook/opt-1.3b'
+            self.intelligence_level = 'Very Low'
         elif 14 < round(float(self.free_memory / self.bytes), 0) < 22:
-            self.opt = "facebook/opt-2.7b"
-            self.intelligence_level = "Low"
+            self.opt = 'facebook/opt-2.7b'
+            self.intelligence_level = 'Low'
         elif 22 < round(float(self.free_memory / self.bytes), 0) < 45:
-            self.opt = "facebook/opt-6.7b"
-            self.intelligence_level = "Medium"
+            self.opt = 'facebook/opt-6.7b'
+            self.intelligence_level = 'Medium'
         elif 45 < round(float(self.free_memory / self.bytes), 0) < 100:
-            self.opt = "facebook/opt-13b"
-            self.intelligence_level = "High"
+            self.opt = 'facebook/opt-13b'
+            self.intelligence_level = 'High'
         elif 200 < round(float(self.free_memory / self.bytes), 0):
-            self.opt = "facebook/opt-66b"
-            self.intelligence_level = "Very High"
+            self.opt = 'facebook/opt-66b'
+            self.intelligence_level = 'Very High'
 
     def check_hardware(self):
         self.total_memory = psutil.virtual_memory()[0]
         self.used_memory = psutil.virtual_memory()[3]
         self.free_memory = psutil.virtual_memory()[1]
         self.used_percent = psutil.virtual_memory()[2]
-        print(f"RAM Utilization: {round(self.used_percent, 2)}%\n"
-              f"\tUsed  RAM: {round(float(self.used_memory / self.bytes), 2)} GB\n"
-              f"\tFree  RAM: {round(float(self.free_memory / self.bytes), 2)} GB\n"
-              f"\tTotal RAM: {round(float(self.total_memory / self.bytes), 2)} GB\n\n")
+        print(f'RAM Utilization: {round(self.used_percent, 2)}%\n'
+              f'\tUsed  RAM: {round(float(self.used_memory / self.bytes), 2)} GB\n'
+              f'\tFree  RAM: {round(float(self.free_memory / self.bytes), 2)} GB\n'
+              f'\tTotal RAM: {round(float(self.total_memory / self.bytes), 2)} GB\n\n')
 
     def load_model(self):
-        print(f"Loading Model: {self.opt}")
+        print(f'Loading Model: {self.opt}')
         if self.local_files:
-            if self.device == "cuda":
+            if self.device == 'cuda':
                 self.model = AutoModelForCausalLM.from_pretrained(self.model_path,
                                                                   torch_dtype=self.torch_dtype,
                                                                   local_files_only=self.local_files).cuda()
-                self.model.to("cuda:0")
+                self.model.to('cuda:0')
             else:
                 self.model = AutoModelForCausalLM.from_pretrained(self.model_path,
                                                                   torch_dtype=self.torch_dtype,
                                                                   local_files_only=self.local_files,
                                                                   low_cpu_mem_usage=self.low_cpu_usage)
-            print("Loading Tokenizer")
+            print('Loading Tokenizer')
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_path,
                                                            local_files_only=self.local_files,
                                                            use_fast=self.use_fast)
         else:
-            if self.device == "cuda":
+            if self.device == 'cuda':
                 self.model = AutoModelForCausalLM.from_pretrained(self.opt,
                                                                   torch_dtype=self.torch_dtype,
                                                                   local_files_only=self.local_files).cuda()
-                self.model.to("cuda:0")
+                self.model.to('cuda:0')
             else:
                 self.model = AutoModelForCausalLM.from_pretrained(self.opt,
                                                                   torch_dtype=self.torch_dtype,
                                                                   local_files_only=self.local_files,
                                                                   low_cpu_mem_usage=self.low_cpu_usage)
-            print("Loading Tokenizer")
+            print('Loading Tokenizer')
             self.tokenizer = AutoTokenizer.from_pretrained(self.opt,
                                                            local_files_only=self.local_files,
                                                            use_fast=self.use_fast)
         self.loaded = True
-        print("Loading Complete!")
+        print('Loading Complete!')
 
     def save_model(self):
-        print(f"Saving model {self.opt} to {self.model_path}")
+        print(f'Saving model {self.opt} to {self.model_path}')
         self.model = AutoModelForCausalLM.from_pretrained(self.opt,
                                                           torch_dtype=self.torch_dtype,
                                                           low_cpu_mem_usage=self.low_cpu_usage)
         self.tokenizer = AutoTokenizer.from_pretrained(self.opt, use_fast=self.use_fast)
         self.model.save_pretrained(self.model_path)
         self.tokenizer.save_pretrained(self.model_path)
-        print("Save Complete!")
+        print('Save Complete!')
         transformers.utils.move_cache()
-        print("Cache Moved Successfully!")
+        print('Cache Moved Successfully!')
 
     def chat(self, prompt):
-        if self.device == "cuda":
-            input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids.cuda()
+        if self.device == 'cuda':
+            input_ids = self.tokenizer(prompt, return_tensors='pt').input_ids.cuda()
         else:
-            input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
+            input_ids = self.tokenizer(prompt, return_tensors='pt').input_ids
         generated_ids = self.model.generate(input_ids,
                                             do_sample=True,
                                             max_new_tokens=self.output_length,
@@ -159,30 +159,31 @@ class ChatBot:
 
 
 def usage():
-    print(f"Usage:\n"
-          f"-h | --help          [ See usage for script ]\n"
-          f"-s | --save          [ Save model locally ]\n"
-          f"-i | --intelligence  [ Autoscale intelligence for hardware ]\n"
-          f"-d | --directory     [ Directory for model ]\n"
-          f"-o | --output-length [ Maximum output length of response ]\n"
-          f"-p | --prompt        [ Prompt for chatbot ]\n"
-          f"-m | --model         [ Model to use from Huggingface ]\n\n"
-          f"Example:\n"
-          f"genius-chatbot --model 'facebook/opt-66b' --output-length '500' "
-          f"--prompt 'Chatbots are cool because they'")
+    print(f'Usage:\n'
+          f'-h | --help          [ See usage for script ]\n'
+          f'-c | --cuda          [ Use Nvidia Cuda instead of CPU ]\n'
+          f'-s | --save          [ Save model locally ]\n'
+          f'-i | --intelligence  [ Autoscale intelligence for hardware ]\n'
+          f'-d | --directory     [ Directory for model ]\n'
+          f'-o | --output-length [ Maximum output length of response ]\n'
+          f'-p | --prompt        [ Prompt for chatbot ]\n'
+          f'-m | --model         [ Model to use from Huggingface ]\n\n'
+          f'Example:\n'
+          f'genius-chatbot --model "facebook/opt-66b" --output-length "500" '
+          f'--prompt "Chatbots are cool because they"')
 
 
 def genius_chatbot(argv):
     geniusbot_chat = ChatBot()
     run_flag = False
     save_model_flag = False
-    prompt = "Geniusbot is the smartest chatbot in existence."
+    prompt = 'Geniusbot is the smartest chatbot in existence.'
     try:
-        opts, args = getopt.getopt(argv, "hsid:o:p:m:", ["help", "save", "intelligence",
-                                                         "directory=",
-                                                         "output-length=",
-                                                         "prompt=",
-                                                         "model="])
+        opts, args = getopt.getopt(argv, 'hsicd:o:p:m:', ['help', 'save', 'intelligence', 'cuda',
+                                                          'directory=',
+                                                          'output-length=',
+                                                          'prompt=',
+                                                          'model='])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -192,11 +193,13 @@ def genius_chatbot(argv):
             sys.exit()
         elif opt in ('-o', '--output-length'):
             geniusbot_chat.set_output_length(int(arg))
+        elif opt in ('-c', '--cuda'):
+            geniusbot_chat.set_device('cuda')
         elif opt in ('-d', '--directory'):
             if os.path.exists(arg):
                 geniusbot_chat.set_model_path(arg)
             else:
-                print(f"Path does not exist: {arg}")
+                print(f'Path does not exist: {arg}')
                 sys.exit(1)
         elif opt in ('-i', '--intelligence'):
             geniusbot_chat.scale_intelligence()
@@ -213,10 +216,10 @@ def genius_chatbot(argv):
         geniusbot_chat.save_model()
 
     if run_flag:
-        print("RAM Utilization Before Loading Model")
+        print('RAM Utilization Before Loading Model')
         geniusbot_chat.check_hardware()
         geniusbot_chat.load_model()
-        print("RAM Utilization After Loading Model")
+        print('RAM Utilization After Loading Model')
         geniusbot_chat.check_hardware()
         print(geniusbot_chat.chat(prompt))
 
@@ -228,7 +231,7 @@ def main():
     genius_chatbot(sys.argv[1:])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     if len(sys.argv) < 2:
         usage()
         sys.exit(2)
