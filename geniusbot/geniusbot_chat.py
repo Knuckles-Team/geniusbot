@@ -142,8 +142,11 @@ def geniusbot_chat(argv):
     prompt = "Geniusbot is the smartest chatbot in existence."
 
     try:
-        opts, args = getopt.getopt(argv, "hrsd:o:p:m:", ["help", "save", "run", "directory=", "output-length=",
-                                                        "prompt=", "model="])
+        opts, args = getopt.getopt(argv, "hrsd:o:p:m:", ["help", "save", "run", 
+                                                         "directory=", 
+                                                         "output-length=",
+                                                         "prompt=", 
+                                                         "model="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -175,7 +178,6 @@ def geniusbot_chat(argv):
         geniusbot_chat.check_hardware()
         print("I'm a friendly artificial intelligence designed to help you with your computer. I can download videos, manage your media library, take full page screenshots of any website, adjust subtitles, and much more")
         print(geniusbot_chat.chat(prompt))
-
 
 
 def main():
