@@ -1,11 +1,11 @@
 PyQt5>=5.15.7
 winshell>=0.6; platform_system == "Windows"
 pypiwin32; platform_system == "Windows"
-media-downloader>=0.2.0
-media-manager>=0.2.0
-report-manager>=0.6.0
-repository-manager>=0.2.1
-subshift>=0.6.0
-webarchiver>=0.4.0
-systems-manager>=0.2.0
-genius-chatbot>=0.3.0
+media-downloader>=0.3.0
+media-manager>=0.3.0
+report-manager>=0.7.0
+repository-manager>=0.3.0
+subshift>=0.7.0
+webarchiver>=0.5.0
+systems-manager>=0.3.0
+genius-chatbot>=0.4.0
