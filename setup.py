@@ -27,9 +27,7 @@ setup(
     author=__author__,
     author_email='knucklessg1@gmail.com',
     license='Unlicensed',
-    packages=[
-        'geniusbot',
-    ],
+    packages=['geniusbot'],
     include_package_data=True,
     install_requires=[str(requirement.requirement) for requirement in requirements],
     py_modules=['geniusbot'],
