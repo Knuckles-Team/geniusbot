@@ -160,12 +160,15 @@ class ChatBot:
 
 def usage():
     print(f"Usage:\n"
-          f"-h | --help [ See usage for script ]\n"
-          f"-r | --run  [ Run Chat ]\n"
-          f"-m | --mode [ \"+\"/\"-\" ]\n"
-          f"-t | --time [ Time in seconds to shift ]\n"
+          f"-h | --help          [ See usage for script ]\n"
+          f"-s | --save          [ Save model locally ]\n"
+          f"-i | --intelligence  [ Autoscale intelligence for hardware ]\n"
+          f"-d | --directory     [ Directory for model ]\n"
+          f"-o | --output-length [ Maximum output length of response ]\n"
+          f"-p | --prompt        [ Prompt for chatbot ]\n"
+          f"-m | --model         [ Model to use from Huggingface ]\n\n"
           f"Example:\n"
-          f"genius-chatbot --run --model 'facebook/opt-66b' --output-length '500' "
+          f"genius-chatbot --model 'facebook/opt-66b' --output-length '500' "
           f"--prompt 'Chatbots are cool because they'")
 
 
