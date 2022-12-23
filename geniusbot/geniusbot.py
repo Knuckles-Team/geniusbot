@@ -3,6 +3,7 @@
 
 import os
 import sys
+import re
 import pandas as pd
 import subshift
 from io import StringIO
@@ -102,27 +103,31 @@ class GeniusBotWorker(QObject):
         self.geniusbot_chatbot = geniusbot_chatbot
         self.geniusbot_chat = geniusbot_chat
         self.text = text
+        self.default_text = "Hello, my name is Geniusbot and I'm an artificially intelligent robot that can help you with"
+
 
     def run(self):
         """Long-running task."""
         old_text = self.geniusbot_chat.text()
         if self.geniusbot_chatbot.get_loaded() is False:
-            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n
-                                        [Genius Bot] Attempting to load intelligence...""")
+            self.geniusbot_chat.setText(f"{self.geniusbot_chat.text()}\n"
+                                        f"[Genius Bot] Attempting to load intelligence...")
             self.geniusbot_chatbot.set_output_length(output_length=500)
             self.geniusbot_chatbot.scale_intelligence()
             self.geniusbot_chatbot.load_model()
-            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Loaded 
-                                        {self.geniusbot_chatbot.get_intelligence_level()} intelligence level!""")
-        response = self.geniusbot_chatbot.chat(self.text)
-        import re
-        if response != self.text:
-            response = re.sub(self.text, "", response)
-            response = re.sub("^\?", "", response)
-            response = re.sub("^\.", "", response)
-            response = re.sub("^\!", "", response)
-            response = response.lstrip()
-        self.geniusbot_chat.setText(f"""{old_text}\n[Genius Bot] {response}""")
+            self.geniusbot_chat.setText(f"{self.geniusbot_chat.text()}\n"
+                                        f"[Genius Bot] Loaded {self.geniusbot_chatbot.get_intelligence_level()} "
+                                        f"intelligence level!")
+        if self.text == '':
+            self.text = self.default_text
+        self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] Processing ...")
+        response = self.geniusbot_chatbot.chat(prompt=self.text)
+        # if self.text != self.default_text:
+        #     response = re.sub(self.text, '', response)
+        #     response = re.sub("^\?", "", response)
+        #     response = re.sub("^\.", "", response)
+        #     response = re.sub("^\!", "", response)
+        self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response}")
         self.progress.emit(100)
         self.finished.emit()
 
@@ -453,7 +458,7 @@ class GeniusBot(QMainWindow):
         self.setWindowTitle(f"Genius Bot")
         self.setWindowIcon(QIcon(f'{os.path.dirname(os.path.realpath(__file__))}/img/geniusbot.ico'))
         self.setStyleSheet("background-color: #bfc3c9;")
-        self.resize(1080, 960)
+        self.resize(800, 640)
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
 
