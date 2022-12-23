@@ -1,5 +1,6 @@
 PyQt5>=5.15.7
 winshell>=0.6; platform_system == "Windows"
+pypiwin32; platform_system == "Windows"
 media-downloader>=0.2.0
 media-manager>=0.2.0
 report-manager>=0.6.0
