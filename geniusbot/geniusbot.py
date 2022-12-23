@@ -3,26 +3,22 @@
 
 import os
 import sys
-
 import pandas as pd
 import subshift
 from io import StringIO
 from pathlib import Path
-from PyQt5.QtGui import QIcon, QFont, QTextCursor
+from PyQt5.QtGui import QIcon, QFont
 from webarchiver import Webarchiver
 from media_downloader import MediaDownloader
 from media_manager import MediaManager
 from report_manager import ReportManager
 from repository_manager import Git
+from genius_chatbot import ChatBot
 
 pd.set_option('display.max_rows', 250)
 pd.set_option('display.max_columns', 9)
 pd.set_option('display.expand_frame_repr', False)
 
-try:
-    from geniusbot.genius_chatbot import ChatBot
-except Exception as e:
-    from genius_chatbot import ChatBot
 try:
     from geniusbot.version import __version__, __author__, __credits__
 except Exception as e:
@@ -54,7 +50,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QTabWidget,
-    QGridLayout, QFormLayout, QHBoxLayout, QRadioButton, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
+    QGridLayout, QHBoxLayout, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
     QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit, QListWidget, QAbstractItemView
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
@@ -111,12 +107,14 @@ class GeniusBotWorker(QObject):
         """Long-running task."""
         old_text = self.geniusbot_chat.text()
         if self.geniusbot_chatbot.get_loaded() is False:
-            self.geniusbot_chat.setText(
-                f"""{self.geniusbot_chat.text()}\n[Genius Bot] Attempting to load intelligence...""")
+            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n
+                                        [Genius Bot] Attempting to load intelligence...""")
+            self.geniusbot_chatbot.set_output_length(output_length="1000")
+            self.geniusbot_chatbot.scale_intelligence()
             self.geniusbot_chatbot.load_model()
-            self.geniusbot_chat.setText(
-                f"""{self.geniusbot_chat.text()}\n[Genius Bot] Loaded {self.geniusbot_chatbot.get_intelligence_level()} intelligence level!""")
-        response = self.geniusbot_chatbot.chat(self.text, output_length=40)
+            self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[Genius Bot] Loaded 
+                                        {self.geniusbot_chatbot.get_intelligence_level()} intelligence level!""")
+        response = self.geniusbot_chatbot.chat(self.text)
         import re
         if response != self.text:
             response = re.sub(self.text, "", response)
