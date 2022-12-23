@@ -20,9 +20,9 @@ pd.set_option('display.max_columns', 9)
 pd.set_option('display.expand_frame_repr', False)
 
 try:
-    from geniusbot.geniusbot_chat import ChatBot
+    from geniusbot.genius_chatbot import ChatBot
 except Exception as e:
-    from geniusbot_chat import ChatBot
+    from genius_chatbot import ChatBot
 try:
     from geniusbot.version import __version__, __author__, __credits__
 except Exception as e:
