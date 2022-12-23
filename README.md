@@ -12,7 +12,7 @@ Click the arrows on the left of each of the items below to see more information 
 <details >
 <summary style="text-align:left; font-size:111%; color:black;"><b> Geniusbot Chat </b></summary>
 <br>
-Chat with your friendly Geniusbot. 
+Chat with your friendly and extremely intelligent Geniusbot. 
 
 Powered by Artificial Intelligence scaled to your PC's performance!
 
