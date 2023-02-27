@@ -174,7 +174,7 @@ class WebarchiverWorker(QObject):
 
         for website_index in range(0, len(self.websites)):
             self.webarchiver.append_link(self.websites[website_index])
-            self.webarchiver.fullpage_screenshot(url=self.websites[website_index], zoom_percentage=self.zoom,
+            self.webarchiver.full_page_screenshot(url=self.websites[website_index], zoom_percentage=self.zoom,
                                                  filetype=self.filetype)
             self.progress.emit(int(((1 + website_index) / len(self.websites)) * 100))
             self.webarchiver.reset_links()
