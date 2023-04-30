@@ -3,7 +3,7 @@ winshell>=0.6; platform_system == "Windows"
 pypiwin32; platform_system == "Windows"
 media-downloader>=0.4.0
 media-manager>=0.48.0
-report-manager>=0.7.0
+report-manager>=0.8.0
 repository-manager>=0.5.0
 subshift>=0.7.0
 webarchiver>=0.10.0
