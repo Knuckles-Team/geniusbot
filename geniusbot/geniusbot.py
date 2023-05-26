@@ -6,43 +6,36 @@ import sys
 import pandas as pd
 from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont
-
 try:
     from webarchiver import Webarchiver
     webarchiver_installed = True
 except Exception as e:
     webarchiver_installed = False
-
 try:
     import subshift
     subshift_installed = True
 except Exception as e:
     subshift_installed = False
-
 try:
     from media_downloader import MediaDownloader
     media_downloader_installed = True
 except Exception as e:
     media_downloader_installed = False
-
 try:
     from media_manager import MediaManager
     media_manager_installed = True
 except Exception as e:
     media_manager_installed = False
-
 try:
     from report_manager import ReportManager
     report_manager_installed = True
 except Exception as e:
     report_manager_installed = False
-
 try:
     from repository_manager import Git
     repository_manager_installed = True
 except Exception as e:
     repository_manager_installed = False
-
 from genius_chatbot import ChatBot
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
@@ -57,38 +50,43 @@ from PyQt5.QtWidgets import (
     QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit, QListWidget, QAbstractItemView
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
+
 try:
     from geniusbot.version import __version__, __author__, __credits__
-    from geniusbot.workers.geniusbot_worker import GeniusBotWorker
+    from geniusbot.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.scrollable_widget import ScrollLabel
+    from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotWorker
     if subshift_installed:
-        from geniusbot.workers.subshift_worker import SubshiftWorker
+        from geniusbot.plugins.subshift_plugin import SubshiftWorker, subshift_tab
     if webarchiver_installed:
-        from geniusbot.workers.webarchiver_worker import WebarchiverWorker
+        from geniusbot.plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
     if media_downloader_installed:
-        from geniusbot.workers.media_downloader_worker import VideoWorker
+        from geniusbot.plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
     if media_manager_installed:
-        from geniusbot.workers.media_manager_worker import MediaWorker
+        from geniusbot.plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
     if report_manager_installed:
-        from geniusbot.workers.merge_report_worker import MergeReportWorker
+        from geniusbot.plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
     if repository_manager_installed:
-        from geniusbot.workers.repository_manager_worker import RepositoryManagerWorker
-    from geniusbot.workers.systems_manager_worker import SystemsManagerWorker
+        from geniusbot.plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
+    from geniusbot.plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
 except Exception as e:
     from version import __version__, __author__, __credits__
-    from workers.geniusbot_worker import GeniusBotWorker
+    from colors import yellow, green, orange, blue, red, purple
+    from qt.scrollable_widget import ScrollLabel
+    from plugins.geniusbot_chat_plugin import GeniusBotWorker
     if subshift_installed:
-        from workers.subshift_worker import SubshiftWorker
+        from plugins.subshift_plugin import SubshiftWorker, subshift_tab
     if webarchiver_installed:
-        from workers.webarchiver_worker import WebarchiverWorker
+        from plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
     if media_downloader_installed:
-        from workers.media_downloader_worker import VideoWorker
+        from plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
     if media_manager_installed:
-        from workers.media_manager_worker import MediaWorker
+        from plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
     if report_manager_installed:
-        from workers.merge_report_worker import MergeReportWorker
+        from plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
     if repository_manager_installed:
-        from workers.repository_manager_worker import RepositoryManagerWorker
-    from workers.systems_manager_worker import SystemsManagerWorker
+        from plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
+    from plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
 
 if os.name == "posix":
     import pwd
@@ -102,7 +100,6 @@ else:
 if sys.platform == 'win32':
     import winshell
     import ctypes
-
     myappid = f'knucklesteam.geniusbot.geniusbot.{__version__}'  # arbitrary string
     myappid.encode("utf-8")
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -110,13 +107,6 @@ if sys.platform == 'win32':
 pd.set_option('display.max_rows', 250)
 pd.set_option('display.max_columns', 9)
 pd.set_option('display.expand_frame_repr', False)
-
-yellow = "#FFA500"
-green = "#2E8B57"
-orange = "#FF7518"
-blue = "#4682B4"
-red = ""
-purple = ""
 
 
 class OutputWrapper(QObject):
@@ -149,70 +139,6 @@ class OutputWrapper(QObject):
             pass
 
 
-# class for scrollable label
-class ScrollLabel(QScrollArea):
-
-    # constructor
-    def __init__(self, *args, **kwargs):
-        QScrollArea.__init__(self, *args, **kwargs)
-        self.setStyleSheet("background-color: #211f1f;")
-
-        self.scroll_bar = self.verticalScrollBar()
-        # making widget resizable
-        self.setWidgetResizable(True)
-
-        # making qwidget object
-        content = QWidget(self)
-        self.setWidget(content)
-
-        # vertical box layout
-        lay = QVBoxLayout(content)
-
-        # creating label
-        self.label = QLabel(content)
-        self.label.setFont(QFont('Monospace', 10))
-        self.label.setStyleSheet("background-color: #211f1f; color: white;")
-
-        # setting alignment to the text
-        self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-
-        # making label multi-line
-        self.label.setWordWrap(True)
-
-        # adding label to the layout
-        lay.addWidget(self.label)
-
-        self.setHidden(True)
-
-    def setFont(self, font="Monospace"):
-        self.label.setFont(QFont(font, 10))
-
-    def setFontColor(self, background_color="#211f1f", color="white"):
-        self.label.setStyleSheet(f"background-color: {background_color}; color: {color};")
-        self.setStyleSheet(f"background-color: {background_color};")
-
-    # the setText method
-    def setText(self, text):
-        # setting text to the label
-        self.label.setText(text)
-
-    def setScrollWheel(self, location="Top"):
-        if location == "Bottom":
-            self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(self.scroll_bar.maximum()))
-        else:
-            self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(0))
-
-    # the text() method
-    def text(self):
-        return self.label.text()
-
-    def hide(self):
-        if self.isHidden():
-            self.setHidden(False)
-        else:
-            self.setHidden(True)
-
-
 class GeniusBot(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -236,6 +162,21 @@ class GeniusBot(QMainWindow):
         self.tab_widget = None
         self.repository_links_editor = None
         self.geniusbot_chatbot = ChatBot()
+        self.web_links_label = None
+        self.web_links_editor = None
+        self.archive_button = None
+        self.open_webfile_button = None
+        self.open_webfile_label = None
+        self.save_web_location_button = None
+        self.save_web_location_label = None
+        self.web_dpi_label = None
+        self.web_dpi_spin_box = None
+        self.web_file_type_label = None
+        self.web_links_file_type = None
+        self.web_zoom_label = None
+        self.web_zoom_spin_box = None
+        self.web_progress_bar = None
+        self.file_type_combobox = None
         self.initialize_user_interface()
 
     def initialize_user_interface(self):
@@ -257,31 +198,31 @@ class GeniusBot(QMainWindow):
             self.video_downloader = MediaDownloader()
             self.tab2 = QWidget()
             self.tab_widget.addTab(self.tab2, "Tab 2")
-            self.tab2_media_downloader()
+            media_downloader_tab(self)
         if media_manager_installed:
             self.media_manager = MediaManager()
             self.tab3 = QWidget()
             self.tab_widget.addTab(self.tab3, "Tab 3")
-            self.tab3_media_manager()
+            media_manager_tab(self)
         if webarchiver_installed:
             self.webarchiver = Webarchiver()
             self.tab4 = QWidget()
             self.tab_widget.addTab(self.tab4, "Tab 4")
-            self.tab4_webarchiver()
+            webarchiver_tab(self)
         if subshift_installed:
             self.tab5 = QWidget()
             self.tab_widget.addTab(self.tab5, "Tab 5")
-            self.tab5_subshift()
+            subshift_tab(self)
         if report_manager_installed:
             self.report_manager = ReportManager()
             self.tab6 = QWidget()
             self.tab_widget.addTab(self.tab6, "Tab 6")
-            self.tab6_report_manager()
+            report_manager_tab(self)
         if repository_manager_installed:
             self.repository_manager = Git()
             self.tab7 = QWidget()
             self.tab_widget.addTab(self.tab7, "Tab 7")
-            self.tab7_repository_manager()
+            repository_manager_tab(self)
 
         self.tab_widget.addTab(self.tab8, "Tab 8")
         self.tab8_settings()
@@ -314,14 +255,6 @@ class GeniusBot(QMainWindow):
         self.centralWidget.setLayout(layout)
 
     def tab1_home(self):
-        # self.console = QLabel(
-        #     f"""GeniusBot at your service! What can we help you with?\n
-        #     1. Video Downloader\n
-        #     2. Web Archiver\n
-        #     3. Analytical Profiler\n
-        #     4. Report Merger\n
-        #     5. Subtitle Shifter\n
-        # """)
         self.geniusbot_chat = ScrollLabel(self)
         self.geniusbot_chat.hide()
         self.geniusbot_chat.setFontColor(background_color="white", color="black")
@@ -329,353 +262,20 @@ class GeniusBot(QMainWindow):
             f"""[Genius Bot] ZzzzZzzz... (It appears Genius Bot is sleeping, click "Wake Up!")""")
         self.chat_editor = QTextEdit()
         self.chat_editor.installEventFilter(self)
-
-        # self.geniusbot_train_button = QPushButton("Wake Up!")
-        # self.geniusbot_train_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        # self.geniusbot_train_button.clicked.connect(self.chattybot_response)
         self.geniusbot_send_button = QPushButton("Wake Up!")
         self.geniusbot_send_button.setStyleSheet(
             f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.geniusbot_send_button.clicked.connect(self.chattybot_response)
-        # self.geniusbot_send_button.hide()
         self.chat_editor.setDisabled(False)
         layout = QVBoxLayout()
         layout.addWidget(self.geniusbot_chat)
         layout.addWidget(self.chat_editor)
-        # layout.addWidget(self.geniusbot_train_button)
         layout.addWidget(self.geniusbot_send_button)
         layout.setStretch(0, 24)
         layout.setStretch(1, 3)
         layout.setStretch(2, 1)
         self.tab_widget.setTabText(0, "Genius Bot Chat")
         self.tab1.setLayout(layout)
-
-    def tab2_media_downloader(self):
-        # Video Download Widgets
-        self.video_links_label = QLabel("Paste Video URL(s) Below ↴")
-        self.video_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
-        self.video_links_editor = QPlainTextEdit()
-        self.channel_field_label = QPushButton("Channel/User")
-        self.channel_field_label.setStyleSheet(f"background-color: {yellow}; color: white; font: bold;")
-        self.channel_field_label.clicked.connect(self.add_channel_videos)
-        self.channel_field_editor = QLineEdit()
-        self.video_download_button = QPushButton("Download ￬")
-        self.video_download_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.video_download_button.clicked.connect(self.download_videos)
-        self.open_video_file_button = QPushButton("Open File")
-        self.open_video_file_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.open_video_file_button.clicked.connect(self.open_video_file)
-        self.video_open_file_label = QLabel("None")
-        self.video_save_location_button = QPushButton("Save Location")
-        self.video_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-        self.video_save_location_button.clicked.connect(self.save_location)
-        self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.video_type_label = QLabel("Filetype")
-        self.video_type_combobox = QComboBox()
-        self.video_type_combobox.addItems(['Video', 'Audio'])
-        self.video_type_combobox.setItemText(0, "Video")
-        self.video_progress_bar = QProgressBar()
-
-        # Set the tab layout
-        video_layout = QGridLayout()
-        video_layout.addWidget(self.video_links_label, 0, 0, 1, 2)
-        video_layout.addWidget(self.video_links_editor, 1, 0, 1, 2)
-        video_layout.addWidget(self.video_type_label, 2, 0, 1, 1)
-        video_layout.addWidget(self.video_type_combobox, 2, 1, 1, 2)
-        video_layout.addWidget(self.channel_field_label, 3, 0, 1, 1)
-        video_layout.addWidget(self.channel_field_editor, 3, 1, 1, 1)
-        video_layout.addWidget(self.open_video_file_button, 4, 0, 1, 1)
-        video_layout.addWidget(self.video_open_file_label, 4, 1, 1, 2)
-        video_layout.addWidget(self.video_save_location_button, 5, 0, 1, 1)
-        video_layout.addWidget(self.video_save_location_label, 5, 1, 1, 2)
-        video_layout.addWidget(self.video_download_button, 6, 0, 1, 2)
-        video_layout.addWidget(self.video_progress_bar, 7, 0, 1, 2)
-        video_layout.setContentsMargins(3, 3, 3, 3)
-        self.tab_widget.setTabText(1, "Media Downloader")
-        self.tab2.setLayout(video_layout)
-
-    def tab3_media_manager(self):
-        media_manager_layout = QGridLayout()
-        self.media_manager_media_location_button = QPushButton("Media Location")
-        self.media_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-        self.media_manager_media_location_button.clicked.connect(self.media_manager_media_location)
-        self.media_manager_media_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.media_manager_move_location_button = QPushButton("Move Location")
-        self.media_manager_move_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.media_manager_move_location_button.clicked.connect(self.media_manager_move_location)
-        self.media_manager_move_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.subtitle_ticker = QCheckBox("Apply Subtitles")
-        self.move_ticker = QCheckBox("Move Media")
-        self.media_manager_files_label = ScrollLabel(self)
-        self.media_manager_files_label.hide()
-        self.media_manager_files_label.setText(f"Media files found will be shown here\n")
-        self.media_manager_files_label.setFont("Arial")
-        self.media_manager_files_label.setFontColor(background_color="white", color="black")
-        self.media_manager_files_label.setScrollWheel("Top")
-        self.media_manager_run_button = QPushButton("Run ⥀")
-        self.media_manager_run_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.media_manager_run_button.clicked.connect(self.manage_media)
-        media_manager_layout.addWidget(self.media_manager_media_location_button, 0, 0, 1, 1)
-        media_manager_layout.addWidget(self.media_manager_media_location_label, 0, 1, 1, 1)
-        media_manager_layout.addWidget(self.media_manager_move_location_button, 1, 0, 1, 1)
-        media_manager_layout.addWidget(self.media_manager_move_location_label, 1, 1, 1, 1)
-        media_manager_layout.addWidget(self.move_ticker, 2, 0, 1, 1)
-        media_manager_layout.addWidget(self.subtitle_ticker, 2, 1, 1, 1)
-        media_manager_layout.addWidget(self.media_manager_files_label, 3, 0, 1, 2)
-        media_manager_layout.addWidget(self.media_manager_run_button, 4, 0, 1, 2)
-        self.tab_widget.setTabText(2, "Media Manager")
-        self.tab3.setLayout(media_manager_layout)
-
-    def tab4_webarchiver(self):
-        # Video Download Widgets
-        self.web_links_label = QLabel("Paste Website URL(s) Below ↴")
-        self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
-        self.web_links_editor = QPlainTextEdit()
-        self.archive_button = QPushButton("Archive ￬")
-        self.archive_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.archive_button.clicked.connect(self.screenshot_websites)
-        self.open_webfile_button = QPushButton("Open File")
-        self.open_webfile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.open_webfile_button.clicked.connect(self.open_webfile)
-        self.open_webfile_label = QLabel("None")
-        self.save_web_location_button = QPushButton("Save Location")
-        self.save_web_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-        self.save_web_location_button.clicked.connect(self.save_web_location)
-        self.save_web_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.web_dpi_label = QLabel("DPI")
-        self.web_dpi_spin_box = QSpinBox(self)
-        self.web_dpi_spin_box.setRange(0, 2)
-        self.web_dpi_spin_box.setValue(1)
-        self.web_file_type_label = QLabel("Filetype")
-        self.web_links_file_type = QComboBox()
-        self.web_links_file_type.addItems(['PNG', 'JPEG'])
-        self.web_zoom_label = QLabel("Zoom")
-        self.web_zoom_spin_box = QSpinBox(self)
-        self.web_zoom_spin_box.setRange(50, 200)
-        self.web_zoom_spin_box.setValue(100)
-        self.web_progress_bar = QProgressBar()
-
-        # Set the tab layout
-        webarchiver_layout = QGridLayout()
-        webarchiver_layout.addWidget(self.web_links_label, 0, 0, 1, 6)
-        webarchiver_layout.addWidget(self.web_links_editor, 1, 0, 1, 6)
-        webarchiver_layout.addWidget(self.web_file_type_label, 2, 0, 1, 1, alignment=Qt.AlignRight)
-        webarchiver_layout.addWidget(self.web_links_file_type, 2, 1, 1, 1)
-        webarchiver_layout.addWidget(self.web_dpi_label, 2, 2, 1, 1, alignment=Qt.AlignRight)
-        webarchiver_layout.addWidget(self.web_dpi_spin_box, 2, 3, 1, 1)
-        webarchiver_layout.addWidget(self.web_zoom_label, 2, 4, 1, 1, alignment=Qt.AlignRight)
-        webarchiver_layout.addWidget(self.web_zoom_spin_box, 2, 5, 1, 1)
-        webarchiver_layout.addWidget(self.open_webfile_button, 3, 0, 1, 1)
-        webarchiver_layout.addWidget(self.open_webfile_label, 3, 1, 1, 4)
-        webarchiver_layout.addWidget(self.save_web_location_button, 4, 0, 1, 1)
-        webarchiver_layout.addWidget(self.save_web_location_label, 4, 1, 1, 4)
-        webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 6)
-        webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
-        webarchiver_layout.setContentsMargins(3, 3, 3, 3)
-        self.tab_widget.setTabText(3, "Website Archive")
-        self.tab4.setLayout(webarchiver_layout)
-
-    def tab5_subshift(self):
-        self.open_subtitlefile_button = QPushButton("Open File")
-        self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.open_subtitlefile_button.clicked.connect(self.open_subtitlefile)
-        self.shift_subtitle_button = QPushButton("Shift Subtitles ↹")
-        self.shift_subtitle_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.shift_subtitle_button.clicked.connect(self.shift_subtitle)
-
-        # self.subtitle_label = QLabel(self)
-        self.subtitle_label = ScrollLabel(self)
-        self.subtitle_label.hide()
-        self.subtitle_label.setText(f"Subtitle file contents will be shown here\n")
-        self.subtitle_label.setFont("Arial")
-        self.subtitle_label.setFontColor(background_color="white", color="black")
-        self.subtitle_label.setScrollWheel("Top")
-        self.subtitle_menu_widget = QWidget(self)
-        menu_layout = QHBoxLayout()
-        self.open_subtitlefile_label = QLabel("None")
-        self.shift_time_label = QLabel("Shift Time")
-        self.sub_time_spin_box = QSpinBox(self)
-        self.sub_time_spin_box.setRange(-2147483646, 2147483646)
-        self.sub_time_spin_box.setValue(0)
-        self.sub_time_spin_box.valueChanged.connect(self.check_subtitle_seconds)
-        self.shift_subtitle_button.setEnabled(False)
-        layout = QGridLayout()
-        menu_layout.addWidget(self.shift_time_label)
-        menu_layout.addWidget(self.sub_time_spin_box)
-        menu_layout.addWidget(self.open_subtitlefile_button)
-        menu_layout.addWidget(self.open_subtitlefile_label)
-        menu_layout.setStretch(0, 1)
-        menu_layout.setStretch(1, 1)
-        menu_layout.setStretch(2, 3)
-        menu_layout.setStretch(3, 24)
-
-        self.subtitle_menu_widget.setLayout(menu_layout)
-        layout.addWidget(self.subtitle_menu_widget, 0, 0, 1, 1)
-        layout.addWidget(self.shift_subtitle_button, 2, 0, 1, 1)
-        layout.addWidget(self.subtitle_label, 3, 0, 1, 1)
-        self.tab_widget.setTabText(4, "Shift Subtitles")
-        self.tab5.setLayout(layout)
-
-    def tab6_report_manager(self):
-        self.report_manager_layout = QGridLayout()
-        self.action_type_combobox = QComboBox()
-        self.action_type_combobox.addItems(['Generate Report', 'Merge Reports'])
-        self.action_type_combobox.setItemText(0, "Generate Report")
-        self.action_type_combobox.activated.connect(self.swap_report_layout)
-        self.custom_report_widget = QWidget(self)
-        self.merge_widget = QWidget(self)
-        self.custom_report_layout = QGridLayout()
-        self.merge_report_layout = QGridLayout()
-        self.custom_report_layout.setContentsMargins(0, 0, 0, 0)
-        self.merge_report_layout.setContentsMargins(0, 0, 0, 0)
-        self.custom_report_widget.setLayout(self.custom_report_layout)
-        self.merge_widget.setLayout(self.merge_report_layout)
-        self.report_manager_layout.addWidget(self.action_type_combobox, 0, 0, 1, 1)
-        self.report_manager_layout.addWidget(self.custom_report_widget, 1, 0, 1, 1)
-        self.report_manager_layout.addWidget(self.merge_widget, 2, 0, 1, 1)
-        self.pandas_profiling_ticker = QCheckBox("Pandas Profiling")
-        self.custom_report_ticker = QCheckBox("Custom Report")
-        self.custom_report_generate_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.custom_report_generate_button = QPushButton("Generate ⦽")
-        self.custom_report_generate_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.custom_report_generate_button.clicked.connect(self.report_manage)
-        self.report_file_location_button = QPushButton("Data File")
-        self.custom_data_file_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.report_file_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.report_file_location_button.clicked.connect(self.open_report_manager_file)
-        self.generated_report_save_location_button = QPushButton("Save Location")
-        self.generated_report_save_location_button.setStyleSheet(
-            f"background-color: {orange}; color: white; font: bold;")
-        self.generated_report_save_location_button.clicked.connect(self.report_manager_save_location)
-        self.report_name_label = QLabel("Report Name: ")
-        self.report_name_editor = QLineEdit("Report Name")
-        self.file_type_label = QLabel("Export Filetype")
-        self.file_type_combobox = QComboBox()
-        self.file_type_combobox.addItems(['CSV', 'XLSX'])
-        self.file_type_combobox.setItemText(1, "XLSX")
-        self.dataframe_label = ScrollLabel(self)
-        self.dataframe_label.setText(f"Dataframe will appear here\n")
-        self.dataframe_label.setFont("Arial")
-        self.dataframe_label.setFontColor(background_color="white", color="black")
-        self.dataframe_label.setScrollWheel("Top")
-        self.dataframe_label.hide()
-        self.custom_report_layout.addWidget(self.generated_report_save_location_button, 0, 0, 1, 1)
-        self.custom_report_layout.addWidget(self.custom_report_generate_label, 0, 1, 1, 5)
-        self.custom_report_layout.addWidget(self.report_file_location_button, 1, 0, 1, 1)
-        self.custom_report_layout.addWidget(self.custom_data_file_label, 1, 1, 1, 5)
-        self.custom_report_layout.addWidget(self.report_name_label, 2, 0, 1, 1)
-        self.custom_report_layout.addWidget(self.report_name_editor, 2, 1, 1, 1)
-        self.custom_report_layout.addWidget(self.file_type_label, 2, 2, 1, 1)
-        self.custom_report_layout.addWidget(self.file_type_combobox, 2, 3, 1, 1)
-        self.custom_report_layout.addWidget(self.pandas_profiling_ticker, 2, 4, 1, 1)
-        self.custom_report_layout.addWidget(self.custom_report_ticker, 2, 5, 1, 1)
-        self.custom_report_layout.addWidget(self.dataframe_label, 4, 0, 1, 6)
-        self.custom_report_layout.addWidget(self.custom_report_generate_button, 5, 0, 1, 6)
-
-        self.merged_report_save_location_button = QPushButton("Save Location")
-        self.merged_report_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-        self.merged_report_save_location_button.clicked.connect(self.report_merger_save_location)
-        self.merged_report_save_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.merged_report_name_label = QLabel("Report Name: ")
-        self.merged_report_name_editor = QLineEdit("Report Name")
-        self.merge_file_type_label = QLabel("Export Filetype")
-        self.merge_file_type_combobox = QComboBox()
-        self.merge_file_type_combobox.addItems(['CSV', 'XLSX'])
-        self.merge_file_type_combobox.setItemText(1, "XLSX")
-        self.merge_file1_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.merge_file2_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.merge_file1_location_button = QPushButton("Open Data File 1")
-        self.merge_file2_location_button = QPushButton("Open Data File 2")
-        self.merge_file1_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.merge_file2_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.merge_file1_location_button.clicked.connect(self.open_data1_file)
-        self.merge_file2_location_button.clicked.connect(self.open_data2_file)
-        self.file1_columns = QListWidget()
-        self.file2_columns = QListWidget()
-        self.file1_columns.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.file2_columns.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.merge_type_label = QLabel("Merge Type: ")
-        self.merge_type_combobox = QComboBox()
-        self.merge_type_combobox.addItems(['Inner', 'Outer', 'Right', 'Left', 'Append'])
-        self.merge_type_combobox.setItemText(0, "Inner")
-        self.merge_button = QPushButton("Merge ⦽")
-        self.merge_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.merge_button.clicked.connect(self.merge_reports)
-        self.merge_report_layout.addWidget(self.merged_report_name_label, 0, 0, 1, 1)
-        self.merge_report_layout.addWidget(self.merged_report_name_editor, 0, 1, 1, 3)
-        self.merge_report_layout.addWidget(self.merge_file_type_label, 1, 0, 1, 1)
-        self.merge_report_layout.addWidget(self.merge_file_type_combobox, 1, 1, 1, 3)
-        self.merge_report_layout.addWidget(self.merged_report_save_location_button, 2, 0, 1, 1)
-        self.merge_report_layout.addWidget(self.merged_report_save_location_label, 2, 1, 1, 3)
-        self.merge_report_layout.addWidget(self.merge_file1_location_button, 3, 0, 1, 1)
-        self.merge_report_layout.addWidget(self.merge_file1_label, 3, 1, 1, 1)
-        self.merge_report_layout.addWidget(self.merge_file2_location_button, 3, 2, 1, 1)
-        self.merge_report_layout.addWidget(self.merge_file2_label, 3, 3, 1, 1)
-        self.merge_report_layout.addWidget(self.file1_columns, 4, 0, 1, 2)
-        self.merge_report_layout.addWidget(self.file2_columns, 4, 2, 1, 2)
-        self.merge_report_layout.addWidget(self.merge_type_label, 5, 0, 1, 1)
-        self.merge_report_layout.addWidget(self.merge_type_combobox, 5, 1, 1, 3)
-        self.merge_report_layout.addWidget(self.merge_button, 6, 0, 1, 4)
-        self.merge_widget.hide()
-        self.tab_widget.setTabText(5, "Report Manager")
-        self.tab6.setLayout(self.report_manager_layout)
-
-    def tab7_repository_manager(self):
-        repository_manager_layout = QGridLayout()
-        self.repository_manager_repositories_location_button = QPushButton("Repositories Location")
-        self.repository_manager_repositories_location_button.setStyleSheet(
-            f"background-color: {orange}; color: white; font: bold;")
-        self.repository_manager_repositories_location_button.clicked.connect(
-            self.repository_manager_repositories_location)
-        self.repository_manager_repositories_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.repository_manager_repositories_file_location_button = QPushButton("Repositories File Location")
-        self.repository_manager_repositories_file_location_button.setStyleSheet(
-            f"background-color: {green}; color: white; font: bold;")
-        self.repository_manager_repositories_file_location_button.clicked.connect(self.open_repository_manager_file)
-        self.repository_manager_repositories_file_location_label = QLabel(
-            f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.clone_ticker = QCheckBox("Clone")
-        self.pull_ticker = QCheckBox("Pull")
-        self.clone_ticker.setChecked(True)
-        self.pull_ticker.setChecked(True)
-        self.set_default_branch_ticker = QCheckBox("Checkout Default Branch")
-        self.repository_git_command_label = QLabel("Git Command: ")
-        self.repository_git_command_label.setStyleSheet(f"color: black; font-size: 11pt;")
-        self.repository_git_command = QLineEdit()
-        self.repository_links_editor_label = QLabel("Paste Repository URL(s) Below ↴")
-        self.repository_links_editor_label.setStyleSheet(f"color: black; font-size: 11pt;")
-        self.repository_links_editor = QPlainTextEdit()
-        self.repository_manager_files_label = ScrollLabel(self)
-        self.repository_manager_files_label.hide()
-        self.repository_manager_files_label.setText(f"Repositories will be shown here\n")
-        self.repository_manager_files_label.setFont("Arial")
-        self.repository_manager_files_label.setFontColor(background_color="white", color="black")
-        self.repository_manager_files_label.setScrollWheel("Top")
-        self.repository_manager_run_button = QPushButton("Run ⥀")
-        self.repository_manager_run_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-        self.repository_manager_run_button.clicked.connect(self.manage_repositories)
-        self.repositories_progress_bar = QProgressBar()
-        repository_manager_layout.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
-        repository_manager_layout.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 2)
-        repository_manager_layout.addWidget(self.repository_manager_repositories_file_location_button, 1, 0, 1, 1)
-        repository_manager_layout.addWidget(self.repository_manager_repositories_file_location_label, 1, 1, 1, 2)
-        repository_manager_layout.addWidget(self.clone_ticker, 2, 0, 1, 1)
-        repository_manager_layout.addWidget(self.pull_ticker, 2, 1, 1, 1)
-        repository_manager_layout.addWidget(self.set_default_branch_ticker, 2, 2, 1, 1)
-        repository_manager_layout.addWidget(self.repository_git_command_label, 3, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_git_command, 4, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_links_editor_label, 5, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_links_editor, 6, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
-        repository_manager_layout.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
-        self.tab_widget.setTabText(6, "Repository Manager")
-        self.tab7.setLayout(repository_manager_layout)
 
     def tab8_settings(self):
         layout = QHBoxLayout()
@@ -886,52 +486,7 @@ class GeniusBot(QMainWindow):
         self.subtitles = self.subtitles.strip()
         self.subtitle_label.setText(self.subtitles)
 
-    def screenshot_websites(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Taking screenshots...\n")
-        self.web_progress_bar.setValue(1)
-        websites = self.web_links_editor.toPlainText()
-        websites = websites.strip()
-        websites = websites.split('\n')
-        if websites[0] != '':
-            self.webarchiver_thread = QThread()
-            self.webarchiver_worker = WebarchiverWorker(self.webarchiver, websites, self.web_zoom_spin_box.value(),
-                                                        dpi=self.web_dpi_spin_box.value(),
-                                                        filetype=self.web_links_file_type.currentText())
-            self.webarchiver_worker.moveToThread(self.webarchiver_thread)
-            self.webarchiver_thread.started.connect(self.webarchiver_worker.run)
-            self.webarchiver_worker.finished.connect(self.webarchiver_thread.quit)
-            self.webarchiver_worker.finished.connect(self.webarchiver_worker.deleteLater)
-            self.webarchiver_thread.finished.connect(self.webarchiver_thread.deleteLater)
-            self.webarchiver_worker.progress.connect(self.report_web_progress_bar)
-            self.webarchiver_thread.start()
-            self.archive_button.setEnabled(False)
-            self.webarchiver_thread.finished.connect(
-                lambda: self.archive_button.setEnabled(True)
-            )
-            self.webarchiver_thread.finished.connect(
-                lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Screenshots captured!\n")
-            )
 
-    def open_webfile(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Website URL file\n")
-        website_file_name = QFileDialog.getOpenFileName(self, 'File with URL(s)')
-        print(website_file_name[0])
-        self.open_webfile_label.setText(website_file_name[0])
-
-        with open(website_file_name[0], 'r') as file:
-            websites = file.read()
-        websites = websites + self.web_links_editor.toPlainText()
-        websites = websites.strip()
-        self.web_links_editor.setPlainText(websites)
-
-    def save_web_location(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n")
-        web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
-                                                              QFileDialog.ShowDirsOnly)
-        if web_directory_name == None or web_directory_name == "":
-            web_directory_name = os.path.expanduser("~")
-        self.save_web_location_label.setText(web_directory_name)
-        self.webarchiver.set_save_path(web_directory_name)
 
     def report_video_progress_bar(self, n):
         self.video_progress_bar.setValue(n)
