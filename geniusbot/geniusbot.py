@@ -49,20 +49,17 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 try:
     from version import __version__, __author__, __credits__
 except Exception as e:
-    # from geniusbot.version import __version__, __author__, __credits__
     print(f"Unable to import version\nError: {e}")
 from qt.colors import yellow, green, orange, blue, red, purple
 try:
     from qt.scrollable_widget import ScrollLabel
 except Exception as e:
-    # from geniusbot.qt.scrollable_widget import ScrollLabel
     print(f"Unable to import custom Scroll Label\nError: {e}")
 
 try:
     from plugins.geniusbot_chat_plugin import GeniusBotWorker
 except Exception as e:
     print(f"Geniusbot Chat Installed, however, we encountered an issue importing the module\nError: {e}")
-    # from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotWorker
 if subshift_installed:
     print("Checking if subshift is installed first pass")
     from plugins.subshift_plugin import SubshiftWorker
@@ -82,8 +79,7 @@ if repository_manager_installed:
     from repository_manager import Git
     from plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
 from systems_manager import SystemsManager
-
-# from plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
+from plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
 
 if os.name == "posix":
     import pwd

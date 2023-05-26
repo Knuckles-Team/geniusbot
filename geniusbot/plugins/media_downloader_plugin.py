@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QLabel,
     QPlainTextEdit,
-    QLineEdit, QProgressBar
+    QLineEdit, QProgressBar, QComboBox
 )
 from PyQt5.QtCore import QObject, pyqtSignal
 from qt.colors import yellow, green, orange, blue, red, purple
@@ -36,7 +36,7 @@ def media_downloader_tab(self):
     self.video_save_location_button.clicked.connect(self.save_location)
     self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
     self.video_type_label = QLabel("Filetype")
-    self.video_type_combobox = QLineEdit()
+    self.video_type_combobox = QComboBox()
     self.video_type_combobox.addItems(['Video', 'Audio'])
     self.video_type_combobox.setItemText(0, "Video")
     self.video_progress_bar = QProgressBar()
