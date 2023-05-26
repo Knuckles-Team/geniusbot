@@ -115,6 +115,7 @@ class GeniusBot(QMainWindow):
         self.webarchiver = None
         self.media_manager = None
         self.video_downloader = None
+        self.systems_manager = None
         self.hide_console_button = None
         self.buttonsWidgetLayout = None
         self.buttonsWidget = None
@@ -127,6 +128,7 @@ class GeniusBot(QMainWindow):
         self.media_manager_tab = None
         self.media_downloader_tab = None
         self.geniusbot_chat_tab = None
+        self.systems_manager_tab = None
         self.tab_widget = None
         self.repository_links_editor = None
         self.geniusbot_chatbot = None
@@ -152,7 +154,7 @@ class GeniusBot(QMainWindow):
         self.setWindowTitle(f"Genius Bot")
         self.setWindowIcon(QIcon(f'{os.path.dirname(os.path.realpath(__file__))}/img/geniusbot.ico'))
         self.setStyleSheet("background-color: #bfc3c9;")
-        self.resize(800, 640)
+        self.resize(900, 640)
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
         self.tab_widget = QTabWidget()
@@ -171,6 +173,7 @@ class GeniusBot(QMainWindow):
             initialize_report_manager_tab(self)
         if repository_manager_installed:
             initialize_repository_manager_tab(self)
+        initialize_systems_manager_tab(self)
         self.settings_tab = QWidget()
         self.tab_widget.addTab(self.settings_tab, "⚙")
         self.settings_tab_settings()
