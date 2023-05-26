@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import pkg_resources
 sys.path.append("..")
 from PyQt5.QtWidgets import (
     QGridLayout,
@@ -10,7 +11,7 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QCheckBox,
-    QPlainTextEdit, QWidget
+    QPlainTextEdit, QWidget, QComboBox
 )
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from qt.colors import yellow, green, orange, blue, red, purple
@@ -18,43 +19,87 @@ from qt.scrollable_widget import ScrollLabel
 from systems_manager import SystemsManager
 
 
+def check_package(package="None"):
+    found = False
+    try:
+        dist = pkg_resources.get_distribution(package)
+        found = True
+    except pkg_resources.DistributionNotFound:
+        print('')
+    return found
+
+webarchiver_installed = check_package("webarchiver")
+subshift_installed = check_package("subshift")
+media_downloader_installed = check_package("media-downloader")
+media_manager_installed = check_package("media-manager")
+report_manager_installed = check_package("report-manager")
+repository_manager_installed = check_package("repository-manager")
+
+
 def initialize_systems_manager_tab(self):
     self.systems_manager = SystemsManager()
     self.systems_manager_tab = QWidget()
     self.tab_widget.addTab(self.systems_manager_tab, "Systems Manager")
     systems_manager_layout = QGridLayout()
-    # self.repository_manager_repositories_location_button = QPushButton("Repositories Location")
-    # self.repository_manager_repositories_location_button.setStyleSheet(
-    #     f"background-color: {orange}; color: white; font: bold;")
-    # self.repository_manager_repositories_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-    # self.repository_manager_repositories_file_location_button = QPushButton("Repositories File Location")
-    # self.repository_manager_repositories_file_location_button.setStyleSheet(
-    #     f"background-color: {green}; color: white; font: bold;")
-    # self.repository_manager_repositories_file_location_button.clicked.connect(self.open_repository_manager_file)
-    # self.repository_manager_repositories_file_location_label = QLabel(
-    #     f'{os.path.expanduser("~")}'.replace("\\", "/"))
-    # self.clone_ticker = QCheckBox("Clone")
-    # self.pull_ticker = QCheckBox("Pull")
-    # self.clone_ticker.setChecked(True)
-    # self.pull_ticker.setChecked(True)
-    # self.set_default_branch_ticker = QCheckBox("Checkout Default Branch")
-    # self.repository_git_command_label = QLabel("Git Command: ")
-    # self.repository_git_command_label.setStyleSheet(f"color: black; font-size: 11pt;")
-    # self.repository_git_command = QLineEdit()
-    # self.repository_links_editor_label = QLabel("Paste Repository URL(s) Below ↴")
-    # self.repository_links_editor_label.setStyleSheet(f"color: black; font-size: 11pt;")
-    # self.repository_links_editor = QPlainTextEdit()
-    # self.repository_manager_files_label = ScrollLabel(self)
-    # self.repository_manager_files_label.hide()
-    # self.repository_manager_files_label.setText(f"Repositories will be shown here\n")
-    # self.repository_manager_files_label.setFont("Arial")
-    # self.repository_manager_files_label.setFontColor(background_color="white", color="black")
-    # self.repository_manager_files_label.setScrollWheel("Top")
-    # self.repository_manager_run_button = QPushButton("Run ⥀")
-    # self.repository_manager_run_button.setStyleSheet(
-    #     f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-    # self.repository_manager_run_button.clicked.connect(self.manage_repositories)
-    # self.repositories_progress_bar = QProgressBar()
+    self.install_app_ticker = QCheckBox("Install Applications")
+    self.install_python_ticker = QCheckBox("Install Python Modules")
+    self.enable_windows_features_ticker = QCheckBox("Enable Windows Features")
+    if sys.platform != 'win32':
+        self.enable_windows_features_ticker.setEnabled(False)
+    self.install_theme_ticker = QCheckBox("Install Theme")
+    self.install_font_ticker = QCheckBox("Install Font")
+    self.update_ticker = QCheckBox("Update")
+    self.clean_ticker = QCheckBox("Clean")
+    self.silent_ticker = QCheckBox("Silent")
+    self.install_app_ticker.setChecked(False)
+    self.update_ticker.setChecked(False)
+    self.clean_ticker.setChecked(False)
+    self.theme_combobox = QComboBox()
+    self.theme_combobox.addItems(['Takayuma', 'Other'])
+    self.theme_combobox.setItemText(0, "Takayuma")
+    self.font_combobox = QComboBox()
+    self.font_combobox.addItems(['Hack NF', 'Meslo'])
+    self.font_combobox.setItemText(0, "Hack NF")
+    self.systems_manager_run_button = QPushButton("Run ⥀")
+    self.systems_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+    self.webarchiver_install_button = QCheckBox("Geniusbot - Webarchiver Plugin")
+    if webarchiver_installed:
+        self.webarchiver_install_button.setChecked(True)
+        self.webarchiver_install_button.setEnabled(False)
+    else:
+        self.webarchiver_install_button.setChecked(False)
+    self.subshift_install_button = QCheckBox("Geniusbot - Subshift Plugin")
+    if subshift_installed:
+        self.subshift_install_button.setChecked(True)
+        self.subshift_install_button.setEnabled(False)
+    else:
+        self.subshift_install_button.setChecked(False)
+    self.media_downloader_install_button = QCheckBox("Geniusbot - Media Downloader Plugin")
+    if media_downloader_installed:
+        self.media_downloader_install_button.setChecked(True)
+        self.media_downloader_install_button.setEnabled(False)
+    else:
+        self.media_downloader_install_button.setChecked(False)
+    self.media_manager_install_button = QCheckBox("Geniusbot - Media Manager Plugin")
+    if media_manager_installed:
+        self.media_manager_install_button.setChecked(True)
+        self.media_manager_install_button.setEnabled(False)
+    else:
+        self.media_manager_install_button.setChecked(False)
+    self.repository_manager_install_button = QCheckBox("Geniusbot - Repository Manager Plugin")
+    if repository_manager_installed:
+        self.repository_manager_install_button.setChecked(True)
+        self.repository_manager_install_button.setEnabled(False)
+    else:
+        self.repository_manager_install_button.setChecked(False)
+    self.report_manager_install_button = QCheckBox("Geniusbot - Report Manager Plugin")
+    if report_manager_installed:
+        self.report_manager_install_button.setChecked(True)
+        self.report_manager_install_button.setEnabled(False)
+    else:
+        self.report_manager_install_button.setChecked(False)
+    self.systems_manager_run_button.clicked.connect(manage_system)
+    self.system_progress_bar = QProgressBar()
     # systems_manager_layout.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
     # systems_manager_layout.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 2)
     # systems_manager_layout.addWidget(self.repository_manager_repositories_file_location_button, 1, 0, 1, 1)
@@ -69,8 +114,29 @@ def initialize_systems_manager_tab(self):
     # systems_manager_layout.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
     # systems_manager_layout.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
     # systems_manager_layout.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
+    systems_manager_layout.addWidget(self.update_ticker, 1, 0, 1, 1)
+    systems_manager_layout.addWidget(self.clean_ticker, 1, 1, 1, 1)
+    systems_manager_layout.addWidget(self.install_theme_ticker, 1, 2, 1, 1)
+    systems_manager_layout.addWidget(self.install_font_ticker, 1, 3, 1, 1)
+    systems_manager_layout.addWidget(self.theme_combobox, 2, 2, 1, 1)
+    systems_manager_layout.addWidget(self.font_combobox, 2, 3, 1, 1)
+    systems_manager_layout.addWidget(self.install_app_ticker, 3, 0, 1, 2)
+    systems_manager_layout.addWidget(self.install_python_ticker, 3, 1, 1, 1)
+    systems_manager_layout.addWidget(self.enable_windows_features_ticker, 3, 2, 1, 1)
+    systems_manager_layout.addWidget(self.webarchiver_install_button, 4, 1, 1, 1)
+    systems_manager_layout.addWidget(self.subshift_install_button, 5, 1, 1, 1)
+    systems_manager_layout.addWidget(self.media_downloader_install_button, 6, 1, 1, 1)
+    systems_manager_layout.addWidget(self.media_manager_install_button, 7, 1, 1, 1)
+    systems_manager_layout.addWidget(self.repository_manager_install_button, 8, 1, 1, 1)
+    systems_manager_layout.addWidget(self.report_manager_install_button, 9, 1, 1, 1)
+    systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
+    systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
     self.tab_widget.setTabText(7, "Systems Manager")
     self.systems_manager_tab.setLayout(systems_manager_layout)
+
+
+def manage_system(self):
+    print("TEST")
 
 
 class SystemsManagerWorker(QObject):
