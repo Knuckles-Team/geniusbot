@@ -1,40 +1,35 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import pkg_resources
+
+
+def check_package(package="None"):
+    found = False
+    try:
+        dist = pkg_resources.get_distribution(package)
+        print('{} ({}) is installed'.format(dist.key, dist.version))
+        found = True
+    except pkg_resources.DistributionNotFound:
+        print('{} is NOT installed'.format(package))
+    return found
 import os
 import sys
 import pandas as pd
 from pathlib import Path
-try:
-    from webarchiver import Webarchiver
-    webarchiver_installed = True
-except Exception as e:
-    webarchiver_installed = False
-try:
-    import subshift
-    subshift_installed = True
-except Exception as e:
-    subshift_installed = False
-try:
-    from media_downloader import MediaDownloader
-    media_downloader_installed = True
-except Exception as e:
-    media_downloader_installed = False
-try:
-    from media_manager import MediaManager
-    media_manager_installed = True
-except Exception as e:
-    media_manager_installed = False
-try:
-    from report_manager import ReportManager
-    report_manager_installed = True
-except Exception as e:
-    report_manager_installed = False
-try:
-    from repository_manager import Git
-    repository_manager_installed = True
-except Exception as e:
-    repository_manager_installed = False
+# webarchiver_installed = check_package("webarchiver")
+# subshift_installed = check_package("subshift")
+# media_downloader_installed = check_package("media-downloader")
+# media_manager_installed = check_package("media-manager")
+# report_manager_installed = check_package("report-manager")
+# repository_manager_installed = check_package("repository-manager")
+systems_manager_installed = check_package("systems-manager")
+webarchiver_installed = False
+subshift_installed = False
+media_downloader_installed = False
+media_manager_installed = False
+report_manager_installed = False
+repository_manager_installed = False
 from genius_chatbot import ChatBot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent
@@ -50,40 +45,61 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 try:
     from geniusbot.version import __version__, __author__, __credits__
+except Exception as e:
+    from version import __version__, __author__, __credits__
+try:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+except Exception as e:
+    from qt.colors import yellow, green, orange, blue, red, purple
+try:
     from geniusbot.qt.scrollable_widget import ScrollLabel
+except Exception as e:
+    from qt.scrollable_widget import ScrollLabel
+try:
     from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotWorker
+except Exception as e:
+    from plugins.geniusbot_chat_plugin import GeniusBotWorker
+try:
     if subshift_installed:
         from geniusbot.plugins.subshift_plugin import SubshiftWorker, subshift_tab
-    if webarchiver_installed:
-        from geniusbot.plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
-    if media_downloader_installed:
-        from geniusbot.plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
-    if media_manager_installed:
-        from geniusbot.plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
-    if report_manager_installed:
-        from geniusbot.plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
-    if repository_manager_installed:
-        from geniusbot.plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
-    from geniusbot.plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
-except:
-    from version import __version__, __author__, __credits__
-    from qt.colors import yellow, green, orange, blue, red, purple
-    from qt.scrollable_widget import ScrollLabel
-    from plugins.geniusbot_chat_plugin import GeniusBotWorker
+except Exception as e:
     if subshift_installed:
         from plugins.subshift_plugin import SubshiftWorker, subshift_tab
+try:
+    if webarchiver_installed:
+        from geniusbot.plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
+except Exception as e:
     if webarchiver_installed:
         from plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
+try:
+    if media_downloader_installed:
+        from geniusbot.plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
+except Exception as e:
     if media_downloader_installed:
         from plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
+try:
+    if media_manager_installed:
+        from geniusbot.plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
+except Exception as e:
     if media_manager_installed:
         from plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
+try:
+    if report_manager_installed:
+        from geniusbot.plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
+except Exception as e:
     if report_manager_installed:
         from plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
+try:
+    if repository_manager_installed:
+        from geniusbot.plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
+except Exception as e:
     if repository_manager_installed:
         from plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
+try:
+    from geniusbot.plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
+except Exception as e:
     from plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
+
 if os.name == "posix":
     import pwd
     user = pwd.getpwuid(os.geteuid()).pw_name
