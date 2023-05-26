@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtCore import QObject, pyqtSignal
 import sys
+sys.path.append("..")
 from io import StringIO
 import os
 from PyQt5.QtCore import Qt
@@ -12,7 +13,7 @@ from PyQt5.QtWidgets import (
     QFileDialog, QComboBox, QSpinBox
 )
 from PyQt5.QtCore import QThread
-from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+from qt.colors import yellow, green, orange, blue, red, purple
 
 
 def webarchiver_tab(self):

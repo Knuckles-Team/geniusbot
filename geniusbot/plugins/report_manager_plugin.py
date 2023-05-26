@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import sys
+sys.path.append("..")
 from PyQt5.QtWidgets import (
     QGridLayout,
     QLabel,
@@ -11,8 +13,8 @@ from PyQt5.QtWidgets import (
     QListWidget, QCheckBox, QAbstractItemView
 )
 from PyQt5.QtCore import QObject, pyqtSignal
-from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-from geniusbot.qt.scrollable_widget import ScrollLabel
+from qt.colors import yellow, green, orange, blue, red, purple
+from qt.scrollable_widget import ScrollLabel
 
 
 def report_manager_tab(self):

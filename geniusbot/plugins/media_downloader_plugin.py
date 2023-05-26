@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import sys
+sys.path.append("..")
 from PyQt5.QtWidgets import (
     QGridLayout,
     QPushButton,
@@ -9,7 +11,7 @@ from PyQt5.QtWidgets import (
     QLineEdit, QProgressBar
 )
 from PyQt5.QtCore import QObject, pyqtSignal
-from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+from qt.colors import yellow, green, orange, blue, red, purple
 
 
 def media_downloader_tab(self):

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append("..")
 import subshift
 from PyQt5.QtWidgets import (
     QGridLayout,
@@ -10,8 +12,8 @@ from PyQt5.QtWidgets import (
     QHBoxLayout
 )
 from PyQt5.QtCore import QObject, pyqtSignal
-from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-from geniusbot.qt.scrollable_widget import ScrollLabel
+from qt.colors import yellow, green, orange, blue, red, purple
+from qt.scrollable_widget import ScrollLabel
 
 
 def subshift_tab(self):

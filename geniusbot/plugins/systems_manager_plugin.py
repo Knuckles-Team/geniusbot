@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import sys
+sys.path.append("..")
 from PyQt5.QtWidgets import (
     QGridLayout,
     QLabel,
@@ -11,11 +13,11 @@ from PyQt5.QtWidgets import (
     QPlainTextEdit
 )
 from PyQt5.QtCore import QObject, pyqtSignal
-from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-from geniusbot.qt.scrollable_widget import ScrollLabel
+from qt.colors import yellow, green, orange, blue, red, purple
+from qt.scrollable_widget import ScrollLabel
 
 
-def repository_manager_tab(self):
+def systems_manager_tab(self):
     repository_manager_layout = QGridLayout()
     self.repository_manager_repositories_location_button = QPushButton("Repositories Location")
     self.repository_manager_repositories_location_button.setStyleSheet(
