@@ -7,22 +7,26 @@ from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
     QGridLayout,
-    QCheckBox
+    QCheckBox, QWidget, QFileDialog
 )
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from qt.colors import yellow, green, orange, blue, red, purple
 from qt.scrollable_widget import ScrollLabel
+from media_manager import MediaManager
 
 
-def media_manager_tab(self):
+def initialize_media_manager_tab(self):
+    self.media_manager = MediaManager()
+    self.media_manager_tab = QWidget()
+    self.tab_widget.addTab(self.media_manager_tab, "Media Manager")
     media_manager_layout = QGridLayout()
     self.media_manager_media_location_button = QPushButton("Media Location")
     self.media_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-    self.media_manager_media_location_button.clicked.connect(self.media_manager_media_location)
+    self.media_manager_media_location_button.clicked.connect(media_manager_media_location)
     self.media_manager_media_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
     self.media_manager_move_location_button = QPushButton("Move Location")
     self.media_manager_move_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-    self.media_manager_move_location_button.clicked.connect(self.media_manager_move_location)
+    self.media_manager_move_location_button.clicked.connect(media_manager_move_location)
     self.media_manager_move_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
     self.subtitle_ticker = QCheckBox("Apply Subtitles")
     self.move_ticker = QCheckBox("Move Media")
@@ -35,7 +39,7 @@ def media_manager_tab(self):
     self.media_manager_run_button = QPushButton("Run ⥀")
     self.media_manager_run_button.setStyleSheet(
         f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-    self.media_manager_run_button.clicked.connect(self.manage_media)
+    self.media_manager_run_button.clicked.connect(manage_media)
     media_manager_layout.addWidget(self.media_manager_media_location_button, 0, 0, 1, 1)
     media_manager_layout.addWidget(self.media_manager_media_location_label, 0, 1, 1, 1)
     media_manager_layout.addWidget(self.media_manager_move_location_button, 1, 0, 1, 1)
@@ -45,7 +49,77 @@ def media_manager_tab(self):
     media_manager_layout.addWidget(self.media_manager_files_label, 3, 0, 1, 2)
     media_manager_layout.addWidget(self.media_manager_run_button, 4, 0, 1, 2)
     self.tab_widget.setTabText(2, "Media Manager")
-    self.tab3.setLayout(media_manager_layout)
+    self.media_manager_tab.setLayout(media_manager_layout)
+
+
+def manage_media(self):
+    self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing media...\n")
+
+    if self.subtitle_ticker.isChecked():
+        subtitle_boolean = True
+    else:
+        subtitle_boolean = False
+
+    if self.move_ticker.isChecked():
+        move_boolean = True
+    else:
+        move_boolean = False
+
+    self.media_manager_thread = QThread()
+    self.media_manager_worker = MediaManagerWorker(media_manager=self.media_manager,
+                                                   directory=self.media_manager_media_location_label.text(),
+                                                   move=move_boolean,
+                                                   destination=self.media_manager_move_location_label.text(),
+                                                   subtitle=subtitle_boolean)
+    self.media_manager_worker.moveToThread(self.media_manager_thread)
+    self.media_manager_thread.started.connect(self.media_manager_worker.run)
+    self.media_manager_worker.finished.connect(self.media_manager_thread.quit)
+    self.media_manager_worker.finished.connect(self.media_manager_worker.deleteLater)
+    self.media_manager_thread.finished.connect(self.media_manager_thread.deleteLater)
+    self.media_manager_thread.start()
+    self.media_manager_run_button.setEnabled(False)
+    self.media_manager_thread.finished.connect(
+        lambda: self.media_manager_run_button.setEnabled(True)
+    )
+    self.media_manager_thread.finished.connect(
+        lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing media complete!\n")
+    )
+    self.media_manager_thread.finished.connect(
+        lambda: self.media_manager_refresh_list()
+    )
+
+
+def media_manager_media_location(self):
+    self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting media location to look for media in!\n")
+    media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
+                                                                    os.path.expanduser("~"),
+                                                                    QFileDialog.ShowDirsOnly)
+    if media_manager_directory_name == None or media_manager_directory_name == "":
+        media_manager_directory_name = os.path.expanduser("~")
+    self.media_manager_media_location_label.setText(media_manager_directory_name)
+    self.media_manager.set_media_directory(media_manager_directory_name)
+    self.media_manager.find_media()
+    files = ""
+    for file in self.media_manager.get_media_list():
+        files = f"{files}\n{file}"
+    self.media_manager_files_label.setText(files.strip())
+
+def media_manager_refresh_list(self):
+    self.media_manager.set_media_directory(self.media_manager_move_location_label.text())
+    self.media_manager.find_media()
+    files = ""
+    for file in self.media_manager.get_media_list():
+        files = f"{files}\n{file}"
+    self.media_manager_files_label.setText(files.strip())
+
+def media_manager_move_location(self):
+    self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting move location for media\n")
+    media_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
+                                                                         os.path.expanduser("~"),
+                                                                         QFileDialog.ShowDirsOnly)
+    if media_manager_move_directory_name == None or media_manager_move_directory_name == "":
+        media_manager_move_directory_name = os.path.expanduser("~")
+    self.media_manager_move_location_label.setText(media_manager_move_directory_name)
 
 
 class MediaManagerWorker(QObject):
