@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
+from PyQt5.QtWidgets import (
+    QGridLayout,
+    QPushButton,
+    QLabel,
+    QPlainTextEdit,
+    QLineEdit, QProgressBar
+)
 from PyQt5.QtCore import QObject, pyqtSignal
+from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
 
 
 def media_downloader_tab(self):
@@ -25,7 +34,7 @@ def media_downloader_tab(self):
     self.video_save_location_button.clicked.connect(self.save_location)
     self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
     self.video_type_label = QLabel("Filetype")
-    self.video_type_combobox = QComboBox()
+    self.video_type_combobox = QLineEdit()
     self.video_type_combobox.addItems(['Video', 'Audio'])
     self.video_type_combobox.setItemText(0, "Video")
     self.video_progress_bar = QProgressBar()
@@ -47,7 +56,6 @@ def media_downloader_tab(self):
     video_layout.setContentsMargins(3, 3, 3, 3)
     self.tab_widget.setTabText(1, "Media Downloader")
     self.tab2.setLayout(video_layout)
-
 
 
 class MediaDownloaderWorker(QObject):
