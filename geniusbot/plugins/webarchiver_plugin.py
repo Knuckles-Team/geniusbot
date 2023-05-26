@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
 import sys
 sys.path.append("..")
 from io import StringIO
@@ -10,13 +10,16 @@ from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
     QGridLayout, QPlainTextEdit, QProgressBar,
-    QFileDialog, QComboBox, QSpinBox
+    QFileDialog, QComboBox, QSpinBox, QWidget
 )
-from PyQt5.QtCore import QThread
 from qt.colors import yellow, green, orange, blue, red, purple
+from webarchiver import Webarchiver
 
 
-def webarchiver_tab(self):
+def initialize_webarchiver_tab(self):
+    self.webarchiver = Webarchiver()
+    self.webarchiver_tab = QWidget()
+    self.tab_widget.addTab(self.webarchiver_tab, "Webarchiver")
     # Video Download Widgets
     self.web_links_label = QLabel("Paste Website URL(s) Below ↴")
     self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
@@ -63,7 +66,7 @@ def webarchiver_tab(self):
     webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
     webarchiver_layout.setContentsMargins(3, 3, 3, 3)
     self.tab_widget.setTabText(3, "Website Archive")
-    self.tab4.setLayout(webarchiver_layout)
+    self.webarchiver_tab.setLayout(webarchiver_layout)
 
 
 def screenshot_websites(self):
@@ -114,6 +117,10 @@ def save_web_location(self):
         web_directory_name = os.path.expanduser("~")
     self.save_web_location_label.setText(web_directory_name)
     self.webarchiver.set_save_path(web_directory_name)
+
+
+def report_web_progress_bar(self, n):
+    self.web_progress_bar.setValue(n)
 
 
 class WebarchiverWorker(QObject):

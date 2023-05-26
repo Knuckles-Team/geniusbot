@@ -10,20 +10,23 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QCheckBox,
-    QPlainTextEdit
+    QPlainTextEdit, QWidget
 )
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from qt.colors import yellow, green, orange, blue, red, purple
 from qt.scrollable_widget import ScrollLabel
+from systems_manager import SystemsManager
 
 
-def systems_manager_tab(self):
+def initialize_systems_manager_tab(self):
+    self.systems_manager_tab = QWidget()
+    self.tab_widget.addTab(self.systems_manager_tab, "Systems Manager")
     repository_manager_layout = QGridLayout()
     self.repository_manager_repositories_location_button = QPushButton("Repositories Location")
     self.repository_manager_repositories_location_button.setStyleSheet(
         f"background-color: {orange}; color: white; font: bold;")
     self.repository_manager_repositories_location_button.clicked.connect(
-        self.repository_manager_repositories_location)
+        repository_manager_repositories_location)
     self.repository_manager_repositories_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
     self.repository_manager_repositories_file_location_button = QPushButton("Repositories File Location")
     self.repository_manager_repositories_file_location_button.setStyleSheet(
@@ -68,7 +71,7 @@ def systems_manager_tab(self):
     repository_manager_layout.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
     repository_manager_layout.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
     self.tab_widget.setTabText(6, "Repository Manager")
-    self.tab7.setLayout(repository_manager_layout)
+    self.systems_manager_tab.setLayout(repository_manager_layout)
 
 
 class SystemsManagerWorker(QObject):
