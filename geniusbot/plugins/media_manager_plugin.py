@@ -1,26 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from PyQt5.QtCore import QObject, pyqtSignal
 import os
-from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
-    QApplication,
     QLabel,
-    QMainWindow,
     QPushButton,
-    QVBoxLayout,
-    QWidget,
-    QTabWidget,
-    QGridLayout, QHBoxLayout, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
-    QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit, QListWidget, QAbstractItemView
+    QGridLayout,
+    QCheckBox
 )
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
-try:
-    from geniusbot.colors import yellow, green, orange, blue, red, purple
-    from geniusbot.qt.scrollable_widget import ScrollLabel
-except Exception as e:
-    from colors import yellow, green, orange, blue, red, purple
-    from qt.scrollable_widget import ScrollLabel
+from PyQt5.QtCore import QObject, pyqtSignal
+from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+from geniusbot.qt.scrollable_widget import ScrollLabel
 
 
 def media_manager_tab(self):

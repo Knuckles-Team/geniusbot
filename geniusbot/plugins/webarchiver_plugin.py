@@ -12,10 +12,7 @@ from PyQt5.QtWidgets import (
     QFileDialog, QComboBox, QSpinBox
 )
 from PyQt5.QtCore import QThread
-try:
-    from geniusbot.colors import yellow, green, orange, blue, red, purple
-except Exception as e:
-    from colors import yellow, green, orange, blue, red, purple
+from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
 
 
 def webarchiver_tab(self):

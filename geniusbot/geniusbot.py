@@ -5,7 +5,6 @@ import os
 import sys
 import pandas as pd
 from pathlib import Path
-from PyQt5.QtGui import QIcon, QFont
 try:
     from webarchiver import Webarchiver
     webarchiver_installed = True
@@ -37,23 +36,21 @@ try:
 except Exception as e:
     repository_manager_installed = False
 from genius_chatbot import ChatBot
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
     QApplication,
-    QLabel,
     QMainWindow,
     QPushButton,
     QVBoxLayout,
     QWidget,
     QTabWidget,
-    QGridLayout, QHBoxLayout, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
-    QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit, QListWidget, QAbstractItemView
+    QHBoxLayout, QCheckBox, QFileDialog, QTextEdit
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
-
 try:
     from geniusbot.version import __version__, __author__, __credits__
-    from geniusbot.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
     from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotWorker
     if subshift_installed:
@@ -69,9 +66,9 @@ try:
     if repository_manager_installed:
         from geniusbot.plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
     from geniusbot.plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
-except Exception as e:
+except:
     from version import __version__, __author__, __credits__
-    from colors import yellow, green, orange, blue, red, purple
+    from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
     from plugins.geniusbot_chat_plugin import GeniusBotWorker
     if subshift_installed:
@@ -87,7 +84,6 @@ except Exception as e:
     if repository_manager_installed:
         from plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
     from plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
-
 if os.name == "posix":
     import pwd
     user = pwd.getpwuid(os.geteuid()).pw_name
