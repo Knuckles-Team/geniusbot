@@ -13,23 +13,25 @@ def check_package(package="None"):
     except pkg_resources.DistributionNotFound:
         print('{} is NOT installed'.format(package))
     return found
+
+
 import os
 import sys
 import pandas as pd
+import plugins
 from pathlib import Path
-# webarchiver_installed = check_package("webarchiver")
-# subshift_installed = check_package("subshift")
-# media_downloader_installed = check_package("media-downloader")
-# media_manager_installed = check_package("media-manager")
-# report_manager_installed = check_package("report-manager")
-# repository_manager_installed = check_package("repository-manager")
-systems_manager_installed = check_package("systems-manager")
-webarchiver_installed = False
-subshift_installed = False
-media_downloader_installed = False
-media_manager_installed = False
-report_manager_installed = False
-repository_manager_installed = False
+
+webarchiver_installed = check_package("webarchiver")
+subshift_installed = check_package("subshift")
+media_downloader_installed = check_package("media-downloader")
+media_manager_installed = check_package("media-manager")
+report_manager_installed = check_package("report-manager")
+repository_manager_installed = check_package("repository-manager")
+# webarchiver_installed = False
+# media_downloader_installed = False
+# media_manager_installed = False
+# report_manager_installed = False
+# repository_manager_installed = False
 from genius_chatbot import ChatBot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent
@@ -43,65 +45,49 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QCheckBox, QFileDialog, QTextEdit
 )
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
+
 try:
-    from geniusbot.version import __version__, __author__, __credits__
-except Exception as e:
     from version import __version__, __author__, __credits__
-try:
-    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
 except Exception as e:
-    from qt.colors import yellow, green, orange, blue, red, purple
+    # from geniusbot.version import __version__, __author__, __credits__
+    print(f"Unable to import version\nError: {e}")
+from qt.colors import yellow, green, orange, blue, red, purple
 try:
-    from geniusbot.qt.scrollable_widget import ScrollLabel
-except Exception as e:
     from qt.scrollable_widget import ScrollLabel
-try:
-    from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotWorker
 except Exception as e:
+    # from geniusbot.qt.scrollable_widget import ScrollLabel
+    print(f"Unable to import custom Scroll Label\nError: {e}")
+
+try:
     from plugins.geniusbot_chat_plugin import GeniusBotWorker
-try:
-    if subshift_installed:
-        from geniusbot.plugins.subshift_plugin import SubshiftWorker, subshift_tab
 except Exception as e:
-    if subshift_installed:
-        from plugins.subshift_plugin import SubshiftWorker, subshift_tab
-try:
-    if webarchiver_installed:
-        from geniusbot.plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
-except Exception as e:
-    if webarchiver_installed:
-        from plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
-try:
-    if media_downloader_installed:
-        from geniusbot.plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
-except Exception as e:
-    if media_downloader_installed:
-        from plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
-try:
-    if media_manager_installed:
-        from geniusbot.plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
-except Exception as e:
-    if media_manager_installed:
-        from plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
-try:
-    if report_manager_installed:
-        from geniusbot.plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
-except Exception as e:
-    if report_manager_installed:
-        from plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
-try:
-    if repository_manager_installed:
-        from geniusbot.plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
-except Exception as e:
-    if repository_manager_installed:
-        from plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
-try:
-    from geniusbot.plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
-except Exception as e:
-    from plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
+    print(f"Geniusbot Chat Installed, however, we encountered an issue importing the module\nError: {e}")
+    # from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotWorker
+if subshift_installed:
+    print("Checking if subshift is installed first pass")
+    from plugins.subshift_plugin import SubshiftWorker
+if webarchiver_installed:
+    from webarchiver import Webarchiver
+    from plugins.webarchiver_plugin import WebarchiverWorker, webarchiver_tab
+if media_downloader_installed:
+    from media_downloader import MediaDownloader
+    from plugins.media_downloader_plugin import MediaDownloaderWorker, media_downloader_tab
+if media_manager_installed:
+    from media_manager import MediaManager
+    from plugins.media_manager_plugin import MediaManagerWorker, media_manager_tab
+if report_manager_installed:
+    from report_manager import ReportManager
+    from plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, report_manager_tab
+if repository_manager_installed:
+    from repository_manager import Git
+    from plugins.repository_manager_plugin import RepositoryManagerWorker, repository_manager_tab
+from systems_manager import SystemsManager
+
+# from plugins.systems_manager_plugin import SystemsManagerWorker, systems_manager_tab
 
 if os.name == "posix":
     import pwd
+
     user = pwd.getpwuid(os.geteuid()).pw_name
 else:
     ukn = 'UNKNOWN'
@@ -112,6 +98,7 @@ else:
 if sys.platform == 'win32':
     import winshell
     import ctypes
+
     myappid = f'knucklesteam.geniusbot.geniusbot.{__version__}'  # arbitrary string
     myappid.encode("utf-8")
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -220,11 +207,11 @@ class GeniusBot(QMainWindow):
             self.webarchiver = Webarchiver()
             self.tab4 = QWidget()
             self.tab_widget.addTab(self.tab4, "Tab 4")
-            webarchiver_tab(self)
+            plugins.webarchiver_plugin.webarchiver_tab(self)
         if subshift_installed:
             self.tab5 = QWidget()
             self.tab_widget.addTab(self.tab5, "Tab 5")
-            subshift_tab(self)
+            plugins.subshift_plugin.subshift_tab(self)
         if report_manager_installed:
             self.report_manager = ReportManager()
             self.tab6 = QWidget()
@@ -498,8 +485,6 @@ class GeniusBot(QMainWindow):
         self.subtitles = self.subtitles.strip()
         self.subtitle_label.setText(self.subtitles)
 
-
-
     def report_video_progress_bar(self, n):
         self.video_progress_bar.setValue(n)
 
@@ -523,11 +508,11 @@ class GeniusBot(QMainWindow):
             move_boolean = False
 
         self.media_manager_thread = QThread()
-        self.media_manager_worker = MediaWorker(media_manager=self.media_manager,
-                                                directory=self.media_manager_media_location_label.text(),
-                                                move=move_boolean,
-                                                destination=self.media_manager_move_location_label.text(),
-                                                subtitle=subtitle_boolean)
+        self.media_manager_worker = MediaManagerWorker(media_manager=self.media_manager,
+                                                       directory=self.media_manager_media_location_label.text(),
+                                                       move=move_boolean,
+                                                       destination=self.media_manager_move_location_label.text(),
+                                                       subtitle=subtitle_boolean)
         self.media_manager_worker.moveToThread(self.media_manager_thread)
         self.media_manager_thread.started.connect(self.media_manager_worker.run)
         self.media_manager_worker.finished.connect(self.media_manager_thread.quit)
@@ -668,7 +653,7 @@ class GeniusBot(QMainWindow):
             else:
                 audio_boolean = False
             self.video_thread = QThread()
-            self.video_worker = VideoWorker(self.video_downloader, videos, audio_boolean)
+            self.video_worker = MediaDownloaderWorker(self.video_downloader, videos, audio_boolean)
             self.video_worker.moveToThread(self.video_thread)
             self.video_thread.started.connect(self.video_worker.run)
             self.video_worker.finished.connect(self.video_thread.quit)

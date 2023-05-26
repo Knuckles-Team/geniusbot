@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append("..")
 from PyQt5.QtCore import QObject, pyqtSignal
 
 
