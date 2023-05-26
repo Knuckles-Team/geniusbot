@@ -3,27 +3,92 @@
 
 import os
 import sys
-import re
 import pandas as pd
-import subshift
-from io import StringIO
 from pathlib import Path
 from PyQt5.QtGui import QIcon, QFont
-from webarchiver import Webarchiver
-from media_downloader import MediaDownloader
-from media_manager import MediaManager
-from report_manager import ReportManager
-from repository_manager import Git
-from genius_chatbot import ChatBot
-
-pd.set_option('display.max_rows', 250)
-pd.set_option('display.max_columns', 9)
-pd.set_option('display.expand_frame_repr', False)
 
 try:
+    from webarchiver import Webarchiver
+    webarchiver_installed = True
+except Exception as e:
+    webarchiver_installed = False
+
+try:
+    import subshift
+    subshift_installed = True
+except Exception as e:
+    subshift_installed = False
+
+try:
+    from media_downloader import MediaDownloader
+    media_downloader_installed = True
+except Exception as e:
+    media_downloader_installed = False
+
+try:
+    from media_manager import MediaManager
+    media_manager_installed = True
+except Exception as e:
+    media_manager_installed = False
+
+try:
+    from report_manager import ReportManager
+    report_manager_installed = True
+except Exception as e:
+    report_manager_installed = False
+
+try:
+    from repository_manager import Git
+    repository_manager_installed = True
+except Exception as e:
+    repository_manager_installed = False
+
+from genius_chatbot import ChatBot
+from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtWidgets import (
+    QApplication,
+    QLabel,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QTabWidget,
+    QGridLayout, QHBoxLayout, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
+    QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit, QListWidget, QAbstractItemView
+)
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
+try:
     from geniusbot.version import __version__, __author__, __credits__
+    from geniusbot.workers.geniusbot_worker import GeniusBotWorker
+    if subshift_installed:
+        from geniusbot.workers.subshift_worker import SubshiftWorker
+    if webarchiver_installed:
+        from geniusbot.workers.webarchiver_worker import WebarchiverWorker
+    if media_downloader_installed:
+        from geniusbot.workers.media_downloader_worker import VideoWorker
+    if media_manager_installed:
+        from geniusbot.workers.media_manager_worker import MediaWorker
+    if report_manager_installed:
+        from geniusbot.workers.merge_report_worker import MergeReportWorker
+    if repository_manager_installed:
+        from geniusbot.workers.repository_manager_worker import RepositoryManagerWorker
+    from geniusbot.workers.systems_manager_worker import SystemsManagerWorker
 except Exception as e:
     from version import __version__, __author__, __credits__
+    from workers.geniusbot_worker import GeniusBotWorker
+    if subshift_installed:
+        from workers.subshift_worker import SubshiftWorker
+    if webarchiver_installed:
+        from workers.webarchiver_worker import WebarchiverWorker
+    if media_downloader_installed:
+        from workers.media_downloader_worker import VideoWorker
+    if media_manager_installed:
+        from workers.media_manager_worker import MediaWorker
+    if report_manager_installed:
+        from workers.merge_report_worker import MergeReportWorker
+    if repository_manager_installed:
+        from workers.repository_manager_worker import RepositoryManagerWorker
+    from workers.systems_manager_worker import SystemsManagerWorker
 
 if os.name == "posix":
     import pwd
@@ -42,19 +107,9 @@ if sys.platform == 'win32':
     myappid.encode("utf-8")
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-from PyQt5.QtCore import Qt, QEvent
-from PyQt5.QtWidgets import (
-    QApplication,
-    QLabel,
-    QMainWindow,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-    QTabWidget,
-    QGridLayout, QHBoxLayout, QLineEdit, QCheckBox, QPlainTextEdit, QProgressBar,
-    QFileDialog, QScrollArea, QComboBox, QSpinBox, QTextEdit, QListWidget, QAbstractItemView
-)
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+pd.set_option('display.max_rows', 250)
+pd.set_option('display.max_columns', 9)
+pd.set_option('display.expand_frame_repr', False)
 
 yellow = "#FFA500"
 green = "#2E8B57"
@@ -92,291 +147,6 @@ class OutputWrapper(QObject):
                 sys.stderr = self._stream
         except AttributeError:
             pass
-
-
-class GeniusBotWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, geniusbot_chatbot, geniusbot_chat, text):
-        super().__init__()
-        self.geniusbot_chatbot = geniusbot_chatbot
-        self.geniusbot_chat = geniusbot_chat
-        self.text = text
-        self.default_text = "Hello, my name is Geniusbot and I'm an artificially intelligent robot that can help you with"
-
-
-    def run(self):
-        """Long-running task."""
-        old_text = self.geniusbot_chat.text()
-        if self.geniusbot_chatbot.get_loaded() is False:
-            self.geniusbot_chat.setText(f"{self.geniusbot_chat.text()}\n"
-                                        f"[Genius Bot] Attempting to load intelligence...")
-            self.geniusbot_chatbot.set_output_length(output_length=500)
-            self.geniusbot_chatbot.scale_intelligence()
-            self.geniusbot_chatbot.load_model()
-            self.geniusbot_chat.setText(f"{self.geniusbot_chat.text()}\n"
-                                        f"[Genius Bot] Loaded {self.geniusbot_chatbot.get_intelligence_level()} "
-                                        f"intelligence level!")
-        if self.text == '':
-            self.text = self.default_text
-        self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] Processing ...")
-        response = self.geniusbot_chatbot.chat(prompt=self.text)
-        # if self.text != self.default_text:
-        #     response = re.sub(self.text, '', response)
-        #     response = re.sub("^\?", "", response)
-        #     response = re.sub("^\.", "", response)
-        #     response = re.sub("^\!", "", response)
-        self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response}")
-        self.progress.emit(100)
-        self.finished.emit()
-
-
-class SubshiftWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, subtitle_file, mode, time):
-        super().__init__()
-        self.subtitle_file = subtitle_file
-        self.mode = mode
-        self.time = time
-
-    def run(self):
-        """Long-running task."""
-        print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
-        subshift.subshift([f"-f", f"{self.subtitle_file}", f"-m", f"{self.mode}", f"-t", f"{self.time}"])
-        self.progress.emit(100)
-        self.finished.emit()
-
-
-class WebarchiverWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, webarchiver, websites, zoom=100, dpi=1, filetype="png"):
-        super().__init__()
-        self.webarchiver = webarchiver
-        self.websites = websites
-        self.zoom = zoom
-        self.dpi = dpi
-        self.filetype = filetype
-
-    def run(self):
-        """Long-running task."""
-        old_stdout = sys.stdout
-        result = StringIO()
-        sys.stdout = result
-        self.webarchiver.launch_browser()
-        self.webarchiver.set_dpi_level(self.dpi)
-        sys.stdout = old_stdout
-        result_string = result.getvalue()
-
-        for website_index in range(0, len(self.websites)):
-            self.webarchiver.append_link(self.websites[website_index])
-            self.webarchiver.full_page_screenshot(url=self.websites[website_index], zoom_percentage=self.zoom,
-                                                 filetype=self.filetype)
-            self.progress.emit(int(((1 + website_index) / len(self.websites)) * 100))
-            self.webarchiver.reset_links()
-
-        self.webarchiver.quit_driver()
-
-        self.finished.emit()
-
-
-class ReportManagerWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, report_manager, report_name_editor, custom_report_generate_label, action_type_combobox,
-                 pandas_profiling_ticker, custom_report_ticker, file_type_combobox):
-        super().__init__()
-        self.report_manager = report_manager
-        self.report_name_editor = report_name_editor
-        self.custom_report_generate_label = custom_report_generate_label
-        self.action_type_combobox = action_type_combobox
-        self.pandas_profiling_ticker = pandas_profiling_ticker
-        self.custom_report_ticker = custom_report_ticker
-        self.pandas_profiling_ticker = pandas_profiling_ticker
-        self.file_type_combobox = file_type_combobox
-        if self.file_type_comboox == "CSV":
-            self.csv_flag = True
-        else:
-            self.csv_flag = False
-
-    def run(self):
-        """Long-running task."""
-        self.report_manager.set_report_title(self.report_name_editor.text())
-        self.report_manager.set_report_name(self.report_name_editor.text())
-        self.report_manager.set_save_directory(self.custom_report_generate_label.text())
-        if self.action_type_combobox.currentText() == "Generate Report":
-            if self.pandas_profiling_ticker.isChecked:
-                sample_flag = None  # Set to the sample size if you would like to do it on a sample instead.
-                minimal_flag = False  # Quicker run if set to true, but not everything is captured.
-                self.report_manager.create_pandas_profiling_report(sample_flag, minimal_flag)
-                self.report_manager.export_pandas_profiling()
-            if self.custom_report_ticker.isChecked():
-                self.report_manager.run_analysis()
-                self.report_manager.export_data(csv_flag=self.csv_flag,
-                                                report_name=f"{self.report_name_editor.text()} - Dataset")
-        self.finished.emit()
-
-
-class MergeReportWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, report_manager, file1_columns, file2_columns, action_type_combobox, merge_type_combobox,
-                 merged_report_save_location_label, merge_file1_label, merge_file2_label, merged_report_name_editor,
-                 merge_file_type_combobox):
-        super().__init__()
-        self.report_manager = report_manager
-        self.file1_columns = file1_columns
-        self.file2_columns = file2_columns
-        self.action_type_combobox = action_type_combobox
-        self.merge_type_combobox = merge_type_combobox
-        self.merge_file1_label = merge_file1_label
-        self.merge_file2_label = merge_file2_label
-        self.merged_report_save_location_label = merged_report_save_location_label
-        self.merged_report_name_editor = merged_report_name_editor
-        self.merge_file_type_combobox = merge_file_type_combobox
-        if self.merge_file_type_combobox == "CSV":
-            self.csv_flag = True
-        else:
-            self.csv_flag = False
-
-    def run(self):
-        """Long-running task."""
-        self.report_manager.set_report_title(self.merged_report_name_editor.text())
-        self.report_manager.set_report_name(self.merged_report_name_editor.text())
-        self.report_manager.set_df1_join_keys(self.file1_columns.selectedItems())
-        self.report_manager.set_df1_join_keys(self.file2_columns.selectedItems())
-        self.report_manager.set_save_directory(self.merged_report_save_location_label.text())
-        if self.action_type_combobox.currentText() == "Merge Reports" and self.merge_type_combobox.currentText() == "Append":
-            self.report_manager.set_files(self.merge_file1_label.text(), "file2")
-            self.report_manager.set_files(self.merge_file2_label.text(), "file3")
-            self.report_manager.load_dataframe(file_instance=2)
-            self.report_manager.load_dataframe(file_instance=3)
-            self.report_manager.set_join_type(join_type=self.merge_type_combobox.currentText().lower())
-            self.report_manager.join_data()
-            self.report_manager.export_data(csv_flag=self.csv_flag,
-                                            report_name=f"{self.merged_report_name_editor.text()} - Merged")
-        elif self.action_type_combobox.currentText() == "Merge Reports" and self.merge_type_combobox.currentText() != "Append":
-            self.report_manager.set_files(self.merge_file1_label.text(), "file2")
-            self.report_manager.set_files(self.merge_file2_label.text(), "file3")
-            self.report_manager.load_dataframe(file_instance=2)
-            self.report_manager.load_dataframe(file_instance=3)
-            self.report_manager.set_df1_join_keys(df_1_join_keys=self.file1_columns)
-            self.report_manager.set_df2_join_keys(df_2_join_keys=self.file2_columns)
-            self.report_manager.set_join_type(join_type=self.merge_type_combobox.currentText().lower())
-            self.report_manager.join_data()
-            self.report_manager.export_data(csv_flag=self.csv_flag,
-                                            report_name=f"{self.merged_report_name_editor.text()} - Merged")
-        self.finished.emit()
-
-
-class RepositoryManagerWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, repository_manager, clone_ticker, set_default_branch_ticker, pull_ticker,
-                 repository_links_editor, repository_git_command, repository_manager_repositories_file_location_label,
-                 repository_manager_files_label, repository_manager_repositories_location_label):
-        super().__init__()
-        self.repository_manager = repository_manager
-        self.clone_ticker = clone_ticker
-        self.set_default_branch_ticker = set_default_branch_ticker
-        self.pull_ticker = pull_ticker
-        self.repository_links_editor = repository_links_editor
-        self.repository_git_command = repository_git_command
-        self.repository_manager_repositories_file_location_label = repository_manager_repositories_file_location_label
-        self.repository_manager_files_label = repository_manager_files_label
-        self.repository_manager_repositories_location_label = repository_manager_repositories_location_label
-
-    def run(self):
-        """Long-running task."""
-        if self.clone_ticker.isChecked():
-            projects = self.repository_links_editor.toPlainText()
-            projects = projects.strip()
-            projects = projects.split('\n')
-            if projects[0] == '':
-                projects = []
-            if os.path.exists(self.repository_manager_repositories_file_location_label.text()):
-                try:
-                    file_repositories = open(self.repository_manager_repositories_file_location_label.text(), 'r')
-                    for repository in file_repositories:
-                        projects.append(repository)
-                    projects = list(dict.fromkeys(projects))
-                except Exception as e:
-                    print(f"File not found or unable to parse file contents: {e}")
-            self.repository_manager.set_git_projects(projects)
-            self.repository_manager.clone_projects()
-            self.progress.emit(33)
-        default_branch_flag = self.set_default_branch_ticker.isChecked()
-        if self.pull_ticker.isChecked():
-            self.repository_manager.pull_projects(set_to_default_branch=default_branch_flag)
-            self.progress.emit(66)
-        if self.repository_git_command.text() != "":
-            projects = self.repository_manager_files_label.text()
-            projects = projects.strip()
-            projects = projects.split('\n')
-            print(f"PROJECTS SO FAR: {projects}")
-            if projects[0] == '':
-                projects = []
-            for project in projects:
-                try:
-                    result = self.repository_manager.git_action(command=f"{self.repository_git_command.text()}",
-                                                                directory=f"{self.repository_manager_repositories_location_label.text()}/{project}")
-                    print(result)
-                except Exception as e:
-                    print(
-                        f"Unable to execute git command: {self.repository_git_command.text()} for directory: {self.repository_manager_repositories_location_label.text()}/{project}")
-            self.progress.emit(99)
-        self.progress.emit(100)
-        self.finished.emit()
-
-
-class VideoWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, video_downloader, videos, audio):
-        super().__init__()
-        self.video_downloader = video_downloader
-        self.videos = videos
-        self.audio = audio
-
-    def run(self):
-        """Long-running task."""
-        for video_index in range(0, len(self.videos)):
-            self.video_downloader.set_audio(audio=self.audio)
-            self.video_downloader.download_video(self.videos[video_index])
-            self.progress.emit(int(((1 + video_index) / len(self.videos)) * 100))
-        self.finished.emit()
-
-
-class MediaWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(int)
-
-    def __init__(self, media_manager, directory, move, destination, subtitle):
-        super().__init__()
-        self.media_manager = media_manager
-        self.directory = directory
-        self.move = move
-        self.destination = destination
-        self.subtitle = subtitle
-
-    def run(self):
-        """Long-running task."""
-        self.media_manager.set_media_directory(media_directory=self.directory)
-        self.media_manager.find_media()
-        self.media_manager.clean_media(subtitle=self.subtitle)
-        if os.path.isdir(self.destination) and self.move is True:
-            self.media_manager.move_media(target_directory=self.destination)
-
-        self.progress.emit(100)
-        self.finished.emit()
 
 
 # class for scrollable label
@@ -446,52 +216,78 @@ class ScrollLabel(QScrollArea):
 class GeniusBot(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.video_downloader = MediaDownloader()
-        self.webarchiver = Webarchiver()
-        self.media_manager = MediaManager()
-        self.report_manager = ReportManager()
-        self.repository_manager = Git()
+        self.repository_manager = None
+        self.report_manager = None
+        self.webarchiver = None
+        self.media_manager = None
+        self.video_downloader = None
+        self.hide_console_button = None
+        self.buttonsWidgetLayout = None
+        self.buttonsWidget = None
+        self.centralWidget = None
+        self.tab8 = None
+        self.tab7 = None
+        self.tab6 = None
+        self.tab5 = None
+        self.tab4 = None
+        self.tab3 = None
+        self.tab2 = None
+        self.tab1 = None
+        self.tab_widget = None
+        self.repository_links_editor = None
         self.geniusbot_chatbot = ChatBot()
-        self.setupUi()
+        self.initialize_user_interface()
 
-    def setupUi(self):
+    def initialize_user_interface(self):
         self.setWindowTitle(f"Genius Bot")
         self.setWindowIcon(QIcon(f'{os.path.dirname(os.path.realpath(__file__))}/img/geniusbot.ico'))
         self.setStyleSheet("background-color: #bfc3c9;")
         self.resize(800, 640)
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
+        self.tab_widget = QTabWidget()
+        self.tab_widget.setStyleSheet("background-color: #f5f5f5;")
 
         self.tab1 = QWidget()
-        self.tab2 = QWidget()
-        self.tab3 = QWidget()
-        self.tab4 = QWidget()
-        self.tab5 = QWidget()
-        self.tab6 = QWidget()
-        self.tab7 = QWidget()
         self.tab8 = QWidget()
-        self.tabwidget = QTabWidget()
-        self.tabwidget.setStyleSheet("background-color: #f5f5f5;")
-        self.tabwidget.addTab(self.tab1, "Tab 1")
-        self.tabwidget.addTab(self.tab2, "Tab 2")
-        self.tabwidget.addTab(self.tab3, "Tab 3")
-        self.tabwidget.addTab(self.tab4, "Tab 4")
-        self.tabwidget.addTab(self.tab5, "Tab 5")
-        self.tabwidget.addTab(self.tab6, "Tab 6")
-        self.tabwidget.addTab(self.tab7, "Tab 7")
-        self.tabwidget.addTab(self.tab8, "Tab 8")
+        self.tab_widget.addTab(self.tab1, "Tab 1")
         self.tab1_home()
-        self.tab2_media_downloader()
-        self.tab3_media_manager()
-        self.tab4_webarchiver()
-        self.tab5_subshift()
-        self.tab6_report_manager()
-        self.tab7_repository_manager()
-        self.tab8_settings()
 
+        if media_downloader_installed:
+            self.video_downloader = MediaDownloader()
+            self.tab2 = QWidget()
+            self.tab_widget.addTab(self.tab2, "Tab 2")
+            self.tab2_media_downloader()
+        if media_manager_installed:
+            self.media_manager = MediaManager()
+            self.tab3 = QWidget()
+            self.tab_widget.addTab(self.tab3, "Tab 3")
+            self.tab3_media_manager()
+        if webarchiver_installed:
+            self.webarchiver = Webarchiver()
+            self.tab4 = QWidget()
+            self.tab_widget.addTab(self.tab4, "Tab 4")
+            self.tab4_webarchiver()
+        if subshift_installed:
+            self.tab5 = QWidget()
+            self.tab_widget.addTab(self.tab5, "Tab 5")
+            self.tab5_subshift()
+        if report_manager_installed:
+            self.report_manager = ReportManager()
+            self.tab6 = QWidget()
+            self.tab_widget.addTab(self.tab6, "Tab 6")
+            self.tab6_report_manager()
+        if repository_manager_installed:
+            self.repository_manager = Git()
+            self.tab7 = QWidget()
+            self.tab_widget.addTab(self.tab7, "Tab 7")
+            self.tab7_repository_manager()
+
+        self.tab_widget.addTab(self.tab8, "Tab 8")
+        self.tab8_settings()
         # Set the main gui layout
         layout = QVBoxLayout()
-        layout.addWidget(self.tabwidget)
+        layout.addWidget(self.tab_widget)
         self.buttonsWidget = QWidget()
         self.buttonsWidgetLayout = QHBoxLayout(self.buttonsWidget)
         # self.console_label = QLabel("Console")
@@ -551,7 +347,7 @@ class GeniusBot(QMainWindow):
         layout.setStretch(0, 24)
         layout.setStretch(1, 3)
         layout.setStretch(2, 1)
-        self.tabwidget.setTabText(0, "Genius Bot Chat")
+        self.tab_widget.setTabText(0, "Genius Bot Chat")
         self.tab1.setLayout(layout)
 
     def tab2_media_downloader(self):
@@ -596,7 +392,7 @@ class GeniusBot(QMainWindow):
         video_layout.addWidget(self.video_download_button, 6, 0, 1, 2)
         video_layout.addWidget(self.video_progress_bar, 7, 0, 1, 2)
         video_layout.setContentsMargins(3, 3, 3, 3)
-        self.tabwidget.setTabText(1, "Media Downloader")
+        self.tab_widget.setTabText(1, "Media Downloader")
         self.tab2.setLayout(video_layout)
 
     def tab3_media_manager(self):
@@ -629,7 +425,7 @@ class GeniusBot(QMainWindow):
         media_manager_layout.addWidget(self.subtitle_ticker, 2, 1, 1, 1)
         media_manager_layout.addWidget(self.media_manager_files_label, 3, 0, 1, 2)
         media_manager_layout.addWidget(self.media_manager_run_button, 4, 0, 1, 2)
-        self.tabwidget.setTabText(2, "Media Manager")
+        self.tab_widget.setTabText(2, "Media Manager")
         self.tab3.setLayout(media_manager_layout)
 
     def tab4_webarchiver(self):
@@ -678,7 +474,7 @@ class GeniusBot(QMainWindow):
         webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 6)
         webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
         webarchiver_layout.setContentsMargins(3, 3, 3, 3)
-        self.tabwidget.setTabText(3, "Website Archive")
+        self.tab_widget.setTabText(3, "Website Archive")
         self.tab4.setLayout(webarchiver_layout)
 
     def tab5_subshift(self):
@@ -720,7 +516,7 @@ class GeniusBot(QMainWindow):
         layout.addWidget(self.subtitle_menu_widget, 0, 0, 1, 1)
         layout.addWidget(self.shift_subtitle_button, 2, 0, 1, 1)
         layout.addWidget(self.subtitle_label, 3, 0, 1, 1)
-        self.tabwidget.setTabText(4, "Shift Subtitles")
+        self.tab_widget.setTabText(4, "Shift Subtitles")
         self.tab5.setLayout(layout)
 
     def tab6_report_manager(self):
@@ -825,7 +621,7 @@ class GeniusBot(QMainWindow):
         self.merge_report_layout.addWidget(self.merge_type_combobox, 5, 1, 1, 3)
         self.merge_report_layout.addWidget(self.merge_button, 6, 0, 1, 4)
         self.merge_widget.hide()
-        self.tabwidget.setTabText(5, "Report Manager")
+        self.tab_widget.setTabText(5, "Report Manager")
         self.tab6.setLayout(self.report_manager_layout)
 
     def tab7_repository_manager(self):
@@ -878,7 +674,7 @@ class GeniusBot(QMainWindow):
         repository_manager_layout.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
         repository_manager_layout.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
         repository_manager_layout.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
-        self.tabwidget.setTabText(6, "Repository Manager")
+        self.tab_widget.setTabText(6, "Repository Manager")
         self.tab7.setLayout(repository_manager_layout)
 
     def tab8_settings(self):
@@ -886,7 +682,7 @@ class GeniusBot(QMainWindow):
         self.desktop_icon_checkbox = QCheckBox("Create Desktop Icon")
         self.desktop_icon_checkbox.stateChanged.connect(self.create_desktop_icon)
         layout.addWidget(self.desktop_icon_checkbox)
-        self.tabwidget.setTabText(7, "⚙")
+        self.tab_widget.setTabText(7, "⚙")
         self.tab8.setLayout(layout)
 
     def create_desktop_icon(self):
