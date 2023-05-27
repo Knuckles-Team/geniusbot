@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QCheckBox,
-    QPlainTextEdit, QWidget, QComboBox
+    QListWidget, QWidget, QComboBox
 )
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from qt.colors import yellow, green, orange, blue, red, purple
@@ -52,16 +52,37 @@ def initialize_systems_manager_tab(self):
     self.clean_ticker = QCheckBox("Clean")
     self.silent_ticker = QCheckBox("Silent")
     self.install_app_ticker.setChecked(False)
+    self.install_app_ticker.stateChanged.connect(install_applications_button_selected)
+    self.install_theme_ticker.stateChanged.connect(install_applications_button_selected)
+    self.install_font_ticker.stateChanged.connect(install_applications_button_selected)
+    self.install_font_ticker.stateChanged.connect(install_applications_button_selected)
+    self.install_font_ticker.stateChanged.connect(install_applications_button_selected)
     self.update_ticker.setChecked(False)
     self.clean_ticker.setChecked(False)
     self.theme_combobox = QComboBox()
     self.theme_combobox.addItems(['Takayuma', 'Other'])
     self.theme_combobox.setItemText(0, "Takayuma")
+    self.theme_combobox.setEnabled(False)
     self.font_combobox = QComboBox()
     self.font_combobox.addItems(['Hack NF', 'Meslo'])
     self.font_combobox.setItemText(0, "Hack NF")
+    self.font_combobox.setEnabled(False)
     self.systems_manager_run_button = QPushButton("Run ⥀")
     self.systems_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+    self.application_install_edit = QLineEdit()
+    self.python_module_install_edit = QLineEdit()
+    self.enable_windows_feature_edit = QLineEdit()
+    self.application_install_edit.setEnabled(False)
+    self.python_module_install_edit.setEnabled(False)
+    self.enable_windows_feature_edit.setEnabled(False)
+    self.enable_windows_feature_list = QListWidget()
+    self.enable_windows_feature_list.setSelectionMode(3)
+    self.enable_windows_feature_list.setEnabled(False)
+    self.enable_windows_feature_list.addItems(self.systems_manager.windows_features)
+    self.application_install_list = QListWidget()
+    self.application_install_list.setSelectionMode(3)
+    self.application_install_list.setEnabled(False)
+    self.application_install_list.addItems(self.systems_manager.applications)
     self.webarchiver_install_button = QCheckBox("Geniusbot - Webarchiver Plugin")
     if webarchiver_installed:
         self.webarchiver_install_button.setChecked(True)
@@ -122,17 +143,43 @@ def initialize_systems_manager_tab(self):
     systems_manager_layout.addWidget(self.font_combobox, 2, 3, 1, 1)
     systems_manager_layout.addWidget(self.install_app_ticker, 3, 0, 1, 2)
     systems_manager_layout.addWidget(self.install_python_ticker, 3, 1, 1, 1)
-    systems_manager_layout.addWidget(self.enable_windows_features_ticker, 3, 2, 1, 1)
-    systems_manager_layout.addWidget(self.webarchiver_install_button, 4, 1, 1, 1)
-    systems_manager_layout.addWidget(self.subshift_install_button, 5, 1, 1, 1)
-    systems_manager_layout.addWidget(self.media_downloader_install_button, 6, 1, 1, 1)
-    systems_manager_layout.addWidget(self.media_manager_install_button, 7, 1, 1, 1)
-    systems_manager_layout.addWidget(self.repository_manager_install_button, 8, 1, 1, 1)
-    systems_manager_layout.addWidget(self.report_manager_install_button, 9, 1, 1, 1)
+    systems_manager_layout.addWidget(self.enable_windows_features_ticker, 3, 2, 1, 2)
+    systems_manager_layout.addWidget(self.application_install_edit, 4, 0, 1, 1)
+    systems_manager_layout.addWidget(self.application_install_list, 5, 0, 6, 1)
+    systems_manager_layout.addWidget(self.python_module_install_edit, 4, 1, 1, 1)
+    systems_manager_layout.addWidget(self.enable_windows_feature_edit, 4, 2, 1, 2)
+    systems_manager_layout.addWidget(self.enable_windows_feature_list, 5, 2, 6, 2)
+    systems_manager_layout.addWidget(self.webarchiver_install_button, 5, 1, 1, 1)
+    systems_manager_layout.addWidget(self.subshift_install_button, 6, 1, 1, 1)
+    systems_manager_layout.addWidget(self.media_downloader_install_button, 7, 1, 1, 1)
+    systems_manager_layout.addWidget(self.media_manager_install_button, 8, 1, 1, 1)
+    systems_manager_layout.addWidget(self.repository_manager_install_button, 9, 1, 1, 1)
+    systems_manager_layout.addWidget(self.report_manager_install_button, 10, 1, 1, 1)
     systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
     systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
     self.tab_widget.setTabText(7, "Systems Manager")
     self.systems_manager_tab.setLayout(systems_manager_layout)
+
+
+def install_applications_button_selected(self):
+    if self.install_app_ticker.isChecked():
+        self.application_install_edit.setEnabled(True)
+    else:
+        self.application_install_edit.setEnabled(False)
+
+
+def install_python_button_selected(self):
+    if self.install_python_modules_ticker.isChecked():
+        self.python_install_edit.setEnabled(True)
+    else:
+        self.python_install_edit.setEnabled(False)
+
+
+def enable_windows_features_selected(self):
+    if self.enable_windows_features.isChecked():
+        self.python_install_edit.setEnabled(True)
+    else:
+        self.python_install_edit.setEnabled(False)
 
 
 def manage_system(self):
