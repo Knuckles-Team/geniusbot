@@ -9,7 +9,7 @@ from plugins.media_manager_plugin import initialize_media_manager_tab, MediaMana
 from plugins.report_manager_plugin import initialize_report_manager_tab, ReportManagerWorker, MergeReportWorker
 from plugins.repository_manager_plugin import initialize_repository_manager_tab, RepositoryManagerWorker
 from plugins.geniusbot_chat_plugin import GeniusBotWorker, initialize_geniusbot_chat_tab
-from plugins.systems_manager_plugin import initialize_systems_manager_tab, SystemsManagerWorker
+from plugins.systems_manager_plugin import SystemsManagerTab, SystemsManagerWorker
 from plugins.webarchiver_plugin import initialize_webarchiver_tab, \
     WebarchiverWorker, \
     screenshot_websites, \

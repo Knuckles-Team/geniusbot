@@ -19,171 +19,178 @@ from qt.scrollable_widget import ScrollLabel
 from systems_manager import SystemsManager
 
 
-def check_package(package="None"):
-    found = False
-    try:
-        dist = pkg_resources.get_distribution(package)
-        found = True
-    except pkg_resources.DistributionNotFound:
-        print('')
-    return found
+class SystemsManagerTab(QWidget):
 
-webarchiver_installed = check_package("webarchiver")
-subshift_installed = check_package("subshift")
-media_downloader_installed = check_package("media-downloader")
-media_manager_installed = check_package("media-manager")
-report_manager_installed = check_package("report-manager")
-repository_manager_installed = check_package("repository-manager")
-
-
-def initialize_systems_manager_tab(self):
-    self.systems_manager = SystemsManager()
-    self.systems_manager_tab = QWidget()
-    self.tab_widget.addTab(self.systems_manager_tab, "Systems Manager")
-    systems_manager_layout = QGridLayout()
-    self.install_app_ticker = QCheckBox("Install Applications")
-    self.install_python_ticker = QCheckBox("Install Python Modules")
-    self.enable_windows_features_ticker = QCheckBox("Enable Windows Features")
-    if sys.platform != 'win32':
-        self.enable_windows_features_ticker.setEnabled(False)
-    self.install_theme_ticker = QCheckBox("Install Theme")
-    self.install_font_ticker = QCheckBox("Install Font")
-    self.update_ticker = QCheckBox("Update")
-    self.clean_ticker = QCheckBox("Clean")
-    self.silent_ticker = QCheckBox("Silent")
-    self.install_app_ticker.setChecked(False)
-    self.install_app_ticker.stateChanged.connect(install_applications_button_selected)
-    self.install_theme_ticker.stateChanged.connect(install_applications_button_selected)
-    self.install_font_ticker.stateChanged.connect(install_applications_button_selected)
-    self.install_font_ticker.stateChanged.connect(install_applications_button_selected)
-    self.install_font_ticker.stateChanged.connect(install_applications_button_selected)
-    self.update_ticker.setChecked(False)
-    self.clean_ticker.setChecked(False)
-    self.theme_combobox = QComboBox()
-    self.theme_combobox.addItems(['Takayuma', 'Other'])
-    self.theme_combobox.setItemText(0, "Takayuma")
-    self.theme_combobox.setEnabled(False)
-    self.font_combobox = QComboBox()
-    self.font_combobox.addItems(['Hack NF', 'Meslo'])
-    self.font_combobox.setItemText(0, "Hack NF")
-    self.font_combobox.setEnabled(False)
-    self.systems_manager_run_button = QPushButton("Run ⥀")
-    self.systems_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-    self.application_install_edit = QLineEdit()
-    self.python_module_install_edit = QLineEdit()
-    self.enable_windows_feature_edit = QLineEdit()
-    self.application_install_edit.setEnabled(False)
-    self.python_module_install_edit.setEnabled(False)
-    self.enable_windows_feature_edit.setEnabled(False)
-    self.enable_windows_feature_list = QListWidget()
-    self.enable_windows_feature_list.setSelectionMode(3)
-    self.enable_windows_feature_list.setEnabled(False)
-    self.enable_windows_feature_list.addItems(self.systems_manager.windows_features)
-    self.application_install_list = QListWidget()
-    self.application_install_list.setSelectionMode(3)
-    self.application_install_list.setEnabled(False)
-    self.application_install_list.addItems(self.systems_manager.applications)
-    self.webarchiver_install_button = QCheckBox("Geniusbot - Webarchiver Plugin")
-    if webarchiver_installed:
-        self.webarchiver_install_button.setChecked(True)
-        self.webarchiver_install_button.setEnabled(False)
-    else:
-        self.webarchiver_install_button.setChecked(False)
-    self.subshift_install_button = QCheckBox("Geniusbot - Subshift Plugin")
-    if subshift_installed:
-        self.subshift_install_button.setChecked(True)
-        self.subshift_install_button.setEnabled(False)
-    else:
-        self.subshift_install_button.setChecked(False)
-    self.media_downloader_install_button = QCheckBox("Geniusbot - Media Downloader Plugin")
-    if media_downloader_installed:
-        self.media_downloader_install_button.setChecked(True)
-        self.media_downloader_install_button.setEnabled(False)
-    else:
-        self.media_downloader_install_button.setChecked(False)
-    self.media_manager_install_button = QCheckBox("Geniusbot - Media Manager Plugin")
-    if media_manager_installed:
-        self.media_manager_install_button.setChecked(True)
-        self.media_manager_install_button.setEnabled(False)
-    else:
-        self.media_manager_install_button.setChecked(False)
-    self.repository_manager_install_button = QCheckBox("Geniusbot - Repository Manager Plugin")
-    if repository_manager_installed:
-        self.repository_manager_install_button.setChecked(True)
-        self.repository_manager_install_button.setEnabled(False)
-    else:
-        self.repository_manager_install_button.setChecked(False)
-    self.report_manager_install_button = QCheckBox("Geniusbot - Report Manager Plugin")
-    if report_manager_installed:
-        self.report_manager_install_button.setChecked(True)
-        self.report_manager_install_button.setEnabled(False)
-    else:
-        self.report_manager_install_button.setChecked(False)
-    self.systems_manager_run_button.clicked.connect(manage_system)
-    self.system_progress_bar = QProgressBar()
-    # systems_manager_layout.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
-    # systems_manager_layout.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 2)
-    # systems_manager_layout.addWidget(self.repository_manager_repositories_file_location_button, 1, 0, 1, 1)
-    # systems_manager_layout.addWidget(self.repository_manager_repositories_file_location_label, 1, 1, 1, 2)
-    # systems_manager_layout.addWidget(self.clone_ticker, 2, 0, 1, 1)
-    # systems_manager_layout.addWidget(self.pull_ticker, 2, 1, 1, 1)
-    # systems_manager_layout.addWidget(self.set_default_branch_ticker, 2, 2, 1, 1)
-    # systems_manager_layout.addWidget(self.repository_git_command_label, 3, 0, 1, 3)
-    # systems_manager_layout.addWidget(self.repository_git_command, 4, 0, 1, 3)
-    # systems_manager_layout.addWidget(self.repository_links_editor_label, 5, 0, 1, 3)
-    # systems_manager_layout.addWidget(self.repository_links_editor, 6, 0, 1, 3)
-    # systems_manager_layout.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
-    # systems_manager_layout.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
-    # systems_manager_layout.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
-    systems_manager_layout.addWidget(self.update_ticker, 1, 0, 1, 1)
-    systems_manager_layout.addWidget(self.clean_ticker, 1, 1, 1, 1)
-    systems_manager_layout.addWidget(self.install_theme_ticker, 1, 2, 1, 1)
-    systems_manager_layout.addWidget(self.install_font_ticker, 1, 3, 1, 1)
-    systems_manager_layout.addWidget(self.theme_combobox, 2, 2, 1, 1)
-    systems_manager_layout.addWidget(self.font_combobox, 2, 3, 1, 1)
-    systems_manager_layout.addWidget(self.install_app_ticker, 3, 0, 1, 2)
-    systems_manager_layout.addWidget(self.install_python_ticker, 3, 1, 1, 1)
-    systems_manager_layout.addWidget(self.enable_windows_features_ticker, 3, 2, 1, 2)
-    systems_manager_layout.addWidget(self.application_install_edit, 4, 0, 1, 1)
-    systems_manager_layout.addWidget(self.application_install_list, 5, 0, 6, 1)
-    systems_manager_layout.addWidget(self.python_module_install_edit, 4, 1, 1, 1)
-    systems_manager_layout.addWidget(self.enable_windows_feature_edit, 4, 2, 1, 2)
-    systems_manager_layout.addWidget(self.enable_windows_feature_list, 5, 2, 6, 2)
-    systems_manager_layout.addWidget(self.webarchiver_install_button, 5, 1, 1, 1)
-    systems_manager_layout.addWidget(self.subshift_install_button, 6, 1, 1, 1)
-    systems_manager_layout.addWidget(self.media_downloader_install_button, 7, 1, 1, 1)
-    systems_manager_layout.addWidget(self.media_manager_install_button, 8, 1, 1, 1)
-    systems_manager_layout.addWidget(self.repository_manager_install_button, 9, 1, 1, 1)
-    systems_manager_layout.addWidget(self.report_manager_install_button, 10, 1, 1, 1)
-    systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
-    systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
-    self.tab_widget.setTabText(7, "Systems Manager")
-    self.systems_manager_tab.setLayout(systems_manager_layout)
-
-
-def install_applications_button_selected(self):
-    if self.install_app_ticker.isChecked():
-        self.application_install_edit.setEnabled(True)
-    else:
+    def __init__(self, tab_widget):
+        super(SystemsManagerTab, self).__init__()
+        self.systems_manager = SystemsManager()
+        self.systems_manager_tab = QWidget()
+        self.webarchiver_installed = self.check_package(package="webarchiver")
+        self.subshift_installed = self.check_package(package="subshift")
+        self.media_downloader_installed = self.check_package(package="media-downloader")
+        self.media_manager_installed = self.check_package(package="media-manager")
+        self.report_manager_installed = self.check_package(package="report-manager")
+        self.repository_manager_installed = self.check_package(package="repository-manager")
+        self.tab_widget = tab_widget
+        self.tab_widget.addTab(self.systems_manager_tab, "Systems Manager")
+        systems_manager_layout = QGridLayout()
+        self.install_app_ticker = QCheckBox("Install Applications")
+        self.install_python_ticker = QCheckBox("Install Python Modules")
+        self.enable_windows_features_ticker = QCheckBox("Enable Windows Features")
+        if sys.platform != 'win32':
+            self.enable_windows_features_ticker.setEnabled(False)
+        self.install_theme_ticker = QCheckBox("Install Theme")
+        self.install_font_ticker = QCheckBox("Install Font")
+        self.update_ticker = QCheckBox("Update")
+        self.clean_ticker = QCheckBox("Clean")
+        self.silent_ticker = QCheckBox("Silent")
+        self.install_app_ticker.setChecked(False)
+        self.install_app_ticker.stateChanged.connect(self.install_applications_button_selected)
+        self.install_theme_ticker.stateChanged.connect(self.enable_theme)
+        self.install_font_ticker.stateChanged.connect(self.enable_font)
+        self.install_python_ticker.stateChanged.connect(self.install_python_button_selected)
+        self.enable_windows_features_ticker.stateChanged.connect(self.enable_windows_features_selected)
+        self.update_ticker.setChecked(False)
+        self.clean_ticker.setChecked(False)
+        self.theme_combobox = QComboBox()
+        self.theme_combobox.addItems(['Takayuma', 'Other'])
+        self.theme_combobox.setItemText(0, "Takayuma")
+        self.theme_combobox.setEnabled(False)
+        self.font_combobox = QComboBox()
+        self.font_combobox.addItems(['Hack NF', 'Meslo'])
+        self.font_combobox.setItemText(0, "Hack NF")
+        self.font_combobox.setEnabled(False)
+        self.systems_manager_run_button = QPushButton("Run ⥀")
+        self.systems_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.application_install_edit = QLineEdit()
+        self.python_module_install_edit = QLineEdit()
+        self.enable_windows_feature_edit = QLineEdit()
         self.application_install_edit.setEnabled(False)
+        self.python_module_install_edit.setEnabled(False)
+        self.enable_windows_feature_edit.setEnabled(False)
+        self.enable_windows_feature_list = QListWidget()
+        self.enable_windows_feature_list.setSelectionMode(3)
+        self.enable_windows_feature_list.setEnabled(False)
+        self.enable_windows_feature_list.addItems(self.systems_manager.windows_features)
+        self.application_install_list = QListWidget()
+        self.application_install_list.setSelectionMode(3)
+        self.application_install_list.setEnabled(False)
+        self.application_install_list.addItems(self.systems_manager.applications)
+        self.webarchiver_install_button = QCheckBox("Geniusbot - Webarchiver Plugin")
+        if self.webarchiver_installed:
+            self.webarchiver_install_button.setChecked(True)
+            self.webarchiver_install_button.setEnabled(False)
+        else:
+            self.webarchiver_install_button.setChecked(False)
+        self.subshift_install_button = QCheckBox("Geniusbot - Subshift Plugin")
+        if self.subshift_installed:
+            self.subshift_install_button.setChecked(True)
+            self.subshift_install_button.setEnabled(False)
+        else:
+            self.subshift_install_button.setChecked(False)
+        self.media_downloader_install_button = QCheckBox("Geniusbot - Media Downloader Plugin")
+        if self.media_downloader_installed:
+            self.media_downloader_install_button.setChecked(True)
+            self.media_downloader_install_button.setEnabled(False)
+        else:
+            self.media_downloader_install_button.setChecked(False)
+        self.media_manager_install_button = QCheckBox("Geniusbot - Media Manager Plugin")
+        if self.media_manager_installed:
+            self.media_manager_install_button.setChecked(True)
+            self.media_manager_install_button.setEnabled(False)
+        else:
+            self.media_manager_install_button.setChecked(False)
+        self.repository_manager_install_button = QCheckBox("Geniusbot - Repository Manager Plugin")
+        if self.repository_manager_installed:
+            self.repository_manager_install_button.setChecked(True)
+            self.repository_manager_install_button.setEnabled(False)
+        else:
+            self.repository_manager_install_button.setChecked(False)
+        self.report_manager_install_button = QCheckBox("Geniusbot - Report Manager Plugin")
+        if self.report_manager_installed:
+            self.report_manager_install_button.setChecked(True)
+            self.report_manager_install_button.setEnabled(False)
+        else:
+            self.report_manager_install_button.setChecked(False)
+        self.systems_manager_run_button.clicked.connect(self.manage_system)
+        self.system_progress_bar = QProgressBar()
+        systems_manager_layout.addWidget(self.update_ticker, 1, 0, 1, 1)
+        systems_manager_layout.addWidget(self.clean_ticker, 1, 1, 1, 1)
+        systems_manager_layout.addWidget(self.install_theme_ticker, 1, 2, 1, 1)
+        systems_manager_layout.addWidget(self.install_font_ticker, 1, 3, 1, 1)
+        systems_manager_layout.addWidget(self.theme_combobox, 2, 2, 1, 1)
+        systems_manager_layout.addWidget(self.font_combobox, 2, 3, 1, 1)
+        systems_manager_layout.addWidget(self.install_app_ticker, 3, 0, 1, 2)
+        systems_manager_layout.addWidget(self.install_python_ticker, 3, 1, 1, 1)
+        systems_manager_layout.addWidget(self.enable_windows_features_ticker, 3, 2, 1, 2)
+        systems_manager_layout.addWidget(self.application_install_edit, 4, 0, 1, 1)
+        systems_manager_layout.addWidget(self.application_install_list, 5, 0, 6, 1)
+        systems_manager_layout.addWidget(self.python_module_install_edit, 4, 1, 1, 1)
+        systems_manager_layout.addWidget(self.enable_windows_feature_edit, 4, 2, 1, 2)
+        systems_manager_layout.addWidget(self.enable_windows_feature_list, 5, 2, 6, 2)
+        systems_manager_layout.addWidget(self.webarchiver_install_button, 5, 1, 1, 1)
+        systems_manager_layout.addWidget(self.subshift_install_button, 6, 1, 1, 1)
+        systems_manager_layout.addWidget(self.media_downloader_install_button, 7, 1, 1, 1)
+        systems_manager_layout.addWidget(self.media_manager_install_button, 8, 1, 1, 1)
+        systems_manager_layout.addWidget(self.repository_manager_install_button, 9, 1, 1, 1)
+        systems_manager_layout.addWidget(self.report_manager_install_button, 10, 1, 1, 1)
+        systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
+        systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
+        self.tab_widget.setTabText(7, "Systems Manager")
+        self.systems_manager_tab.setLayout(systems_manager_layout)
+
+    def install_applications_button_selected(self):
+        print(f"Install App Button Detected: {self.install_app_ticker.isEnabled():}")
+        if self.application_install_edit.isEnabled():
+            print("Detected Checked for Applications")
+            self.application_install_edit.setDisabled(True)
+        else:
+            self.application_install_edit.setDisabled(False)
 
 
-def install_python_button_selected(self):
-    if self.install_python_modules_ticker.isChecked():
-        self.python_install_edit.setEnabled(True)
-    else:
-        self.python_install_edit.setEnabled(False)
+    def install_python_button_selected(self):
+        if self.python_module_install_edit.isEnabled():
+            self.python_module_install_edit.setDisabled(True)
+        else:
+            self.python_module_install_edit.setDisabled(False)
 
 
-def enable_windows_features_selected(self):
-    if self.enable_windows_features.isChecked():
-        self.python_install_edit.setEnabled(True)
-    else:
-        self.python_install_edit.setEnabled(False)
+    def enable_windows_features_selected(self):
+        if self.enable_windows_features_ticker.isChecked():
+            self.enable_windows_feature_edit.setEnabled(True)
+        else:
+            self.enable_windows_feature_edit.setEnabled(False)
 
 
-def manage_system(self):
-    print("TEST")
+    def enable_theme(self):
+        print("THEME WAS CHECKED TRY 1")
+        if self.install_theme_ticker.isChecked():
+            print("THEME WAS CHECKED")
+            self.theme_combobox.setEnabled(True)
+        else:
+            self.theme_combobox.setEnabled(False)
+
+
+    def enable_font(self):
+        if self.install_font_ticker.isChecked():
+            self.font_combobox.setEnabled(True)
+        else:
+            self.font_combobox.setEnabled(False)
+
+
+    def check_package(self, package="None"):
+        found = False
+        try:
+            dist = pkg_resources.get_distribution(package)
+            print('{} ({}) is installed'.format(dist.key, dist.version))
+            found = True
+        except pkg_resources.DistributionNotFound:
+            print('{} is NOT installed'.format(package))
+        return found
+
+
+    def manage_system(self):
+        print("TEST")
 
 
 class SystemsManagerWorker(QObject):

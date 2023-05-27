@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 from geniusbot.version import __version__, __author__, __credits__
-from geniusbot.geniusbot import geniusbot
+from geniusbot.geniusbot import geniusbot, GeniusBot
 from geniusbot.plugins import \
     geniusbot_chat_plugin, \
     media_downloader_plugin, \
