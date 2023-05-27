@@ -40,7 +40,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from version import __version__, __author__, __credits__
 from qt.scrollable_widget import ScrollLabel
 from plugins.geniusbot_chat_plugin import initialize_geniusbot_chat_tab
-from plugins.systems_manager_plugin import initialize_systems_manager_tab
+from plugins.systems_manager_plugin import SystemsManagerTab
 if subshift_installed:
     from plugins.subshift_plugin import initialize_subshift_tab
 if webarchiver_installed:
@@ -148,6 +148,30 @@ class GeniusBot(QMainWindow):
         self.web_progress_bar = None
         self.file_type_combobox = None
         self.chattybot_response = None
+        self.systems_manager = None
+        self.systems_manager_tab = None
+        self.install_app_ticker = None
+        self.install_python_ticker = None
+        self.enable_windows_features_ticker = None
+        self.install_theme_ticker = None
+        self.install_font_ticker = None
+        self.update_ticker = None
+        self.clean_ticker = None
+        self.silent_ticker = None
+        self.theme_combobox = None
+        self.font_combobox = None
+        self.systems_manager_run_button = None
+        self.application_install_edit = None
+        self.python_module_install_edit = None
+        self.enable_windows_feature_edit = None
+        self.enable_windows_feature_list = None
+        self.application_install_list = None
+        self.webarchiver_installed = check_package("webarchiver")
+        self.subshift_installed = check_package("subshift")
+        self.media_downloader_installed = check_package("media-downloader")
+        self.media_manager_installed = check_package("media-manager")
+        self.report_manager_installed = check_package("report-manager")
+        self.repository_manager_installed = check_package("repository-manager")
         self.initialize_user_interface()
 
     def initialize_user_interface(self):
@@ -173,7 +197,7 @@ class GeniusBot(QMainWindow):
             initialize_report_manager_tab(self)
         if repository_manager_installed:
             initialize_repository_manager_tab(self)
-        initialize_systems_manager_tab(self)
+        SystemsManagerTab(self.tab_widget)
         self.settings_tab = QWidget()
         self.tab_widget.addTab(self.settings_tab, "⚙")
         self.settings_tab_settings()
