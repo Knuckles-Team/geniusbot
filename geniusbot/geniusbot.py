@@ -39,20 +39,20 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QObject, pyqtSignal
 from version import __version__, __author__, __credits__
 from qt.scrollable_widget import ScrollLabel
-from plugins.geniusbot_chat_plugin import GeniusBotWorker, initialize_geniusbot_chat_tab
-from plugins.systems_manager_plugin import SystemsManagerWorker, initialize_systems_manager_tab
+from plugins.geniusbot_chat_plugin import initialize_geniusbot_chat_tab
+from plugins.systems_manager_plugin import initialize_systems_manager_tab
 if subshift_installed:
-    from plugins.subshift_plugin import SubshiftWorker, initialize_subshift_tab
+    from plugins.subshift_plugin import initialize_subshift_tab
 if webarchiver_installed:
-    from plugins.webarchiver_plugin import WebarchiverWorker, initialize_webarchiver_tab
+    from plugins.webarchiver_plugin import initialize_webarchiver_tab
 if media_downloader_installed:
-    from plugins.media_downloader_plugin import MediaDownloaderWorker, initialize_media_downloader_tab
+    from plugins.media_downloader_plugin import initialize_media_downloader_tab
 if media_manager_installed:
-    from plugins.media_manager_plugin import MediaManagerWorker, initialize_media_manager_tab
+    from plugins.media_manager_plugin import initialize_media_manager_tab
 if report_manager_installed:
-    from plugins.report_manager_plugin import MergeReportWorker, ReportManagerWorker, initialize_report_manager_tab
+    from plugins.report_manager_plugin import initialize_report_manager_tab
 if repository_manager_installed:
-    from plugins.repository_manager_plugin import RepositoryManagerWorker, initialize_repository_manager_tab
+    from plugins.repository_manager_plugin import initialize_repository_manager_tab
 
 
 if os.name == "posix":
@@ -231,7 +231,6 @@ class GeniusBot(QMainWindow):
                     print("Desktop Shortcut Created!")
             else:
                 os.remove(link_filepath)
-            # print(f"Desktop: {desktop}\nScript Parent Directory: {script_parent_dir}\nwin32 Command: {win32_cmd}\nIcon: {icon}\nWorking Path: {working_directory}\nLink Path {link_filepath}\nArgs: {arg_str}")
         elif sys.platform == 'linux':
             desktop_link_filepath = str(f"{desktop}/Genius Bot.desktop")
             link_filepath = os.path.join(os.path.join(os.path.expanduser('~')),
