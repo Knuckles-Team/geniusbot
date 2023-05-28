@@ -1,7 +1,7 @@
-# Geniusbot 
-*Version: 3.14.0*
+# Geniusbot
+*Version: 3.13.0*
 
-![Geniusbot](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot") 
+![Geniusbot](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot")
 
 The Ever-learning and ever-improving tool!
 
@@ -25,7 +25,7 @@ Powered by Artificial Intelligence scaled to your PC's performance!
 <br>
 Download videos from various websites! 
 
-Supports: 
+Supports:
 
 - YouTube
 - DailyMotion
@@ -69,7 +69,7 @@ Download as MP3 or MP4
 <details >
 <summary style="text-align:left; font-size:111%; color:black;"><b> Website Archiving </b></summary>
 <br>
-Archive any website by taking screenshots of any website entered.
+Archive any website by taking screenshots of any website entered or scraping that site for specific file types.
 
 Choose from a variety of options like file type, quality, and image size.
 
@@ -113,6 +113,19 @@ Multiple column selection optional for Inner, Outer, Left, and Right joining
 Manage your repositories by cloning, pulling, or running your own set of git commands on a given directory
 
 ![Repository Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_repository_manager.png "Repository Manager")
+
+</details>
+
+<details >
+<summary style="text-align:left; font-size:111%; color:black;"><b> Systems Manager </b></summary>
+<br>
+Manage your Linux/Windows System!
+
+* Install Applications
+* Clean
+* Update
+* Upgrade Geniusbot
+* Enable Windows Features
 
 </details>
 
