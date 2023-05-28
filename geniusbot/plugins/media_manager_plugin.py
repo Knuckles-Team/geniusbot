@@ -17,12 +17,10 @@ from media_manager import MediaManager
 
 
 class MediaManagerTab(QWidget):
-    def __init__(self, tab_widget):
+    def __init__(self):
         super(MediaManagerTab, self).__init__()
-        self.tab_widget = tab_widget
         self.media_manager = MediaManager()
         self.media_manager_tab = QWidget()
-        self.tab_widget.addTab(self.media_manager_tab, "Media Manager")
         media_manager_layout = QGridLayout()
         self.media_manager_media_location_button = QPushButton("Media Location")
         self.media_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
@@ -52,7 +50,6 @@ class MediaManagerTab(QWidget):
         media_manager_layout.addWidget(self.subtitle_ticker, 2, 1, 1, 1)
         media_manager_layout.addWidget(self.media_manager_files_label, 3, 0, 1, 2)
         media_manager_layout.addWidget(self.media_manager_run_button, 4, 0, 1, 2)
-        self.tab_widget.setTabText(2, "Media Manager")
         self.media_manager_tab.setLayout(media_manager_layout)
 
     def manage_media(self):

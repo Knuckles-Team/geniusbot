@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
 import sys
+
 sys.path.append("..")
 from io import StringIO
 import os
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QObject, pyqtSignal, QThread, Qt
 from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
@@ -17,12 +18,10 @@ from webarchiver import Webarchiver
 
 
 class WebarchiverTab(QWidget):
-    def __init__(self, tab_widget):
+    def __init__(self):
         super(WebarchiverTab, self).__init__()
-        self.tab_widget = tab_widget
         self.webarchiver = Webarchiver()
         self.webarchiver_tab = QWidget()
-        self.tab_widget.addTab(self.webarchiver_tab, "Webarchiver")
         # Video Download Widgets
         self.web_links_label = QLabel("Paste Website URL(s) Below ↴")
         self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
@@ -68,9 +67,7 @@ class WebarchiverTab(QWidget):
         webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 6)
         webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
         webarchiver_layout.setContentsMargins(3, 3, 3, 3)
-        self.tab_widget.setTabText(3, "Website Archive")
         self.webarchiver_tab.setLayout(webarchiver_layout)
-
 
     def screenshot_websites(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Taking screenshots...\n")
@@ -98,7 +95,6 @@ class WebarchiverTab(QWidget):
                 lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Screenshots captured!\n")
             )
 
-
     def open_webfile(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Website URL file\n")
         website_file_name = QFileDialog.getOpenFileName(self, 'File with URL(s)')
@@ -111,7 +107,6 @@ class WebarchiverTab(QWidget):
         websites = websites.strip()
         self.web_links_editor.setPlainText(websites)
 
-
     def save_web_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n")
         web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
@@ -120,7 +115,6 @@ class WebarchiverTab(QWidget):
             web_directory_name = os.path.expanduser("~")
         self.save_web_location_label.setText(web_directory_name)
         self.webarchiver.set_save_path(web_directory_name)
-
 
     def report_web_progress_bar(self, n):
         self.web_progress_bar.setValue(n)
@@ -148,7 +142,6 @@ class WebarchiverWorker(QObject):
         sys.stdout = result
         sys.stdout = old_stdout
         result_string = result.getvalue()
-
 
         for website_index in range(0, len(self.websites)):
             self.webarchiver.append_link(self.websites[website_index])

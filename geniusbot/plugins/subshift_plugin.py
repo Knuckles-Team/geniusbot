@@ -18,11 +18,10 @@ from qt.scrollable_widget import ScrollLabel
 
 
 class SubshiftTab(QWidget):
-    def __init__(self, tab_widget):
+    def __init__(self):
         super(SubshiftTab, self).__init__()
-        self.tab_widget = tab_widget
         self.subshift_tab = QWidget()
-        self.tab_widget.addTab(self.subshift_tab, "Subshift")
+
         self.open_subtitlefile_button = QPushButton("Open File")
         self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
         self.open_subtitlefile_button.clicked.connect(self.open_subtitlefile)
@@ -61,7 +60,7 @@ class SubshiftTab(QWidget):
         layout.addWidget(self.subtitle_menu_widget, 0, 0, 1, 1)
         layout.addWidget(self.shift_subtitle_button, 2, 0, 1, 1)
         layout.addWidget(self.subtitle_label, 3, 0, 1, 1)
-        self.tab_widget.setTabText(4, "Shift Subtitles")
+
         self.subshift_tab.setLayout(layout)
 
     def check_subtitle_seconds(self):
