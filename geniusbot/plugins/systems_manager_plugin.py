@@ -147,20 +147,17 @@ class SystemsManagerTab(QWidget):
         else:
             self.application_install_edit.setDisabled(False)
 
-
     def install_python_button_selected(self):
         if self.python_module_install_edit.isEnabled():
             self.python_module_install_edit.setDisabled(True)
         else:
             self.python_module_install_edit.setDisabled(False)
 
-
     def enable_windows_features_selected(self):
         if self.enable_windows_features_ticker.isChecked():
             self.enable_windows_feature_edit.setEnabled(True)
         else:
             self.enable_windows_feature_edit.setEnabled(False)
-
 
     def enable_theme(self):
         print("THEME WAS CHECKED TRY 1")
@@ -170,13 +167,11 @@ class SystemsManagerTab(QWidget):
         else:
             self.theme_combobox.setEnabled(False)
 
-
     def enable_font(self):
         if self.install_font_ticker.isChecked():
             self.font_combobox.setEnabled(True)
         else:
             self.font_combobox.setEnabled(False)
-
 
     def check_package(self, package="None"):
         found = False
@@ -187,7 +182,6 @@ class SystemsManagerTab(QWidget):
         except pkg_resources.DistributionNotFound:
             print('{} is NOT installed'.format(package))
         return found
-
 
     def manage_system(self):
         print("TEST")
