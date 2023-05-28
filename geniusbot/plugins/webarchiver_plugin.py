@@ -17,7 +17,15 @@ try:
     from qt.colors import yellow, green, orange, blue, red, purple
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-from webarchiver import Webarchiver
+
+import pkg_resources
+package = 'media-downloader'
+try:
+    dist = pkg_resources.get_distribution('webarchiver')
+    print('{} ({}) is installed'.format(dist.key, dist.version))
+    from webarchiver import Webarchiver
+except pkg_resources.DistributionNotFound:
+    print('{} is NOT installed'.format(package))
 
 
 class WebarchiverTab(QWidget):

@@ -16,7 +16,14 @@ try:
     from qt.colors import yellow, green, orange, blue, red, purple
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-from media_downloader import MediaDownloader
+import pkg_resources
+package = 'media-downloader'
+try:
+    dist = pkg_resources.get_distribution(package)
+    print('{} ({}) is installed'.format(dist.key, dist.version))
+    from media_downloader import MediaDownloader
+except pkg_resources.DistributionNotFound:
+    print('{} is NOT installed'.format(package))
 
 
 class MediaDownloaderTab(QWidget):
