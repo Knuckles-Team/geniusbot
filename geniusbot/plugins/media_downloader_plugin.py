@@ -17,8 +17,9 @@ from media_downloader import MediaDownloader
 
 
 class MediaDownloaderTab(QWidget):
-    def __init__(self):
+    def __init__(self, console):
         super(MediaDownloaderTab, self).__init__()
+        self.console = console
         self.video_downloader = MediaDownloader()
         self.media_downloader_tab = QWidget()
         # Video Download Widgets

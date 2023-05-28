@@ -17,8 +17,9 @@ from media_manager import MediaManager
 
 
 class MediaManagerTab(QWidget):
-    def __init__(self):
+    def __init__(self, console):
         super(MediaManagerTab, self).__init__()
+        self.console = console
         self.media_manager = MediaManager()
         self.media_manager_tab = QWidget()
         media_manager_layout = QGridLayout()

@@ -27,8 +27,9 @@ else:
 
 
 class GeniusBotChatTab(QWidget):
-    def __init__(self):
+    def __init__(self, console):
         super(GeniusBotChatTab, self).__init__()
+        self.console = console
         self.geniusbot_chatbot = ChatBot()
         self.geniusbot_chat_tab = QWidget()
         self.geniusbot_chat = ScrollLabel(self)

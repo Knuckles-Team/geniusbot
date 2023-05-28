@@ -18,10 +18,11 @@ from webarchiver import Webarchiver
 
 
 class WebarchiverTab(QWidget):
-    def __init__(self):
+    def __init__(self, console):
         super(WebarchiverTab, self).__init__()
         self.webarchiver = Webarchiver()
         self.webarchiver_tab = QWidget()
+        self.console = console
         # Video Download Widgets
         self.web_links_label = QLabel("Paste Website URL(s) Below ↴")
         self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
@@ -41,6 +42,9 @@ class WebarchiverTab(QWidget):
         self.web_dpi_spin_box = QSpinBox(self)
         self.web_dpi_spin_box.setRange(0, 2)
         self.web_dpi_spin_box.setValue(1)
+        self.web_scrape_label = QLabel("Scrape")
+        self.web_scrape_options = QComboBox()
+        self.web_scrape_options.addItems(['No', 'Yes'])
         self.web_file_type_label = QLabel("Filetype")
         self.web_links_file_type = QComboBox()
         self.web_links_file_type.addItems(['PNG', 'JPEG'])
@@ -52,20 +56,22 @@ class WebarchiverTab(QWidget):
 
         # Set the tab layout
         webarchiver_layout = QGridLayout()
-        webarchiver_layout.addWidget(self.web_links_label, 0, 0, 1, 6)
-        webarchiver_layout.addWidget(self.web_links_editor, 1, 0, 1, 6)
-        webarchiver_layout.addWidget(self.web_file_type_label, 2, 0, 1, 1, alignment=Qt.AlignRight)
-        webarchiver_layout.addWidget(self.web_links_file_type, 2, 1, 1, 1)
-        webarchiver_layout.addWidget(self.web_dpi_label, 2, 2, 1, 1, alignment=Qt.AlignRight)
-        webarchiver_layout.addWidget(self.web_dpi_spin_box, 2, 3, 1, 1)
-        webarchiver_layout.addWidget(self.web_zoom_label, 2, 4, 1, 1, alignment=Qt.AlignRight)
-        webarchiver_layout.addWidget(self.web_zoom_spin_box, 2, 5, 1, 1)
+        webarchiver_layout.addWidget(self.web_links_label, 0, 0, 1, 8)
+        webarchiver_layout.addWidget(self.web_links_editor, 1, 0, 1, 8)
+        webarchiver_layout.addWidget(self.web_scrape_label, 2, 0, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_scrape_options, 2, 1, 1, 1)
+        webarchiver_layout.addWidget(self.web_file_type_label, 2, 2, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_links_file_type, 2, 3, 1, 1)
+        webarchiver_layout.addWidget(self.web_dpi_label, 2, 4, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_dpi_spin_box, 2, 5, 1, 1)
+        webarchiver_layout.addWidget(self.web_zoom_label, 2, 6, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_zoom_spin_box, 2, 7, 1, 1)
         webarchiver_layout.addWidget(self.open_webfile_button, 3, 0, 1, 1)
         webarchiver_layout.addWidget(self.open_webfile_label, 3, 1, 1, 4)
         webarchiver_layout.addWidget(self.save_web_location_button, 4, 0, 1, 1)
         webarchiver_layout.addWidget(self.save_web_location_label, 4, 1, 1, 4)
-        webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 6)
-        webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 6)
+        webarchiver_layout.addWidget(self.archive_button, 5, 0, 1, 8)
+        webarchiver_layout.addWidget(self.web_progress_bar, 6, 0, 1, 8)
         webarchiver_layout.setContentsMargins(3, 3, 3, 3)
         self.webarchiver_tab.setLayout(webarchiver_layout)
 
@@ -77,9 +83,11 @@ class WebarchiverTab(QWidget):
         websites = websites.split('\n')
         if websites[0] != '':
             self.webarchiver_thread = QThread()
-            self.webarchiver_worker = WebarchiverWorker(self.webarchiver, websites, self.web_zoom_spin_box.value(),
+            self.webarchiver_worker = WebarchiverWorker(webarchiver=self.webarchiver,
+                                                        websites=websites, zoom=self.web_zoom_spin_box.value(),
                                                         dpi=self.web_dpi_spin_box.value(),
-                                                        filetype=self.web_links_file_type.currentText())
+                                                        filetype=self.web_links_file_type.currentText(),
+                                                        scrape=self.web_scrape_options.currentText())
             self.webarchiver_worker.moveToThread(self.webarchiver_thread)
             self.webarchiver_thread.started.connect(self.webarchiver_worker.run)
             self.webarchiver_worker.finished.connect(self.webarchiver_thread.quit)
@@ -124,7 +132,7 @@ class WebarchiverWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, webarchiver, websites, zoom=100, dpi=1, filetype="png"):
+    def __init__(self, webarchiver, websites, zoom=100, dpi=1, filetype="png", scrape="No"):
         super().__init__()
         self.webarchiver = webarchiver
         self.websites = websites
@@ -134,6 +142,10 @@ class WebarchiverWorker(QObject):
         self.browser = "Chrome"
         self.executor = "Local"
         self.processes = 1
+        if scrape == "Yes":
+            self.scrape = True
+        else:
+            self.scrape = False
 
     def run(self):
         """Long-running task."""
@@ -142,21 +154,20 @@ class WebarchiverWorker(QObject):
         sys.stdout = result
         sys.stdout = old_stdout
         result_string = result.getvalue()
+        self.webarchiver.launch_browser()
 
         for website_index in range(0, len(self.websites)):
             self.webarchiver.append_link(self.websites[website_index])
-            self.webarchiver.full_page_screenshot(url=self.websites[website_index], zoom_percentage=self.zoom,
-                                                  filetype=self.filetype)
-            self.progress.emit(int(((1 + website_index) / len(self.websites)) * 100))
-            self.webarchiver.reset_links()
-
             self.webarchiver.set_zoom_level(self.zoom)
             self.webarchiver.set_image_format(self.filetype)
             self.webarchiver.set_browser(browser=self.browser)
             self.webarchiver.set_executor(executor=self.executor)
             self.webarchiver.set_processes(processes=self.processes)
-            self.webarchiver.screenshot_urls_in_parallel(parallel_urls=self.webarchiver.urls)
-
+            self.webarchiver.full_page_screenshot(url=self.websites[website_index])
+            if self.scrape:
+                self.webarchiver.scrape_urls(url=self.websites[website_index])
+            self.progress.emit(int(((1 + website_index) / len(self.websites)) * 100))
+            self.webarchiver.reset_links()
         self.webarchiver.quit_driver()
 
         self.finished.emit()
