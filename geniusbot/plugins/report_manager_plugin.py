@@ -14,8 +14,12 @@ from PyQt5.QtWidgets import (
     QListWidget, QCheckBox, QAbstractItemView, QWidget
 )
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
-from qt.colors import yellow, green, orange, blue, red, purple
-from qt.scrollable_widget import ScrollLabel
+try:
+    from qt.colors import yellow, green, orange, blue, red, purple
+    from qt.scrollable_widget import ScrollLabel
+except ModuleNotFoundError:
+    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.scrollable_widget import ScrollLabel
 from report_manager import ReportManager
 
 

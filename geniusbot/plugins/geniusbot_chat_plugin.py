@@ -6,13 +6,15 @@ sys.path.append("..")
 from PyQt5.QtWidgets import (
     QWidget,
     QPushButton,
-    QLabel,
-    QPlainTextEdit,
-    QLineEdit, QProgressBar, QVBoxLayout, QTextEdit
+    QVBoxLayout, QTextEdit
 )
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
-from qt.colors import yellow, green, orange, blue, red, purple
-from qt.scrollable_widget import ScrollLabel
+try:
+    from qt.colors import yellow, green, orange, blue, red, purple
+    from qt.scrollable_widget import ScrollLabel
+except ModuleNotFoundError:
+    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.scrollable_widget import ScrollLabel
 from genius_chatbot import ChatBot
 
 
