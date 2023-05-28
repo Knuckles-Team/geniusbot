@@ -20,12 +20,12 @@ from repository_manager import Git
 
 
 class RepositoryManagerTab(QWidget):
-    def __init__(self, tab_widget):
+    def __init__(self):
         super(RepositoryManagerTab, self).__init__()
-        self.tab_widget = tab_widget
+        #super(RepositoryManagerTab, self).__init__()
         self.repository_manager = Git()
         self.repository_manager_tab = QWidget()
-        self.tab_widget.addTab(self.repository_manager_tab, "Repository Manager")
+
         repository_manager_layout = QGridLayout()
         self.repository_manager_repositories_location_button = QPushButton("Repositories Location")
         self.repository_manager_repositories_location_button.setStyleSheet(
@@ -75,7 +75,6 @@ class RepositoryManagerTab(QWidget):
         repository_manager_layout.addWidget(self.repository_manager_files_label, 7, 0, 1, 3)
         repository_manager_layout.addWidget(self.repository_manager_run_button, 8, 0, 1, 3)
         repository_manager_layout.addWidget(self.repositories_progress_bar, 9, 0, 1, 3)
-        self.tab_widget.setTabText(6, "Repository Manager")
         self.repository_manager_tab.setLayout(repository_manager_layout)
 
     def manage_repositories(self):

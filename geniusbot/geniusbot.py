@@ -166,6 +166,11 @@ class GeniusBot(QMainWindow):
         self.enable_windows_feature_edit = None
         self.enable_windows_feature_list = None
         self.application_install_list = None
+        self.geniusbot_send_button = None
+        self.geniusbot_chatbot = None
+        self.geniusbot_chat_tab = None
+        self.geniusbot_chat = None
+        self.chat_editor = None
         self.webarchiver_installed = check_package("webarchiver")
         self.subshift_installed = check_package("subshift")
         self.media_downloader_installed = check_package("media-downloader")
@@ -184,20 +189,36 @@ class GeniusBot(QMainWindow):
         self.tab_widget = QTabWidget()
         self.tab_widget.setStyleSheet("background-color: #f5f5f5;")
 
-        GeniusBotChatTab(self.tab_widget)
+        self.geniusbot_chat_tab = GeniusBotChatTab()
+        self.tab_widget.addTab(self.geniusbot_chat_tab.geniusbot_chat_tab, "Genius Chat")
+        self.tab_widget.setTabText(0, "Genius Bot Chat")
         if media_downloader_installed:
-            MediaDownloaderTab(self.tab_widget)
+            self.media_downloader_tab = MediaDownloaderTab()
+            self.tab_widget.addTab(self.media_downloader_tab.media_downloader_tab, "Media Downloader")
+            self.tab_widget.setTabText(1, "Media Downloader")
         if media_manager_installed:
-            MediaManagerTab(self.tab_widget)
+            self.media_manager_tab = MediaManagerTab()
+            self.tab_widget.addTab(self.media_manager_tab.media_manager_tab, "Media Manager")
+            self.tab_widget.setTabText(2, "Media Manager")
         if webarchiver_installed:
-            WebarchiverTab(self.tab_widget)
+            self.webarchiver_tab = WebarchiverTab()
+            self.tab_widget.addTab(self.webarchiver_tab.webarchiver_tab, "Webarchiver")
+            self.tab_widget.setTabText(3, "Website Archive")
         if subshift_installed:
-            SubshiftTab(self.tab_widget)
+            self.subshift_tab = SubshiftTab()
+            self.tab_widget.addTab(self.subshift_tab.subshift_tab, "Subshift")
+            self.tab_widget.setTabText(4, "Shift Subtitles")
         if report_manager_installed:
-            ReportManagerTab(self.tab_widget)
+            self.report_manager_tab = ReportManagerTab()
+            self.tab_widget.addTab(self.report_manager_tab.report_manager_tab, "Report Manager")
+            self.tab_widget.setTabText(5, "Report Manager")
         if repository_manager_installed:
-            RepositoryManagerTab(self.tab_widget)
-        SystemsManagerTab(self.tab_widget)
+            self.repository_manager_tab = RepositoryManagerTab()
+            self.tab_widget.addTab(self.repository_manager_tab.repository_manager_tab, "Repository Manager")
+            self.tab_widget.setTabText(6, "Repository Manager")
+        self.systems_manager_tab = SystemsManagerTab()
+        self.tab_widget.addTab(self.systems_manager_tab.systems_manager_tab, "Systems Manager")
+        self.tab_widget.setTabText(7, "Systems Manager")
         self.settings_tab = QWidget()
         self.tab_widget.addTab(self.settings_tab, "⚙")
         self.settings_tab_settings()

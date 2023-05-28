@@ -20,12 +20,11 @@ from report_manager import ReportManager
 
 
 class ReportManagerTab(QWidget):
-    def __init__(self, tab_widget):
+    def __init__(self):
         super(ReportManagerTab, self).__init__()
-        self.tab_widget = tab_widget
         self.report_manager = ReportManager()
         self.report_manager_tab = QWidget()
-        self.tab_widget.addTab(self.report_manager_tab, "Report Manager")
+
         self.report_manager_layout = QGridLayout()
         self.action_type_combobox = QComboBox()
         self.action_type_combobox.addItems(['Generate Report', 'Merge Reports'])
@@ -127,7 +126,7 @@ class ReportManagerTab(QWidget):
         self.merge_report_layout.addWidget(self.merge_type_combobox, 5, 1, 1, 3)
         self.merge_report_layout.addWidget(self.merge_button, 6, 0, 1, 4)
         self.merge_widget.hide()
-        self.tab_widget.setTabText(5, "Report Manager")
+
         self.report_manager_tab.setLayout(self.report_manager_layout)
 
     def swap_report_layout(self):

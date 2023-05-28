@@ -17,12 +17,10 @@ from media_downloader import MediaDownloader
 
 
 class MediaDownloaderTab(QWidget):
-    def __init__(self, tab_widget):
+    def __init__(self):
         super(MediaDownloaderTab, self).__init__()
-        self.tab_widget = tab_widget
         self.video_downloader = MediaDownloader()
         self.media_downloader_tab = QWidget()
-        self.tab_widget.addTab(self.media_downloader_tab, "Media Downloader")
         # Video Download Widgets
         self.video_links_label = QLabel("Paste Video URL(s) Below ↴")
         self.video_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
@@ -62,7 +60,6 @@ class MediaDownloaderTab(QWidget):
         video_layout.addWidget(self.video_download_button, 6, 0, 1, 2)
         video_layout.addWidget(self.video_progress_bar, 7, 0, 1, 2)
         video_layout.setContentsMargins(3, 3, 3, 3)
-        self.tab_widget.setTabText(1, "Media Downloader")
         self.media_downloader_tab.setLayout(video_layout)
 
     def media_download_save_location(self):

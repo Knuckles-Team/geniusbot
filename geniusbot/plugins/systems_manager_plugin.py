@@ -21,7 +21,7 @@ from systems_manager import SystemsManager
 
 class SystemsManagerTab(QWidget):
 
-    def __init__(self, tab_widget):
+    def __init__(self):
         super(SystemsManagerTab, self).__init__()
         self.systems_manager = SystemsManager()
         self.systems_manager_tab = QWidget()
@@ -31,8 +31,7 @@ class SystemsManagerTab(QWidget):
         self.media_manager_installed = self.check_package(package="media-manager")
         self.report_manager_installed = self.check_package(package="report-manager")
         self.repository_manager_installed = self.check_package(package="repository-manager")
-        self.tab_widget = tab_widget
-        self.tab_widget.addTab(self.systems_manager_tab, "Systems Manager")
+
         systems_manager_layout = QGridLayout()
         self.install_app_ticker = QCheckBox("Install Applications")
         self.install_python_ticker = QCheckBox("Install Python Modules")
@@ -136,7 +135,7 @@ class SystemsManagerTab(QWidget):
         systems_manager_layout.addWidget(self.report_manager_install_button, 10, 1, 1, 1)
         systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
         systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
-        self.tab_widget.setTabText(7, "Systems Manager")
+
         self.systems_manager_tab.setLayout(systems_manager_layout)
 
     def install_applications_button_selected(self):
