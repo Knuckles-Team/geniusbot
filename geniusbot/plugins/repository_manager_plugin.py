@@ -20,9 +20,9 @@ from repository_manager import Git
 
 
 class RepositoryManagerTab(QWidget):
-    def __init__(self):
+    def __init__(self, console):
         super(RepositoryManagerTab, self).__init__()
-        #super(RepositoryManagerTab, self).__init__()
+        self.console = console
         self.repository_manager = Git()
         self.repository_manager_tab = QWidget()
 

@@ -20,8 +20,9 @@ from report_manager import ReportManager
 
 
 class ReportManagerTab(QWidget):
-    def __init__(self):
+    def __init__(self, console):
         super(ReportManagerTab, self).__init__()
+        self.console = console
         self.report_manager = ReportManager()
         self.report_manager_tab = QWidget()
 

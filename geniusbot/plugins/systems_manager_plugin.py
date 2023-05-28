@@ -21,10 +21,11 @@ from systems_manager import SystemsManager
 
 class SystemsManagerTab(QWidget):
 
-    def __init__(self):
+    def __init__(self, console):
         super(SystemsManagerTab, self).__init__()
         self.systems_manager = SystemsManager()
         self.systems_manager_tab = QWidget()
+        self.console = console
         self.webarchiver_installed = self.check_package(package="webarchiver")
         self.subshift_installed = self.check_package(package="subshift")
         self.media_downloader_installed = self.check_package(package="media-downloader")
@@ -135,33 +136,32 @@ class SystemsManagerTab(QWidget):
         systems_manager_layout.addWidget(self.report_manager_install_button, 10, 1, 1, 1)
         systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
         systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
-
         self.systems_manager_tab.setLayout(systems_manager_layout)
 
     def install_applications_button_selected(self):
-        print(f"Install App Button Detected: {self.install_app_ticker.isEnabled():}")
-        if self.application_install_edit.isEnabled():
-            print("Detected Checked for Applications")
-            self.application_install_edit.setDisabled(True)
+        if self.install_app_ticker.isChecked():
+            self.application_install_edit.setEnabled(True)
+            self.application_install_list.setEnabled(True)
         else:
-            self.application_install_edit.setDisabled(False)
+            self.application_install_edit.setEnabled(False)
+            self.application_install_list.setEnabled(False)
 
     def install_python_button_selected(self):
-        if self.python_module_install_edit.isEnabled():
-            self.python_module_install_edit.setDisabled(True)
+        if self.install_python_ticker.isChecked():
+            self.python_module_install_edit.setEnabled(True)
         else:
-            self.python_module_install_edit.setDisabled(False)
+            self.python_module_install_edit.setEnabled(False)
 
     def enable_windows_features_selected(self):
         if self.enable_windows_features_ticker.isChecked():
             self.enable_windows_feature_edit.setEnabled(True)
+            self.enable_windows_feature_list.setEnabled(True)
         else:
             self.enable_windows_feature_edit.setEnabled(False)
+            self.enable_windows_feature_list.setEnabled(False)
 
     def enable_theme(self):
-        print("THEME WAS CHECKED TRY 1")
         if self.install_theme_ticker.isChecked():
-            print("THEME WAS CHECKED")
             self.theme_combobox.setEnabled(True)
         else:
             self.theme_combobox.setEnabled(False)
@@ -182,66 +182,151 @@ class SystemsManagerTab(QWidget):
             print('{} is NOT installed'.format(package))
         return found
 
+    def report_systems_progress_bar(self, n):
+        self.system_progress_bar.setValue(n)
+
     def manage_system(self):
-        print("TEST")
+        self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing System...\n")
+        self.system_progress_bar.setValue(1)
+        self.systems_manager_thread = QThread()
+        self.systems_manager_worker = SystemsManagerWorker(systems_manager=self.systems_manager,
+                                                           silent_ticker=self.silent_ticker,
+                                                           update_ticker=self.update_ticker,
+                                                           enable_windows_features_ticker=self.enable_windows_features_ticker,
+                                                           enable_windows_feature_list=self.enable_windows_feature_list,
+                                                           enable_windows_feature_edit=self.enable_windows_feature_edit,
+                                                           install_app_ticker=self.install_app_ticker,
+                                                           application_install_edit=self.application_install_edit,
+                                                           install_python_ticker=self.install_python_ticker,
+                                                           webarchiver_install_button=self.webarchiver_install_button,
+                                                           subshift_install_button=self.subshift_install_button,
+                                                           repository_manager_install_button=self.repository_manager_install_button,
+                                                           report_manager_install_button=self.report_manager_install_button,
+                                                           media_manager_install_button=self.media_manager_install_button,
+                                                           media_downloader_install_button=self.media_downloader_install_button,
+                                                           python_module_install_edit=self.python_module_install_edit,
+                                                           install_font_ticker=self.install_font_ticker,
+                                                           install_theme_ticker=self.install_theme_ticker,
+                                                           clean_ticker=self.clean_ticker)
+        self.systems_manager_worker.moveToThread(self.systems_manager_thread)
+        self.systems_manager_thread.started.connect(self.systems_manager_worker.run)
+        self.systems_manager_worker.finished.connect(self.systems_manager_thread.quit)
+        self.systems_manager_worker.finished.connect(self.systems_manager_worker.deleteLater)
+        self.systems_manager_thread.finished.connect(self.systems_manager_thread.deleteLater)
+        self.systems_manager_worker.progress.connect(self.report_systems_progress_bar)
+        self.systems_manager_thread.start()
+        self.systems_manager_run_button.setEnabled(False)
+        self.systems_manager_thread.finished.connect(
+            lambda: self.systems_manager_run_button.setEnabled(True)
+        )
+        self.systems_manager_thread.finished.connect(
+            lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] System actions complete!\n")
+        )
 
 
 class SystemsManagerWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, repository_manager, clone_ticker, set_default_branch_ticker, pull_ticker,
-                 repository_links_editor, repository_git_command, repository_manager_repositories_file_location_label,
-                 repository_manager_files_label, repository_manager_repositories_location_label):
+    def __init__(self, systems_manager, silent_ticker, update_ticker, enable_windows_features_ticker, enable_windows_feature_list,
+                 enable_windows_feature_edit, install_app_ticker, application_install_edit, install_python_ticker,
+                 webarchiver_install_button, subshift_install_button, repository_manager_install_button,
+                 report_manager_install_button, media_manager_install_button, media_downloader_install_button,
+                 python_module_install_edit, install_font_ticker, install_theme_ticker, clean_ticker):
         super().__init__()
-        self.repository_manager = repository_manager
-        self.clone_ticker = clone_ticker
-        self.set_default_branch_ticker = set_default_branch_ticker
-        self.pull_ticker = pull_ticker
-        self.repository_links_editor = repository_links_editor
-        self.repository_git_command = repository_git_command
-        self.repository_manager_repositories_file_location_label = repository_manager_repositories_file_location_label
-        self.repository_manager_files_label = repository_manager_files_label
-        self.repository_manager_repositories_location_label = repository_manager_repositories_location_label
+        self.systems_manager = systems_manager
+        self.silent_ticker = silent_ticker
+        self.update_ticker = update_ticker
+        self.enable_windows_features_ticker = enable_windows_features_ticker
+        self.enable_windows_feature_list = enable_windows_feature_list
+        self.enable_windows_feature_edit = enable_windows_feature_edit
+        self.install_app_ticker = install_app_ticker
+        self.application_install_edit = application_install_edit
+        self.install_python_ticker = install_python_ticker
+        self.webarchiver_install_button = webarchiver_install_button
+        self.subshift_install_button = subshift_install_button
+        self.repository_manager_install_button = repository_manager_install_button
+        self.report_manager_install_button = report_manager_install_button
+        self.media_manager_install_button = media_manager_install_button
+        self.media_downloader_install_button = media_downloader_install_button
+        self.python_module_install_edit = python_module_install_edit
+        self.install_font_ticker = install_font_ticker
+        self.install_theme_ticker = install_theme_ticker
+        self.clean_ticker = clean_ticker
 
     def run(self):
         """Long-running task."""
-        if self.clone_ticker.isChecked():
-            projects = self.repository_links_editor.toPlainText()
-            projects = projects.strip()
-            projects = projects.split('\n')
-            if projects[0] == '':
-                projects = []
-            if os.path.exists(self.repository_manager_repositories_file_location_label.text()):
-                try:
-                    file_repositories = open(self.repository_manager_repositories_file_location_label.text(), 'r')
-                    for repository in file_repositories:
-                        projects.append(repository)
-                    projects = list(dict.fromkeys(projects))
-                except Exception as e:
-                    print(f"File not found or unable to parse file contents: {e}")
-            self.repository_manager.set_git_projects(projects)
-            self.repository_manager.clone_projects()
-            self.progress.emit(33)
-        default_branch_flag = self.set_default_branch_ticker.isChecked()
-        if self.pull_ticker.isChecked():
-            self.repository_manager.pull_projects(set_to_default_branch=default_branch_flag)
-            self.progress.emit(66)
-        if self.repository_git_command.text() != "":
-            projects = self.repository_manager_files_label.text()
-            projects = projects.strip()
-            projects = projects.split('\n')
-            print(f"PROJECTS SO FAR: {projects}")
-            if projects[0] == '':
-                projects = []
-            for project in projects:
-                try:
-                    result = self.repository_manager.git_action(command=f"{self.repository_git_command.text()}",
-                                                                directory=f"{self.repository_manager_repositories_location_label.text()}/{project}")
-                    print(result)
-                except Exception as e:
-                    print(
-                        f"Unable to execute git command: {self.repository_git_command.text()} for directory: {self.repository_manager_repositories_location_label.text()}/{project}")
-            self.progress.emit(99)
+        if self.silent_ticker.isChecked():
+            print("Setting Silent...")
+            self.systems_manager.set_silent(silent=True)
+        self.progress.emit(1)
+        if self.update_ticker.isChecked():
+            print("Performing Update...")
+            self.systems_manager.update()
+        self.progress.emit(5)
+        if self.enable_windows_features_ticker.isChecked():
+            features_ui = self.enable_windows_feature_list.selectedItems()
+            features = []
+            for i in range(len(features_ui)):
+                features.append(str(self.enable_windows_feature_list.selectedItems()[i].text()))
+            custom_features = self.enable_windows_feature_edit.text()
+            custom_features = custom_features.replace(" ", "")
+            custom_features = custom_features.split(",")
+            features = features + custom_features
+            print(f"Setting features: {features}")
+            self.systems_manager.set_features(features=features)
+            print("Enabling Windows Features...")
+            self.systems_manager.enable_windows_features()
+        self.progress.emit(20)
+        if self.install_app_ticker.isChecked():
+            applications_ui = self.enable_windows_feature_list.selectedItems()
+            applications = []
+            for i in range(len(applications_ui)):
+                applications.append(str(self.enable_windows_feature_list.selectedItems()[i].text()))
+            custom_applications = self.application_install_edit.text()
+            custom_applications = custom_applications.replace(" ", "")
+            custom_applications = custom_applications.split(",")
+            applications = applications + custom_applications
+            print(f"Setting applications from GUI: {applications}")
+            self.systems_manager.set_applications(applications=applications)
+            print("Installing...")
+            self.systems_manager.install_applications()
+        self.progress.emit(45)
+        if self.install_python_ticker.isChecked():
+            python_modules = []
+            if self.webarchiver_install_button.isChecked():
+                python_modules.append('webarchiver')
+            if self.subshift_install_button.isChecked():
+                python_modules.append('subshift')
+            if self.repository_manager_install_button.isChecked():
+                python_modules.append('repository-manager')
+            if self.report_manager_install_button.isChecked():
+                python_modules.append('report-manager')
+            if self.media_manager_install_button.isChecked():
+                python_modules.append('media-manager')
+            if self.media_downloader_install_button.isChecked():
+                python_modules.append('media-downloader')
+            custom_python_modules = self.python_module_install_edit.text()
+            custom_python_modules = custom_python_modules.replace(" ", "")
+            custom_python_modules = custom_python_modules.split(",")
+            python_modules = python_modules + custom_python_modules
+            print(f"Setting Python Modules: {python_modules}")
+            self.systems_manager.set_python_modules(modules=python_modules)
+            print("Installing Python Modules...")
+            self.systems_manager.install_python_modules()
+        self.progress.emit(60)
+        if self.install_font_ticker.isChecked():
+            print("Setting Hack Font")
+            self.systems_manager.font()
+        self.progress.emit(75)
+        if self.install_theme_ticker.isChecked():
+            print("Setting Theme")
+            self.systems_manager.theme()
+        self.progress.emit(85)
+        if self.clean_ticker.isChecked():
+            print("Cleaning Recycle/Trash Bin")
+            self.systems_manager.clean()
+        self.progress.emit(95)
+
         self.progress.emit(100)
         self.finished.emit()

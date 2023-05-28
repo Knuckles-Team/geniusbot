@@ -18,9 +18,10 @@ from qt.scrollable_widget import ScrollLabel
 
 
 class SubshiftTab(QWidget):
-    def __init__(self):
+    def __init__(self, console):
         super(SubshiftTab, self).__init__()
         self.subshift_tab = QWidget()
+        self.console = console
 
         self.open_subtitlefile_button = QPushButton("Open File")
         self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
