@@ -13,7 +13,10 @@ from PyQt5.QtWidgets import (
     QGridLayout, QPlainTextEdit, QProgressBar,
     QFileDialog, QComboBox, QSpinBox, QWidget
 )
-from qt.colors import yellow, green, orange, blue, red, purple
+try:
+    from qt.colors import yellow, green, orange, blue, red, purple
+except ModuleNotFoundError:
+    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
 from webarchiver import Webarchiver
 
 

@@ -12,7 +12,10 @@ from PyQt5.QtWidgets import (
     QLineEdit, QProgressBar, QComboBox, QWidget, QFileDialog
 )
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
-from qt.colors import yellow, green, orange, blue, red, purple
+try:
+    from qt.colors import yellow, green, orange, blue, red, purple
+except ModuleNotFoundError:
+    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
 from media_downloader import MediaDownloader
 
 

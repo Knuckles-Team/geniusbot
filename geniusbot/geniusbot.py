@@ -17,6 +17,9 @@ def check_package(package="None"):
 
 import os
 import sys
+sys.path.append(".")
+sys.path.append("plugins")
+sys.path.append("qt")
 import pandas as pd
 from pathlib import Path
 webarchiver_installed = check_package("webarchiver")
@@ -37,22 +40,52 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QCheckBox
 )
 from PyQt5.QtCore import QObject, pyqtSignal
-from version import __version__, __author__, __credits__
-from qt.scrollable_widget import ScrollLabel
-from plugins.geniusbot_chat_plugin import GeniusBotChatTab
-from plugins.systems_manager_plugin import SystemsManagerTab
+try:
+    from version import __version__, __author__, __credits__
+except ModuleNotFoundError:
+    from geniusbot.version import __version__, __author__, __credits__
+try:
+    from qt.scrollable_widget import ScrollLabel
+except ModuleNotFoundError:
+    from geniusbot.qt.scrollable_widget import ScrollLabel
+try:
+    from plugins.geniusbot_chat_plugin import GeniusBotChatTab
+except ModuleNotFoundError:
+    from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotChatTab
+try:
+    from plugins.systems_manager_plugin import SystemsManagerTab
+except ModuleNotFoundError:
+    from geniusbot.plugins.systems_manager_plugin import SystemsManagerTab
 if subshift_installed:
-    from plugins.subshift_plugin import SubshiftTab
+    try:
+        from plugins.subshift_plugin import SubshiftTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.subshift_plugin import SubshiftTab
 if webarchiver_installed:
-    from plugins.webarchiver_plugin import WebarchiverTab
+    try:
+        from plugins.webarchiver_plugin import WebarchiverTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.webarchiver_plugin import WebarchiverTab
 if media_downloader_installed:
-    from plugins.media_downloader_plugin import MediaDownloaderTab
+    try:
+        from plugins.media_downloader_plugin import MediaDownloaderTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.media_downloader_plugin import MediaDownloaderTab
 if media_manager_installed:
-    from plugins.media_manager_plugin import MediaManagerTab
+    try:
+        from plugins.media_manager_plugin import MediaManagerTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.media_manager_plugin import MediaManagerTab
 if report_manager_installed:
-    from plugins.report_manager_plugin import ReportManagerTab
+    try:
+        from plugins.report_manager_plugin import ReportManagerTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.report_manager_plugin import ReportManagerTab
 if repository_manager_installed:
-    from plugins.repository_manager_plugin import RepositoryManagerTab
+    try:
+        from plugins.repository_manager_plugin import RepositoryManagerTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.repository_manager_plugin import RepositoryManagerTab
 
 
 if os.name == "posix":
