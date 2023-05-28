@@ -39,20 +39,20 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QObject, pyqtSignal
 from version import __version__, __author__, __credits__
 from qt.scrollable_widget import ScrollLabel
-from plugins.geniusbot_chat_plugin import initialize_geniusbot_chat_tab
+from plugins.geniusbot_chat_plugin import GeniusBotChatTab
 from plugins.systems_manager_plugin import SystemsManagerTab
 if subshift_installed:
-    from plugins.subshift_plugin import initialize_subshift_tab
+    from plugins.subshift_plugin import SubshiftTab
 if webarchiver_installed:
-    from plugins.webarchiver_plugin import initialize_webarchiver_tab
+    from plugins.webarchiver_plugin import WebarchiverTab
 if media_downloader_installed:
-    from plugins.media_downloader_plugin import initialize_media_downloader_tab
+    from plugins.media_downloader_plugin import MediaDownloaderTab
 if media_manager_installed:
-    from plugins.media_manager_plugin import initialize_media_manager_tab
+    from plugins.media_manager_plugin import MediaManagerTab
 if report_manager_installed:
-    from plugins.report_manager_plugin import initialize_report_manager_tab
+    from plugins.report_manager_plugin import ReportManagerTab
 if repository_manager_installed:
-    from plugins.repository_manager_plugin import initialize_repository_manager_tab
+    from plugins.repository_manager_plugin import RepositoryManagerTab
 
 
 if os.name == "posix":
@@ -184,19 +184,19 @@ class GeniusBot(QMainWindow):
         self.tab_widget = QTabWidget()
         self.tab_widget.setStyleSheet("background-color: #f5f5f5;")
 
-        initialize_geniusbot_chat_tab(self)
+        GeniusBotChatTab(self.tab_widget)
         if media_downloader_installed:
-            initialize_media_downloader_tab(self)
+            MediaDownloaderTab(self.tab_widget)
         if media_manager_installed:
-            initialize_media_manager_tab(self)
+            MediaManagerTab(self.tab_widget)
         if webarchiver_installed:
-            initialize_webarchiver_tab(self)
+            WebarchiverTab(self.tab_widget)
         if subshift_installed:
-            initialize_subshift_tab(self)
+            SubshiftTab(self.tab_widget)
         if report_manager_installed:
-            initialize_report_manager_tab(self)
+            ReportManagerTab(self.tab_widget)
         if repository_manager_installed:
-            initialize_repository_manager_tab(self)
+            RepositoryManagerTab(self.tab_widget)
         SystemsManagerTab(self.tab_widget)
         self.settings_tab = QWidget()
         self.tab_widget.addTab(self.settings_tab, "⚙")

@@ -26,53 +26,54 @@ else:
         user = os.getlogin()
 
 
-def initialize_geniusbot_chat_tab(self):
-    self.geniusbot_chatbot = ChatBot()
-    self.geniusbot_chat_tab = QWidget()
-    self.tab_widget.addTab(self.geniusbot_chat_tab, "Genius Chat")
-    self.geniusbot_chat = ScrollLabel(self)
-    self.geniusbot_chat.hide()
-    self.geniusbot_chat.setFontColor(background_color="white", color="black")
-    self.geniusbot_chat.setText(
-        f"""[Genius Bot] ZzzzZzzz... (It appears Genius Bot is sleeping, click "Wake Up!")""")
-    self.chat_editor = QTextEdit()
-    self.chat_editor.installEventFilter(self)
-    self.geniusbot_send_button = QPushButton("Wake Up!")
-    self.geniusbot_send_button.setStyleSheet(
-        f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
-    self.geniusbot_send_button.clicked.connect(chattybot_response)
-    self.chat_editor.setDisabled(False)
-    layout = QVBoxLayout()
-    layout.addWidget(self.geniusbot_chat)
-    layout.addWidget(self.chat_editor)
-    layout.addWidget(self.geniusbot_send_button)
-    layout.setStretch(0, 24)
-    layout.setStretch(1, 3)
-    layout.setStretch(2, 1)
-    self.tab_widget.setTabText(0, "Genius Bot Chat")
-    self.geniusbot_chat_tab.setLayout(layout)
+class GeniusBotChatTab(QWidget):
+    def __init__(self, tab_widget):
+        super(GeniusBotChatTab, self).__init__()
+        self.tab_widget = tab_widget
+        self.geniusbot_chatbot = ChatBot()
+        self.geniusbot_chat_tab = QWidget()
+        self.tab_widget.addTab(self.geniusbot_chat_tab, "Genius Chat")
+        self.geniusbot_chat = ScrollLabel(self)
+        self.geniusbot_chat.hide()
+        self.geniusbot_chat.setFontColor(background_color="white", color="black")
+        self.geniusbot_chat.setText(
+            f"""[Genius Bot] ZzzzZzzz... (It appears Genius Bot is sleeping, click "Wake Up!")""")
+        self.chat_editor = QTextEdit()
+        self.chat_editor.installEventFilter(self)
+        self.geniusbot_send_button = QPushButton("Wake Up!")
+        self.geniusbot_send_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.geniusbot_send_button.clicked.connect(self.geniusbot_chat_response)
+        self.chat_editor.setDisabled(False)
+        layout = QVBoxLayout()
+        layout.addWidget(self.geniusbot_chat)
+        layout.addWidget(self.chat_editor)
+        layout.addWidget(self.geniusbot_send_button)
+        layout.setStretch(0, 24)
+        layout.setStretch(1, 3)
+        layout.setStretch(2, 1)
+        self.tab_widget.setTabText(0, "Genius Bot Chat")
+        self.geniusbot_chat_tab.setLayout(layout)
 
-
-def chattybot_response(self):
-    # self.geniusbot_send_button.setEnabled(False)
-    self.geniusbot_send_button.setText("Send")
-    text = str(self.chat_editor.toPlainText().strip())
-    self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[{user}] {text}""")
-    self.chat_editor.setText("")
-    self.geniusbot_thread = QThread()
-    self.geniusbot_worker = GeniusBotWorker(geniusbot_chatbot=self.geniusbot_chatbot,
-                                            geniusbot_chat=self.geniusbot_chat,
-                                            text=text)
-    self.geniusbot_worker.moveToThread(self.geniusbot_thread)
-    self.geniusbot_thread.started.connect(self.geniusbot_worker.run)
-    self.geniusbot_worker.finished.connect(self.geniusbot_thread.quit)
-    self.geniusbot_worker.finished.connect(self.geniusbot_worker.deleteLater)
-    self.geniusbot_thread.finished.connect(self.geniusbot_thread.deleteLater)
-    self.geniusbot_thread.finished.connect(lambda: self.geniusbot_send_button.setDisabled(False))
-    self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
-    self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setText(""))
-    self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setFocus())
-    self.geniusbot_thread.start()
+    def geniusbot_chat_response(self):
+        self.geniusbot_send_button.setText("Send")
+        text = str(self.chat_editor.toPlainText().strip())
+        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[{user}] {text}""")
+        self.chat_editor.setText("")
+        self.geniusbot_thread = QThread()
+        self.geniusbot_worker = GeniusBotWorker(geniusbot_chatbot=self.geniusbot_chatbot,
+                                                geniusbot_chat=self.geniusbot_chat,
+                                                text=text)
+        self.geniusbot_worker.moveToThread(self.geniusbot_thread)
+        self.geniusbot_thread.started.connect(self.geniusbot_worker.run)
+        self.geniusbot_worker.finished.connect(self.geniusbot_thread.quit)
+        self.geniusbot_worker.finished.connect(self.geniusbot_worker.deleteLater)
+        self.geniusbot_thread.finished.connect(self.geniusbot_thread.deleteLater)
+        self.geniusbot_thread.finished.connect(lambda: self.geniusbot_send_button.setDisabled(False))
+        self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
+        self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setText(""))
+        self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setFocus())
+        self.geniusbot_thread.start()
 
 
 class GeniusBotWorker(QObject):
