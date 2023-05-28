@@ -20,7 +20,14 @@ try:
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
-from repository_manager import Git
+import pkg_resources
+package = 'repository-manager'
+try:
+    dist = pkg_resources.get_distribution(package)
+    print('{} ({}) is installed'.format(dist.key, dist.version))
+    from repository_manager import Git
+except pkg_resources.DistributionNotFound:
+    print('{} is NOT installed'.format(package))
 
 
 class RepositoryManagerTab(QWidget):

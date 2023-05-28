@@ -3,7 +3,7 @@
 import sys
 
 sys.path.append("..")
-import subshift
+
 from PyQt5.QtWidgets import (
     QGridLayout,
     QPushButton,
@@ -18,6 +18,14 @@ try:
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
+import pkg_resources
+package = 'subshift'
+try:
+    dist = pkg_resources.get_distribution(package)
+    print('{} ({}) is installed'.format(dist.key, dist.version))
+    import subshift
+except pkg_resources.DistributionNotFound:
+    print('{} is NOT installed'.format(package))
 
 
 class SubshiftTab(QWidget):
