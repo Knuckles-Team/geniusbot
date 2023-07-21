@@ -98,6 +98,6 @@ class GeniusBotWorker(QObject):
         if self.text == '':
             self.text = self.default_text
         response = self.geniusbot_chatbot.chat(prompt=self.text)
-        self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response['answer']}\n[Source] {response['source']}")
+        self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response['answer']}\n[Source] {response['sources']}")
         self.progress.emit(100)
         self.finished.emit()
