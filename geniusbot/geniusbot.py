@@ -110,6 +110,12 @@ pd.set_option('display.max_rows', 250)
 pd.set_option('display.max_columns', 9)
 pd.set_option('display.expand_frame_repr', False)
 
+if os.path.isdir(os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation'))):
+    print("Documentation directory exists")
+else:
+    print(f"Making Documentation directory: {os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation'))}")
+    os.mkdir(os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation')))
+
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/geniusbot/main/README.md')
 with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/geniusbot.md', 'w') as f:
     f.write(response.text)
