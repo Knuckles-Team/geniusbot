@@ -15,6 +15,7 @@ from geniusbot.qt.scrollable_widget import ScrollLabel
 from geniusbot.qt import colors
 from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
 
+
 """
 geniusbot
 
