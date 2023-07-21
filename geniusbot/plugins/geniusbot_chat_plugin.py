@@ -93,7 +93,7 @@ class GeniusBotWorker(QObject):
         old_text = self.geniusbot_chat.text()
         self.geniusbot_chat.setText(f"{self.geniusbot_chat.text()}\n"
                                     f"[Genius Bot] Firing up the gears...")
-        self.geniusbot_chatbot.source_directory = os.path.dirname((os.path.normpath(os.path.dirname(__file__))))
+        self.geniusbot_chatbot.source_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation'))
         self.geniusbot_chatbot.assimilate()
         if self.text == '':
             self.text = self.default_text
