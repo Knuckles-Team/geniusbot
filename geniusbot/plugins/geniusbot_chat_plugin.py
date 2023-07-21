@@ -104,7 +104,6 @@ class GeniusBotWorker(QObject):
         self.geniusbot_chatbot.hide_source = False
         self.geniusbot_chatbot.model_n_ctx = 2127
         self.geniusbot_chatbot.model_n_batch = 9
-        self.geniusbot_chatbot.bytes = 1073741824
         response = self.geniusbot_chatbot.chat(prompt=self.text)
         self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response['answer']}")
         #self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response['answer']}\n[Source] {response['sources']}")
