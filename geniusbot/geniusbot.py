@@ -17,6 +17,7 @@ def check_package(package="None"):
 
 import os
 import sys
+import requests
 sys.path.append(".")
 sys.path.append("plugins")
 sys.path.append("qt")
@@ -109,6 +110,41 @@ pd.set_option('display.max_rows', 250)
 pd.set_option('display.max_columns', 9)
 pd.set_option('display.expand_frame_repr', False)
 
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/geniusbot/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/geniusbot.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/systems-manager/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/systems-manager.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/report-manager/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/report-manager.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/webarchiver/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/webarchiver.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-manager/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/media-manager.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-downloader/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/media-downloader.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/repository-manager/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/repository-manager.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/subshift/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/subshift.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/genius-chatbot/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/genius-chatbot.md', 'w') as f:
+    f.write(response.text)
 
 class OutputWrapper(QObject):
     outputWritten = pyqtSignal(object, object)
