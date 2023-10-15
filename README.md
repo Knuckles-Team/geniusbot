@@ -1,4 +1,26 @@
 # Geniusbot
+
+![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)
+![PyPI - Downloads](https://img.shields.io/pypi/dd/geniusbot)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/geniusbot)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)
+![PyPI - License](https://img.shields.io/pypi/l/geniusbot)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/geniusbot)
+
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/geniusbot)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/geniusbot)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/geniusbot)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/geniusbot)
+
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/geniusbot)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/geniusbot)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/geniusbot)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/geniusbot)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/geniusbot)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/geniusbot)
+
+
 *Version: 3.26.0*
 
 ![Geniusbot](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot")
@@ -131,61 +153,22 @@ Manage your Linux/Windows System!
 
 <hr>
 
-### Install
+
+<details >
+<summary style="text-align:left; font-size:130%; color:black;"><b> Install </b></summary>
+
 ```bash
 pip install geniusbot
 ```
 
-<details >
-<summary style="text-align:left; font-size:130%; color:black;"><b> Build </b></summary>
-<br>
-
-### Development Environment
-```bash
-bash ./build_container.sh
-```
-
-#### Install Instructions
-Install Python Package
-
-```bash
-python -m pip install geniusbot
-```
-
-
-### Build Instructions
-Build Python Package
-
-```bash
-sudo chmod +x ./*.py
-pip install .
-python setup.py bdist_wheel --universal
-# Test Pypi
-twine upload --repository-url https://test.pypi.org/legacy/ dist/* --verbose -u "Username" -p "Password"
-# Prod Pypi
-twine upload dist/* --verbose -u "Username" -p "Password"
-```
-
 </details>
 
+<details>
+  <summary style="text-align:left; font-size:130%; color:black;"><b>Repository Owners:</b></summary>
 
 
-### Repository
-[geniusbot](https://github.com/Knucklessg1/geniusbot.git)
+<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=Knucklessg1&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
 
-### Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-### License
-Please attribute any uses to this repository. Do not resale this application. Test
-All credits to the FFMPEG team for the audio/video conversions
-### Authors
-
-* **Audel Rouhi** - *Software & Automation Engineer + Data Scientist* - [knucklessg1](https://github.com/Knucklessg1)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-### Acknowledgments
-Huggingface Models
+![GitHub followers](https://img.shields.io/github/followers/Knucklessg1)
+![GitHub User's stars](https://img.shields.io/github/stars/Knucklessg1)
+</details>

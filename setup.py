@@ -26,7 +26,7 @@ setup(
     url='https://github.com/Knuckles-Team/geniusbot',
     author=__author__,
     author_email='knucklessg1@gmail.com',
-    license='Unlicensed',
+    license='MIT',
     packages=['geniusbot', 'geniusbot.qt', 'geniusbot.plugins', 'geniusbot.documentation'],
     include_package_data=True,
     install_requires=[str(requirement.requirement) for requirement in requirements],
