@@ -27,9 +27,9 @@ except pkg_resources.DistributionNotFound:
     print('{} is NOT installed'.format(package))
 
 
-class MediaManagerTab(QWidget):
+class RomManagerTab(QWidget):
     def __init__(self, console):
-        super(MediaManagerTab, self).__init__()
+        super(RomManagerTab, self).__init__()
         self.console = console
         self.rom_manager = RomManager()
         self.rom_manager_tab = QWidget()
