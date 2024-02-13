@@ -135,7 +135,7 @@ class RomManagerTab(QWidget):
         self.rom_manager_files_label.setText(files.strip())
 
     def rom_manager_refresh_list(self):
-        self.rom_manager.directory = self.rom_manager_move_location_label.text()
+        self.rom_manager.directory = self.rom_manager_location_label.text()
         files = ""
         for file in self.rom_manager.get_files(directory=self.rom_manager.directory,
                                                extensions=self.rom_manager.supported_extensions):
@@ -154,7 +154,7 @@ class RomManagerWorker(QObject):
         self.verbose = verbose
         self.force = force
         self.clean_origin_files = clean_origin_files
-        self.iso_type = iso_type
+        self.iso_type = iso_type.lower()
         self.cpu_count = cpu_count
 
     def run(self):
