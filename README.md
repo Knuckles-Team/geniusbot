@@ -23,7 +23,7 @@
 
 *Version: 3.29.0*
 
-![Geniusbot](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot")
+![Geniusbot](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot")
 
 The Ever-learning and ever-improving tool!
 
@@ -38,7 +38,7 @@ Chat with your friendly and extremely intelligent Geniusbot.
 
 Powered by Artificial Intelligence scaled to your PC's performance!
 
-![Geniusbot Chat](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_home.png "Geniusbot Chat")
+![Geniusbot Chat](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_home.png "Geniusbot Chat")
 
 </details>
 
@@ -58,9 +58,9 @@ Supports:
 
 Examples for how to find user & channel.
 
-![User Entry Image](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/user.png "User Entry")
+![User Entry Image](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/user.png "User Entry")
 
-![Channel Entry Image](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/channel.png "Channel Entry")
+![Channel Entry Image](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/channel.png "Channel Entry")
 
 Open File allows you to browse for a text file that has a list of YouTube links.
 Examples contents:
@@ -70,7 +70,7 @@ https://www.youtube.com/watch?v=7RSpZkIjK4w
 https://www.youtube.com/watch?v=7qRSAUb96wg
 ```
 
-![Media Downloader](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_media_downloader.png "Media Downloader")
+![Media Downloader](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_media_downloader.png "Media Downloader")
 
 </details>
 
@@ -84,7 +84,7 @@ Manage your media library by:
 
 Download as MP3 or MP4
 
-![Media Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_media_manager.png "Media Manager")
+![Media Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_media_manager.png "Media Manager")
 
 </details>
 
@@ -95,7 +95,7 @@ Archive any website by taking screenshots of any website entered or scraping tha
 
 Choose from a variety of options like file type, quality, and image size.
 
-![Web Archiver](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_website_archive.png "Web Archiver")
+![Web Archiver](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_website_archive.png "Web Archiver")
 
 </details>
 
@@ -104,7 +104,7 @@ Choose from a variety of options like file type, quality, and image size.
 <br>
 Shift a subtitle forward or backward a few seconds so it aligns with your video!
 
-![Subtitle Shift](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_shift_subtitles.png "Subtitle Shift")
+![Subtitle Shift](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_shift_subtitles.png "Subtitle Shift")
 
 </details>
 
@@ -125,7 +125,7 @@ Merge reports with the following methods:
 
 Multiple column selection optional for Inner, Outer, Left, and Right joining
 
-![Report Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_report_manager.png "Report Manager")
+![Report Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_report_manager.png "Report Manager")
 
 </details>
 
@@ -134,7 +134,17 @@ Multiple column selection optional for Inner, Outer, Left, and Right joining
 <br>
 Manage your repositories by cloning, pulling, or running your own set of git commands on a given directory
 
-![Repository Manager](https://raw.githubusercontent.com/Knucklessg1/geniusbot/master/screenshots/geniusbot_repository_manager.png "Repository Manager")
+![Repository Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_repository_manager.png "Repository Manager")
+
+</details>
+
+<details >
+<summary style="text-align:left; font-size:111%; color:black;"><b> Rom Manager </b></summary>
+<br>
+Convert Game ROMs to Compressed Hunks of Data (CHD) file format or RVZ file format
+
+Automatically generate missing .cue files for your .bin files!
+![Rom Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_rom_manager.png "Rom Manager")
 
 </details>
 
