@@ -36,6 +36,8 @@ class RomManagerTab(QWidget):
         super(RomManagerTab, self).__init__()
         self.console = console
         self.rom_manager = RomManager()
+        self.rom_manager_thread = None
+        self.rom_manager_worker = None
         self.rom_manager_tab = QWidget()
         rom_manager_layout = QGridLayout()
         self.rom_manager_location_button = QPushButton("Game Location")
@@ -65,14 +67,15 @@ class RomManagerTab(QWidget):
         self.rom_manager_run_button.clicked.connect(self.manage_roms)
         rom_manager_layout.addWidget(self.rom_manager_location_button, 0, 0, 1, 1)
         rom_manager_layout.addWidget(self.rom_manager_location_label, 0, 1, 1, 5)
-        rom_manager_layout.addWidget(self.force_ticker, 2, 0, 1, 1)
-        rom_manager_layout.addWidget(self.clean_origin_files_ticker, 2, 1, 1, 1)
-        rom_manager_layout.addWidget(self.cpu_count_label, 2, 2, 1, 1)
-        rom_manager_layout.addWidget(self.cpu_count_spin_box, 2, 3, 1, 1)
-        rom_manager_layout.addWidget(self.iso_file_type_label, 2, 4, 1, 1)
-        rom_manager_layout.addWidget(self.iso_file_type, 2, 5, 1, 1)
-        rom_manager_layout.addWidget(self.rom_manager_files_label, 3, 0, 1, 6)
-        rom_manager_layout.addWidget(self.rom_manager_run_button, 4, 0, 1, 6)
+        rom_manager_layout.addWidget(self.force_ticker, 1, 0, 1, 1)
+        rom_manager_layout.addWidget(self.verbose_ticker, 1, 1, 1, 1)
+        rom_manager_layout.addWidget(self.clean_origin_files_ticker, 1, 2, 1, 1)
+        rom_manager_layout.addWidget(self.cpu_count_label, 1, 3, 1, 1)
+        rom_manager_layout.addWidget(self.cpu_count_spin_box, 1, 4, 1, 1)
+        rom_manager_layout.addWidget(self.iso_file_type_label, 1, 5, 1, 1)
+        rom_manager_layout.addWidget(self.iso_file_type, 1, 6, 1, 1)
+        rom_manager_layout.addWidget(self.rom_manager_files_label, 2, 0, 1, 7)
+        rom_manager_layout.addWidget(self.rom_manager_run_button, 3, 0, 1, 7)
         self.rom_manager_tab.setLayout(rom_manager_layout)
 
     def manage_roms(self):
@@ -110,28 +113,24 @@ class RomManagerTab(QWidget):
         self.rom_manager_thread.finished.connect(self.rom_manager_thread.deleteLater)
         self.rom_manager_thread.start()
         self.rom_manager_run_button.setEnabled(False)
-        self.rom_manager_thread.finished.connect(
-            lambda: self.rom_manager_run_button.setEnabled(True)
-        )
-        self.rom_manager_thread.finished.connect(
-            lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing ROM(s) complete!\n")
-        )
-        self.rom_manager_thread.finished.connect(
-            lambda: self.rom_manager_refresh_list()
-        )
+        self.rom_manager_thread.finished.connect(lambda: self.rom_manager_run_button.setEnabled(True))
+        self.rom_manager_thread.finished.connect(lambda: self.console.setText(f"{self.console.text()}\n"
+                                                                              f"[Genius Bot] Managing "
+                                                                              f"ROM(s) complete!\n"))
+        self.rom_manager_thread.finished.connect(lambda: self.rom_manager_refresh_list())
 
     def rom_manager_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting game location to look for ROMs in!\n")
         rom_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
                                                                       os.path.normpath(os.path.expanduser("~")),
                                                                       QFileDialog.ShowDirsOnly)
-        if rom_manager_directory_name == None or rom_manager_directory_name == "":
+        if rom_manager_directory_name is None or rom_manager_directory_name == "":
             rom_manager_directory_name = os.path.normpath(os.path.expanduser("~"))
         self.rom_manager_location_label.setText(rom_manager_directory_name)
         files = ""
         self.rom_manager.directory = rom_manager_directory_name
-        for file in self.rom_manager.get_files(directory=self.rom_manager.directory,
-                                               extensions=self.rom_manager.supported_extensions):
+        for file in RomManager.get_files(directory=self.rom_manager.directory,
+                                         extensions=self.rom_manager.supported_extensions):
             files = f"{files}\n{os.path.normpath(file)}"
         self.rom_manager_files_label.setText(files.strip())
 
