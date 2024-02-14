@@ -375,7 +375,6 @@ class GeniusBot(QMainWindow):
         layout.setStretch(2, 3)
         self.centralWidget.setLayout(layout)
 
-
     def settings_tab_settings(self):
         layout = QHBoxLayout()
         self.desktop_icon_checkbox = QCheckBox("Create Desktop Icon")
