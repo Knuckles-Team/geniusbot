@@ -29,6 +29,8 @@ media_downloader_installed = check_package("media-downloader")
 media_manager_installed = check_package("media-manager")
 report_manager_installed = check_package("report-manager")
 repository_manager_installed = check_package("repository-manager")
+rom_manager_installed = check_package("rom-manager")
+audio_transcriber_installed = check_package("audio-transcriber")
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
@@ -87,6 +89,16 @@ if repository_manager_installed:
         from plugins.repository_manager_plugin import RepositoryManagerTab
     except ModuleNotFoundError:
         from geniusbot.plugins.repository_manager_plugin import RepositoryManagerTab
+if rom_manager_installed:
+    try:
+        from plugins.rom_manager_plugin import RomManagerTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.rom_manager_plugin import RomManagerTab
+if audio_transcriber_installed:
+    try:
+        from plugins.audio_transcriber_plugin import AudioTranscriberTab
+    except ModuleNotFoundError:
+        from geniusbot.plugins.audio_transcriber_plugin import AudioTranscriberTab
 
 
 if os.name == "posix":
@@ -152,6 +164,15 @@ response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/genius-
 with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/genius-chatbot.md', 'w') as f:
     f.write(response.text)
 
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/rom-manager/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/rom-manager.md', 'w') as f:
+    f.write(response.text)
+
+response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/audio-transcriber/main/README.md')
+with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/audio-transcriber.md', 'w') as f:
+    f.write(response.text)
+
+
 class OutputWrapper(QObject):
     outputWritten = pyqtSignal(object, object)
 
@@ -185,16 +206,23 @@ class OutputWrapper(QObject):
 class GeniusBot(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        # Main Objects
         self.repository_manager = None
         self.report_manager = None
         self.webarchiver = None
         self.media_manager = None
         self.video_downloader = None
         self.systems_manager = None
+        self.rom_manager = None
+        self.audio_transcriber = None
+
+
         self.hide_console_button = None
         self.buttonsWidgetLayout = None
         self.buttonsWidget = None
         self.centralWidget = None
+
+        # Tabs
         self.settings_tab = None
         self.repository_manager_tab = None
         self.report_manager_tab = None
@@ -204,6 +232,10 @@ class GeniusBot(QMainWindow):
         self.media_downloader_tab = None
         self.geniusbot_chat_tab = None
         self.systems_manager_tab = None
+        self.rom_manager_tab = None
+        self.audio_transcriber_tab = None
+
+
         self.tab_widget = None
         self.repository_links_editor = None
         self.geniusbot_chatbot = None
@@ -252,6 +284,8 @@ class GeniusBot(QMainWindow):
         self.media_manager_installed = check_package("media-manager")
         self.report_manager_installed = check_package("report-manager")
         self.repository_manager_installed = check_package("repository-manager")
+        self.rom_manager_installed = check_package("rom-manager")
+        self.rom_manager_installed = check_package("audio-transcriber")
         self.initialize_user_interface()
 
     def initialize_user_interface(self):
@@ -269,34 +303,52 @@ class GeniusBot(QMainWindow):
 
         self.geniusbot_chat_tab = GeniusBotChatTab(console=self.console)
         self.tab_widget.addTab(self.geniusbot_chat_tab.geniusbot_chat_tab, "Genius Chat")
-        self.tab_widget.setTabText(0, "Genius Bot Chat")
+        tab = 0
+        self.tab_widget.setTabText(tab, "Genius Bot Chat")
+        tab = tab + 1
         if media_downloader_installed:
             self.media_downloader_tab = MediaDownloaderTab(console=self.console)
             self.tab_widget.addTab(self.media_downloader_tab.media_downloader_tab, "Media Downloader")
-            self.tab_widget.setTabText(1, "Media Downloader")
+            self.tab_widget.setTabText(tab, "Media Downloader")
+            tab = tab + 1
         if media_manager_installed:
             self.media_manager_tab = MediaManagerTab(console=self.console)
             self.tab_widget.addTab(self.media_manager_tab.media_manager_tab, "Media Manager")
-            self.tab_widget.setTabText(2, "Media Manager")
+            self.tab_widget.setTabText(tab, "Media Manager")
+            tab = tab + 1
         if webarchiver_installed:
             self.webarchiver_tab = WebarchiverTab(console=self.console)
             self.tab_widget.addTab(self.webarchiver_tab.webarchiver_tab, "Webarchiver")
-            self.tab_widget.setTabText(3, "Website Archive")
+            self.tab_widget.setTabText(tab, "Website Archive")
+            tab = tab + 1
         if subshift_installed:
             self.subshift_tab = SubshiftTab(console=self.console)
             self.tab_widget.addTab(self.subshift_tab.subshift_tab, "Subshift")
-            self.tab_widget.setTabText(4, "Shift Subtitles")
+            self.tab_widget.setTabText(tab, "Shift Subtitles")
+            tab = tab + 1
         if report_manager_installed:
             self.report_manager_tab = ReportManagerTab(console=self.console)
             self.tab_widget.addTab(self.report_manager_tab.report_manager_tab, "Report Manager")
-            self.tab_widget.setTabText(5, "Report Manager")
+            self.tab_widget.setTabText(tab, "Report Manager")
+            tab = tab + 1
         if repository_manager_installed:
             self.repository_manager_tab = RepositoryManagerTab(console=self.console)
             self.tab_widget.addTab(self.repository_manager_tab.repository_manager_tab, "Repository Manager")
-            self.tab_widget.setTabText(6, "Repository Manager")
+            self.tab_widget.setTabText(tab, "Repository Manager")
+            tab = tab + 1
+        if rom_manager_installed:
+            self.rom_manager_tab = RomManagerTab(console=self.console)
+            self.tab_widget.addTab(self.rom_manager_tab.rom_manager_tab, "Rom Manager")
+            self.tab_widget.setTabText(tab, "Rom Manager")
+            tab = tab + 1
+        if audio_transcriber_installed:
+            self.audio_transcriber_tab = AudioTranscriberTab(console=self.console)
+            self.tab_widget.addTab(self.audio_transcriber_tab.audio_transcriber_tab, "Audio Transcriber")
+            self.tab_widget.setTabText(tab, "Audio Transcriber")
+            tab = tab + 1
         self.systems_manager_tab = SystemsManagerTab(console=self.console)
         self.tab_widget.addTab(self.systems_manager_tab.systems_manager_tab, "Systems Manager")
-        self.tab_widget.setTabText(7, "Systems Manager")
+        self.tab_widget.setTabText(tab, "Systems Manager")
         self.settings_tab = QWidget()
         self.tab_widget.addTab(self.settings_tab, "⚙")
         self.settings_tab_settings()
