@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import importlib.metadata
 from PyQt5.QtWidgets import (
     QGridLayout,
     QPushButton,
@@ -16,23 +15,11 @@ try:
     from qt.colors import yellow, green, orange, blue, red, purple
 except ModuleNotFoundError or ImportError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-
-
-package_name = 'media-downloader'
-
-
-def check_package(package="None"):
-    found = False
-    try:
-        version = importlib.metadata.version(package)
-        print('{} ({}) is installed'.format(package, version))
-        found = True
-    except importlib.metadata.PackageNotFoundError:
-        print('{} is NOT installed'.format(package))
-    return found
-
-
-if check_package(package=package_name):
+try:
+    from utils.utils import check_package
+except ModuleNotFoundError:
+    from geniusbot.utils.utils import check_package
+if check_package(package='media-downloader'):
     from media_downloader import MediaDownloader
 
 
