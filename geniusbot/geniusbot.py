@@ -45,59 +45,59 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QObject, pyqtSignal
 try:
     from version import __version__, __author__, __credits__
-except ModuleNotFoundError:
+except ModuleNotFoundError or ImportError:
     from geniusbot.version import __version__, __author__, __credits__
 try:
     from qt.scrollable_widget import ScrollLabel
-except ModuleNotFoundError:
+except ModuleNotFoundError or ImportError:
     from geniusbot.qt.scrollable_widget import ScrollLabel
 try:
     from plugins.geniusbot_chat_plugin import GeniusBotChatTab
-except ModuleNotFoundError:
+except ModuleNotFoundError or ImportError:
     from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotChatTab
 try:
     from plugins.systems_manager_plugin import SystemsManagerTab
-except ModuleNotFoundError:
+except ModuleNotFoundError or ImportError:
     from geniusbot.plugins.systems_manager_plugin import SystemsManagerTab
 if subshift_installed:
     try:
         from plugins.subshift_plugin import SubshiftTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.subshift_plugin import SubshiftTab
 if webarchiver_installed:
     try:
         from plugins.webarchiver_plugin import WebarchiverTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.webarchiver_plugin import WebarchiverTab
 if media_downloader_installed:
     try:
         from plugins.media_downloader_plugin import MediaDownloaderTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.media_downloader_plugin import MediaDownloaderTab
 if media_manager_installed:
     try:
         from plugins.media_manager_plugin import MediaManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.media_manager_plugin import MediaManagerTab
 if report_manager_installed:
     try:
         from plugins.report_manager_plugin import ReportManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.report_manager_plugin import ReportManagerTab
 if repository_manager_installed:
     try:
         from plugins.repository_manager_plugin import RepositoryManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.repository_manager_plugin import RepositoryManagerTab
 if rom_manager_installed:
     try:
         from plugins.rom_manager_plugin import RomManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.rom_manager_plugin import RomManagerTab
 if audio_transcriber_installed:
     try:
         from plugins.audio_transcriber_plugin import AudioTranscriberTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError or ImportError:
         from geniusbot.plugins.audio_transcriber_plugin import AudioTranscriberTab
 
 
