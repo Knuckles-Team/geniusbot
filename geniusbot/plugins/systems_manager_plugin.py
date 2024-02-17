@@ -178,7 +178,8 @@ class SystemsManagerTab(QWidget):
         else:
             self.font_combobox.setEnabled(False)
 
-    def check_package(self, package="None"):
+    @staticmethod
+    def check_package(package="None"):
         found = False
         try:
             version = importlib.metadata.version(package)
