@@ -173,6 +173,18 @@ pip install geniusbot
 
 </details>
 
+<details >
+<summary style="text-align:left; font-size:130%; color:black;"><b> Build Executable </b></summary>
+
+```bash
+python -m pip install pyinstaller
+git clone https://github.com/Knuckles-Team/geniusbot.git
+cd geniusbot
+pyinstaller ./geniusbot/geniusbot.py
+```
+
+</details>
+
 <details>
   <summary style="text-align:left; font-size:130%; color:black;"><b>Repository Owners:</b></summary>
 

@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import pkg_resources
-sys.path.append("..")
+import importlib.metadata
+from systems_manager import SystemsManager
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from PyQt5.QtWidgets import (
     QGridLayout,
     QPushButton,
@@ -12,20 +13,21 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QListWidget, QWidget, QComboBox
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
-from systems_manager import SystemsManager
 
 
 class SystemsManagerTab(QWidget):
 
     def __init__(self, console):
         super(SystemsManagerTab, self).__init__()
+        self.systems_manager_worker = None
+        self.systems_manager_thread = None
         self.systems_manager = SystemsManager()
         self.systems_manager_tab = QWidget()
         self.console = console
@@ -64,7 +66,8 @@ class SystemsManagerTab(QWidget):
         self.font_combobox.setItemText(0, "Hack NF")
         self.font_combobox.setEnabled(False)
         self.systems_manager_run_button = QPushButton("Run ⥀")
-        self.systems_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.systems_manager_run_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.application_install_edit = QLineEdit()
         self.python_module_install_edit = QLineEdit()
         self.enable_windows_feature_edit = QLineEdit()
@@ -178,10 +181,10 @@ class SystemsManagerTab(QWidget):
     def check_package(self, package="None"):
         found = False
         try:
-            dist = pkg_resources.get_distribution(package)
-            print('{} ({}) is installed'.format(dist.key, dist.version))
+            version = importlib.metadata.version(package)
+            print('{} ({}) is installed'.format(package, version))
             found = True
-        except pkg_resources.DistributionNotFound:
+        except importlib.metadata.PackageNotFoundError:
             print('{} is NOT installed'.format(package))
         return found
 
@@ -231,7 +234,8 @@ class SystemsManagerWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, systems_manager, silent_ticker, update_ticker, enable_windows_features_ticker, enable_windows_feature_list,
+    def __init__(self, systems_manager, silent_ticker, update_ticker, enable_windows_features_ticker,
+                 enable_windows_feature_list,
                  enable_windows_feature_edit, install_app_ticker, application_install_edit, install_python_ticker,
                  webarchiver_install_button, subshift_install_button, repository_manager_install_button,
                  report_manager_install_button, media_manager_install_button, media_downloader_install_button,

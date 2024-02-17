@@ -1,16 +1,32 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pkg_resources
+import importlib.metadata
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS2
+        except Exception:
+            base_path = os.path.dirname(__file__)
+    if not os.path.exists(base_path):
+        base_path = os.path.dirname(__file__)
+    return os.path.join(base_path, relative_path)
 
 
 def check_package(package="None"):
     found = False
     try:
-        dist = pkg_resources.get_distribution(package)
-        print('{} ({}) is installed'.format(dist.key, dist.version))
+        version = importlib.metadata.version(package)
+        print('{} ({}) is installed'.format(package, version))
         found = True
-    except pkg_resources.DistributionNotFound:
+    except importlib.metadata.PackageNotFoundError:
         print('{} is NOT installed'.format(package))
     return found
 
@@ -123,43 +139,43 @@ else:
     os.mkdir(os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation')))
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/geniusbot/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/geniusbot.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "geniusbot.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/systems-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/systems-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "systems-manager.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/report-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/report-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "report-manager.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/webarchiver/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/webarchiver.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "webarchiver.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/media-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "media-manager.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-downloader/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/media-downloader.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "media-downloader.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/repository-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/repository-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "repository-manager.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/subshift/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/subshift.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "subshift.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/genius-chatbot/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/genius-chatbot.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "genius-chatbot.md")), 'w') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/rom-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/rom-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "rom-manager.md")), 'w') as f:
     f.write(response.text)
 
 
@@ -270,7 +286,7 @@ class GeniusBot(QMainWindow):
 
     def initialize_user_interface(self):
         self.setWindowTitle(f"Genius Bot")
-        self.setWindowIcon(QIcon(f'{os.path.dirname(os.path.realpath(__file__))}/img/geniusbot.ico'))
+        self.setWindowIcon(QIcon(resource_path(os.path.join("img", "geniusbot.ico"))))
         self.setStyleSheet("background-color: #bfc3c9;")
         self.resize(900, 640)
         self.centralWidget = QWidget()
