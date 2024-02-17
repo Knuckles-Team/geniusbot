@@ -177,23 +177,25 @@ pip install geniusbot
 <summary style="text-align:left; font-size:130%; color:black;"><b> Build Executable </b></summary>
 
 ```bash
-python -m pip install pyinstaller
+python -m pip install --upgrade pyinstaller
 git clone https://github.com/Knuckles-Team/geniusbot.git
 cd geniusbot
 python -m venv .venv
 ./.venv/Scripts/activate
 
-pyinstaller --name geniusbot \
---add-binary "C:\Users\User\…\xzy.dll;." \
---onefile \
---windowed \
---icon='./geniusbot/img/geniusbot.ico' \
---paths ./.venv/Lib/site-packages \
-./geniusbot/geniusbot.py
+pyinstaller --name geniusbot --onefile --windowed --icon='./geniusbot/img/geniusbot.ico' --paths ./.venv/Lib/site-packages --hidden-import=appdirs --hidden-import=sklearn --hidden-import=sklearn.utils --hidden-import=nltk --hidden-import=gpt4all ./geniusbot/geniusbot.py
 ```
 
 </details>
 
+<details >
+<summary style="text-align:left; font-size:130%; color:black;"><b> Build Setup Executable </b></summary>
+
+```bash
+
+```
+
+</details>
 <details>
   <summary style="text-align:left; font-size:130%; color:black;"><b>Repository Owners:</b></summary>
 
