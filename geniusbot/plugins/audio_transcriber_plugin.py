@@ -32,7 +32,7 @@ class AudioTranscriberTab(QWidget):
         super(AudioTranscriberTab, self).__init__()
         self.console = console
         self.audio_transcriber_manager = AudioTranscriber()
-        self.audio_transcriber_manager_tab = QWidget()
+        self.audio_transcriber_tab = QWidget()
         audio_transcriber_manager_layout = QGridLayout()
         self.audio_transcriber_manager_media_location_button = QPushButton("Media Location")
         self.audio_transcriber_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
@@ -62,7 +62,7 @@ class AudioTranscriberTab(QWidget):
         audio_transcriber_manager_layout.addWidget(self.subtitle_ticker, 2, 1, 1, 1)
         audio_transcriber_manager_layout.addWidget(self.audio_transcriber_manager_files_label, 3, 0, 1, 2)
         audio_transcriber_manager_layout.addWidget(self.audio_transcriber_manager_run_button, 4, 0, 1, 2)
-        self.audio_transcriber_manager_tab.setLayout(audio_transcriber_manager_layout)
+        self.audio_transcriber_tab.setLayout(audio_transcriber_manager_layout)
 
     def manage_media(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing media...\n")
