@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
-import sys
-
-sys.path.append("..")
-from io import StringIO
 import os
+import sys
+import importlib.metadata
+from io import StringIO
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, Qt
 from PyQt5.QtWidgets import (
     QLabel,
@@ -13,19 +11,29 @@ from PyQt5.QtWidgets import (
     QGridLayout, QPlainTextEdit, QProgressBar,
     QFileDialog, QComboBox, QSpinBox, QWidget
 )
+sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
 
-import pkg_resources
-package = 'media-downloader'
-try:
-    dist = pkg_resources.get_distribution('webarchiver')
-    print('{} ({}) is installed'.format(dist.key, dist.version))
+
+package_name = 'webarchiver'
+
+
+def check_package(package="None"):
+    found = False
+    try:
+        version = importlib.metadata.version(package)
+        print('{} ({}) is installed'.format(package, version))
+        found = True
+    except importlib.metadata.PackageNotFoundError:
+        print('{} is NOT installed'.format(package))
+    return found
+
+
+if check_package(package=package_name):
     from webarchiver import Webarchiver
-except pkg_resources.DistributionNotFound:
-    print('{} is NOT installed'.format(package))
 
 
 class WebarchiverTab(QWidget):

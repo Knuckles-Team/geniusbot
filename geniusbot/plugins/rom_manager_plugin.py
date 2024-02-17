@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-
-sys.path.append("..")
+import importlib.metadata
 from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
@@ -13,22 +12,31 @@ from PyQt5.QtWidgets import (
     QComboBox
 )
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
-
+sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
-import pkg_resources
 
-package = 'rom-manager'
-try:
-    dist = pkg_resources.get_distribution(package)
-    print('{} ({}) is installed'.format(dist.key, dist.version))
+
+package_name = 'rom-manager'
+
+
+def check_package(package="None"):
+    found = False
+    try:
+        version = importlib.metadata.version(package)
+        print('{} ({}) is installed'.format(package, version))
+        found = True
+    except importlib.metadata.PackageNotFoundError:
+        print('{} is NOT installed'.format(package))
+    return found
+
+
+if check_package(package=package_name):
     from rom_manager import RomManager
-except pkg_resources.DistributionNotFound:
-    print('{} is NOT installed'.format(package))
 
 
 class RomManagerTab(QWidget):
