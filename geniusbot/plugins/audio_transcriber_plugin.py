@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
     QCheckBox, QWidget, QFileDialog
 )
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
+
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
@@ -18,6 +19,7 @@ except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
 import pkg_resources
+
 package = 'audio-transcriber'
 try:
     dist = pkg_resources.get_distribution(package)
@@ -30,17 +32,32 @@ except pkg_resources.DistributionNotFound:
 class AudioTranscriberTab(QWidget):
     def __init__(self, console):
         super(AudioTranscriberTab, self).__init__()
+
+        # f"-b | --bitrate   [ Bitrate to use during recording ]\n"
+        # f"-c | --channels  [ Number of channels to use during recording ]\n"
+        # f"-d | --directory [ Directory to save recording ]\n"
+        # f"-e | --export    [ Export txt, srt, & vtt ]\n"
+        # f"-f | --file      [ File to transcribe ]\n"
+        # f"-l | --language  [ Language to transcribe <'en', 'fa', 'es', 'zh'> ]\n"
+        # f"-m | --model     [ Model to use: <tiny, base, small, medium, large> ]\n"
+        # f"-n | --name      [ Name of recording ]\n"
+        # f"-r | --record    [ Specify number of seconds to record to record from microphone ]\n"
+
         self.console = console
         self.audio_transcriber_manager = AudioTranscriber()
         self.audio_transcriber_tab = QWidget()
         audio_transcriber_manager_layout = QGridLayout()
-        self.audio_transcriber_manager_media_location_button = QPushButton("Media Location")
-        self.audio_transcriber_manager_media_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-        self.audio_transcriber_manager_media_location_button.clicked.connect(self.audio_transcriber_manager_media_location)
+        self.audio_transcriber_manager_media_location_button = QPushButton("File to Transcribe")
+        self.audio_transcriber_manager_media_location_button.setStyleSheet(
+            f"background-color: {orange}; color: white; font: bold;")
+        self.audio_transcriber_manager_media_location_button.clicked.connect(
+            self.audio_transcriber_manager_media_location)
         self.audio_transcriber_manager_media_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
-        self.audio_transcriber_manager_move_location_button = QPushButton("Move Location")
-        self.audio_transcriber_manager_move_location_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
-        self.audio_transcriber_manager_move_location_button.clicked.connect(self.audio_transcriber_manager_move_location)
+        self.audio_transcriber_manager_move_location_button = QPushButton("Directory to Save Recordings")
+        self.audio_transcriber_manager_move_location_button.setStyleSheet(
+            f"background-color: {green}; color: white; font: bold;")
+        self.audio_transcriber_manager_move_location_button.clicked.connect(
+            self.audio_transcriber_manager_move_location)
         self.audio_transcriber_manager_move_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.subtitle_ticker = QCheckBox("Apply Subtitles")
         self.move_ticker = QCheckBox("Move Media")
@@ -50,7 +67,7 @@ class AudioTranscriberTab(QWidget):
         self.audio_transcriber_manager_files_label.setFont("Arial")
         self.audio_transcriber_manager_files_label.setFontColor(background_color="white", color="black")
         self.audio_transcriber_manager_files_label.setScrollWheel("Top")
-        self.audio_transcriber_manager_run_button = QPushButton("Run ⥀")
+        self.audio_transcriber_manager_run_button = QPushButton("Transcribe ⥀")
         self.audio_transcriber_manager_run_button.setStyleSheet(
             f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.audio_transcriber_manager_run_button.clicked.connect(self.manage_media)
@@ -78,11 +95,12 @@ class AudioTranscriberTab(QWidget):
             move_boolean = False
 
         self.audio_transcriber_manager_thread = QThread()
-        self.audio_transcriber_manager_worker = MediaManagerWorker(audio_transcriber_manager=self.audio_transcriber_manager,
-                                                       directory=self.audio_transcriber_manager_media_location_label.text(),
-                                                       move=move_boolean,
-                                                       destination=self.audio_transcriber_manager_move_location_label.text(),
-                                                       subtitle=subtitle_boolean)
+        self.audio_transcriber_manager_worker = MediaManagerWorker(
+            audio_transcriber_manager=self.audio_transcriber_manager,
+            directory=self.audio_transcriber_manager_media_location_label.text(),
+            move=move_boolean,
+            destination=self.audio_transcriber_manager_move_location_label.text(),
+            subtitle=subtitle_boolean)
         self.audio_transcriber_manager_worker.moveToThread(self.audio_transcriber_manager_thread)
         self.audio_transcriber_manager_thread.started.connect(self.audio_transcriber_manager_worker.run)
         self.audio_transcriber_manager_worker.finished.connect(self.audio_transcriber_manager_thread.quit)
@@ -103,8 +121,8 @@ class AudioTranscriberTab(QWidget):
     def audio_transcriber_manager_media_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting media location to look for media in!\n")
         audio_transcriber_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
-                                                                        os.path.expanduser("~"),
-                                                                        QFileDialog.ShowDirsOnly)
+                                                                                    os.path.expanduser("~"),
+                                                                                    QFileDialog.ShowDirsOnly)
         if audio_transcriber_manager_directory_name == None or audio_transcriber_manager_directory_name == "":
             audio_transcriber_manager_directory_name = os.path.expanduser("~")
         self.audio_transcriber_manager_media_location_label.setText(audio_transcriber_manager_directory_name)
@@ -126,8 +144,8 @@ class AudioTranscriberTab(QWidget):
     def audio_transcriber_manager_move_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting move location for media\n")
         audio_transcriber_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
-                                                                             os.path.expanduser("~"),
-                                                                             QFileDialog.ShowDirsOnly)
+                                                                                         os.path.expanduser("~"),
+                                                                                         QFileDialog.ShowDirsOnly)
         if audio_transcriber_manager_move_directory_name == None or audio_transcriber_manager_move_directory_name == "":
             audio_transcriber_manager_move_directory_name = os.path.expanduser("~")
         self.audio_transcriber_manager_move_location_label.setText(audio_transcriber_manager_move_directory_name)
