@@ -180,7 +180,16 @@ pip install geniusbot
 python -m pip install pyinstaller
 git clone https://github.com/Knuckles-Team/geniusbot.git
 cd geniusbot
-pyinstaller --onefile  --icon='./geniusbot/img/geniusbot.ico' ./geniusbot/geniusbot.py
+python -m venv .venv
+./.venv/Scripts/activate
+
+pyinstaller --name geniusbot \
+--add-binary "C:\Users\User\…\xzy.dll;." \
+--onefile \
+--windowed \
+--icon='./geniusbot/img/geniusbot.ico' \
+--paths ./.venv/Lib/site-packages \
+./geniusbot/geniusbot.py
 ```
 
 </details>
