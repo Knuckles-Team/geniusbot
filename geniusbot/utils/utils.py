@@ -18,15 +18,14 @@ def check_package(package: str = "None") -> bool:
 
 def resource_path(relative_path: str = "None") -> str:
     """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = ""
     try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
+        if "_MEIPASS" in os.environ:
+            base_path = os.environ["_MEIPASS"]
+        elif "_MEIPASS2" in os.environ:
+            base_path = os.environ["_MEIPASS2"]
     except Exception:
-        try:
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            base_path = sys._MEIPASS2
-        except Exception:
-            base_path = os.path.dirname(os.path.dirname(__file__))
-    if not os.path.exists(base_path):
+        base_path = os.path.dirname(os.path.dirname(__file__))
+    if not os.path.exists(base_path) or base_path == "":
         base_path = os.path.dirname(os.path.dirname(__file__))
     return os.path.join(base_path, relative_path)
