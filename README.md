@@ -180,7 +180,7 @@ pip install geniusbot
 python -m pip install pyinstaller
 git clone https://github.com/Knuckles-Team/geniusbot.git
 cd geniusbot
-pyinstaller ./geniusbot/geniusbot.py
+pyinstaller --onefile  --icon='./geniusbot/img/geniusbot.ico' ./geniusbot/geniusbot.py
 ```
 
 </details>
