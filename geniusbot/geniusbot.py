@@ -1,34 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import importlib.metadata
 
 
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        try:
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            base_path = sys._MEIPASS2
-        except Exception:
-            base_path = os.path.dirname(__file__)
-    if not os.path.exists(base_path):
-        base_path = os.path.dirname(__file__)
-    return os.path.join(base_path, relative_path)
-
-
-def check_package(package="None"):
-    found = False
-    try:
-        version = importlib.metadata.version(package)
-        print('{} ({}) is installed'.format(package, version))
-        found = True
-    except importlib.metadata.PackageNotFoundError:
-        print('{} is NOT installed'.format(package))
-    return found
 
 
 import os
@@ -39,13 +13,6 @@ sys.path.append("plugins")
 sys.path.append("qt")
 import pandas as pd
 from pathlib import Path
-webarchiver_installed = check_package("webarchiver")
-subshift_installed = check_package("subshift")
-media_downloader_installed = check_package("media-downloader")
-media_manager_installed = check_package("media-manager")
-report_manager_installed = check_package("report-manager")
-repository_manager_installed = check_package("repository-manager")
-rom_manager_installed = check_package("rom-manager")
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
@@ -58,6 +25,17 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QCheckBox
 )
 from PyQt5.QtCore import QObject, pyqtSignal
+try:
+    from utils.utils import check_package, resource_path
+except ModuleNotFoundError:
+    from geniusbot.utils.utils import check_package, resource_path
+webarchiver_installed = check_package("webarchiver")
+subshift_installed = check_package("subshift")
+media_downloader_installed = check_package("media-downloader")
+media_manager_installed = check_package("media-manager")
+report_manager_installed = check_package("report-manager")
+repository_manager_installed = check_package("repository-manager")
+rom_manager_installed = check_package("rom-manager")
 try:
     from version import __version__, __author__, __credits__
 except ModuleNotFoundError:

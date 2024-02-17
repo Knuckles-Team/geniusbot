@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import importlib.metadata
 from io import StringIO
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, Qt
 from PyQt5.QtWidgets import (
@@ -16,23 +15,11 @@ try:
     from qt.colors import yellow, green, orange, blue, red, purple
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-
-
-package_name = 'webarchiver'
-
-
-def check_package(package="None"):
-    found = False
-    try:
-        version = importlib.metadata.version(package)
-        print('{} ({}) is installed'.format(package, version))
-        found = True
-    except importlib.metadata.PackageNotFoundError:
-        print('{} is NOT installed'.format(package))
-    return found
-
-
-if check_package(package=package_name):
+try:
+    from utils.utils import check_package
+except ModuleNotFoundError:
+    from geniusbot.utils.utils import check_package
+if check_package(package='webarchiver'):
     from webarchiver import Webarchiver
 
 
