@@ -184,7 +184,7 @@ python -m venv .venv
 ./.venv/Scripts/activate
 python -m pip install -r ./requirements.txt
 cd geniusbot
-pyinstaller --name geniusbot --log-level DEBUG --onefile --windowed --icon='./geniusbot/img/geniusbot.ico' --paths ./geniusbot --paths ./.venv/Lib/site-packages/ --paths ./.venv/Lib/site-packages/gpt4all --paths ./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build --paths ./geniusbot --hidden-import=appdirs --hidden-import=sklearn --hidden-import=sklearn.utils --hidden-import=nltk --hidden-import=gpt4all ./geniusbot/geniusbot.py
+pyinstaller --name geniusbot --log-level DEBUG --onefile --windowed --icon='./geniusbot/img/geniusbot.ico' --add-binary ./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libllmodel.dll:./gpt4all/llmodel_DO_NOT_MODIFY/build/ --paths ./geniusbot --paths ./.venv/Lib/site-packages/ --paths ./.venv/Lib/site-packages/gpt4all --paths ./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build --paths ./geniusbot --hidden-import=appdirs --hidden-import=sklearn --hidden-import=sklearn.utils --hidden-import=nltk --hidden-import=gpt4all ./geniusbot/geniusbot.py
 ```
 
 </details>
