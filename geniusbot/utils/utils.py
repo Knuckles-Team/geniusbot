@@ -22,7 +22,7 @@ def resource_path(relative_path: str = "None") -> str:
     try:
         if "_MEIPASS" in os.environ:
             base_path = os.environ["_MEIPASS"]
-        elif "_MEIPASS2" in os.environ:
+        if "_MEIPASS2" in os.environ:
             base_path = os.environ["_MEIPASS2"]
     except Exception:
         base_path = os.path.dirname(os.path.dirname(__file__))

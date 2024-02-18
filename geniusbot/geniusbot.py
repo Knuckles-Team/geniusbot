@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-
-
-
-
 import os
 import sys
 import requests
 sys.path.append(".")
 sys.path.append("plugins")
 sys.path.append("qt")
+sys.path.append("utils")
 import pandas as pd
 from pathlib import Path
 from PyQt5.QtGui import QIcon

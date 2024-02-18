@@ -182,8 +182,9 @@ git clone https://github.com/Knuckles-Team/geniusbot.git
 cd geniusbot
 python -m venv .venv
 ./.venv/Scripts/activate
-
-pyinstaller --name geniusbot --onefile --windowed --icon='./geniusbot/img/geniusbot.ico' --paths ./.venv/Lib/site-packages --hidden-import=appdirs --hidden-import=sklearn --hidden-import=sklearn.utils --hidden-import=nltk --hidden-import=gpt4all ./geniusbot/geniusbot.py
+python -m pip install -r ./requirements.txt
+cd geniusbot
+pyinstaller --name geniusbot --log-level DEBUG --onefile --windowed --icon='./geniusbot/img/geniusbot.ico' --paths ./geniusbot --paths ./.venv/Lib/site-packages/ --paths ./.venv/Lib/site-packages/gpt4all --paths ./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build --paths ./geniusbot --hidden-import=appdirs --hidden-import=sklearn --hidden-import=sklearn.utils --hidden-import=nltk --hidden-import=gpt4all ./geniusbot/geniusbot.py
 ```
 
 </details>
