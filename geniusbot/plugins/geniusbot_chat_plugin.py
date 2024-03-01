@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
-sys.path.append("..")
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QWidget,
     QPushButton,
     QVBoxLayout, QTextEdit
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+from genius_chatbot import ChatBot
+sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
-from genius_chatbot import ChatBot
 
 
 if os.name == "posix":
     import pwd
+
     user = pwd.getpwuid(os.geteuid()).pw_name
 else:
     ukn = 'UNKNOWN'
@@ -31,6 +33,8 @@ else:
 class GeniusBotChatTab(QWidget):
     def __init__(self, console):
         super(GeniusBotChatTab, self).__init__()
+        self.geniusbot_worker = None
+        self.geniusbot_thread = None
         self.console = console
         self.geniusbot_chatbot = ChatBot()
         self.geniusbot_chat_tab = QWidget()
@@ -86,14 +90,20 @@ class GeniusBotWorker(QObject):
         self.geniusbot_chatbot = geniusbot_chatbot
         self.geniusbot_chat = geniusbot_chat
         self.text = text
-        self.default_text = "Hello, my name is Geniusbot and I'm an artificially intelligent robot that can help you with anything you need!"
+        self.default_text = ("Hello, my name is Geniusbot and I'm an artificially "
+                             "intelligent robot that can help you with anything you need!")
 
     def run(self):
         """Long-running task."""
         old_text = self.geniusbot_chat.text()
+        source_directory = os.path.normpath(
+            os.path.join(os.path.dirname(os.path.dirname(__file__)), 'documentation'))
         self.geniusbot_chat.setText(f"{self.geniusbot_chat.text()}\n"
-                                    f"[Genius Bot] Firing up the gears...")
-        self.geniusbot_chatbot.source_directory = os.path.normpath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'documentation'))
+                                    f"[Genius Bot] Firing up the gears...\n"
+                                    f"             Slurping up the latest news...")
+
+        self.geniusbot_chatbot.source_directory = source_directory
+        print(f"SOURCE DIRECTORY: {source_directory}")
         self.geniusbot_chatbot.assimilate()
         if self.text == '':
             self.text = self.default_text
@@ -106,6 +116,6 @@ class GeniusBotWorker(QObject):
         self.geniusbot_chatbot.model_n_batch = 9
         response = self.geniusbot_chatbot.chat(prompt=self.text)
         self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response['answer']}")
-        #self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response['answer']}\n[Source] {response['sources']}")
+        # self.geniusbot_chat.setText(f"{old_text}\n[Genius Bot] {response['answer']}\n[Source] {response['sources']}")
         self.progress.emit(100)
         self.finished.emit()

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QPushButton,
     QPlainTextEdit,
     QLineEdit,
@@ -11,7 +13,7 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QProgressBar, QWidget, QFileDialog
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
@@ -30,6 +32,8 @@ if check_package(package='repository-manager'):
 class RepositoryManagerTab(QWidget):
     def __init__(self, console):
         super(RepositoryManagerTab, self).__init__()
+        self.repository_manager_worker = None
+        self.repository_manager_thread = None
         self.console = console
         self.repository_manager = Git()
         self.repository_manager_tab = QWidget()
@@ -45,7 +49,7 @@ class RepositoryManagerTab(QWidget):
         self.repository_manager_repositories_file_location_button.setStyleSheet(
             f"background-color: {green}; color: white; font: bold;")
         self.repository_manager_repositories_file_location_button.clicked.connect(self.open_repository_manager_file)
-        self.repository_manager_repositories_file_location_label = QLabel(
+        self.repository_manager_file_location_label = QLabel(
             f'{os.path.expanduser("~")}'.replace("\\", "/"))
         self.clone_ticker = QCheckBox("Clone")
         self.pull_ticker = QCheckBox("Pull")
@@ -72,7 +76,7 @@ class RepositoryManagerTab(QWidget):
         repository_manager_layout.addWidget(self.repository_manager_repositories_location_button, 0, 0, 1, 1)
         repository_manager_layout.addWidget(self.repository_manager_repositories_location_label, 0, 1, 1, 2)
         repository_manager_layout.addWidget(self.repository_manager_repositories_file_location_button, 1, 0, 1, 1)
-        repository_manager_layout.addWidget(self.repository_manager_repositories_file_location_label, 1, 1, 1, 2)
+        repository_manager_layout.addWidget(self.repository_manager_file_location_label, 1, 1, 1, 2)
         repository_manager_layout.addWidget(self.clone_ticker, 2, 0, 1, 1)
         repository_manager_layout.addWidget(self.pull_ticker, 2, 1, 1, 1)
         repository_manager_layout.addWidget(self.set_default_branch_ticker, 2, 2, 1, 1)
@@ -94,7 +98,7 @@ class RepositoryManagerTab(QWidget):
                                                                  self.set_default_branch_ticker, self.pull_ticker,
                                                                  self.repository_links_editor,
                                                                  self.repository_git_command,
-                                                                 self.repository_manager_repositories_file_location_label,
+                                                                 self.repository_manager_file_location_label,
                                                                  self.repository_manager_files_label,
                                                                  self.repository_manager_repositories_location_label)
         self.repository_manager_worker.moveToThread(self.repository_manager_thread)
@@ -122,9 +126,9 @@ class RepositoryManagerTab(QWidget):
             projects = []
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
         repository_manager_file_location_name = QFileDialog.getOpenFileName(self, 'Text File with Repositories')
-        if repository_manager_file_location_name[0] == None or repository_manager_file_location_name[0] == "":
+        if repository_manager_file_location_name[0] is None or repository_manager_file_location_name[0] == "":
             repository_manager_file_location_name = os.path.expanduser("~")
-        self.repository_manager_repositories_file_location_label.setText(repository_manager_file_location_name[0])
+        self.repository_manager_file_location_label.setText(repository_manager_file_location_name[0])
         if os.path.exists(repository_manager_file_location_name[0]):
             file_repositories = open(repository_manager_file_location_name[0], 'r')
             for repository in file_repositories:
@@ -134,15 +138,15 @@ class RepositoryManagerTab(QWidget):
 
     def repository_manager_repositories_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting repositories location to clone and pull!\n")
-        repository_manager_repositories_location_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
-                                                                                         os.path.expanduser("~"),
-                                                                                         QFileDialog.ShowDirsOnly)
-        if repository_manager_repositories_location_name == None or repository_manager_repositories_location_name == "":
-            repository_manager_repositories_location_name = os.path.expanduser("~")
-        self.repository_manager_repositories_location_label.setText(repository_manager_repositories_location_name)
-        self.repository_manager.set_repository_directory(repository_manager_repositories_location_name)
+        repository_manager_location_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
+                                                                            os.path.expanduser("~"),
+                                                                            QFileDialog.Option.ShowDirsOnly)
+        if repository_manager_location_name is None or repository_manager_location_name == "":
+            repository_manager_location_name = os.path.expanduser("~")
+        self.repository_manager_repositories_location_label.setText(repository_manager_location_name)
+        self.repository_manager.set_repository_directory(repository_manager_location_name)
         repositories_string = ""
-        for project_directory in os.listdir(repository_manager_repositories_location_name):
+        for project_directory in os.listdir(repository_manager_location_name):
             repositories_string = f"{repositories_string}\n{project_directory}"
         self.repository_manager_files_label.setText(f"{repositories_string.lstrip()}")
 
@@ -152,7 +156,7 @@ class RepositoryManagerWorker(QObject):
     progress = pyqtSignal(int)
 
     def __init__(self, repository_manager, clone_ticker, set_default_branch_ticker, pull_ticker,
-                 repository_links_editor, repository_git_command, repository_manager_repositories_file_location_label,
+                 repository_links_editor, repository_git_command, repository_manager_file_location_label,
                  repository_manager_files_label, repository_manager_repositories_location_label):
         super().__init__()
         self.repository_manager = repository_manager
@@ -161,7 +165,7 @@ class RepositoryManagerWorker(QObject):
         self.pull_ticker = pull_ticker
         self.repository_links_editor = repository_links_editor
         self.repository_git_command = repository_git_command
-        self.repository_manager_repositories_file_location_label = repository_manager_repositories_file_location_label
+        self.repository_manager_file_location_label = repository_manager_file_location_label
         self.repository_manager_files_label = repository_manager_files_label
         self.repository_manager_repositories_location_label = repository_manager_repositories_location_label
 
@@ -173,9 +177,9 @@ class RepositoryManagerWorker(QObject):
             projects = projects.split('\n')
             if projects[0] == '':
                 projects = []
-            if os.path.exists(self.repository_manager_repositories_file_location_label.text()):
+            if os.path.exists(self.repository_manager_file_location_label.text()):
                 try:
-                    file_repositories = open(self.repository_manager_repositories_file_location_label.text(), 'r')
+                    file_repositories = open(self.repository_manager_file_location_label.text(), 'r')
                     for repository in file_repositories:
                         projects.append(repository)
                     projects = list(dict.fromkeys(projects))
@@ -196,13 +200,15 @@ class RepositoryManagerWorker(QObject):
             if projects[0] == '':
                 projects = []
             for project in projects:
+                directory = os.path.join(self.repository_manager_repositories_location_label.text(), project)
                 try:
                     result = self.repository_manager.git_action(command=f"{self.repository_git_command.text()}",
-                                                                directory=f"{self.repository_manager_repositories_location_label.text()}/{project}")
+                                                                directory=f"{directory}")
                     print(result)
                 except Exception as e:
-                    print(
-                        f"Unable to execute git command: {self.repository_git_command.text()} for directory: {self.repository_manager_repositories_location_label.text()}/{project}")
+                    print(f"Unable to execute git command: {self.repository_git_command.text()} "
+                          f"for directory: {directory}\n"
+                          f"Error: {e}")
             self.progress.emit(99)
         self.progress.emit(100)
         self.finished.emit()

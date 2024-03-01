@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QGridLayout,
     QPushButton,
     QLabel,
     QPlainTextEdit,
     QLineEdit, QProgressBar, QComboBox, QWidget, QFileDialog
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
@@ -26,6 +27,8 @@ if check_package(package='media-downloader'):
 class MediaDownloaderTab(QWidget):
     def __init__(self, console):
         super(MediaDownloaderTab, self).__init__()
+        self.video_worker = None
+        self.video_thread = None
         self.console = console
         self.video_downloader = MediaDownloader()
         self.media_downloader_tab = QWidget()
@@ -73,8 +76,8 @@ class MediaDownloaderTab(QWidget):
     def media_download_save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
         video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
-                                                                QFileDialog.ShowDirsOnly)
-        if video_directory_name == None or video_directory_name == "":
+                                                                QFileDialog.Option.ShowDirsOnly)
+        if video_directory_name is None or video_directory_name == "":
             video_directory_name = os.path.expanduser("~")
         self.video_save_location_label.setText(video_directory_name)
         self.video_downloader.set_save_path(video_directory_name)

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QGridLayout,
     QCheckBox, QWidget, QFileDialog
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
@@ -27,6 +29,8 @@ if check_package(package='media-manager'):
 class MediaManagerTab(QWidget):
     def __init__(self, console):
         super(MediaManagerTab, self).__init__()
+        self.media_manager_thread = None
+        self.media_manager_worker = None
         self.console = console
         self.media_manager = MediaManager()
         self.media_manager_tab = QWidget()
@@ -101,8 +105,8 @@ class MediaManagerTab(QWidget):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting media location to look for media in!\n")
         media_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
                                                                         os.path.expanduser("~"),
-                                                                        QFileDialog.ShowDirsOnly)
-        if media_manager_directory_name == None or media_manager_directory_name == "":
+                                                                        QFileDialog.Option.ShowDirsOnly)
+        if media_manager_directory_name is None or media_manager_directory_name == "":
             media_manager_directory_name = os.path.expanduser("~")
         self.media_manager_media_location_label.setText(media_manager_directory_name)
         self.media_manager.set_media_directory(media_manager_directory_name)
@@ -124,8 +128,8 @@ class MediaManagerTab(QWidget):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting move location for media\n")
         media_manager_move_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
                                                                              os.path.expanduser("~"),
-                                                                             QFileDialog.ShowDirsOnly)
-        if media_manager_move_directory_name == None or media_manager_move_directory_name == "":
+                                                                             QFileDialog.Option.ShowDirsOnly)
+        if media_manager_move_directory_name is None or media_manager_move_directory_name == "":
             media_manager_move_directory_name = os.path.expanduser("~")
         self.media_manager_move_location_label.setText(media_manager_move_directory_name)
 
