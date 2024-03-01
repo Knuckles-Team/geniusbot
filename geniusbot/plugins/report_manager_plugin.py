@@ -1,41 +1,44 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
-
-sys.path.append("..")
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QGridLayout,
     QLabel,
     QPushButton,
     QComboBox,
     QFileDialog,
     QLineEdit,
-    QListWidget, QCheckBox, QAbstractItemView, QWidget
+    QListWidget, QCheckBox, QAbstractItemView, QWidget, QProgressBar
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
-import pkg_resources
-package = 'report-manager'
 try:
-    dist = pkg_resources.get_distribution(package)
-    print('{} ({}) is installed'.format(dist.key, dist.version))
+    from utils.utils import check_package
+except ModuleNotFoundError:
+    from geniusbot.utils.utils import check_package
+if check_package(package='report-manager'):
     from report_manager import ReportManager
-except pkg_resources.DistributionNotFound:
-    print('{} is NOT installed'.format(package))
 
 
 class ReportManagerTab(QWidget):
     def __init__(self, console):
         super(ReportManagerTab, self).__init__()
+        self.report_manager_thread = None
+        self.report_manager_worker = None
+        self.merge_report_worker = None
+        self.merge_report_thread = None
         self.console = console
         self.report_manager = ReportManager()
         self.report_manager_tab = QWidget()
+        self.report_progress_bar = QProgressBar()
 
         self.report_manager_layout = QGridLayout()
         self.action_type_combobox = QComboBox()
@@ -113,8 +116,8 @@ class ReportManagerTab(QWidget):
         self.merge_file2_location_button.clicked.connect(self.open_data2_file)
         self.file1_columns = QListWidget()
         self.file2_columns = QListWidget()
-        self.file1_columns.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.file2_columns.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.file1_columns.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.file2_columns.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.merge_type_label = QLabel("Merge Type: ")
         self.merge_type_combobox = QComboBox()
         self.merge_type_combobox.addItems(['Inner', 'Outer', 'Right', 'Left', 'Append'])
@@ -158,7 +161,7 @@ class ReportManagerTab(QWidget):
         self.custom_data_file_label.setText(report_manager_data_file[0])
         dataframe = self.report_manager.get_df()
         dataframe_markdown = dataframe.to_markdown(tablefmt="grid")
-        dataframe_html = dataframe.to_html(max_cols=9)
+        # dataframe_html = dataframe.to_html(max_cols=9)
         self.dataframe_label.setText(f"{dataframe_markdown}")
 
     def open_data1_file(self):
@@ -182,16 +185,16 @@ class ReportManagerTab(QWidget):
     def report_manager_save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for final report!\n")
         report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
-                                                                 QFileDialog.ShowDirsOnly)
-        if report_save_directory == None or report_save_directory == "":
+                                                                 QFileDialog.Option.ShowDirsOnly)
+        if report_save_directory is None or report_save_directory == "":
             report_save_directory = os.path.expanduser("~")
         self.custom_report_generate_label.setText(report_save_directory)
 
     def report_merger_save_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for final report!\n")
         report_save_directory = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
-                                                                 QFileDialog.ShowDirsOnly)
-        if report_save_directory == None or report_save_directory == "":
+                                                                 QFileDialog.Option.ShowDirsOnly)
+        if report_save_directory is None or report_save_directory == "":
             report_save_directory = os.path.expanduser("~")
         self.merged_report_save_location_label.setText(report_save_directory)
 
@@ -206,7 +209,7 @@ class ReportManagerTab(QWidget):
         self.report_manager_worker.finished.connect(self.report_manager_thread.quit)
         self.report_manager_worker.finished.connect(self.report_manager_worker.deleteLater)
         self.report_manager_thread.finished.connect(self.report_manager_thread.deleteLater)
-        self.report_manager_worker.progress.connect(self.report_web_progress_bar)
+        self.report_manager_worker.progress.connect(self.report_progress_bar)
         self.report_manager_thread.start()
         self.custom_report_generate_button.setEnabled(False)
         self.report_manager_thread.finished.connect(
@@ -228,7 +231,7 @@ class ReportManagerTab(QWidget):
         self.merge_report_worker.finished.connect(self.merge_report_thread.quit)
         self.merge_report_worker.finished.connect(self.merge_report_worker.deleteLater)
         self.merge_report_thread.finished.connect(self.merge_report_thread.deleteLater)
-        self.merge_report_worker.progress.connect(self.report_web_progress_bar)
+        self.merge_report_worker.progress.connect(self.report_progress_bar)
         self.merge_report_thread.start()
         self.merge_button.setEnabled(False)
         self.merge_report_thread.finished.connect(
@@ -307,7 +310,8 @@ class MergeReportWorker(QObject):
         self.report_manager.set_df1_join_keys(self.file1_columns.selectedItems())
         self.report_manager.set_df1_join_keys(self.file2_columns.selectedItems())
         self.report_manager.set_save_directory(self.merged_report_save_location_label.text())
-        if self.action_type_combobox.currentText() == "Merge Reports" and self.merge_type_combobox.currentText() == "Append":
+        if (self.action_type_combobox.currentText() == "Merge Reports"
+                and self.merge_type_combobox.currentText() == "Append"):
             self.report_manager.set_files(self.merge_file1_label.text(), "file2")
             self.report_manager.set_files(self.merge_file2_label.text(), "file3")
             self.report_manager.load_dataframe(file_instance=2)
@@ -316,7 +320,8 @@ class MergeReportWorker(QObject):
             self.report_manager.join_data()
             self.report_manager.export_data(csv_flag=self.csv_flag,
                                             report_name=f"{self.merged_report_name_editor.text()} - Merged")
-        elif self.action_type_combobox.currentText() == "Merge Reports" and self.merge_type_combobox.currentText() != "Append":
+        elif (self.action_type_combobox.currentText() == "Merge Reports"
+              and self.merge_type_combobox.currentText() != "Append"):
             self.report_manager.set_files(self.merge_file1_label.text(), "file2")
             self.report_manager.set_files(self.merge_file2_label.text(), "file3")
             self.report_manager.load_dataframe(file_instance=2)

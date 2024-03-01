@@ -1,38 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import sys
-
-sys.path.append("..")
-
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QGridLayout,
     QPushButton,
     QSpinBox,
     QLabel,
-    QHBoxLayout, QWidget, QFileDialog
+    QHBoxLayout, QWidget, QFileDialog, QProgressBar
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
-import pkg_resources
-package = 'subshift'
 try:
-    dist = pkg_resources.get_distribution(package)
-    print('{} ({}) is installed'.format(dist.key, dist.version))
+    from utils.utils import check_package
+except ModuleNotFoundError:
+    from geniusbot.utils.utils import check_package
+if check_package(package='subshift'):
     import subshift
-except pkg_resources.DistributionNotFound:
-    print('{} is NOT installed'.format(package))
 
 
 class SubshiftTab(QWidget):
     def __init__(self, console):
         super(SubshiftTab, self).__init__()
+        self.subshift_thread = None
+        self.subshift_worker = None
+        self.subtitles = None
         self.subshift_tab = QWidget()
         self.console = console
+        self.subshift_progress_bar = QProgressBar()
 
         self.open_subtitlefile_button = QPushButton("Open File")
         self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
@@ -97,7 +98,7 @@ class SubshiftTab(QWidget):
         self.subshift_worker.finished.connect(self.subshift_thread.quit)
         self.subshift_worker.finished.connect(self.subshift_worker.deleteLater)
         self.subshift_thread.finished.connect(self.subshift_thread.deleteLater)
-        self.subshift_worker.progress.connect(self.report_web_progress_bar)
+        self.subshift_worker.progress.connect(self.subshift_progress_bar)
         self.subshift_thread.start()
         self.shift_subtitle_button.setEnabled(False)
         self.subshift_thread.finished.connect(

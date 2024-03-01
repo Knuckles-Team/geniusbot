@@ -1,40 +1,48 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import os
+
 import sys
-import pkg_resources
-sys.path.append("..")
-from PyQt5.QtWidgets import (
+from systems_manager import SystemsManager
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QGridLayout,
     QPushButton,
     QLineEdit,
     QProgressBar,
     QCheckBox,
-    QListWidget, QWidget, QComboBox
+    QListWidget, QWidget, QComboBox,
+    QAbstractItemView
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
     from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
     from geniusbot.qt.scrollable_widget import ScrollLabel
-from systems_manager import SystemsManager
+try:
+    from utils.utils import check_package, resource_path
+except ModuleNotFoundError:
+    from geniusbot.utils.utils import check_package, resource_path
 
 
 class SystemsManagerTab(QWidget):
 
     def __init__(self, console):
         super(SystemsManagerTab, self).__init__()
+        self.systems_manager_worker = None
+        self.systems_manager_thread = None
         self.systems_manager = SystemsManager()
         self.systems_manager_tab = QWidget()
         self.console = console
-        self.webarchiver_installed = self.check_package(package="webarchiver")
-        self.subshift_installed = self.check_package(package="subshift")
-        self.media_downloader_installed = self.check_package(package="media-downloader")
-        self.media_manager_installed = self.check_package(package="media-manager")
-        self.report_manager_installed = self.check_package(package="report-manager")
-        self.repository_manager_installed = self.check_package(package="repository-manager")
+        self.webarchiver_installed = check_package(package="webarchiver")
+        self.subshift_installed = check_package(package="subshift")
+        self.media_downloader_installed = check_package(package="media-downloader")
+        self.media_manager_installed = check_package(package="media-manager")
+        self.report_manager_installed = check_package(package="report-manager")
+        self.repository_manager_installed = check_package(package="repository-manager")
+        self.rom_manager_installed = check_package(package="rom-manager")
+        self.audio_transcriber_installed = check_package(package="audio-transcriber")
 
         systems_manager_layout = QGridLayout()
         self.install_app_ticker = QCheckBox("Install Applications")
@@ -64,7 +72,8 @@ class SystemsManagerTab(QWidget):
         self.font_combobox.setItemText(0, "Hack NF")
         self.font_combobox.setEnabled(False)
         self.systems_manager_run_button = QPushButton("Run ⥀")
-        self.systems_manager_run_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.systems_manager_run_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
         self.application_install_edit = QLineEdit()
         self.python_module_install_edit = QLineEdit()
         self.enable_windows_feature_edit = QLineEdit()
@@ -72,11 +81,11 @@ class SystemsManagerTab(QWidget):
         self.python_module_install_edit.setEnabled(False)
         self.enable_windows_feature_edit.setEnabled(False)
         self.enable_windows_feature_list = QListWidget()
-        self.enable_windows_feature_list.setSelectionMode(3)
+        self.enable_windows_feature_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.enable_windows_feature_list.setEnabled(False)
         self.enable_windows_feature_list.addItems(self.systems_manager.windows_features)
         self.application_install_list = QListWidget()
-        self.application_install_list.setSelectionMode(3)
+        self.application_install_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.application_install_list.setEnabled(False)
         self.application_install_list.addItems(self.systems_manager.applications)
         self.webarchiver_install_button = QCheckBox("Geniusbot - Webarchiver Plugin")
@@ -115,6 +124,19 @@ class SystemsManagerTab(QWidget):
             self.report_manager_install_button.setEnabled(False)
         else:
             self.report_manager_install_button.setChecked(False)
+        self.rom_manager_install_button = QCheckBox("Geniusbot - ROM Manager Plugin")
+        if self.rom_manager_installed:
+            self.rom_manager_install_button.setChecked(True)
+            self.rom_manager_install_button.setEnabled(False)
+        else:
+            self.rom_manager_install_button.setChecked(False)
+        self.audio_transcriber_install_button = QCheckBox("Geniusbot - Audio Transcriber Plugin")
+        if self.audio_transcriber_installed:
+            self.audio_transcriber_install_button.setChecked(True)
+            self.audio_transcriber_install_button.setEnabled(False)
+        else:
+            self.audio_transcriber_install_button.setChecked(False)
+
         self.systems_manager_run_button.clicked.connect(self.manage_system)
         self.system_progress_bar = QProgressBar()
         systems_manager_layout.addWidget(self.update_ticker, 1, 0, 1, 1)
@@ -137,6 +159,8 @@ class SystemsManagerTab(QWidget):
         systems_manager_layout.addWidget(self.media_manager_install_button, 8, 1, 1, 1)
         systems_manager_layout.addWidget(self.repository_manager_install_button, 9, 1, 1, 1)
         systems_manager_layout.addWidget(self.report_manager_install_button, 10, 1, 1, 1)
+        systems_manager_layout.addWidget(self.rom_manager_install_button, 11, 1, 1, 1)
+        systems_manager_layout.addWidget(self.audio_transcriber_install_button, 12, 1, 1, 1)
         systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
         systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
         self.systems_manager_tab.setLayout(systems_manager_layout)
@@ -175,16 +199,6 @@ class SystemsManagerTab(QWidget):
         else:
             self.font_combobox.setEnabled(False)
 
-    def check_package(self, package="None"):
-        found = False
-        try:
-            dist = pkg_resources.get_distribution(package)
-            print('{} ({}) is installed'.format(dist.key, dist.version))
-            found = True
-        except pkg_resources.DistributionNotFound:
-            print('{} is NOT installed'.format(package))
-        return found
-
     def report_systems_progress_bar(self, n):
         self.system_progress_bar.setValue(n)
 
@@ -192,25 +206,29 @@ class SystemsManagerTab(QWidget):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing System...\n")
         self.system_progress_bar.setValue(1)
         self.systems_manager_thread = QThread()
-        self.systems_manager_worker = SystemsManagerWorker(systems_manager=self.systems_manager,
-                                                           silent_ticker=self.silent_ticker,
-                                                           update_ticker=self.update_ticker,
-                                                           enable_windows_features_ticker=self.enable_windows_features_ticker,
-                                                           enable_windows_feature_list=self.enable_windows_feature_list,
-                                                           enable_windows_feature_edit=self.enable_windows_feature_edit,
-                                                           install_app_ticker=self.install_app_ticker,
-                                                           application_install_edit=self.application_install_edit,
-                                                           install_python_ticker=self.install_python_ticker,
-                                                           webarchiver_install_button=self.webarchiver_install_button,
-                                                           subshift_install_button=self.subshift_install_button,
-                                                           repository_manager_install_button=self.repository_manager_install_button,
-                                                           report_manager_install_button=self.report_manager_install_button,
-                                                           media_manager_install_button=self.media_manager_install_button,
-                                                           media_downloader_install_button=self.media_downloader_install_button,
-                                                           python_module_install_edit=self.python_module_install_edit,
-                                                           install_font_ticker=self.install_font_ticker,
-                                                           install_theme_ticker=self.install_theme_ticker,
-                                                           clean_ticker=self.clean_ticker)
+        self.systems_manager_worker = SystemsManagerWorker(
+            systems_manager=self.systems_manager,
+            silent_ticker=self.silent_ticker,
+            update_ticker=self.update_ticker,
+            enable_windows_features_ticker=self.enable_windows_features_ticker,
+            enable_windows_feature_list=self.enable_windows_feature_list,
+            enable_windows_feature_edit=self.enable_windows_feature_edit,
+            install_app_ticker=self.install_app_ticker,
+            application_install_edit=self.application_install_edit,
+            install_python_ticker=self.install_python_ticker,
+            webarchiver_install_button=self.webarchiver_install_button,
+            subshift_install_button=self.subshift_install_button,
+            repository_manager_install_button=self.repository_manager_install_button,
+            report_manager_install_button=self.report_manager_install_button,
+            media_manager_install_button=self.media_manager_install_button,
+            media_downloader_install_button=self.media_downloader_install_button,
+            rom_manager_install_button=self.rom_manager_install_button,
+            audio_transcriber_install_button=self.audio_transcriber_install_button,
+            python_module_install_edit=self.python_module_install_edit,
+            install_font_ticker=self.install_font_ticker,
+            install_theme_ticker=self.install_theme_ticker,
+            clean_ticker=self.clean_ticker
+        )
         self.systems_manager_worker.moveToThread(self.systems_manager_thread)
         self.systems_manager_thread.started.connect(self.systems_manager_worker.run)
         self.systems_manager_worker.finished.connect(self.systems_manager_thread.quit)
@@ -231,10 +249,12 @@ class SystemsManagerWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, systems_manager, silent_ticker, update_ticker, enable_windows_features_ticker, enable_windows_feature_list,
+    def __init__(self, systems_manager, silent_ticker, update_ticker, enable_windows_features_ticker,
+                 enable_windows_feature_list,
                  enable_windows_feature_edit, install_app_ticker, application_install_edit, install_python_ticker,
                  webarchiver_install_button, subshift_install_button, repository_manager_install_button,
                  report_manager_install_button, media_manager_install_button, media_downloader_install_button,
+                 rom_manager_install_button, audio_transcriber_install_button,
                  python_module_install_edit, install_font_ticker, install_theme_ticker, clean_ticker):
         super().__init__()
         self.systems_manager = systems_manager
@@ -252,6 +272,8 @@ class SystemsManagerWorker(QObject):
         self.report_manager_install_button = report_manager_install_button
         self.media_manager_install_button = media_manager_install_button
         self.media_downloader_install_button = media_downloader_install_button
+        self.rom_manager_install_button = rom_manager_install_button
+        self.audio_transcriber_install_button = audio_transcriber_install_button
         self.python_module_install_edit = python_module_install_edit
         self.install_font_ticker = install_font_ticker
         self.install_theme_ticker = install_theme_ticker
@@ -309,6 +331,10 @@ class SystemsManagerWorker(QObject):
                 python_modules.append('media-manager')
             if self.media_downloader_install_button.isChecked():
                 python_modules.append('media-downloader')
+            if self.media_downloader_install_button.isChecked():
+                python_modules.append('rom-manager')
+            if self.media_downloader_install_button.isChecked():
+                python_modules.append('audio-transcriber')
             custom_python_modules = self.python_module_install_edit.text()
             custom_python_modules = custom_python_modules.replace(" ", "")
             custom_python_modules = custom_python_modules.split(",")

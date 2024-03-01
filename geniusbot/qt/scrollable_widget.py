@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QLabel,
     QVBoxLayout,
     QWidget,
     QScrollArea
 )
-from PyQt5.QtGui import QFont
+from PyQt6.QtGui import QFont
 
 
 # class for scrollable label
@@ -35,7 +35,7 @@ class ScrollLabel(QScrollArea):
         self.label.setStyleSheet("background-color: #211f1f; color: white;")
 
         # setting alignment to the text
-        self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
         # making label multi-line
         self.label.setWordWrap(True)
