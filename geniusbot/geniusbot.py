@@ -1,38 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-import pkg_resources
-
-
-def check_package(package="None"):
-    found = False
-    try:
-        dist = pkg_resources.get_distribution(package)
-        print('{} ({}) is installed'.format(dist.key, dist.version))
-        found = True
-    except pkg_resources.DistributionNotFound:
-        print('{} is NOT installed'.format(package))
-    return found
-
-
 import os
 import sys
 import requests
+import logging
+import pandas as pd
+import warnings
+warnings.filterwarnings("ignore", message="Couldn't find ffmpeg or avconv.*")
+
 sys.path.append(".")
 sys.path.append("plugins")
 sys.path.append("qt")
-import pandas as pd
+sys.path.append("utils")
 from pathlib import Path
-webarchiver_installed = check_package("webarchiver")
-subshift_installed = check_package("subshift")
-media_downloader_installed = check_package("media-downloader")
-media_manager_installed = check_package("media-manager")
-report_manager_installed = check_package("report-manager")
-repository_manager_installed = check_package("repository-manager")
-rom_manager_installed = check_package("rom-manager")
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QEvent
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt, QEvent, QObject, pyqtSignal
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
     QPushButton,
@@ -41,7 +24,18 @@ from PyQt5.QtWidgets import (
     QTabWidget,
     QHBoxLayout, QCheckBox
 )
-from PyQt5.QtCore import QObject, pyqtSignal
+
+try:
+    from utils.utils import check_package, resource_path
+except ModuleNotFoundError:
+    from geniusbot.utils.utils import check_package, resource_path
+webarchiver_installed = check_package("webarchiver")
+subshift_installed = check_package("subshift")
+media_downloader_installed = check_package("media-downloader")
+media_manager_installed = check_package("media-manager")
+report_manager_installed = check_package("report-manager")
+repository_manager_installed = check_package("repository-manager")
+rom_manager_installed = check_package("rom-manager")
 try:
     from version import __version__, __author__, __credits__
 except ModuleNotFoundError:
@@ -52,11 +46,13 @@ except ModuleNotFoundError:
     from geniusbot.qt.scrollable_widget import ScrollLabel
 try:
     from plugins.geniusbot_chat_plugin import GeniusBotChatTab
-except ModuleNotFoundError:
+except ModuleNotFoundError as e:
+    logging.error(f"Error Importing Module: {e}")
     from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotChatTab
 try:
     from plugins.systems_manager_plugin import SystemsManagerTab
-except ModuleNotFoundError:
+except ModuleNotFoundError as e:
+    logging.error(f"Error Importing Module: {e}")
     from geniusbot.plugins.systems_manager_plugin import SystemsManagerTab
 if subshift_installed:
     try:
@@ -66,37 +62,43 @@ if subshift_installed:
 if webarchiver_installed:
     try:
         from plugins.webarchiver_plugin import WebarchiverTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        logging.error(f"Error Importing Module: {e}")
         from geniusbot.plugins.webarchiver_plugin import WebarchiverTab
 if media_downloader_installed:
     try:
         from plugins.media_downloader_plugin import MediaDownloaderTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        logging.error(f"Error Importing Module: {e}")
         from geniusbot.plugins.media_downloader_plugin import MediaDownloaderTab
 if media_manager_installed:
     try:
         from plugins.media_manager_plugin import MediaManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        logging.error(f"Error Importing Module: {e}")
         from geniusbot.plugins.media_manager_plugin import MediaManagerTab
 if report_manager_installed:
     try:
         from plugins.report_manager_plugin import ReportManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        logging.error(f"Error Importing Module: {e}")
         from geniusbot.plugins.report_manager_plugin import ReportManagerTab
 if repository_manager_installed:
     try:
         from plugins.repository_manager_plugin import RepositoryManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        logging.error(f"Error Importing Module: {e}")
         from geniusbot.plugins.repository_manager_plugin import RepositoryManagerTab
 if rom_manager_installed:
     try:
         from plugins.rom_manager_plugin import RomManagerTab
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        logging.error(f"Error Importing Module: {e}")
         from geniusbot.plugins.rom_manager_plugin import RomManagerTab
-
 
 if os.name == "posix":
     import pwd
+
     user = pwd.getpwuid(os.geteuid()).pw_name
 else:
     ukn = 'UNKNOWN'
@@ -107,8 +109,7 @@ else:
 if sys.platform == 'win32':
     import winshell
     import ctypes
-
-    myappid = f'knucklesteam.geniusbot.geniusbot.{__version__}'  # arbitrary string
+    myappid = f'knucklesteam.geniusbot.geniusbot.{__version__}'
     myappid.encode("utf-8")
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -116,50 +117,57 @@ pd.set_option('display.max_rows', 250)
 pd.set_option('display.max_columns', 9)
 pd.set_option('display.expand_frame_repr', False)
 
-if os.path.isdir(os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation'))):
-    print("Documentation directory exists")
+logger = logging.getLogger('geniusbot')
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh = logging.FileHandler('geniusbot.log')
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
+documentation_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation'))
+if os.path.isdir(documentation_dir):
+    logger.info("Documentation directory exists")
 else:
-    print(f"Making Documentation directory: {os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation'))}")
-    os.mkdir(os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation')))
+    logger.info(f"Making Documentation directory: {documentation_dir}")
+    os.mkdir(documentation_dir)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/geniusbot/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/geniusbot.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "geniusbot.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/systems-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/systems-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "systems-manager.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/report-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/report-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "report-manager.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/webarchiver/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/webarchiver.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "webarchiver.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/media-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "media-manager.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-downloader/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/media-downloader.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "media-downloader.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/repository-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/repository-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "repository-manager.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/subshift/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/subshift.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "subshift.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/genius-chatbot/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/genius-chatbot.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "genius-chatbot.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/rom-manager/main/README.md')
-with open(f'{os.path.normpath(os.path.dirname(__file__))}/documentation/rom-manager.md', 'w') as f:
+with open(resource_path(os.path.join("documentation", "rom-manager.md")), 'w', encoding='utf-8') as f:
     f.write(response.text)
 
 
@@ -196,6 +204,7 @@ class OutputWrapper(QObject):
 class GeniusBot(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.console = None
         self.repository_manager = None
         self.report_manager = None
         self.webarchiver = None
@@ -259,6 +268,7 @@ class GeniusBot(QMainWindow):
         self.geniusbot_chat_tab = None
         self.geniusbot_chat = None
         self.chat_editor = None
+        self.desktop_icon_checkbox = None
         self.webarchiver_installed = check_package("webarchiver")
         self.subshift_installed = check_package("subshift")
         self.media_downloader_installed = check_package("media-downloader")
@@ -270,7 +280,7 @@ class GeniusBot(QMainWindow):
 
     def initialize_user_interface(self):
         self.setWindowTitle(f"Genius Bot")
-        self.setWindowIcon(QIcon(f'{os.path.dirname(os.path.realpath(__file__))}/img/geniusbot.ico'))
+        self.setWindowIcon(QIcon(resource_path(os.path.join("img", "geniusbot.ico"))))
         self.setStyleSheet("background-color: #bfc3c9;")
         self.resize(900, 640)
         self.centralWidget = QWidget()
@@ -350,7 +360,6 @@ class GeniusBot(QMainWindow):
         layout.setStretch(2, 3)
         self.centralWidget.setLayout(layout)
 
-
     def settings_tab_settings(self):
         layout = QHBoxLayout()
         self.desktop_icon_checkbox = QCheckBox("Create Desktop Icon")
@@ -375,7 +384,7 @@ class GeniusBot(QMainWindow):
                     link.arguments = arg_str
                     link.icon_location = (icon, 0)
                     link.working_directory = working_directory
-                    print("Desktop Shortcut Created!")
+                    logger.info("Desktop Shortcut Created!")
             else:
                 os.remove(link_filepath)
         elif sys.platform == 'linux':
@@ -396,27 +405,27 @@ class GeniusBot(QMainWindow):
                         f"Type=Application\n"
                         f"Categories=Utility;Application;\n"
                     )
-                    with open(desktop_link_filepath, "w") as desktop_icon:
-                        desktop_icon.write(
-                            f"[Desktop Entry]\n"
-                            f"Version={__version__}\n"
-                            f"Name=Genius Bot\n"
-                            f"Comment=Genius Bot\n"
-                            f"Exec=geniusbot\n"
-                            f"Icon={icon}\n"
-                            f"Path={working_directory}\n"
-                            f"Terminal=false\n"
-                            f"Type=Application\n"
-                            f"Categories=Utility;Application;\n"
-                        )
-                print("Desktop Shortcut Created!")
+                with open(desktop_link_filepath, "w") as desktop_icon:
+                    desktop_icon.write(
+                        f"[Desktop Entry]\n"
+                        f"Version={__version__}\n"
+                        f"Name=Genius Bot\n"
+                        f"Comment=Genius Bot\n"
+                        f"Exec=geniusbot\n"
+                        f"Icon={icon}\n"
+                        f"Path={working_directory}\n"
+                        f"Terminal=false\n"
+                        f"Type=Application\n"
+                        f"Categories=Utility;Application;\n"
+                    )
+                logger.info("Desktop Shortcut Created!")
             else:
                 os.remove(link_filepath)
                 os.remove(desktop_link_filepath)
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.KeyPress and obj is self.chat_editor:
-            if event.key() == Qt.Key_Return and self.chat_editor.hasFocus():
+        if event.type() == QEvent.Type.KeyPress and obj is self.chat_editor:
+            if event.key() == Qt.Key.Key_Return and self.chat_editor.hasFocus():
                 self.chat_editor.setDisabled(True)
                 self.chattybot_response()
         return super().eventFilter(obj, event)
@@ -432,7 +441,7 @@ class GeniusBot(QMainWindow):
         self.console.hide()
 
 
-def geniusbot(argv):
+def geniusbot():
     app = QApplication(sys.argv)
     bot_window = GeniusBot()
     bot_window.show()
@@ -440,8 +449,8 @@ def geniusbot(argv):
 
 
 def main():
-    geniusbot(sys.argv[1:])
+    geniusbot()
 
 
 if __name__ == "__main__":
-    geniusbot(sys.argv[1:])
+    geniusbot()

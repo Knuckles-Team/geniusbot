@@ -173,6 +173,29 @@ pip install geniusbot
 
 </details>
 
+<details >
+<summary style="text-align:left; font-size:130%; color:black;"><b> Build Executable </b></summary>
+
+```bash
+python -m pip install --upgrade pyinstaller
+git clone https://github.com/Knuckles-Team/geniusbot.git
+cd geniusbot
+python -m venv .venv
+./.venv/Scripts/activate
+python -m pip install -r ./requirements.txt
+pyinstaller --name geniusbot --log-level DEBUG --onefile --windowed --icon='./geniusbot/img/geniusbot.ico' --paths ./geniusbot --paths ./.venv/Lib/site-packages/ --paths ./.venv/Lib/site-packages/gpt4all --paths ./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build --paths ./geniusbot --hidden-import=appdirs --hidden-import=sklearn --hidden-import=sklearn.utils --hidden-import=nltk --hidden-import=gpt4all --hidden-import=google-api-core --hidden-import=google-cloud-core ./geniusbot/geniusbot.py
+```
+
+</details>
+
+<details >
+<summary style="text-align:left; font-size:130%; color:black;"><b> Build Setup Executable </b></summary>
+
+```bash
+
+```
+
+</details>
 <details>
   <summary style="text-align:left; font-size:130%; color:black;"><b>Repository Owners:</b></summary>
 
