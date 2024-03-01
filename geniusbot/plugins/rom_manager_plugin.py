@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QGridLayout,
@@ -10,7 +12,6 @@ from PyQt5.QtWidgets import (
     QSpinBox,
     QComboBox
 )
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
@@ -118,7 +119,7 @@ class RomManagerTab(QWidget):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting game location to look for ROMs in!\n")
         rom_manager_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:',
                                                                       os.path.normpath(os.path.expanduser("~")),
-                                                                      QFileDialog.ShowDirsOnly)
+                                                                      QFileDialog.Option.ShowDirsOnly)
         if rom_manager_directory_name is None or rom_manager_directory_name == "":
             rom_manager_directory_name = os.path.normpath(os.path.expanduser("~"))
         self.rom_manager_location_label.setText(rom_manager_directory_name)

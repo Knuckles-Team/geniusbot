@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
 from io import StringIO
-from PyQt5.QtCore import QObject, pyqtSignal, QThread, Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QObject, pyqtSignal, QThread, Qt
+from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QGridLayout, QPlainTextEdit, QProgressBar,
@@ -26,6 +27,8 @@ if check_package(package='webarchiver'):
 class WebarchiverTab(QWidget):
     def __init__(self, console):
         super(WebarchiverTab, self).__init__()
+        self.webarchiver_worker = None
+        self.webarchiver_thread = None
         self.webarchiver = Webarchiver()
         self.webarchiver_tab = QWidget()
         self.console = console
@@ -64,13 +67,13 @@ class WebarchiverTab(QWidget):
         webarchiver_layout = QGridLayout()
         webarchiver_layout.addWidget(self.web_links_label, 0, 0, 1, 8)
         webarchiver_layout.addWidget(self.web_links_editor, 1, 0, 1, 8)
-        webarchiver_layout.addWidget(self.web_scrape_label, 2, 0, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_scrape_label, 2, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
         webarchiver_layout.addWidget(self.web_scrape_options, 2, 1, 1, 1)
-        webarchiver_layout.addWidget(self.web_file_type_label, 2, 2, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_file_type_label, 2, 2, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
         webarchiver_layout.addWidget(self.web_links_file_type, 2, 3, 1, 1)
-        webarchiver_layout.addWidget(self.web_dpi_label, 2, 4, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_dpi_label, 2, 4, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
         webarchiver_layout.addWidget(self.web_dpi_spin_box, 2, 5, 1, 1)
-        webarchiver_layout.addWidget(self.web_zoom_label, 2, 6, 1, 1, alignment=Qt.AlignRight)
+        webarchiver_layout.addWidget(self.web_zoom_label, 2, 6, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
         webarchiver_layout.addWidget(self.web_zoom_spin_box, 2, 7, 1, 1)
         webarchiver_layout.addWidget(self.open_webfile_button, 3, 0, 1, 1)
         webarchiver_layout.addWidget(self.open_webfile_label, 3, 1, 1, 4)
@@ -124,8 +127,8 @@ class WebarchiverTab(QWidget):
     def save_web_location(self):
         self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n")
         web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
-                                                              QFileDialog.ShowDirsOnly)
-        if web_directory_name == None or web_directory_name == "":
+                                                              QFileDialog.Option.ShowDirsOnly)
+        if web_directory_name is None or web_directory_name == "":
             web_directory_name = os.path.expanduser("~")
         self.save_web_location_label.setText(web_directory_name)
         self.webarchiver.set_save_path(web_directory_name)
@@ -161,6 +164,7 @@ class WebarchiverWorker(QObject):
         sys.stdout = old_stdout
         result_string = result.getvalue()
         self.webarchiver.launch_browser()
+        print(f"Result: {result_string}")
 
         for website_index in range(0, len(self.websites)):
             self.webarchiver.append_link(self.websites[website_index])

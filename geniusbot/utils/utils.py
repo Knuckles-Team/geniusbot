@@ -2,17 +2,23 @@
 # -*- coding: utf-8 -*-
 import importlib.metadata
 import os
-import sys
+import logging
+logger = logging.getLogger('geniusbot')
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh = logging.FileHandler('geniusbot.log')
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
 
 
 def check_package(package: str = "None") -> bool:
     found = False
     try:
         version = importlib.metadata.version(package)
-        print('{} ({}) is installed'.format(package, version))
+        logger.info('{} ({}) is installed'.format(package, version))
         found = True
     except importlib.metadata.PackageNotFoundError:
-        print('{} is NOT installed'.format(package))
+        logger.info('{} is NOT installed'.format(package))
     return found
 
 
