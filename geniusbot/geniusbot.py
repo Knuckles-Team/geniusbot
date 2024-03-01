@@ -9,8 +9,8 @@ sys.path.append("qt")
 sys.path.append("utils")
 import pandas as pd
 from pathlib import Path
+from PyQt5.QtCore import Qt, QEvent, QObject, pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -20,7 +20,6 @@ from PyQt5.QtWidgets import (
     QTabWidget,
     QHBoxLayout, QCheckBox
 )
-from PyQt5.QtCore import QObject, pyqtSignal
 try:
     from utils.utils import check_package, resource_path
 except ModuleNotFoundError:
