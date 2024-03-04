@@ -1,0 +1,10 @@
+PyInstaller
+pyinstaller-hooks-contrib
+media-manager
+media-downloader
+webarchiver
+subshift
+rom-manager
+report-manager
+repository-manager
+audio-transcriber
