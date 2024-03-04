@@ -21,7 +21,7 @@
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/geniusbot)
 
 
-*Version: 3.29.3*
+*Version: 3.29.4*
 
 ![Geniusbot](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot")
 
