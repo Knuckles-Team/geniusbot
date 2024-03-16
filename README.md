@@ -167,9 +167,21 @@ Manage your Linux/Windows System!
 <details >
 <summary style="text-align:left; font-size:130%; color:black;"><b> Install </b></summary>
 
+Install core
 ```bash
 pip install geniusbot
 ```
+
+Install with all plugins
+```bash
+pip install geniusbot[all]
+```
+
+Install with desired plugins
+```bash
+pip install geniusbot[rom-manager,media-downloader,media-manager]
+```
+
 
 </details>
 

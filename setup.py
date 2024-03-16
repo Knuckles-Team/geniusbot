@@ -30,6 +30,31 @@ setup(
     packages=['geniusbot', 'geniusbot.qt', 'geniusbot.plugins', 'geniusbot.documentation'],
     include_package_data=True,
     install_requires=[str(requirement.requirement) for requirement in requirements],
+    extras_require={
+        'media-manager': ['media-manager'],
+        'media-downloader': ['media-downloader'],
+        'webarchiver': ['webarchiver'],
+        'subshift': ['subshift'],
+        'report-manager': ['report-manager'],
+        'rom-manager': ['rom-manager'],
+        'repository-manager': ['repository-manager'],
+        'audio-transcriber': ['audio-transcriber'],
+        'all': [
+            *sum([
+                dependencies
+                for dependencies in [
+                    ['media-manager'],
+                    ['media-downloader'],
+                    ['webarchiver'],
+                    ['subshift'],
+                    ['report-manager'],
+                    ['rom-manager'],
+                    ['repository-manager'],
+                    ['audio-transcriber'],
+                ]
+            ], [])
+        ]
+    },
     py_modules=['geniusbot'],
     package_data={'geniusbot': ['geniusbot']},
     data_files=[
