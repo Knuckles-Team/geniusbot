@@ -10,20 +10,22 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QCheckBox,
-    QListWidget, QWidget, QComboBox,
-    QAbstractItemView
+    QListWidget,
+    QWidget,
+    QComboBox,
+    QAbstractItemView,
 )
+
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
-    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
-    from geniusbot.qt.scrollable_widget import ScrollLabel
+    from geniusbot.qt.colors import blue
 try:
     from utils.utils import check_package, resource_path
 except ModuleNotFoundError:
-    from geniusbot.utils.utils import check_package, resource_path
+    from geniusbot.utils.utils import check_package
 
 
 class SystemsManagerTab(QWidget):
@@ -48,7 +50,7 @@ class SystemsManagerTab(QWidget):
         self.install_app_ticker = QCheckBox("Install Applications")
         self.install_python_ticker = QCheckBox("Install Python Modules")
         self.enable_windows_features_ticker = QCheckBox("Enable Windows Features")
-        if sys.platform != 'win32':
+        if sys.platform != "win32":
             self.enable_windows_features_ticker.setEnabled(False)
         self.install_theme_ticker = QCheckBox("Install Theme")
         self.install_font_ticker = QCheckBox("Install Font")
@@ -56,24 +58,31 @@ class SystemsManagerTab(QWidget):
         self.clean_ticker = QCheckBox("Clean")
         self.silent_ticker = QCheckBox("Silent")
         self.install_app_ticker.setChecked(False)
-        self.install_app_ticker.stateChanged.connect(self.install_applications_button_selected)
+        self.install_app_ticker.stateChanged.connect(
+            self.install_applications_button_selected
+        )
         self.install_theme_ticker.stateChanged.connect(self.enable_theme)
         self.install_font_ticker.stateChanged.connect(self.enable_font)
-        self.install_python_ticker.stateChanged.connect(self.install_python_button_selected)
-        self.enable_windows_features_ticker.stateChanged.connect(self.enable_windows_features_selected)
+        self.install_python_ticker.stateChanged.connect(
+            self.install_python_button_selected
+        )
+        self.enable_windows_features_ticker.stateChanged.connect(
+            self.enable_windows_features_selected
+        )
         self.update_ticker.setChecked(False)
         self.clean_ticker.setChecked(False)
         self.theme_combobox = QComboBox()
-        self.theme_combobox.addItems(['Takayuma', 'Other'])
+        self.theme_combobox.addItems(["Takayuma", "Other"])
         self.theme_combobox.setItemText(0, "Takayuma")
         self.theme_combobox.setEnabled(False)
         self.font_combobox = QComboBox()
-        self.font_combobox.addItems(['Hack NF', 'Meslo'])
+        self.font_combobox.addItems(["Hack NF", "Meslo"])
         self.font_combobox.setItemText(0, "Hack NF")
         self.font_combobox.setEnabled(False)
         self.systems_manager_run_button = QPushButton("Run ⥀")
         self.systems_manager_run_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;"
+        )
         self.application_install_edit = QLineEdit()
         self.python_module_install_edit = QLineEdit()
         self.enable_windows_feature_edit = QLineEdit()
@@ -81,11 +90,15 @@ class SystemsManagerTab(QWidget):
         self.python_module_install_edit.setEnabled(False)
         self.enable_windows_feature_edit.setEnabled(False)
         self.enable_windows_feature_list = QListWidget()
-        self.enable_windows_feature_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        self.enable_windows_feature_list.setSelectionMode(
+            QAbstractItemView.SelectionMode.MultiSelection
+        )
         self.enable_windows_feature_list.setEnabled(False)
         self.enable_windows_feature_list.addItems(self.systems_manager.windows_features)
         self.application_install_list = QListWidget()
-        self.application_install_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        self.application_install_list.setSelectionMode(
+            QAbstractItemView.SelectionMode.MultiSelection
+        )
         self.application_install_list.setEnabled(False)
         self.application_install_list.addItems(self.systems_manager.applications)
         self.webarchiver_install_button = QCheckBox("Geniusbot - Webarchiver Plugin")
@@ -100,25 +113,33 @@ class SystemsManagerTab(QWidget):
             self.subshift_install_button.setEnabled(False)
         else:
             self.subshift_install_button.setChecked(False)
-        self.media_downloader_install_button = QCheckBox("Geniusbot - Media Downloader Plugin")
+        self.media_downloader_install_button = QCheckBox(
+            "Geniusbot - Media Downloader Plugin"
+        )
         if self.media_downloader_installed:
             self.media_downloader_install_button.setChecked(True)
             self.media_downloader_install_button.setEnabled(False)
         else:
             self.media_downloader_install_button.setChecked(False)
-        self.media_manager_install_button = QCheckBox("Geniusbot - Media Manager Plugin")
+        self.media_manager_install_button = QCheckBox(
+            "Geniusbot - Media Manager Plugin"
+        )
         if self.media_manager_installed:
             self.media_manager_install_button.setChecked(True)
             self.media_manager_install_button.setEnabled(False)
         else:
             self.media_manager_install_button.setChecked(False)
-        self.repository_manager_install_button = QCheckBox("Geniusbot - Repository Manager Plugin")
+        self.repository_manager_install_button = QCheckBox(
+            "Geniusbot - Repository Manager Plugin"
+        )
         if self.repository_manager_installed:
             self.repository_manager_install_button.setChecked(True)
             self.repository_manager_install_button.setEnabled(False)
         else:
             self.repository_manager_install_button.setChecked(False)
-        self.report_manager_install_button = QCheckBox("Geniusbot - Report Manager Plugin")
+        self.report_manager_install_button = QCheckBox(
+            "Geniusbot - Report Manager Plugin"
+        )
         if self.report_manager_installed:
             self.report_manager_install_button.setChecked(True)
             self.report_manager_install_button.setEnabled(False)
@@ -130,7 +151,9 @@ class SystemsManagerTab(QWidget):
             self.rom_manager_install_button.setEnabled(False)
         else:
             self.rom_manager_install_button.setChecked(False)
-        self.audio_transcriber_install_button = QCheckBox("Geniusbot - Audio Transcriber Plugin")
+        self.audio_transcriber_install_button = QCheckBox(
+            "Geniusbot - Audio Transcriber Plugin"
+        )
         if self.audio_transcriber_installed:
             self.audio_transcriber_install_button.setChecked(True)
             self.audio_transcriber_install_button.setEnabled(False)
@@ -147,7 +170,9 @@ class SystemsManagerTab(QWidget):
         systems_manager_layout.addWidget(self.font_combobox, 2, 3, 1, 1)
         systems_manager_layout.addWidget(self.install_app_ticker, 3, 0, 1, 2)
         systems_manager_layout.addWidget(self.install_python_ticker, 3, 1, 1, 1)
-        systems_manager_layout.addWidget(self.enable_windows_features_ticker, 3, 2, 1, 2)
+        systems_manager_layout.addWidget(
+            self.enable_windows_features_ticker, 3, 2, 1, 2
+        )
         systems_manager_layout.addWidget(self.application_install_edit, 4, 0, 1, 1)
         systems_manager_layout.addWidget(self.application_install_list, 5, 0, 6, 1)
         systems_manager_layout.addWidget(self.python_module_install_edit, 4, 1, 1, 1)
@@ -155,12 +180,20 @@ class SystemsManagerTab(QWidget):
         systems_manager_layout.addWidget(self.enable_windows_feature_list, 5, 2, 6, 2)
         systems_manager_layout.addWidget(self.webarchiver_install_button, 5, 1, 1, 1)
         systems_manager_layout.addWidget(self.subshift_install_button, 6, 1, 1, 1)
-        systems_manager_layout.addWidget(self.media_downloader_install_button, 7, 1, 1, 1)
+        systems_manager_layout.addWidget(
+            self.media_downloader_install_button, 7, 1, 1, 1
+        )
         systems_manager_layout.addWidget(self.media_manager_install_button, 8, 1, 1, 1)
-        systems_manager_layout.addWidget(self.repository_manager_install_button, 9, 1, 1, 1)
-        systems_manager_layout.addWidget(self.report_manager_install_button, 10, 1, 1, 1)
+        systems_manager_layout.addWidget(
+            self.repository_manager_install_button, 9, 1, 1, 1
+        )
+        systems_manager_layout.addWidget(
+            self.report_manager_install_button, 10, 1, 1, 1
+        )
         systems_manager_layout.addWidget(self.rom_manager_install_button, 11, 1, 1, 1)
-        systems_manager_layout.addWidget(self.audio_transcriber_install_button, 12, 1, 1, 1)
+        systems_manager_layout.addWidget(
+            self.audio_transcriber_install_button, 12, 1, 1, 1
+        )
         systems_manager_layout.addWidget(self.systems_manager_run_button, 99, 0, 1, 4)
         systems_manager_layout.addWidget(self.system_progress_bar, 100, 0, 1, 4)
         self.systems_manager_tab.setLayout(systems_manager_layout)
@@ -203,7 +236,9 @@ class SystemsManagerTab(QWidget):
         self.system_progress_bar.setValue(n)
 
     def manage_system(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Managing System...\n")
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Managing System...\n"
+        )
         self.system_progress_bar.setValue(1)
         self.systems_manager_thread = QThread()
         self.systems_manager_worker = SystemsManagerWorker(
@@ -227,13 +262,17 @@ class SystemsManagerTab(QWidget):
             python_module_install_edit=self.python_module_install_edit,
             install_font_ticker=self.install_font_ticker,
             install_theme_ticker=self.install_theme_ticker,
-            clean_ticker=self.clean_ticker
+            clean_ticker=self.clean_ticker,
         )
         self.systems_manager_worker.moveToThread(self.systems_manager_thread)
         self.systems_manager_thread.started.connect(self.systems_manager_worker.run)
         self.systems_manager_worker.finished.connect(self.systems_manager_thread.quit)
-        self.systems_manager_worker.finished.connect(self.systems_manager_worker.deleteLater)
-        self.systems_manager_thread.finished.connect(self.systems_manager_thread.deleteLater)
+        self.systems_manager_worker.finished.connect(
+            self.systems_manager_worker.deleteLater
+        )
+        self.systems_manager_thread.finished.connect(
+            self.systems_manager_thread.deleteLater
+        )
         self.systems_manager_worker.progress.connect(self.report_systems_progress_bar)
         self.systems_manager_thread.start()
         self.systems_manager_run_button.setEnabled(False)
@@ -241,7 +280,9 @@ class SystemsManagerTab(QWidget):
             lambda: self.systems_manager_run_button.setEnabled(True)
         )
         self.systems_manager_thread.finished.connect(
-            lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] System actions complete!\n")
+            lambda: self.console.setText(
+                f"{self.console.text()}\n[Genius Bot] System actions complete!\n"
+            )
         )
 
 
@@ -249,13 +290,30 @@ class SystemsManagerWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, systems_manager, silent_ticker, update_ticker, enable_windows_features_ticker,
-                 enable_windows_feature_list,
-                 enable_windows_feature_edit, install_app_ticker, application_install_edit, install_python_ticker,
-                 webarchiver_install_button, subshift_install_button, repository_manager_install_button,
-                 report_manager_install_button, media_manager_install_button, media_downloader_install_button,
-                 rom_manager_install_button, audio_transcriber_install_button,
-                 python_module_install_edit, install_font_ticker, install_theme_ticker, clean_ticker):
+    def __init__(
+        self,
+        systems_manager,
+        silent_ticker,
+        update_ticker,
+        enable_windows_features_ticker,
+        enable_windows_feature_list,
+        enable_windows_feature_edit,
+        install_app_ticker,
+        application_install_edit,
+        install_python_ticker,
+        webarchiver_install_button,
+        subshift_install_button,
+        repository_manager_install_button,
+        report_manager_install_button,
+        media_manager_install_button,
+        media_downloader_install_button,
+        rom_manager_install_button,
+        audio_transcriber_install_button,
+        python_module_install_edit,
+        install_font_ticker,
+        install_theme_ticker,
+        clean_ticker,
+    ):
         super().__init__()
         self.systems_manager = systems_manager
         self.silent_ticker = silent_ticker
@@ -293,7 +351,9 @@ class SystemsManagerWorker(QObject):
             features_ui = self.enable_windows_feature_list.selectedItems()
             features = []
             for i in range(len(features_ui)):
-                features.append(str(self.enable_windows_feature_list.selectedItems()[i].text()))
+                features.append(
+                    str(self.enable_windows_feature_list.selectedItems()[i].text())
+                )
             custom_features = self.enable_windows_feature_edit.text()
             custom_features = custom_features.replace(" ", "")
             custom_features = custom_features.split(",")
@@ -307,7 +367,9 @@ class SystemsManagerWorker(QObject):
             applications_ui = self.enable_windows_feature_list.selectedItems()
             applications = []
             for i in range(len(applications_ui)):
-                applications.append(str(self.enable_windows_feature_list.selectedItems()[i].text()))
+                applications.append(
+                    str(self.enable_windows_feature_list.selectedItems()[i].text())
+                )
             custom_applications = self.application_install_edit.text()
             custom_applications = custom_applications.replace(" ", "")
             custom_applications = custom_applications.split(",")
@@ -320,21 +382,21 @@ class SystemsManagerWorker(QObject):
         if self.install_python_ticker.isChecked():
             python_modules = []
             if self.webarchiver_install_button.isChecked():
-                python_modules.append('webarchiver')
+                python_modules.append("webarchiver")
             if self.subshift_install_button.isChecked():
-                python_modules.append('subshift')
+                python_modules.append("subshift")
             if self.repository_manager_install_button.isChecked():
-                python_modules.append('repository-manager')
+                python_modules.append("repository-manager")
             if self.report_manager_install_button.isChecked():
-                python_modules.append('report-manager')
+                python_modules.append("report-manager")
             if self.media_manager_install_button.isChecked():
-                python_modules.append('media-manager')
+                python_modules.append("media-manager")
             if self.media_downloader_install_button.isChecked():
-                python_modules.append('media-downloader')
+                python_modules.append("media-downloader")
             if self.media_downloader_install_button.isChecked():
-                python_modules.append('rom-manager')
+                python_modules.append("rom-manager")
             if self.media_downloader_install_button.isChecked():
-                python_modules.append('audio-transcriber')
+                python_modules.append("audio-transcriber")
             custom_python_modules = self.python_module_install_edit.text()
             custom_python_modules = custom_python_modules.replace(" ", "")
             custom_python_modules = custom_python_modules.split(",")

@@ -20,14 +20,22 @@ class Log:
             self.logging_dir = f"{os.path.expanduser('~')}".replace("\\", "/")
         else:
             self.logging_dir = logging_dir
-        self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace("\\", "/")
+        self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace(
+            "\\", "/"
+        )
         if os.path.isdir(self.logging_dir):
             print("Log File: ", self.logging_file)
         else:
-            self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace("\\", "/")
+            self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace(
+                "\\", "/"
+            )
             print("Log File: ", self.logging_file)
-        logging.basicConfig(filename=self.logging_file, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-                            filemode='w', level=logging.DEBUG)
+        logging.basicConfig(
+            filename=self.logging_file,
+            format="%(asctime)s:%(levelname)s:%(name)s:%(message)s",
+            filemode="w",
+            level=logging.DEBUG,
+        )
 
     # Kick Off Log Initializing
     def init_logging(self):
@@ -44,13 +52,13 @@ class Log:
         self.logger.info("Logging Module: Initializing")
 
     def log_stdout(self):
-        stdout_logger = logging.getLogger('STDOUT')
+        stdout_logger = logging.getLogger("STDOUT")
         sl = StreamToLogger(stdout_logger, logging.INFO)
         sys.stdout = sl
         self.logger.debug(sys.stdout)
 
     def log_stderr(self):
-        stderr_logger = logging.getLogger('STDERR')
+        stderr_logger = logging.getLogger("STDERR")
         sl = StreamToLogger(stderr_logger, logging.ERROR)
         sys.stderr = sl
         self.logger.warning(sys.stderr)
@@ -93,7 +101,7 @@ class StreamToLogger(object):
     def __init__(self, logger, log_level=logging.INFO):
         self.logger = logger
         self.log_level = log_level
-        self.linebuf = ''
+        self.linebuf = ""
 
     def write(self, buf):
         for line in buf.rstrip().splitlines():

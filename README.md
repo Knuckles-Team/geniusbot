@@ -34,7 +34,7 @@ Click the arrows on the left of each of the items below to see more information 
 <details >
 <summary style="text-align:left; font-size:111%; color:black;"><b> Geniusbot Chat </b></summary>
 <br>
-Chat with your friendly and extremely intelligent Geniusbot. 
+Chat with your friendly and extremely intelligent Geniusbot.
 
 Powered by Artificial Intelligence scaled to your PC's performance!
 
@@ -45,7 +45,7 @@ Powered by Artificial Intelligence scaled to your PC's performance!
 <details >
 <summary style="text-align:left; font-size:111%; color:black;"><b> Media Downloader </b></summary>
 <br>
-Download videos from various websites! 
+Download videos from various websites!
 
 Supports:
 
@@ -78,7 +78,7 @@ https://www.youtube.com/watch?v=7qRSAUb96wg
 <summary style="text-align:left; font-size:111%; color:black;"><b> Media Manager </b></summary>
 <br>
 Manage your media library by:
-- Cleaning up names of files and folders based off pre-built filters. 
+- Cleaning up names of files and folders based off pre-built filters.
 - Apply subtitles located in "Sub" folder within each media directory
 - Move files to final destination after processing
 

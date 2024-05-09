@@ -3,10 +3,11 @@
 import importlib.metadata
 import os
 import logging
-logger = logging.getLogger('geniusbot')
+
+logger = logging.getLogger("geniusbot")
 logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh = logging.FileHandler('geniusbot.log')
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh = logging.FileHandler("geniusbot.log")
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
@@ -15,15 +16,15 @@ def check_package(package: str = "None") -> bool:
     found = False
     try:
         version = importlib.metadata.version(package)
-        logger.info('{} ({}) is installed'.format(package, version))
+        logger.info("{} ({}) is installed".format(package, version))
         found = True
     except importlib.metadata.PackageNotFoundError:
-        logger.info('{} is NOT installed'.format(package))
+        logger.info("{} is NOT installed".format(package))
     return found
 
 
 def resource_path(relative_path: str = "None") -> str:
-    """ Get absolute path to resource, works for dev and for PyInstaller """
+    """Get absolute path to resource, works for dev and for PyInstaller"""
     base_path = ""
     try:
         if "_MEIPASS" in os.environ:

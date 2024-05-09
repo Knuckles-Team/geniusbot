@@ -8,20 +8,24 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QSpinBox,
     QLabel,
-    QHBoxLayout, QWidget, QFileDialog, QProgressBar
+    QHBoxLayout,
+    QWidget,
+    QFileDialog,
+    QProgressBar,
 )
+
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
-    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.colors import green, blue
     from geniusbot.qt.scrollable_widget import ScrollLabel
 try:
     from utils.utils import check_package
 except ModuleNotFoundError:
     from geniusbot.utils.utils import check_package
-if check_package(package='subshift'):
+if check_package(package="subshift"):
     import subshift
 
 
@@ -36,17 +40,20 @@ class SubshiftTab(QWidget):
         self.subshift_progress_bar = QProgressBar()
 
         self.open_subtitlefile_button = QPushButton("Open File")
-        self.open_subtitlefile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.open_subtitlefile_button.setStyleSheet(
+            f"background-color: {green}; color: white; font: bold;"
+        )
         self.open_subtitlefile_button.clicked.connect(self.open_subtitlefile)
         self.shift_subtitle_button = QPushButton("Shift Subtitles ↹")
         self.shift_subtitle_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;"
+        )
         self.shift_subtitle_button.clicked.connect(self.shift_subtitle)
 
         # self.subtitle_label = QLabel(self)
         self.subtitle_label = ScrollLabel(self)
         self.subtitle_label.hide()
-        self.subtitle_label.setText(f"Subtitle file contents will be shown here\n")
+        self.subtitle_label.setText("Subtitle file contents will be shown here\n")
         self.subtitle_label.setFont("Arial")
         self.subtitle_label.setFontColor(background_color="white", color="black")
         self.subtitle_label.setScrollWheel("Top")
@@ -85,14 +92,18 @@ class SubshiftTab(QWidget):
             self.shift_subtitle_button.setEnabled(True)
 
     def shift_subtitle(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Shifting Subtitles...\n")
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Shifting Subtitles...\n"
+        )
         self.subshift_thread = QThread()
         if self.sub_time_spin_box.value() > 0:
             mode = "+"
         else:
             mode = "-"
         time = abs(self.sub_time_spin_box.value())
-        self.subshift_worker = SubshiftWorker(self.open_subtitlefile_label.text(), mode, time)
+        self.subshift_worker = SubshiftWorker(
+            self.open_subtitlefile_label.text(), mode, time
+        )
         self.subshift_worker.moveToThread(self.subshift_thread)
         self.subshift_thread.started.connect(self.subshift_worker.run)
         self.subshift_worker.finished.connect(self.subshift_thread.quit)
@@ -104,25 +115,25 @@ class SubshiftTab(QWidget):
         self.subshift_thread.finished.connect(
             lambda: self.shift_subtitle_button.setEnabled(True)
         )
-        self.subshift_thread.finished.connect(
-            lambda: self.refresh_subtitlefile()
-        )
-        self.console.setText(f"[Genius Bot] Subtitle Shift Completed!\n")
+        self.subshift_thread.finished.connect(lambda: self.refresh_subtitlefile())
+        self.console.setText("[Genius Bot] Subtitle Shift Completed!\n")
 
     def refresh_subtitlefile(self):
-        with open(self.open_subtitlefile_label.text(), 'r') as file:
+        with open(self.open_subtitlefile_label.text(), "r") as file:
             self.subtitles = file.read()
         self.subtitles = self.subtitles + self.subtitle_label.text()
         self.subtitles = self.subtitles.strip()
         self.subtitle_label.setText(self.subtitles)
 
     def open_subtitlefile(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Subtitle file\n")
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Opening Subtitle file\n"
+        )
         self.subtitle_label.setText("")
-        subtitle_file_name = QFileDialog.getOpenFileName(self, 'Subtitle File')
+        subtitle_file_name = QFileDialog.getOpenFileName(self, "Subtitle File")
         print(subtitle_file_name[0])
         self.open_subtitlefile_label.setText(subtitle_file_name[0])
-        with open(subtitle_file_name[0], 'r') as file:
+        with open(subtitle_file_name[0], "r") as file:
             self.subtitles = file.read()
         self.subtitles = self.subtitles + self.subtitle_label.text()
         self.subtitles = self.subtitles.strip()
@@ -142,6 +153,15 @@ class SubshiftWorker(QObject):
     def run(self):
         """Long-running task."""
         print(f"Subtitle {self.subtitle_file} was shifted {self.mode}{self.time}")
-        subshift.subshift([f"-f", f"{self.subtitle_file}", f"-m", f"{self.mode}", f"-t", f"{self.time}"])
+        subshift.subshift(
+            [
+                "-f",
+                f"{self.subtitle_file}",
+                "-m",
+                f"{self.mode}",
+                "-t",
+                f"{self.time}",
+            ]
+        )
         self.progress.emit(100)
         self.finished.emit()
