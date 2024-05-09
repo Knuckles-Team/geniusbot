@@ -4,18 +4,15 @@
 import os
 import sys
 from PyQt6.QtCore import QObject, pyqtSignal, QThread
-from PyQt6.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QVBoxLayout, QTextEdit
-)
+from PyQt6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit
 from genius_chatbot import ChatBot
+
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
-    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.colors import blue
     from geniusbot.qt.scrollable_widget import ScrollLabel
 
 
@@ -24,9 +21,9 @@ if os.name == "posix":
 
     user = pwd.getpwuid(os.geteuid()).pw_name
 else:
-    ukn = 'UNKNOWN'
-    user = os.environ.get('USER', os.environ.get('USERNAME', ukn))
-    if user == ukn and hasattr(os, 'getlogin'):
+    ukn = "UNKNOWN"
+    user = os.environ.get("USER", os.environ.get("USERNAME", ukn))
+    if user == ukn and hasattr(os, "getlogin"):
         user = os.getlogin()
 
 
@@ -42,13 +39,15 @@ class GeniusBotChatTab(QWidget):
         self.geniusbot_chat.hide()
         self.geniusbot_chat.setFontColor(background_color="white", color="black")
         self.geniusbot_chat.setText(
-            f"""[Genius Bot] Hello there, my name is Geniusbot, I am here to assist you with several things! 
-            Explore the tabs at the top to see what I can do!""")
+            """[Genius Bot] Hello there, my name is Geniusbot, I am here to assist you with several things!
+            Explore the tabs at the top to see what I can do!"""
+        )
         self.chat_editor = QTextEdit()
         self.chat_editor.installEventFilter(self)
         self.geniusbot_send_button = QPushButton("Send")
         self.geniusbot_send_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;"
+        )
         self.geniusbot_send_button.clicked.connect(self.geniusbot_chat_response)
         self.chat_editor.setDisabled(False)
         layout = QVBoxLayout()
@@ -63,19 +62,27 @@ class GeniusBotChatTab(QWidget):
     def geniusbot_chat_response(self):
         print("Sending Chat!!!!!!!!!")
         text = str(self.chat_editor.toPlainText().strip())
-        self.geniusbot_chat.setText(f"""{self.geniusbot_chat.text()}\n[{user}] {text}""")
+        self.geniusbot_chat.setText(
+            f"""{self.geniusbot_chat.text()}\n[{user}] {text}"""
+        )
         self.chat_editor.setText("")
         self.geniusbot_thread = QThread()
-        self.geniusbot_worker = GeniusBotWorker(geniusbot_chatbot=self.geniusbot_chatbot,
-                                                geniusbot_chat=self.geniusbot_chat,
-                                                text=text)
+        self.geniusbot_worker = GeniusBotWorker(
+            geniusbot_chatbot=self.geniusbot_chatbot,
+            geniusbot_chat=self.geniusbot_chat,
+            text=text,
+        )
         self.geniusbot_worker.moveToThread(self.geniusbot_thread)
         self.geniusbot_thread.started.connect(self.geniusbot_worker.run)
         self.geniusbot_worker.finished.connect(self.geniusbot_thread.quit)
         self.geniusbot_worker.finished.connect(self.geniusbot_worker.deleteLater)
         self.geniusbot_thread.finished.connect(self.geniusbot_thread.deleteLater)
-        self.geniusbot_thread.finished.connect(lambda: self.geniusbot_send_button.setDisabled(False))
-        self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setDisabled(False))
+        self.geniusbot_thread.finished.connect(
+            lambda: self.geniusbot_send_button.setDisabled(False)
+        )
+        self.geniusbot_thread.finished.connect(
+            lambda: self.chat_editor.setDisabled(False)
+        )
         self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setText(""))
         self.geniusbot_thread.finished.connect(lambda: self.chat_editor.setFocus())
         self.geniusbot_thread.start()
@@ -90,22 +97,27 @@ class GeniusBotWorker(QObject):
         self.geniusbot_chatbot = geniusbot_chatbot
         self.geniusbot_chat = geniusbot_chat
         self.text = text
-        self.default_text = ("Hello, my name is Geniusbot and I'm an artificially "
-                             "intelligent robot that can help you with anything you need!")
+        self.default_text = (
+            "Hello, my name is Geniusbot and I'm an artificially "
+            "intelligent robot that can help you with anything you need!"
+        )
 
     def run(self):
         """Long-running task."""
         old_text = self.geniusbot_chat.text()
         source_directory = os.path.normpath(
-            os.path.join(os.path.dirname(os.path.dirname(__file__)), 'documentation'))
-        self.geniusbot_chat.setText(f"{self.geniusbot_chat.text()}\n"
-                                    f"[Genius Bot] Firing up the gears...\n"
-                                    f"             Slurping up the latest news...")
+            os.path.join(os.path.dirname(os.path.dirname(__file__)), "documentation")
+        )
+        self.geniusbot_chat.setText(
+            f"{self.geniusbot_chat.text()}\n"
+            f"[Genius Bot] Firing up the gears...\n"
+            f"             Slurping up the latest news..."
+        )
 
         self.geniusbot_chatbot.source_directory = source_directory
         print(f"SOURCE DIRECTORY: {source_directory}")
         self.geniusbot_chatbot.assimilate()
-        if self.text == '':
+        if self.text == "":
             self.text = self.default_text
         self.geniusbot_chatbot.chunk_overlap = 69
         self.geniusbot_chatbot.chunk_size = 639

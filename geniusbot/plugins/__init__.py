@@ -6,29 +6,58 @@ try:
 except:
     from geniusbot.plugins.subshift_plugin import SubshiftTab, SubshiftWorker
 try:
-    from plugins.media_downloader_plugin import MediaDownloaderTab, MediaDownloaderWorker
+    from plugins.media_downloader_plugin import (
+        MediaDownloaderTab,
+        MediaDownloaderWorker,
+    )
 except:
-    from geniusbot.plugins.media_downloader_plugin import MediaDownloaderTab, MediaDownloaderWorker
+    from geniusbot.plugins.media_downloader_plugin import (
+        MediaDownloaderTab,
+        MediaDownloaderWorker,
+    )
 try:
     from plugins.media_manager_plugin import MediaManagerTab, MediaManagerWorker
 except:
-    from geniusbot.plugins.media_manager_plugin import MediaManagerTab, MediaManagerWorker
+    from geniusbot.plugins.media_manager_plugin import (
+        MediaManagerTab,
+        MediaManagerWorker,
+    )
 try:
-    from plugins.report_manager_plugin import ReportManagerTab, ReportManagerWorker, MergeReportWorker
+    from plugins.report_manager_plugin import (
+        ReportManagerTab,
+        ReportManagerWorker,
+        MergeReportWorker,
+    )
 except:
-    from geniusbot.plugins.report_manager_plugin import ReportManagerTab, ReportManagerWorker, MergeReportWorker
+    from geniusbot.plugins.report_manager_plugin import (
+        ReportManagerTab,
+        ReportManagerWorker,
+        MergeReportWorker,
+    )
 try:
-    from plugins.repository_manager_plugin import RepositoryManagerTab, RepositoryManagerWorker
+    from plugins.repository_manager_plugin import (
+        RepositoryManagerTab,
+        RepositoryManagerWorker,
+    )
 except:
-    from geniusbot.plugins.repository_manager_plugin import RepositoryManagerTab, RepositoryManagerWorker
+    from geniusbot.plugins.repository_manager_plugin import (
+        RepositoryManagerTab,
+        RepositoryManagerWorker,
+    )
 try:
     from plugins.geniusbot_chat_plugin import GeniusBotWorker, GeniusBotChatTab
 except:
-    from geniusbot.plugins.geniusbot_chat_plugin import GeniusBotWorker, GeniusBotChatTab
+    from geniusbot.plugins.geniusbot_chat_plugin import (
+        GeniusBotWorker,
+        GeniusBotChatTab,
+    )
 try:
     from plugins.systems_manager_plugin import SystemsManagerTab, SystemsManagerWorker
 except:
-    from geniusbot.plugins.systems_manager_plugin import SystemsManagerTab, SystemsManagerWorker
+    from geniusbot.plugins.systems_manager_plugin import (
+        SystemsManagerTab,
+        SystemsManagerWorker,
+    )
 try:
     from plugins.webarchiver_plugin import WebarchiverTab, WebarchiverWorker
 except:

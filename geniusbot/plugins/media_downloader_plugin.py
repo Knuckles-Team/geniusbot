@@ -9,18 +9,23 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QLabel,
     QPlainTextEdit,
-    QLineEdit, QProgressBar, QComboBox, QWidget, QFileDialog
+    QLineEdit,
+    QProgressBar,
+    QComboBox,
+    QWidget,
+    QFileDialog,
 )
+
 sys.path.append("..")
 try:
-    from qt.colors import yellow, green, orange, blue, red, purple
+    from qt.colors import yellow, green, orange, blue
 except ModuleNotFoundError or ImportError:
-    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.colors import yellow, green, orange, blue
 try:
     from utils.utils import check_package
 except ModuleNotFoundError:
     from geniusbot.utils.utils import check_package
-if check_package(package='media-downloader'):
+if check_package(package="media-downloader"):
     from media_downloader import MediaDownloader
 
 
@@ -34,27 +39,38 @@ class MediaDownloaderTab(QWidget):
         self.media_downloader_tab = QWidget()
         # Video Download Widgets
         self.video_links_label = QLabel("Paste Video URL(s) Below ↴")
-        self.video_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
+        self.video_links_label.setStyleSheet("color: black; font-size: 11pt;")
         self.video_links_editor = QPlainTextEdit()
         self.channel_field_label = QPushButton("Channel/User")
-        self.channel_field_label.setStyleSheet(f"background-color: {yellow}; color: white; font: bold;")
+        self.channel_field_label.setStyleSheet(
+            f"background-color: {yellow}; color: white; font: bold;"
+        )
         self.channel_field_label.clicked.connect(self.add_channel_videos)
         self.channel_field_editor = QLineEdit()
         self.video_download_button = QPushButton("Download ￬")
         self.video_download_button.setStyleSheet(
-            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;"
+        )
         self.video_download_button.clicked.connect(self.download_videos)
         self.open_video_file_button = QPushButton("Open File")
-        self.open_video_file_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.open_video_file_button.setStyleSheet(
+            f"background-color: {green}; color: white; font: bold;"
+        )
         self.open_video_file_button.clicked.connect(self.open_video_file)
         self.video_open_file_label = QLabel("None")
         self.video_save_location_button = QPushButton("Save Location")
-        self.video_save_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
-        self.video_save_location_button.clicked.connect(self.media_download_save_location)
-        self.video_save_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.video_save_location_button.setStyleSheet(
+            f"background-color: {orange}; color: white; font: bold;"
+        )
+        self.video_save_location_button.clicked.connect(
+            self.media_download_save_location
+        )
+        self.video_save_location_label = QLabel(
+            f'{os.path.expanduser("~")}'.replace("\\", "/")
+        )
         self.video_type_label = QLabel("Filetype")
         self.video_type_combobox = QComboBox()
-        self.video_type_combobox.addItems(['Video', 'Audio'])
+        self.video_type_combobox.addItems(["Video", "Audio"])
         self.video_type_combobox.setItemText(0, "Video")
         self.video_progress_bar = QProgressBar()
         video_layout = QGridLayout()
@@ -74,28 +90,38 @@ class MediaDownloaderTab(QWidget):
         self.media_downloader_tab.setLayout(video_layout)
 
     def media_download_save_location(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n")
-        video_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
-                                                                QFileDialog.Option.ShowDirsOnly)
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Setting save location for videos\n"
+        )
+        video_directory_name = QFileDialog.getExistingDirectory(
+            None,
+            "Select a folder:",
+            os.path.expanduser("~"),
+            QFileDialog.Option.ShowDirsOnly,
+        )
         if video_directory_name is None or video_directory_name == "":
             video_directory_name = os.path.expanduser("~")
         self.video_save_location_label.setText(video_directory_name)
         self.video_downloader.set_save_path(video_directory_name)
 
     def download_videos(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Downloading videos...\n")
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Downloading videos...\n"
+        )
         self.video_progress_bar.setValue(1)
         videos = self.video_links_editor.toPlainText()
         videos = videos.strip()
-        videos = videos.split('\n')
+        videos = videos.split("\n")
 
-        if videos[0] != '':
+        if videos[0] != "":
             if self.video_type_combobox.currentText() == "Audio":
                 audio_boolean = True
             else:
                 audio_boolean = False
             self.video_thread = QThread()
-            self.video_worker = MediaDownloaderWorker(self.video_downloader, videos, audio_boolean)
+            self.video_worker = MediaDownloaderWorker(
+                self.video_downloader, videos, audio_boolean
+            )
             self.video_worker.moveToThread(self.video_thread)
             self.video_thread.started.connect(self.video_worker.run)
             self.video_worker.finished.connect(self.video_thread.quit)
@@ -108,26 +134,32 @@ class MediaDownloaderTab(QWidget):
                 lambda: self.video_download_button.setEnabled(True)
             )
             self.video_thread.finished.connect(
-                lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Videos downloaded!\n")
+                lambda: self.console.setText(
+                    f"{self.console.text()}\n[Genius Bot] Videos downloaded!\n"
+                )
             )
 
     def add_channel_videos(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Adding Channel videos\n")
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Adding Channel videos\n"
+        )
         self.video_downloader.get_channel_videos(self.channel_field_editor.text())
         videos = self.video_links_editor.toPlainText()
         videos = videos.strip()
-        videos = videos.split('\n')
+        videos = videos.split("\n")
         videos = videos + self.video_downloader.get_links()
-        videos = '\n'.join(videos)
+        videos = "\n".join(videos)
         self.video_links_editor.setPlainText(videos)
 
     def open_video_file(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Video URL file\n")
-        video_file_name = QFileDialog.getOpenFileName(self, 'File with Video URL(s)')
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Opening Video URL file\n"
+        )
+        video_file_name = QFileDialog.getOpenFileName(self, "File with Video URL(s)")
         print(video_file_name[0])
         self.video_open_file_label.setText(video_file_name[0])
 
-        with open(video_file_name[0], 'r') as file:
+        with open(video_file_name[0], "r") as file:
             videos = file.read()
         videos = videos + self.video_links_editor.toPlainText()
         videos = videos.strip()

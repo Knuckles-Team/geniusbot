@@ -6,6 +6,7 @@ import requests
 import logging
 import pandas as pd
 import warnings
+
 warnings.filterwarnings("ignore", message="Couldn't find ffmpeg or avconv.*")
 
 sys.path.append(".")
@@ -22,7 +23,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QTabWidget,
-    QHBoxLayout, QCheckBox
+    QHBoxLayout,
+    QCheckBox,
 )
 
 try:
@@ -39,7 +41,7 @@ rom_manager_installed = check_package("rom-manager")
 try:
     from version import __version__, __author__, __credits__
 except ModuleNotFoundError:
-    from geniusbot.version import __version__, __author__, __credits__
+    from geniusbot.version import __version__
 try:
     from qt.scrollable_widget import ScrollLabel
 except ModuleNotFoundError:
@@ -101,73 +103,132 @@ if os.name == "posix":
 
     user = pwd.getpwuid(os.geteuid()).pw_name
 else:
-    ukn = 'UNKNOWN'
-    user = os.environ.get('USER', os.environ.get('USERNAME', ukn))
-    if user == ukn and hasattr(os, 'getlogin'):
+    ukn = "UNKNOWN"
+    user = os.environ.get("USER", os.environ.get("USERNAME", ukn))
+    if user == ukn and hasattr(os, "getlogin"):
         user = os.getlogin()
 
-if sys.platform == 'win32':
+if sys.platform == "win32":
     import winshell
     import ctypes
-    myappid = f'knucklesteam.geniusbot.geniusbot.{__version__}'
+
+    myappid = f"knucklesteam.geniusbot.geniusbot.{__version__}"
     myappid.encode("utf-8")
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-pd.set_option('display.max_rows', 250)
-pd.set_option('display.max_columns', 9)
-pd.set_option('display.expand_frame_repr', False)
+pd.set_option("display.max_rows", 250)
+pd.set_option("display.max_columns", 9)
+pd.set_option("display.expand_frame_repr", False)
 
-logger = logging.getLogger('geniusbot')
+logger = logging.getLogger("geniusbot")
 logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh = logging.FileHandler('geniusbot.log')
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh = logging.FileHandler("geniusbot.log")
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
-documentation_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), 'documentation'))
+documentation_dir = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "documentation")
+)
 if os.path.isdir(documentation_dir):
     logger.info("Documentation directory exists")
 else:
     logger.info(f"Making Documentation directory: {documentation_dir}")
     os.mkdir(documentation_dir)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/geniusbot/main/README.md')
-with open(resource_path(os.path.join("documentation", "geniusbot.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/geniusbot/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "geniusbot.md")), "w", encoding="utf-8"
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/systems-manager/main/README.md')
-with open(resource_path(os.path.join("documentation", "systems-manager.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/systems-manager/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "systems-manager.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/report-manager/main/README.md')
-with open(resource_path(os.path.join("documentation", "report-manager.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/report-manager/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "report-manager.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/webarchiver/main/README.md')
-with open(resource_path(os.path.join("documentation", "webarchiver.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/webarchiver/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "webarchiver.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-manager/main/README.md')
-with open(resource_path(os.path.join("documentation", "media-manager.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/media-manager/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "media-manager.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/media-downloader/main/README.md')
-with open(resource_path(os.path.join("documentation", "media-downloader.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/media-downloader/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "media-downloader.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/repository-manager/main/README.md')
-with open(resource_path(os.path.join("documentation", "repository-manager.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/repository-manager/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "repository-manager.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/subshift/main/README.md')
-with open(resource_path(os.path.join("documentation", "subshift.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/subshift/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "subshift.md")), "w", encoding="utf-8"
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/genius-chatbot/main/README.md')
-with open(resource_path(os.path.join("documentation", "genius-chatbot.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/genius-chatbot/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "genius-chatbot.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
-response = requests.get('https://raw.githubusercontent.com/Knuckles-Team/rom-manager/main/README.md')
-with open(resource_path(os.path.join("documentation", "rom-manager.md")), 'w', encoding='utf-8') as f:
+response = requests.get(
+    "https://raw.githubusercontent.com/Knuckles-Team/rom-manager/main/README.md"
+)
+with open(
+    resource_path(os.path.join("documentation", "rom-manager.md")),
+    "w",
+    encoding="utf-8",
+) as f:
     f.write(response.text)
 
 
@@ -279,7 +340,7 @@ class GeniusBot(QMainWindow):
         self.initialize_user_interface()
 
     def initialize_user_interface(self):
-        self.setWindowTitle(f"Genius Bot")
+        self.setWindowTitle("Genius Bot")
         self.setWindowIcon(QIcon(resource_path(os.path.join("img", "geniusbot.ico"))))
         self.setStyleSheet("background-color: #bfc3c9;")
         self.resize(900, 640)
@@ -289,21 +350,29 @@ class GeniusBot(QMainWindow):
         self.tab_widget.setStyleSheet("background-color: #f5f5f5;")
         self.console = ScrollLabel(self)
         self.console.setScrollWheel(location="Bottom")
-        self.console.setText(f"[Genius Bot] Version: {__version__}\n[Genius Bot] Console Output of Running Tasks\n")
+        self.console.setText(
+            f"[Genius Bot] Version: {__version__}\n[Genius Bot] Console Output of Running Tasks\n"
+        )
 
         self.geniusbot_chat_tab = GeniusBotChatTab(console=self.console)
-        self.tab_widget.addTab(self.geniusbot_chat_tab.geniusbot_chat_tab, "Genius Chat")
+        self.tab_widget.addTab(
+            self.geniusbot_chat_tab.geniusbot_chat_tab, "Genius Chat"
+        )
         tab = 0
         self.tab_widget.setTabText(tab, "Genius Bot Chat")
         tab = tab + 1
         if media_downloader_installed:
             self.media_downloader_tab = MediaDownloaderTab(console=self.console)
-            self.tab_widget.addTab(self.media_downloader_tab.media_downloader_tab, "Media Downloader")
+            self.tab_widget.addTab(
+                self.media_downloader_tab.media_downloader_tab, "Media Downloader"
+            )
             self.tab_widget.setTabText(tab, "Media Downloader")
             tab = tab + 1
         if media_manager_installed:
             self.media_manager_tab = MediaManagerTab(console=self.console)
-            self.tab_widget.addTab(self.media_manager_tab.media_manager_tab, "Media Manager")
+            self.tab_widget.addTab(
+                self.media_manager_tab.media_manager_tab, "Media Manager"
+            )
             self.tab_widget.setTabText(tab, "Media Manager")
             tab = tab + 1
         if webarchiver_installed:
@@ -318,12 +387,16 @@ class GeniusBot(QMainWindow):
             tab = tab + 1
         if report_manager_installed:
             self.report_manager_tab = ReportManagerTab(console=self.console)
-            self.tab_widget.addTab(self.report_manager_tab.report_manager_tab, "Report Manager")
+            self.tab_widget.addTab(
+                self.report_manager_tab.report_manager_tab, "Report Manager"
+            )
             self.tab_widget.setTabText(tab, "Report Manager")
             tab = tab + 1
         if repository_manager_installed:
             self.repository_manager_tab = RepositoryManagerTab(console=self.console)
-            self.tab_widget.addTab(self.repository_manager_tab.repository_manager_tab, "Repository Manager")
+            self.tab_widget.addTab(
+                self.repository_manager_tab.repository_manager_tab, "Repository Manager"
+            )
             self.tab_widget.setTabText(tab, "Repository Manager")
             tab = tab + 1
         if rom_manager_installed:
@@ -332,7 +405,9 @@ class GeniusBot(QMainWindow):
             self.tab_widget.setTabText(tab, "Rom Manager")
             tab = tab + 1
         self.systems_manager_tab = SystemsManagerTab(console=self.console)
-        self.tab_widget.addTab(self.systems_manager_tab.systems_manager_tab, "Systems Manager")
+        self.tab_widget.addTab(
+            self.systems_manager_tab.systems_manager_tab, "Systems Manager"
+        )
         self.tab_widget.setTabText(tab, "Systems Manager")
         self.settings_tab = QWidget()
         self.tab_widget.addTab(self.settings_tab, "⚙")
@@ -343,7 +418,9 @@ class GeniusBot(QMainWindow):
         self.buttonsWidget = QWidget()
         self.buttonsWidgetLayout = QHBoxLayout(self.buttonsWidget)
         self.hide_console_button = QPushButton("Console ◳")
-        self.hide_console_button.setStyleSheet("background-color: #211f1f; color: white; font: bold;")
+        self.hide_console_button.setStyleSheet(
+            "background-color: #211f1f; color: white; font: bold;"
+        )
         self.hide_console_button.clicked.connect(self.hide_console)
         self.buttonsWidgetLayout.addWidget(self.hide_console_button)
         self.buttonsWidgetLayout.setStretch(0, 24)
@@ -369,12 +446,12 @@ class GeniusBot(QMainWindow):
         self.settings_tab.setLayout(layout)
 
     def create_desktop_icon(self):
-        desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
+        desktop = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
         script_parent_dir = Path(__file__).parent.absolute().parent.absolute()
         icon = str(script_parent_dir / "geniusbot" / "img" / "geniusbot.ico")
         working_directory = str(Path(script_parent_dir))
-        if sys.platform == 'win32':
-            win32_cmd = str(Path(winshell.folder('CSIDL_SYSTEM')) / 'cmd.exe')
+        if sys.platform == "win32":
+            win32_cmd = str(Path(winshell.folder("CSIDL_SYSTEM")) / "cmd.exe")
             link_filepath = str(desktop + "/Genius Bot.lnk")
             arg_str = "/K " + str("geniusbot")
             if self.desktop_icon_checkbox.isChecked():
@@ -387,10 +464,12 @@ class GeniusBot(QMainWindow):
                     logger.info("Desktop Shortcut Created!")
             else:
                 os.remove(link_filepath)
-        elif sys.platform == 'linux':
+        elif sys.platform == "linux":
             desktop_link_filepath = str(f"{desktop}/Genius Bot.desktop")
-            link_filepath = os.path.join(os.path.join(os.path.expanduser('~')),
-                                         '.local/share/applications/Genius Bot.desktop')
+            link_filepath = os.path.join(
+                os.path.join(os.path.expanduser("~")),
+                ".local/share/applications/Genius Bot.desktop",
+            )
             if self.desktop_icon_checkbox.isChecked():
                 with open(link_filepath, "w") as desktop_icon:
                     desktop_icon.write(

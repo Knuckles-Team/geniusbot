@@ -2,12 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
-    QLabel,
-    QVBoxLayout,
-    QWidget,
-    QScrollArea
-)
+from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget, QScrollArea
 from PyQt6.QtGui import QFont
 
 
@@ -31,7 +26,7 @@ class ScrollLabel(QScrollArea):
 
         # creating label
         self.label = QLabel(content)
-        self.label.setFont(QFont('Monospace', 10))
+        self.label.setFont(QFont("Monospace", 10))
         self.label.setStyleSheet("background-color: #211f1f; color: white;")
 
         # setting alignment to the text
@@ -49,7 +44,9 @@ class ScrollLabel(QScrollArea):
         self.label.setFont(QFont(font, 10))
 
     def setFontColor(self, background_color="#211f1f", color="white"):
-        self.label.setStyleSheet(f"background-color: {background_color}; color: {color};")
+        self.label.setStyleSheet(
+            f"background-color: {background_color}; color: {color};"
+        )
         self.setStyleSheet(f"background-color: {background_color};")
 
     # the setText method
@@ -59,7 +56,9 @@ class ScrollLabel(QScrollArea):
 
     def setScrollWheel(self, location="Top"):
         if location == "Bottom":
-            self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(self.scroll_bar.maximum()))
+            self.scroll_bar.rangeChanged.connect(
+                lambda: self.scroll_bar.setValue(self.scroll_bar.maximum())
+            )
         else:
             self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(0))
 

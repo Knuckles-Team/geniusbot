@@ -8,19 +8,25 @@ from PyQt6.QtCore import QObject, pyqtSignal, QThread, Qt
 from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
-    QGridLayout, QPlainTextEdit, QProgressBar,
-    QFileDialog, QComboBox, QSpinBox, QWidget
+    QGridLayout,
+    QPlainTextEdit,
+    QProgressBar,
+    QFileDialog,
+    QComboBox,
+    QSpinBox,
+    QWidget,
 )
+
 sys.path.append("..")
 try:
     from qt.colors import yellow, green, orange, blue, red, purple
 except ModuleNotFoundError:
-    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+    from geniusbot.qt.colors import green, orange, blue
 try:
     from utils.utils import check_package
 except ModuleNotFoundError:
     from geniusbot.utils.utils import check_package
-if check_package(package='webarchiver'):
+if check_package(package="webarchiver"):
     from webarchiver import Webarchiver
 
 
@@ -34,29 +40,37 @@ class WebarchiverTab(QWidget):
         self.console = console
         # Video Download Widgets
         self.web_links_label = QLabel("Paste Website URL(s) Below ↴")
-        self.web_links_label.setStyleSheet(f"color: black; font-size: 11pt;")
+        self.web_links_label.setStyleSheet("color: black; font-size: 11pt;")
         self.web_links_editor = QPlainTextEdit()
         self.archive_button = QPushButton("Archive ￬")
-        self.archive_button.setStyleSheet(f"background-color: {blue}; color: white; font: bold; font-size: 14pt;")
+        self.archive_button.setStyleSheet(
+            f"background-color: {blue}; color: white; font: bold; font-size: 14pt;"
+        )
         self.archive_button.clicked.connect(self.screenshot_websites)
         self.open_webfile_button = QPushButton("Open File")
-        self.open_webfile_button.setStyleSheet(f"background-color: {green}; color: white; font: bold;")
+        self.open_webfile_button.setStyleSheet(
+            f"background-color: {green}; color: white; font: bold;"
+        )
         self.open_webfile_button.clicked.connect(self.open_webfile)
         self.open_webfile_label = QLabel("None")
         self.save_web_location_button = QPushButton("Save Location")
-        self.save_web_location_button.setStyleSheet(f"background-color: {orange}; color: white; font: bold;")
+        self.save_web_location_button.setStyleSheet(
+            f"background-color: {orange}; color: white; font: bold;"
+        )
         self.save_web_location_button.clicked.connect(self.save_web_location)
-        self.save_web_location_label = QLabel(f'{os.path.expanduser("~")}'.replace("\\", "/"))
+        self.save_web_location_label = QLabel(
+            f'{os.path.expanduser("~")}'.replace("\\", "/")
+        )
         self.web_dpi_label = QLabel("DPI")
         self.web_dpi_spin_box = QSpinBox(self)
         self.web_dpi_spin_box.setRange(0, 2)
         self.web_dpi_spin_box.setValue(1)
         self.web_scrape_label = QLabel("Scrape")
         self.web_scrape_options = QComboBox()
-        self.web_scrape_options.addItems(['No', 'Yes'])
+        self.web_scrape_options.addItems(["No", "Yes"])
         self.web_file_type_label = QLabel("Filetype")
         self.web_links_file_type = QComboBox()
-        self.web_links_file_type.addItems(['PNG', 'JPEG'])
+        self.web_links_file_type.addItems(["PNG", "JPEG"])
         self.web_zoom_label = QLabel("Zoom")
         self.web_zoom_spin_box = QSpinBox(self)
         self.web_zoom_spin_box.setRange(50, 200)
@@ -67,13 +81,21 @@ class WebarchiverTab(QWidget):
         webarchiver_layout = QGridLayout()
         webarchiver_layout.addWidget(self.web_links_label, 0, 0, 1, 8)
         webarchiver_layout.addWidget(self.web_links_editor, 1, 0, 1, 8)
-        webarchiver_layout.addWidget(self.web_scrape_label, 2, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        webarchiver_layout.addWidget(
+            self.web_scrape_label, 2, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignRight
+        )
         webarchiver_layout.addWidget(self.web_scrape_options, 2, 1, 1, 1)
-        webarchiver_layout.addWidget(self.web_file_type_label, 2, 2, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        webarchiver_layout.addWidget(
+            self.web_file_type_label, 2, 2, 1, 1, alignment=Qt.AlignmentFlag.AlignRight
+        )
         webarchiver_layout.addWidget(self.web_links_file_type, 2, 3, 1, 1)
-        webarchiver_layout.addWidget(self.web_dpi_label, 2, 4, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        webarchiver_layout.addWidget(
+            self.web_dpi_label, 2, 4, 1, 1, alignment=Qt.AlignmentFlag.AlignRight
+        )
         webarchiver_layout.addWidget(self.web_dpi_spin_box, 2, 5, 1, 1)
-        webarchiver_layout.addWidget(self.web_zoom_label, 2, 6, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        webarchiver_layout.addWidget(
+            self.web_zoom_label, 2, 6, 1, 1, alignment=Qt.AlignmentFlag.AlignRight
+        )
         webarchiver_layout.addWidget(self.web_zoom_spin_box, 2, 7, 1, 1)
         webarchiver_layout.addWidget(self.open_webfile_button, 3, 0, 1, 1)
         webarchiver_layout.addWidget(self.open_webfile_label, 3, 1, 1, 4)
@@ -85,23 +107,32 @@ class WebarchiverTab(QWidget):
         self.webarchiver_tab.setLayout(webarchiver_layout)
 
     def screenshot_websites(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Taking screenshots...\n")
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Taking screenshots...\n"
+        )
         self.web_progress_bar.setValue(1)
         websites = self.web_links_editor.toPlainText()
         websites = websites.strip()
-        websites = websites.split('\n')
-        if websites[0] != '':
+        websites = websites.split("\n")
+        if websites[0] != "":
             self.webarchiver_thread = QThread()
-            self.webarchiver_worker = WebarchiverWorker(webarchiver=self.webarchiver,
-                                                        websites=websites, zoom=self.web_zoom_spin_box.value(),
-                                                        dpi=self.web_dpi_spin_box.value(),
-                                                        filetype=self.web_links_file_type.currentText(),
-                                                        scrape=self.web_scrape_options.currentText())
+            self.webarchiver_worker = WebarchiverWorker(
+                webarchiver=self.webarchiver,
+                websites=websites,
+                zoom=self.web_zoom_spin_box.value(),
+                dpi=self.web_dpi_spin_box.value(),
+                filetype=self.web_links_file_type.currentText(),
+                scrape=self.web_scrape_options.currentText(),
+            )
             self.webarchiver_worker.moveToThread(self.webarchiver_thread)
             self.webarchiver_thread.started.connect(self.webarchiver_worker.run)
             self.webarchiver_worker.finished.connect(self.webarchiver_thread.quit)
-            self.webarchiver_worker.finished.connect(self.webarchiver_worker.deleteLater)
-            self.webarchiver_thread.finished.connect(self.webarchiver_thread.deleteLater)
+            self.webarchiver_worker.finished.connect(
+                self.webarchiver_worker.deleteLater
+            )
+            self.webarchiver_thread.finished.connect(
+                self.webarchiver_thread.deleteLater
+            )
             self.webarchiver_worker.progress.connect(self.report_web_progress_bar)
             self.webarchiver_thread.start()
             self.archive_button.setEnabled(False)
@@ -109,25 +140,35 @@ class WebarchiverTab(QWidget):
                 lambda: self.archive_button.setEnabled(True)
             )
             self.webarchiver_thread.finished.connect(
-                lambda: self.console.setText(f"{self.console.text()}\n[Genius Bot] Screenshots captured!\n")
+                lambda: self.console.setText(
+                    f"{self.console.text()}\n[Genius Bot] Screenshots captured!\n"
+                )
             )
 
     def open_webfile(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Opening Website URL file\n")
-        website_file_name = QFileDialog.getOpenFileName(self, 'File with URL(s)')
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Opening Website URL file\n"
+        )
+        website_file_name = QFileDialog.getOpenFileName(self, "File with URL(s)")
         print(website_file_name[0])
         self.open_webfile_label.setText(website_file_name[0])
 
-        with open(website_file_name[0], 'r') as file:
+        with open(website_file_name[0], "r") as file:
             websites = file.read()
         websites = websites + self.web_links_editor.toPlainText()
         websites = websites.strip()
         self.web_links_editor.setPlainText(websites)
 
     def save_web_location(self):
-        self.console.setText(f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n")
-        web_directory_name = QFileDialog.getExistingDirectory(None, 'Select a folder:', os.path.expanduser("~"),
-                                                              QFileDialog.Option.ShowDirsOnly)
+        self.console.setText(
+            f"{self.console.text()}\n[Genius Bot] Setting save location for screenshots\n"
+        )
+        web_directory_name = QFileDialog.getExistingDirectory(
+            None,
+            "Select a folder:",
+            os.path.expanduser("~"),
+            QFileDialog.Option.ShowDirsOnly,
+        )
         if web_directory_name is None or web_directory_name == "":
             web_directory_name = os.path.expanduser("~")
         self.save_web_location_label.setText(web_directory_name)
@@ -141,7 +182,9 @@ class WebarchiverWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
 
-    def __init__(self, webarchiver, websites, zoom=100, dpi=1, filetype="png", scrape="No"):
+    def __init__(
+        self, webarchiver, websites, zoom=100, dpi=1, filetype="png", scrape="No"
+    ):
         super().__init__()
         self.webarchiver = webarchiver
         self.websites = websites
