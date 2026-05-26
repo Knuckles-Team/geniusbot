@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
-import os
-import sys
-import shutil
 import logging
+import os
+import shutil
+import sys
 
 
 # This creates the log object
@@ -20,13 +19,13 @@ class Log:
             self.logging_dir = f"{os.path.expanduser('~')}".replace("\\", "/")
         else:
             self.logging_dir = logging_dir
-        self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace(
+        self.logging_file = f"{os.path.join(os.curdir, 'geniusbot.log')}".replace(
             "\\", "/"
         )
         if os.path.isdir(self.logging_dir):
             print("Log File: ", self.logging_file)
         else:
-            self.logging_file = f'{os.path.join(os.curdir, "geniusbot.log")}'.replace(
+            self.logging_file = f"{os.path.join(os.curdir, 'geniusbot.log')}".replace(
                 "\\", "/"
             )
             print("Log File: ", self.logging_file)
@@ -97,7 +96,7 @@ class Log:
 
 
 # This class will write to the logfile in stream format
-class StreamToLogger(object):
+class StreamToLogger:
     def __init__(self, logger, log_level=logging.INFO):
         self.logger = logger
         self.log_level = log_level

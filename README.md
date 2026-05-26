@@ -1,193 +1,120 @@
-# Geniusbot
+# GeniusBot — Desktop Cockpit for AI Agents
 
 ![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)
-![PyPI - Downloads](https://img.shields.io/pypi/dd/geniusbot)
 ![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)
-![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/geniusbot)
 ![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)
 ![PyPI - License](https://img.shields.io/pypi/l/geniusbot)
-![GitHub](https://img.shields.io/github/license/Knuckles-Team/geniusbot)
-
-![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/geniusbot)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/geniusbot)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/geniusbot)
-![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/geniusbot)
-
-![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/geniusbot)
-![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/geniusbot)
-![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/geniusbot)
-![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/geniusbot)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/geniusbot)
-![PyPI - Implementation](https://img.shields.io/pypi/implementation/geniusbot)
-
 
 *Version: 3.29.6*
 
-![Geniusbot](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/geniusbot/img/geniusbot-small.png "Geniusbot")
+GeniusBot is the premium, unified space cockpit and visual control deck built on top of the `agent-utilities` powerhouse backend. It integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
 
-The Ever-learning and ever-improving tool!
+---
 
-Click the arrows on the left of each of the items below to see more information about them.
+## 📖 Table of Contents
+1. [Overview](#-overview)
+2. [Features](#-features)
+3. [Architecture](#-architecture)
+4. [Installation](#-installation)
+5. [Usage](#-usage)
+6. [Packaging & Executables](#-packaging--executables)
+7. [Documentation References](#-documentation-references)
+8. [License](#-license)
 
-<hr>
+---
 
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Geniusbot Chat </b></summary>
-<br>
-Chat with your friendly and extremely intelligent Geniusbot.
+## 🌐 Overview
+GeniusBot provides a centralized graphical cockpit designed to eliminate tedious click-through fatigue. It maps specialist agent parameter schemas directly to custom QSS-themed form widgets on the fly.
 
-Powered by Artificial Intelligence scaled to your PC's performance!
+Operators can trigger actions, monitor running terminal inputs via the embedded `agent-terminal-ui`, and secure dangerous CLI calls using the Zero-Trust Tool-Guard interceptor.
 
-![Geniusbot Chat](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_home.png "Geniusbot Chat")
+---
 
-</details>
+## ✨ Features
 
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Media Downloader </b></summary>
-<br>
-Download videos from various websites!
+* **Zero-Nesting Dynamic UI**: Navigation categorized into flat category menus (Dashboard, Infra, Media, Productivity, Research).
+* **Dynamic Card Schema Grid**: PySide6 widgets are built automatically from specialist agent tool specifications.
+* **Embedded Hybrid Terminal**: Hosts local `xterm.js` to run interactive terminal loops directly in the cockpit.
+* **Zero-Trust Security Tool Guard**: Prompts native authorization dialogs to review arguments before executing dangerous mutations.
+* **Runnable Background Workers**: Utilizes thread pools (`QThreadPool`) to prevent GUI freezes during execution loops.
+* **Visual Trading Dashboard**: Snappy native C++ charting engine (`PySide6.QtCharts`) with OHLCV candlestick/line toggles, strategy indicator overlay crossovers (MACD/RSI), orderbook bids/asks depth volumes, and thread-safe crypto news feeds.
 
-Supports:
 
-- YouTube
-- DailyMotion
-- Rumble
-- Twitter
-- BitChute
-- And More!
+---
 
-Examples for how to find user & channel.
+## 🏛️ Architecture
+GeniusBot is engineered as a lightweight PySide6 GUI client wrapper around the `agent-utilities` logic engine.
 
-![User Entry Image](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/user.png "User Entry")
+```mermaid
+graph TD
+    subgraph GUI ["GeniusBot Cockpit (PySide6)"]
+        Sidebar["Left Category Sidebar"]
+        GridDeck["Central Dynamic Card Grid"]
+        ToolGuard["Tool Guard Modal Interceptor"]
+        TerminalPanel["xterm.js WebEngine Panel"]
+    end
 
-![Channel Entry Image](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/channel.png "Channel Entry")
+    subgraph Backend ["agent-utilities Powerhouse"]
+        Discovery["Agent Specialist Discovery"]
+        Executor["Background Agent Worker Loop"]
+        KG["Epistemic Knowledge Graph"]
+    end
 
-Open File allows you to browse for a text file that has a list of YouTube links.
-Examples contents:
+    Sidebar --> GridDeck
+    GridDeck -->|Introspect Schemas| Discovery
+    GridDeck -->|Trigger Safe Action| Executor
+    GridDeck -->|Sensitive Action| ToolGuard
+    ToolGuard -->|Operator Approved| Executor
+    TerminalPanel -.->|Interactive Terminal| Executor
 ```
-https://www.youtube.com/watch?v=75-siCngYCc
-https://www.youtube.com/watch?v=7RSpZkIjK4w
-https://www.youtube.com/watch?v=7qRSAUb96wg
+
+Detailed architectural diagrams and component breakdowns are located in the [Documentation Overview](docs/overview.md).
+
+---
+
+## 🛠️ Installation
+
+### 1. Modern Virtual Environment (via uv)
+Create a virtual environment and sync standard requirements:
+```bash
+# Setup virtual environment
+uv venv
+
+# Sync requirements
+uv pip sync requirements.txt
 ```
 
-![Media Downloader](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_media_downloader.png "Media Downloader")
-
-</details>
-
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Media Manager </b></summary>
-<br>
-Manage your media library by:
-- Cleaning up names of files and folders based off pre-built filters.
-- Apply subtitles located in "Sub" folder within each media directory
-- Move files to final destination after processing
-
-Download as MP3 or MP4
-
-![Media Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_media_manager.png "Media Manager")
-
-</details>
-
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Website Archiving </b></summary>
-<br>
-Archive any website by taking screenshots of any website entered or scraping that site for specific file types.
-
-Choose from a variety of options like file type, quality, and image size.
-
-![Web Archiver](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_website_archive.png "Web Archiver")
-
-</details>
-
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Subtitle Shift </b></summary>
-<br>
-Shift a subtitle forward or backward a few seconds so it aligns with your video!
-
-![Subtitle Shift](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_shift_subtitles.png "Subtitle Shift")
-
-</details>
-
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Report Manager </b></summary>
-<br>
-Generate report analysis using:
-- Visualization plots
-- Pandas Profiling
-- Report Analysis Text file
-
-Merge reports with the following methods:
-- Inner
-- Outer
-- Left
-- Right
-- Append
-
-Multiple column selection optional for Inner, Outer, Left, and Right joining
-
-![Report Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_report_manager.png "Report Manager")
-
-</details>
-
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Repository Manager </b></summary>
-<br>
-Manage your repositories by cloning, pulling, or running your own set of git commands on a given directory
-
-![Repository Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_repository_manager.png "Repository Manager")
-
-</details>
-
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Rom Manager </b></summary>
-<br>
-Convert Game ROMs to Compressed Hunks of Data (CHD) file format or RVZ file format
-
-Automatically generate missing .cue files for your .bin files!
-![Rom Manager](https://raw.githubusercontent.com/Knuckles-Team/geniusbot/master/screenshots/geniusbot_rom_manager.png "Rom Manager")
-
-</details>
-
-<details >
-<summary style="text-align:left; font-size:111%; color:black;"><b> Systems Manager </b></summary>
-<br>
-Manage your Linux/Windows System!
-
-* Install Applications
-* Clean
-* Update
-* Upgrade Geniusbot
-* Enable Windows Features
-
-</details>
-
-<hr>
-
-
-<details >
-<summary style="text-align:left; font-size:130%; color:black;"><b> Install </b></summary>
-
-Install core
+### 2. Standard pip
+Install standard stable packages:
 ```bash
 pip install geniusbot
 ```
 
-Install with all plugins
+Install with all ecosystem plugins:
 ```bash
 pip install geniusbot[all]
 ```
 
-Install with desired plugins
+---
+
+## 🚀 Usage
+
+Launch the desktop cockpit:
 ```bash
-pip install geniusbot[rom-manager,media-downloader,media-manager]
+uv run geniusbot
 ```
 
+To run in headless or virtual Linux environments (CI/CD):
+```bash
+QT_QPA_PLATFORM=offscreen uv run geniusbot
+```
 
-</details>
+---
 
-<details >
-<summary style="text-align:left; font-size:130%; color:black;"><b> Build Executable </b></summary>
+## 📦 Packaging & Executables
 
+### PyInstaller Compiling
+Compiling GeniusBot as a single standalone executable:
 ```powershell
 python -m pip install --upgrade pyinstaller
 git clone https://github.com/Knuckles-Team/geniusbot.git
@@ -205,42 +132,26 @@ pyinstaller --name geniusbot `
   --recursive-copy-metadata=opentelemetry_api `
   --recursive-copy-metadata=opentelemetry_sdk `
   --recursive-copy-metadata=opentelemetry_exporter_otlp_proto_grpc `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libllmodel.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libatomic-1.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libbert-avxonly.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libbert-default.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libfmt.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libgcc_s_seh-1.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libgfortran-5.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libgomp-1.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libgptj-avxonly.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libgptj-default.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libllamamodel-mainline-avxonly.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libllamamodel-mainline-default.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libquadmath-0.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libwinpthread-1.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
-  --add-binary "./.venv/Lib/site-packages/gpt4all/llmodel_DO_NOT_MODIFY/build/libstdc++-6.dll;gpt4all/llmodel_DO_NOT_MODIFY/build/" `
   --exclude-module pygame `
   --exclude-module tkinter `
    ./geniusbot/geniusbot.py
 ```
 
-</details>
-
-<details >
-<summary style="text-align:left; font-size:130%; color:black;"><b> Build Setup Executable </b></summary>
-
+### Windows Setup Installer
+Generate a Windows MSI setup package:
 ```bash
 iscc "./setup.iss"
 ```
 
-</details>
-<details>
-  <summary style="text-align:left; font-size:130%; color:black;"><b>Repository Owners:</b></summary>
+---
 
+## 📚 Documentation References
+For deep architectural guidelines and code documentation, explore:
+* [docs/index.md](docs/index.md) — Documentation Entrypoint & Quickstart.
+* [docs/overview.md](docs/overview.md) — Detailed Architecture & Security Guardrails.
+* [docs/concepts.md](docs/concepts.md) — Concept Registries (`CONCEPT:GBOT-1.0` through `8.0`).
 
-<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=Knucklessg1&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
+---
 
-![GitHub followers](https://img.shields.io/github/followers/Knucklessg1)
-![GitHub User's stars](https://img.shields.io/github/stars/Knucklessg1)
-</details>
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

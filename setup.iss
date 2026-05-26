@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Geniusbot"
-#define MyAppVersion "3.29.1"
+#define MyAppVersion "3.29.6"
 #define MyAppPublisher "Knuckles-Team"
 #define MyAppURL "https://github.com/Knuckles-Team/geniusbot"
 #define MyAppExeName "geniusbot.exe"
@@ -20,13 +20,13 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=.\geniusbot\LICENSE
+LicenseFile=.\LICENSE
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=.\geniusbot\dist
-OutputBaseFilename=geniusbot-setup-x64.exe
-SetupIconFile=.\geniusbot\geniusbot\img\geniusbot.ico
+OutputDir=.\dist
+OutputBaseFilename=geniusbot-setup-x64
+SetupIconFile=.\geniusbot\img\geniusbot.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -38,7 +38,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: ".\geniusbot\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

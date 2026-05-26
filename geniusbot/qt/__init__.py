@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-# coding: utf-8
 
-try:
-    from qt.scrollable_widget import ScrollLabel
-except:
-    from geniusbot.qt.scrollable_widget import ScrollLabel
-try:
-    from qt.colors import yellow, green, orange, blue, red, purple
-except:
-    from geniusbot.qt.colors import yellow, green, orange, blue, red, purple
+from geniusbot.qt.colors import (
+    ACCENT_PRIMARY,
+    BG_PRIMARY,
+    BG_SECONDARY,
+    DARK_COCKPIT_STYLE,
+    TEXT_MAIN,
+)
+from geniusbot.qt.terminal_widget import TerminalWidget
+from geniusbot.qt.tool_guard import ToolGuardDialog
+from geniusbot.qt.widget_mapper import AgentControlPanel, WidgetSchemaMapper

@@ -10,6 +10,4 @@ set -o errexit
 # Change directory to the project root directory.
 cd "$(dirname "$0")"/..
 
-pip install -q -e .[types]
-
-mypy
+PYTHONPATH=../agent-utilities uv run --with mypy --with types-requests --with types-docker mypy geniusbot

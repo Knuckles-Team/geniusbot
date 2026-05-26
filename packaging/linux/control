@@ -1,0 +1,11 @@
+Package: geniusbot
+Version: 3.29.6
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libc6, libgl1-mesa-glx, libxrender1, libxkbcommon0, libdbus-1-3
+Maintainer: Knuckles-Team <https://github.com/Knuckles-Team/geniusbot>
+Description: GeniusBot Desktop Multi-Agent Cockpit
+ GeniusBot is a premium graphical control cockpit designed to execute
+ multi-agent workflows, host interactive terminal widgets, and manage
+ dangerous CLI actions securely using Zero-Trust guardrails.

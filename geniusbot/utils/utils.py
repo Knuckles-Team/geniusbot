@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import importlib.metadata
-import os
 import logging
+import os
 
 logger = logging.getLogger("geniusbot")
 logger.setLevel(logging.DEBUG)
@@ -16,10 +15,10 @@ def check_package(package: str = "None") -> bool:
     found = False
     try:
         version = importlib.metadata.version(package)
-        logger.info("{} ({}) is installed".format(package, version))
+        logger.info(f"{package} ({version}) is installed")
         found = True
     except importlib.metadata.PackageNotFoundError:
-        logger.info("{} is NOT installed".format(package))
+        logger.info(f"{package} is NOT installed")
     return found
 
 

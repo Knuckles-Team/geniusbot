@@ -1,43 +1,32 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget, QScrollArea
-from PyQt6.QtGui import QFont
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QLabel, QScrollArea, QVBoxLayout, QWidget
 
 
-# class for scrollable label
 class ScrollLabel(QScrollArea):
-    # constructor
+    """Scrollable label widget using PySide6."""
+
     def __init__(self, *args, **kwargs):
         QScrollArea.__init__(self, *args, **kwargs)
         self.setStyleSheet("background-color: #211f1f;")
 
         self.scroll_bar = self.verticalScrollBar()
-        # making widget resizable
         self.setWidgetResizable(True)
 
-        # making qwidget object
         content = QWidget(self)
         self.setWidget(content)
 
-        # vertical box layout
         lay = QVBoxLayout(content)
 
-        # creating label
         self.label = QLabel(content)
         self.label.setFont(QFont("Monospace", 10))
         self.label.setStyleSheet("background-color: #211f1f; color: white;")
-
-        # setting alignment to the text
-        self.label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-
-        # making label multi-line
+        self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.label.setWordWrap(True)
 
-        # adding label to the layout
         lay.addWidget(self.label)
-
         self.setHidden(True)
 
     def setFont(self, font="Monospace"):
@@ -49,9 +38,7 @@ class ScrollLabel(QScrollArea):
         )
         self.setStyleSheet(f"background-color: {background_color};")
 
-    # the setText method
     def setText(self, text):
-        # setting text to the label
         self.label.setText(text)
 
     def setScrollWheel(self, location="Top"):
@@ -62,7 +49,6 @@ class ScrollLabel(QScrollArea):
         else:
             self.scroll_bar.rangeChanged.connect(lambda: self.scroll_bar.setValue(0))
 
-    # the text() method
     def text(self):
         return self.label.text()
 

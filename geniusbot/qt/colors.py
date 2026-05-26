@@ -1,9 +1,140 @@
-#!/usr/bin/env python
-# coding: utf-8
+# Sleek Space Dark Mode Palette and CSS Stylesheets
+# Core HSL/Hex Tokens
+BG_PRIMARY = "#121214"
+BG_SECONDARY = "#1E1E24"
+ACCENT_PRIMARY = "#7C4DFF"
+ACCENT_SUCCESS = "#00E676"
+TEXT_MAIN = "#F5F5F7"
+TEXT_MUTED = "#8A8A93"
+BORDER_COLOR = "#2E2E38"
 
-yellow = "#FFA500"
-green = "#2E8B57"
-orange = "#FF7518"
-blue = "#4682B4"
-red = ""
-purple = ""
+# Premium QSS Stylesheet
+DARK_COCKPIT_STYLE = f"""
+QMainWindow {{
+    background-color: {BG_PRIMARY};
+}}
+
+QWidget {{
+    color: {TEXT_MAIN};
+    font-family: "Outfit", "Inter", "Segoe UI", sans-serif;
+    font-size: 13px;
+}}
+
+/* Side Panel styling */
+QFrame#Sidebar {{
+    background-color: {BG_SECONDARY};
+    border-right: 1px solid {BORDER_COLOR};
+}}
+
+/* Dynamic agent cards */
+QFrame#AgentCard {{
+    background-color: {BG_SECONDARY};
+    border: 1px solid {BORDER_COLOR};
+    border-radius: 8px;
+    padding: 12px;
+}}
+
+QFrame#AgentCard:hover {{
+    border: 1px solid {ACCENT_PRIMARY};
+}}
+
+/* Standard Input elements */
+QLineEdit, QTextEdit {{
+    background-color: {BG_PRIMARY};
+    border: 1px solid {BORDER_COLOR};
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: {TEXT_MAIN};
+}}
+
+QLineEdit:focus, QTextEdit:focus {{
+    border: 1px solid {ACCENT_PRIMARY};
+}}
+
+/* Push buttons */
+QPushButton {{
+    background-color: {ACCENT_PRIMARY};
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+}}
+
+QPushButton:hover {{
+    background-color: #6C3BEF;
+}}
+
+QPushButton:pressed {{
+    background-color: #5B2BDE;
+}}
+
+QPushButton#SecondaryButton {{
+    background-color: {BG_PRIMARY};
+    border: 1px solid {BORDER_COLOR};
+    color: {TEXT_MAIN};
+}}
+
+QPushButton#SecondaryButton:hover {{
+    border: 1px solid {ACCENT_PRIMARY};
+    color: {ACCENT_PRIMARY};
+}}
+
+/* Toggles & Checkboxes */
+QCheckBox {{
+    spacing: 8px;
+}}
+
+QCheckBox::indicator {{
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid {BORDER_COLOR};
+    background-color: {BG_PRIMARY};
+}}
+
+QCheckBox::indicator:checked {{
+    border: 1px solid {ACCENT_PRIMARY};
+    background-color: {ACCENT_PRIMARY};
+}}
+
+/* Tab Styling */
+QTabWidget::pane {{
+    border: none;
+    background-color: {BG_PRIMARY};
+}}
+
+QTabBar::tab {{
+    background-color: {BG_SECONDARY};
+    border: 1px solid {BORDER_COLOR};
+    border-bottom: none;
+    padding: 8px 16px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    color: {TEXT_MUTED};
+}}
+
+QTabBar::tab:selected, QTabBar::tab:hover {{
+    background-color: {BG_PRIMARY};
+    color: {TEXT_MAIN};
+    border-top: 2px solid {ACCENT_PRIMARY};
+}}
+
+/* ScrollBars */
+QScrollBar:vertical {{
+    border: none;
+    background-color: {BG_PRIMARY};
+    width: 10px;
+    margin: 0px;
+}}
+
+QScrollBar::handle:vertical {{
+    background-color: {BORDER_COLOR};
+    min-height: 20px;
+    border-radius: 5px;
+}}
+
+QScrollBar::handle:vertical:hover {{
+    background-color: {ACCENT_PRIMARY};
+}}
+"""
