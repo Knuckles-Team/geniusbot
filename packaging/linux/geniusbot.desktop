@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=GeniusBot
+Comment=GeniusBot Desktop Multi-Agent Cockpit
+Exec=/usr/bin/geniusbot
+Icon=geniusbot
+Terminal=false
+Type=Application
+Categories=Utility;Development;
+StartupNotify=true

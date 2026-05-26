@@ -1,0 +1,15 @@
+name: Cross-Platform Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: Knuckles-Team/pipelines/.github/workflows/desktop_release_pipeline.yml@latest
+    secrets: inherit
