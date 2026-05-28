@@ -14,7 +14,7 @@ import asyncio
 import logging
 from typing import Any
 
-from PySide6.QtCore import QThread, QTimer, Qt, Signal
+from PySide6.QtCore import Qt, QThread, QTimer, Signal
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
@@ -57,6 +57,7 @@ _STATUS_ICONS = {
 
 # ── Background Worker Thread ────────────────────────────────────────
 
+
 class _FetchWorker(QThread):
     """Background thread that fetches all widget data."""
 
@@ -96,6 +97,7 @@ class _FetchWorker(QThread):
 
 # ── ServiceCard QFrame ──────────────────────────────────────────────
 
+
 class ServiceCard(QFrame):
     """A single glassmorphic service card widget."""
 
@@ -112,7 +114,8 @@ class ServiceCard(QFrame):
         self.url = url
 
         self.setObjectName("ServiceCard")
-        self.setStyleSheet(f"""
+        self.setStyleSheet(
+            f"""
             QFrame#ServiceCard {{
                 background-color: {BG_SECONDARY};
                 border: 1px solid {BORDER_COLOR};
@@ -122,7 +125,8 @@ class ServiceCard(QFrame):
             QFrame#ServiceCard:hover {{
                 border: 1px solid {ACCENT_PRIMARY};
             }}
-        """)
+        """
+        )
         self.setMinimumWidth(220)
         self.setMinimumHeight(120)
         self.setMaximumWidth(350)
@@ -209,18 +213,19 @@ class ServiceCard(QFrame):
 
 # ── Category Group Header ───────────────────────────────────────────
 
+
 class CategoryHeader(QLabel):
     """Styled category group header."""
 
     def __init__(self, category_name: str, parent: QWidget | None = None) -> None:
         super().__init__(f"▸ {category_name.upper()}", parent)
         self.setStyleSheet(
-            f"font-size: 13px; font-weight: bold; color: {ACCENT_PRIMARY}; "
-            f"padding: 8px 0 4px 0; margin-top: 12px;"
+            f"font-size: 13px; font-weight: bold; color: {ACCENT_PRIMARY}; padding: 8px 0 4px 0; margin-top: 12px;"
         )
 
 
 # ── ServiceDashboardPanel ──────────────────────────────────────────
+
 
 class ServiceDashboardPanel(QWidget):
     """Homepage-style service dashboard with grouped service cards.
@@ -260,9 +265,7 @@ class ServiceDashboardPanel(QWidget):
         header_layout.addStretch()
 
         self.stats_label = QLabel("Loading...")
-        self.stats_label.setStyleSheet(
-            f"font-size: 12px; color: {TEXT_MUTED};"
-        )
+        self.stats_label.setStyleSheet(f"font-size: 12px; color: {TEXT_MUTED};")
         header_layout.addWidget(self.stats_label)
 
         refresh_btn = QPushButton("↻ Refresh")
@@ -275,9 +278,7 @@ class ServiceDashboardPanel(QWidget):
         # Scrollable card grid
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        scroll.setStyleSheet(
-            "QScrollArea { border: none; background: transparent; }"
-        )
+        scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
 
         self.grid_container = QWidget()
         self.grid_layout = QVBoxLayout(self.grid_container)
@@ -297,12 +298,10 @@ class ServiceDashboardPanel(QWidget):
             layout = config_mgr.load()
         except ImportError:
             empty = QLabel(
-                "⚠ agent-utilities gateway not available.\n"
-                "Install agent-utilities with: pip install agent-utilities"
+                "⚠ agent-utilities gateway not available.\nInstall agent-utilities with: pip install agent-utilities"
             )
             empty.setStyleSheet(
-                f"color: {TEXT_MUTED}; font-size: 14px; font-style: italic; "
-                "padding: 40px;"
+                f"color: {TEXT_MUTED}; font-size: 14px; font-style: italic; padding: 40px;"
             )
             empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.grid_layout.addWidget(empty)
@@ -316,8 +315,7 @@ class ServiceDashboardPanel(QWidget):
 
         if not layout.groups:
             empty = QLabel(
-                "No services configured.\n"
-                "Add services to $XDG_CONFIG_HOME/agent-os/services.yaml"
+                "No services configured.\nAdd services to $XDG_CONFIG_HOME/agent-os/services.yaml"
             )
             empty.setStyleSheet(
                 f"color: {TEXT_MUTED}; font-size: 14px; font-style: italic; padding: 40px;"
@@ -398,9 +396,7 @@ class ServiceDashboardPanel(QWidget):
 
         total = len(self._cards)
         self.stats_label.setText(
-            f"{total} services  |  "
-            f"{ok_count} healthy  |  "
-            f"{err_count} errors"
+            f"{total} services  |  {ok_count} healthy  |  {err_count} errors"
         )
 
     def _on_fetch_error(self, error_msg: str) -> None:

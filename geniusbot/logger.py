@@ -14,21 +14,28 @@ class Log:
 
     # Initialize the Class
     def __init__(self, logging_dir=""):
-        # Set logging directory to users' home directory
+        try:
+            from agent_utilities.core.paths import log_dir
+
+            xdg_log_dir = log_dir()
+        except ImportError:
+            from pathlib import Path
+
+            import platformdirs
+
+            xdg_log_dir = Path(
+                platformdirs.user_log_path("agent-utilities", "knuckles-team")
+            )
+
+        xdg_log_dir.mkdir(parents=True, exist_ok=True)
+
         if logging_dir == "":
-            self.logging_dir = f"{os.path.expanduser('~')}".replace("\\", "/")
+            self.logging_dir = str(xdg_log_dir).replace("\\", "/")
         else:
             self.logging_dir = logging_dir
-        self.logging_file = f"{os.path.join(os.curdir, 'geniusbot.log')}".replace(
-            "\\", "/"
-        )
-        if os.path.isdir(self.logging_dir):
-            print("Log File: ", self.logging_file)
-        else:
-            self.logging_file = f"{os.path.join(os.curdir, 'geniusbot.log')}".replace(
-                "\\", "/"
-            )
-            print("Log File: ", self.logging_file)
+
+        self.logging_file = str(xdg_log_dir / "geniusbot.log").replace("\\", "/")
+        print("Log File: ", self.logging_file)
         logging.basicConfig(
             filename=self.logging_file,
             format="%(asctime)s:%(levelname)s:%(name)s:%(message)s",
