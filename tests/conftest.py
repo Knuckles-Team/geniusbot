@@ -1,4 +1,9 @@
+import os
 import sys
+
+# Ensure Qt runs offscreen in headless environments to prevent GUI aborts
+if "QT_QPA_PLATFORM" not in os.environ:
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
 import pytest
 from PySide6.QtWidgets import QApplication

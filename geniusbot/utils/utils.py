@@ -3,10 +3,27 @@ import importlib.metadata
 import logging
 import os
 
+# Resolve centralized log directory
+try:
+    from agent_utilities.core.paths import log_dir
+
+    geniusbot_log_dir = log_dir()
+except ImportError:
+    from pathlib import Path
+
+    import platformdirs
+
+    geniusbot_log_dir = Path(
+        platformdirs.user_log_path("agent-utilities", "knuckles-team")
+    )
+
+geniusbot_log_dir.mkdir(parents=True, exist_ok=True)
+geniusbot_log_path = geniusbot_log_dir / "geniusbot.log"
+
 logger = logging.getLogger("geniusbot")
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-fh = logging.FileHandler("geniusbot.log")
+fh = logging.FileHandler(geniusbot_log_path)
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 

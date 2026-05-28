@@ -2,8 +2,9 @@ import os
 import re
 
 # Paths
-ROOT_DIR = "/home/apps/workspace/agent-packages/geniusbot"
-WORKSPACE_DIR = "/home/apps/workspace/agent-packages"
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(TEST_DIR)
+WORKSPACE_DIR = os.path.dirname(ROOT_DIR)
 MASTER_OVERVIEW_PATH = os.path.join(
     WORKSPACE_DIR, "agent-utilities", "docs", "overview.md"
 )
