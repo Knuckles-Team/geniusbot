@@ -15,7 +15,7 @@ Skipped informational: 9
   - Priority: P3-Low | Effort: Small
 - [ ] [P] **T006** [Codebase Optimization] 1 functions exceed 200 lines (actionable refactoring targets): initialize_user_i
   - Priority: P2-Medium | Effort: Large
-- [ ] [P] **T007** [Codebase Optimization] Needs attention: geniusbot.py (699L) — 3 functions with high complexity (worst: 
+- [ ] [P] **T007** [Codebase Optimization] Needs attention: geniusbot.py (699L) — 3 functions with high complexity (worst:
   - Priority: P2-Medium | Effort: Medium
 - [ ] [P] **T008** [Test Coverage] Test suite lacks intent diversity (only one type)
   - Priority: P2-Medium | Effort: Medium
