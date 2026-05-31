@@ -7,7 +7,7 @@ geniusbot
 The unified cockpit dashboard for our multi-agent ecosystem.
 """
 
-__version__ = "3.31.0"
+__version__ = "3.32.0"
 __author__ = "Audel Rouhi"
 __credits__ = "Audel Rouhi"
 
