@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "geniusbot"
-version = "3.29.6"
+version = "3.30.0"
 description = "The Ever-learning and ever-improving tool!"
 readme = "README.md"
 requires-python = ">=3.11, <3.12"
@@ -24,25 +24,25 @@ classifiers = [
 ]
 keywords = ["genius", "geniusbot", "desktop", "qt", "agent", "mcp"]
 dependencies = [
-    "PySide6>=6.6.1",
-    "agent-utilities",
+    "PySide6>=6.11.1",
+    "agent-utilities>=0.34.0",
     "winshell>=0.6; sys_platform == 'win32'",
-    "pypiwin32; sys_platform == 'win32'"
+    "pywin32; sys_platform == 'win32'"
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.2.0",
+    "ruff>=0.15.15",
     "pytest>=8.0.0",
-    "pytest-qt>=4.4.0",
+    "pytest-qt>=4.5.0",
     "mypy>=1.0.0",
     "types-requests",
     "types-docker",
 ]
 test = [
-    "ruff>=0.2.0",
+    "ruff>=0.15.15",
     "pytest>=8.0.0",
-    "pytest-qt>=4.4.0",
+    "pytest-qt>=4.5.0",
 ]
 types = [
     "mypy>=1.0.0",
@@ -66,3 +66,10 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501", "F841", "F401", "E402"]
+
+[tool.pytest.ini_options]
+markers = [
+    "unit: mark test as a unit test",
+    "integration: mark test as an integration test",
+    "concept(name): mark test with a specific concept ID for traceability"
+]

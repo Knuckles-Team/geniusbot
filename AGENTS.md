@@ -155,7 +155,7 @@ uv run pyinstaller --clean geniusbot.spec
 
 ---
 
-## 📂 Targeted Directory Structure
+## 📂 Project Structure
 
 To align with modern packaging standards, the modernized repository should follow the layout below:
 
@@ -244,7 +244,7 @@ class AgentWorker(QRunnable):
 ## ⛔ No Scratch or Temporary Files in Repository
 
 **NEVER write any of the following to this repository:**
-- Temporary test scripts (`test_*.py`, `debug_*.py` outside of `tests/`)
+- Temporary test scripts (e.g. scripts starting with 'test_' or 'debug_' outside of the 'tests/' directory)
 - Scratch scripts or experimental one-off files
 - Log files (`.log`, `.txt` command output)
 - Random text files with command output or debug dumps

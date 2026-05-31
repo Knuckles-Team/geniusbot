@@ -12,12 +12,16 @@ def pkg_name():
     return PKG_NAME
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
 def test_package_importable(pkg_name):
     """Package should be importable."""
     mod = importlib.import_module(pkg_name)
     assert mod is not None
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
 def test_version_exists(pkg_name):
     """Package should expose __version__."""
     mod = importlib.import_module(pkg_name)
@@ -25,6 +29,8 @@ def test_version_exists(pkg_name):
     assert version is not None, f"{pkg_name} has no __version__"
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
 def test_version_format(pkg_name):
     """Version should follow semver-like format."""
     mod = importlib.import_module(pkg_name)
