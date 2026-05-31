@@ -31,10 +31,9 @@ sys.path.append(os.path.dirname(__file__))
 
 # Local imports
 from geniusbot.qt.colors import BG_SECONDARY, BORDER_COLOR, DARK_COCKPIT_STYLE
-
-# Cockpit panel imports
 from geniusbot.qt.terminal_widget import TerminalWidget
 from geniusbot.qt.widget_mapper import WidgetSchemaMapper
+from geniusbot.services.gateway_client import GatewayClient
 from geniusbot.utils.agent_bridge import AgentBridgeWorker
 from geniusbot.utils.daemon import GeniusBotDaemon
 
@@ -100,12 +99,16 @@ class OutputWrapper(QObject):
 
 
 class GeniusBot(QMainWindow):
-    """GeniusBot Cockpit Dashboard Window."""
+    """
+    CONCEPT:GBOT-6.0
+    GeniusBot Cockpit Dashboard Window.
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.worker = AgentBridgeWorker()
         self.daemon = GeniusBotDaemon(self)
+        self.gateway = GatewayClient()
         self.discovered_specialists = []
         self.active_agent_card = None
 
@@ -116,15 +119,27 @@ class GeniusBot(QMainWindow):
         QTimer.singleShot(100, self.async_load_specialists)
 
     def initialize_user_interface(self):
+        """
+        CONCEPT:GBOT-6.0
+        Initialize the main user interface components.
+        Refactored to orchestrate sub-components.
+        """
         self.setWindowTitle("GeniusBot Multi-Agent Cockpit")
         self.resize(1200, 800)
         self.setStyleSheet(DARK_COCKPIT_STYLE)
 
-        # Central widget splitter (Left sidebar vs Central pane vs Right Drawer)
         self.centralSplitter = QSplitter(Qt.Horizontal)
-        self.setCentralWidget(self.centralSplitter)
 
-        # ── Left Navigation Sidebar ──
+        self._setup_sidebar()
+        self._setup_central_pane()
+        self._setup_detail_drawer()
+        self._setup_console_wrapper()
+
+    def _setup_sidebar(self):
+        """
+        CONCEPT:GBOT-6.0
+        Setup the left navigation sidebar.
+        """
         self.sidebar = QFrame()
         self.sidebar.setObjectName("Sidebar")
         self.sidebar.setMinimumWidth(180)
@@ -196,19 +211,21 @@ class GeniusBot(QMainWindow):
             "color: #8A8A93; font-size: 11px; padding-left: 10px;"
         )
         sidebar_layout.addWidget(self.lbl_status)
-
         self.centralSplitter.addWidget(self.sidebar)
 
-        # ── Main Content Pane (Stacked view) ──
+    def _setup_central_pane(self):
+        """
+        CONCEPT:GBOT-6.0
+        Setup the main central content stacked widget.
+        """
         self.centralStackWidget = QStackedWidget()
 
-        # View 1: Agent Deck (Scroll Area)
+        # View 0: Agent Deck (Scroll Area)
         self.deck_scroll = QScrollArea()
         self.deck_scroll.setWidgetResizable(True)
         self.deck_scroll.setStyleSheet(
             "QScrollArea { border: none; background: transparent; }"
         )
-
         self.deck_container = QWidget()
         self.deck_layout = QVBoxLayout(self.deck_container)
         self.deck_layout.setSpacing(16)
@@ -216,11 +233,32 @@ class GeniusBot(QMainWindow):
         self.deck_scroll.setWidget(self.deck_container)
         self.centralStackWidget.addWidget(self.deck_scroll)
 
-        # View 2: xterm.js Terminal
+        # View 1: xterm.js Terminal
         self.term_widget = TerminalWidget()
         self.centralStackWidget.addWidget(self.term_widget)
 
-        # View 3: Copilot Chat
+        # View 2: Copilot Chat
+        self._setup_copilot_chat()
+
+        # View 3-9: Lazy-loaded panel placeholders
+        self.graph_panel = None
+        self.telemetry_panel = None
+        self.workflow_panel = None
+        self.security_panel = None
+        self.infra_panel = None
+        self.finance_panel = None
+        self.dashboard_panel = None
+
+        for _ in range(7):
+            self.centralStackWidget.addWidget(QWidget())
+
+        self.centralSplitter.addWidget(self.centralStackWidget)
+
+    def _setup_copilot_chat(self):
+        """
+        CONCEPT:GBOT-6.0
+        Setup the Copilot chat pane inside the central stack.
+        """
         self.chat_container = QWidget()
         chat_layout = QVBoxLayout(self.chat_container)
         chat_layout.setContentsMargins(20, 20, 20, 20)
@@ -255,21 +293,11 @@ class GeniusBot(QMainWindow):
 
         self.centralStackWidget.addWidget(self.chat_container)
 
-        # View 4-9: Lazy-loaded panel placeholders
-        self.graph_panel = None
-        self.telemetry_panel = None
-        self.workflow_panel = None
-        self.security_panel = None
-        self.infra_panel = None
-        self.finance_panel = None
-        self.dashboard_panel = None
-
-        for _ in range(7):
-            self.centralStackWidget.addWidget(QWidget())
-
-        self.centralSplitter.addWidget(self.centralStackWidget)
-
-        # ── Slide-Out Right Detail Drawer ──
+    def _setup_detail_drawer(self):
+        """
+        CONCEPT:GBOT-6.0
+        Setup the right slide-out telemetry detail drawer.
+        """
         self.detail_drawer = QFrame()
         self.detail_drawer.setStyleSheet(
             f"background-color: {BG_SECONDARY}; border-left: 1px solid {BORDER_COLOR};"
@@ -305,10 +333,14 @@ class GeniusBot(QMainWindow):
 
         self.centralSplitter.addWidget(self.detail_drawer)
 
+    def _setup_console_wrapper(self):
+        """
+        CONCEPT:GBOT-6.0
+        Setup the bottom global terminal logger.
+        """
         # Splitter sizing ratio: 15% sidebar, 50% central view, 35% right drawer
         self.centralSplitter.setSizes([180, 600, 360])
 
-        # Bottom retractable standard out/err logger
         self.console = QTextEdit()
         self.console.setReadOnly(True)
         self.console.setMaximumHeight(150)
@@ -316,13 +348,11 @@ class GeniusBot(QMainWindow):
             "background-color: #0b0b0d; color: #8A8A93; border: none; font-family: monospace; font-size: 11px;"
         )
 
-        # Redirect sys.stdout and sys.stderr
         self.stdout_wrapper = OutputWrapper(self, True)
         self.stdout_wrapper.outputWritten.connect(self.log_to_console)
         self.stderr_wrapper = OutputWrapper(self, False)
         self.stderr_wrapper.outputWritten.connect(self.log_to_console)
 
-        # Wrap in layout
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.centralSplitter)
         main_layout.addWidget(self.console)
@@ -340,7 +370,6 @@ class GeniusBot(QMainWindow):
         self.centralStackWidget.insertWidget(index, new_widget)
 
     def switch_view(self, index: int):
-        # Lazy load panels on demand
         if index == 3 and self.graph_panel is None:
             from geniusbot.qt.graph_explorer import GraphExplorerPanel
 
@@ -378,41 +407,27 @@ class GeniusBot(QMainWindow):
             self._swap_placeholder(9, self.dashboard_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
-        # Style active sidebar button
-        self.btn_deck.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 0 else ""
-        )
-        self.btn_term.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 1 else ""
-        )
-        self.btn_chat.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 2 else ""
-        )
-        self.btn_graph.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 3 else ""
-        )
-        self.btn_telemetry.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 4 else ""
-        )
-        self.btn_workflow.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 5 else ""
-        )
-        self.btn_security.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 6 else ""
-        )
-        self.btn_infra.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 7 else ""
-        )
-        self.btn_finance.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 8 else ""
-        )
-        self.btn_dashboard.setStyleSheet(
-            "background-color: transparent; border: none;" if index != 9 else ""
-        )
 
-        # Launch terminal shells when clicked
+        # Style active sidebar button
+        buttons = [
+            (0, self.btn_deck),
+            (1, self.btn_term),
+            (2, self.btn_chat),
+            (3, self.btn_graph),
+            (4, self.btn_telemetry),
+            (5, self.btn_workflow),
+            (6, self.btn_security),
+            (7, self.btn_infra),
+            (8, self.btn_finance),
+            (9, self.btn_dashboard),
+        ]
+
+        for idx, btn in buttons:
+            btn.setStyleSheet(
+                "background-color: transparent; border: none;" if index != idx else ""
+            )
+
         if index == 1 and not self.term_widget.fd:
-            # Execute agent-terminal-ui inside xterm if available
             self.term_widget.start_shell("agent-terminal-ui")
 
     def setup_tray_daemon(self):
@@ -426,24 +441,14 @@ class GeniusBot(QMainWindow):
         self.daemon.start()
 
     def async_load_specialists(self):
-        """Asynchronously load all specialists from the Knowledge Graph via the Gateway."""
+        """
+        CONCEPT:GBOT-6.0
+        Asynchronously load all specialists from the Knowledge Graph via the Gateway.
+        """
         self.lbl_status.setText("Connecting Graph...")
 
         async def fetch(progress_cb=None):
-            import httpx
-
-            try:
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(
-                        "http://localhost:8000/api/enhanced/agents", timeout=5.0
-                    )
-                    if response.status_code == 200:
-                        data = response.json()
-                        if data.get("status") == "ok":
-                            return data.get("agents", [])
-            except Exception as e:
-                logger.warning(f"Failed to fetch specialists from gateway: {e}")
-            return []
+            return await self.gateway.fetch_specialists()
 
         def on_finished(specs):
             self.discovered_specialists = specs
@@ -458,7 +463,6 @@ class GeniusBot(QMainWindow):
 
     def populate_specialist_deck(self):
         """Add discovered specialists control widgets into the scrolling deck layout."""
-        # Clear container
         for i in reversed(range(self.deck_layout.count())):
             widget = self.deck_layout.itemAt(i).widget()
             if widget:
@@ -475,7 +479,6 @@ class GeniusBot(QMainWindow):
 
         self.deck_layout.addStretch()
 
-    # Agent Lifecycle Callbacks
     def on_agent_started(self, agent_name):
         self.lbl_status.setText(f"Running {agent_name}...")
         self.telemetry_log.append(f"⏱️ Spawning {agent_name} Specialist...")
@@ -483,12 +486,8 @@ class GeniusBot(QMainWindow):
     def on_agent_finished(self, agent_name, result):
         self.lbl_status.setText(f"{agent_name} Complete.")
         self.telemetry_log.append(f"✅ {agent_name} Completed execution.\n")
-
-        # Display output in drawer details
         result_text = result.get("result", str(result))
         self.telemetry_log.append(f"Output:\n{result_text}\n")
-
-        # Update graph mermaid visualization if included
         mermaid = result.get("mermaid")
         if mermaid:
             self.graph_display.setText(mermaid)
@@ -503,23 +502,7 @@ class GeniusBot(QMainWindow):
         self.lbl_status.setText("Health checking...")
 
         async def verify(progress_cb=None):
-            import httpx
-
-            try:
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(
-                        "http://localhost:8000/api/enhanced/maintenance/status",
-                        timeout=5.0,
-                    )
-                    if response.status_code == 200:
-                        data = response.json()
-                        return {
-                            "status": "success",
-                            "result": f"Gateway healthy. Maintenance Required: {data.get('maintenance_required', False)}",
-                        }
-            except Exception as e:
-                logger.warning(f"Gateway health check failed: {e}")
-            return {"status": "error", "result": "❌ central Gateway offline."}
+            return await self.gateway.run_health_check()
 
         self.worker.run_agent_task(
             verify,
@@ -536,19 +519,7 @@ class GeniusBot(QMainWindow):
         if text.startswith("/"):
 
             async def fetch_suggestions(progress_cb=None):
-                import httpx
-
-                try:
-                    async with httpx.AsyncClient() as client:
-                        response = await client.get(
-                            f"http://localhost:8000/api/enhanced/commands/autocomplete?query={text}",
-                            timeout=3.0,
-                        )
-                        if response.status_code == 200:
-                            return response.json().get("suggestions", [])
-                except Exception as e:
-                    logger.debug(f"Autocomplete fetch failed: {e}")
-                return []
+                return await self.gateway.fetch_autocomplete_suggestions(text)
 
             def on_finished(suggestions):
                 if suggestions:
@@ -561,7 +532,10 @@ class GeniusBot(QMainWindow):
             self.worker.run_agent_task(fetch_suggestions, on_finished=on_finished)
 
     def send_chat_message(self):
-        """Execute master copilot query with prompt injection scan and secure guard confirmations."""
+        """
+        CONCEPT:GBOT-6.0
+        Execute master copilot query with prompt injection scan and secure guard confirmations.
+        """
         query = self.chat_input.text().strip()
         if not query:
             return
@@ -569,84 +543,27 @@ class GeniusBot(QMainWindow):
         self.chat_input.clear()
         self.chat_log.append(f"\n👤 You: {query}")
 
-        # Task runner targets
+        self._execute_copilot_request(query)
+
+    def _execute_copilot_request(self, query: str):
+        """
+        CONCEPT:GBOT-6.0
+        Internal async handler to route the copilot request to the gateway.
+        """
+
         async def ask_copilot(progress_cb=None):
-            import json
-
-            import httpx
-
-            # If it starts with / command
             if query.startswith("/"):
-                try:
-                    async with httpx.AsyncClient() as client:
-                        response = await client.post(
-                            "http://localhost:8000/api/enhanced/commands/execute",
-                            json={"command": query},
-                            timeout=15.0,
-                        )
-                        if response.status_code == 200:
-                            data = response.json()
-                            return {
-                                "result": data.get("response_markdown", ""),
-                                "client_actions": data.get("client_actions", []),
-                            }
-                        else:
-                            return {
-                                "result": f"❌ Gateway command error: Code {response.status_code}"
-                            }
-                except Exception as e:
-                    return {
-                        "result": f"❌ Gateway connection failed: {e}. Falling back to local run is not supported for slash commands."
-                    }
-
-            # Normal query execution: Try streaming via Gateway SSE first
-            try:
-                async with httpx.AsyncClient() as client:
-                    async with client.stream(
-                        "POST",
-                        "http://localhost:8000/stream",
-                        json={"query": query, "mode": "ask", "topology": "basic"},
-                        timeout=60.0,
-                    ) as stream:
-                        final_output = ""
-                        async for line in stream.aiter_lines():
-                            if line.startswith("data: "):
-                                try:
-                                    event = json.loads(line[6:])
-                                    ev_type = event.get("type")
-                                    if ev_type == "final_output":
-                                        final_output = event.get("content", "")
-                                    elif ev_type == "thought" and progress_cb:
-                                        progress_cb(f"💭 {event.get('thought', '')}")
-                                    elif ev_type == "call_tool" and progress_cb:
-                                        progress_cb(f"🛠️ Tool: {event.get('tool', '')}")
-                                    elif progress_cb:
-                                        progress_cb(
-                                            f"📡 {ev_type}: {event.get('message', '') or event.get('error', '')}"
-                                        )
-                                except Exception:
-                                    continue
-                        if final_output:
-                            return {"result": final_output}
-            except Exception as e:
-                logger.warning(f"Gateway SSE execution failed: {e}")
-
-            return {
-                "result": "❌ Gateway is offline. Please make sure the agent-utilities gateway is running at http://localhost:8000."
-            }
+                return await self.gateway.execute_slash_command(query)
+            return await self.gateway.stream_copilot_query(query, progress_cb)
 
         def on_done(res):
             ans = res.get("result", str(res))
             self.chat_log.append(f"🤖 Copilot: {ans}")
-            mermaid = res.get("mermaid")
-            if mermaid:
-                self.graph_display.setText(mermaid)
+            if res.get("mermaid"):
+                self.graph_display.setText(res.get("mermaid"))
 
-            # Handle gateway client actions
-            actions = res.get("client_actions", [])
-            for action_dict in actions:
-                action = action_dict.get("action")
-                if action == "clear_chat":
+            for action_dict in res.get("client_actions", []):
+                if action_dict.get("action") == "clear_chat":
                     self.chat_log.clear()
                     self.chat_log.append("🧹 Chat log cleared via slash command.")
 
@@ -654,7 +571,6 @@ class GeniusBot(QMainWindow):
             self.chat_log.append(f"❌ Error: {err}")
 
         def on_progress(msg):
-            # Append live thinking/progress directly to the telemetry log
             self.telemetry_log.append(msg)
             self.lbl_status.setText("Agent thinking...")
 

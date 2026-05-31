@@ -5,7 +5,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)
 ![PyPI - License](https://img.shields.io/pypi/l/geniusbot)
 
-*Version: 3.29.6*
+*Version: 3.30.0*
 
 GeniusBot is the premium, unified space cockpit and visual control deck built on top of the `agent-utilities` powerhouse backend. It integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
 
@@ -94,6 +94,22 @@ Install with all ecosystem plugins:
 ```bash
 pip install geniusbot[all]
 ```
+
+---
+
+## 🌍 Environment Variables
+
+GeniusBot can be configured using environment variables or a `.env` file in the project root:
+
+| Variable | Description | Default / Example |
+|----------|-------------|-------------------|
+| `QT_QPA_PLATFORM` | Headless Qt Platform (set to `offscreen` for CI/CD or Docker) | `offscreen` |
+| `LANGFUSE_PUBLIC_KEY` | Langfuse Observability Public Key | `pk-lf-...` |
+| `LANGFUSE_SECRET_KEY` | Langfuse Observability Secret Key | `sk-lf-...` |
+| `LANGFUSE_HOST` | Langfuse Host URL | `https://cloud.langfuse.com` |
+| `LOGFIRE_TOKEN` | Pydantic Logfire Telemetry Token | |
+| `TERM` | Terminal type for the embedded terminal emulator | `xterm-256color` |
+| `_MEIPASS` / `_MEIPASS2` | PyInstaller temp directories for bundled app context | *(Used internally)* |
 
 ---
 

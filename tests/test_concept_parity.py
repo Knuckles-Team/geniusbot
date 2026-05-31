@@ -31,6 +31,9 @@ def extract_concepts_from_overview(filepath):
     return concepts
 
 
+import pytest
+
+
 def extract_concepts_from_codebase(directory):
     """Recursively scans source files in the project for CONCEPT:ID tags."""
     found_concepts = set()
@@ -56,6 +59,8 @@ def extract_concepts_from_codebase(directory):
     return found_concepts
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
 def test_concept_parity():
     """
     Enforces that all concepts documented or used in geniusbot

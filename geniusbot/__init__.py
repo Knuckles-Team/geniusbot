@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from geniusbot.geniusbot import GeniusBot, geniusbot
-from geniusbot.version import __author__, __credits__, __version__
 
 """
 geniusbot
@@ -8,8 +7,8 @@ geniusbot
 The unified cockpit dashboard for our multi-agent ecosystem.
 """
 
-__version__ = __version__
-__author__ = __author__
-__credits__ = __credits__
+__version__ = "3.30.0"
+__author__ = "Audel Rouhi"
+__credits__ = "Audel Rouhi"
 
 __all__ = ["geniusbot", "GeniusBot"]

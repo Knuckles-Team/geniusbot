@@ -1,0 +1,207 @@
+{
+  "feature_id": "code-enhancement-20260531",
+  "title": "Code Enhancement: geniusbot",
+  "created": "2026-05-31T06:00:13.130884+00:00",
+  "overview": "Automated code enhancement review for geniusbot. Covers 17 analysis domains.",
+  "user_stories": [
+    {
+      "role": "developer",
+      "action": "address Test Coverage findings (grade: C, score: 70)",
+      "value": "improve project test coverage from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Architecture & Design Patterns findings (grade: C, score: 75)",
+      "value": "improve project architecture & design patterns from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Concept Traceability findings (grade: F, score: 21)",
+      "value": "improve project concept traceability from F to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Test Execution findings (grade: F, score: 25)",
+      "value": "improve project test execution from F to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Changelog Audit findings (grade: C, score: 75)",
+      "value": "improve project changelog audit from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Environment Variables findings (grade: D, score: 62)",
+      "value": "improve project environment variables from D to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address analyze_xdg_kg findings (grade: F, score: 0)",
+      "value": "improve project analyze_xdg_kg from F to at least B (80+)"
+    }
+  ],
+  "functional_requirements": [
+    {
+      "id": "FR-001",
+      "description": "Minor update: pytest-qt 4.4.0 (constraint \u2014 not installed) -> 4.5.0",
+      "testable": true
+    },
+    {
+      "id": "FR-002",
+      "description": "Minor update: PySide6 6.6.1 (constraint \u2014 not installed) -> 6.11.1",
+      "testable": true
+    },
+    {
+      "id": "FR-003",
+      "description": "Minor update: agent-utilities 0.2.40 (installed) -> 0.16.0",
+      "testable": true
+    },
+    {
+      "id": "FR-004",
+      "description": "Package not found on PyPI: pypiwin32; sys_platform",
+      "testable": true
+    },
+    {
+      "id": "FR-005",
+      "description": "Minor update: ruff 0.2.0 (constraint \u2014 not installed) -> 0.15.15",
+      "testable": true
+    },
+    {
+      "id": "FR-006",
+      "description": "1 functions exceed 200 lines (actionable refactoring targets): initialize_user_interface (217L)",
+      "testable": true
+    },
+    {
+      "id": "FR-007",
+      "description": "Needs attention: geniusbot.py (699L) \u2014 3 functions with high complexity (worst: GeniusBot.initialize_user_interface at 217L, CC=2)",
+      "testable": true
+    },
+    {
+      "id": "FR-008",
+      "description": "Test suite lacks intent diversity (only one type)",
+      "testable": true
+    },
+    {
+      "id": "FR-009",
+      "description": "12 potential doc-test drift items",
+      "testable": true
+    },
+    {
+      "id": "FR-010",
+      "description": "README.md is short (157 lines) \u2014 consider expanding",
+      "testable": true
+    },
+    {
+      "id": "FR-011",
+      "description": "AGENTS.md missing sections: project structure",
+      "testable": true
+    },
+    {
+      "id": "FR-012",
+      "description": "4 broken file references in documentation",
+      "testable": true
+    },
+    {
+      "id": "FR-013",
+      "description": "SRP: 2 modules exceed 500 lines (god modules)",
+      "testable": true
+    },
+    {
+      "id": "FR-014",
+      "description": "No discernible layer architecture (no domain/service/adapter separation)",
+      "testable": true
+    },
+    {
+      "id": "FR-015",
+      "description": "Low traceability ratio: 0% concepts fully traced",
+      "testable": true
+    },
+    {
+      "id": "FR-016",
+      "description": "10 orphaned concepts (only in one source)",
+      "testable": true
+    },
+    {
+      "id": "FR-017",
+      "description": "11 test functions missing concept markers",
+      "testable": true
+    },
+    {
+      "id": "FR-018",
+      "description": "71 significant functions (>10 lines) missing concept markers in docstrings",
+      "testable": true
+    },
+    {
+      "id": "FR-019",
+      "description": "Total lint findings: 0 (high/error: 0, medium/warning: 0, low: 0)",
+      "testable": true
+    },
+    {
+      "id": "FR-020",
+      "description": "1/14 pre-commit hooks failed: mypy",
+      "testable": true
+    },
+    {
+      "id": "FR-021",
+      "description": "1 hook(s) may be outdated: ruff-pre-commit",
+      "testable": true
+    },
+    {
+      "id": "FR-022",
+      "description": "CHANGELOG.md exists but could not be parsed \u2014 check format compliance",
+      "testable": true
+    },
+    {
+      "id": "FR-023",
+      "description": "No changelog entries within the last 30 days",
+      "testable": true
+    },
+    {
+      "id": "FR-024",
+      "description": "keepachangelog not installed \u2014 pip install 'universal-skills[code-enhancer]'",
+      "testable": true
+    },
+    {
+      "id": "FR-025",
+      "description": "No @pytest.mark.parametrize usage \u2014 consider data-driven tests",
+      "testable": true
+    },
+    {
+      "id": "FR-026",
+      "description": "Only 25% of env vars documented in README.md",
+      "testable": true
+    },
+    {
+      "id": "FR-027",
+      "description": "Undocumented env vars: TERM, _MEIPASS, _MEIPASS2",
+      "testable": true
+    },
+    {
+      "id": "FR-028",
+      "description": "4 Python env vars not in .env.example: QT_QPA_PLATFORM, TERM, _MEIPASS, _MEIPASS2",
+      "testable": true
+    },
+    {
+      "id": "FR-029",
+      "description": "Analysis error: No module named 'agent_utilities.knowledge_graph'",
+      "testable": true
+    }
+  ],
+  "success_criteria": [
+    {
+      "metric": "Overall GPA",
+      "current": 2.53,
+      "target": 3.0
+    },
+    {
+      "metric": "Domains at B or above",
+      "current": 10,
+      "target": 17
+    },
+    {
+      "metric": "Actionable findings",
+      "current": 29,
+      "target": 0
+    }
+  ]
+}

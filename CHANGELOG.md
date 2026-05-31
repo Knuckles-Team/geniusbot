@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+- Documented previously missing environment variables (`QT_QPA_PLATFORM`, `TERM`, `_MEIPASS`, `_MEIPASS2`) in `.env.example` and `README.md`.
+- Expanded `AGENTS.md` with explicit project structure rules.
+
+### Changed
+- Bumped dependency constraints for `pytest-qt`, `PySide6`, `agent-utilities`, and `ruff` in `pyproject.toml` to address code audit findings.
+- Replaced `pypiwin32` with `pywin32` in `pyproject.toml` dependencies.
+- Updated `ruff-pre-commit` hook to `v0.15.15` in `.pre-commit-config.yaml`.
 ## [3.29.6] - 2026-05-25
 
 ### Added

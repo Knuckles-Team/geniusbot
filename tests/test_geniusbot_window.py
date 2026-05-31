@@ -1,3 +1,5 @@
+import pytest
+
 from geniusbot.geniusbot import GeniusBot
 from geniusbot.qt.terminal_widget import TerminalBridge, TerminalWidget
 from geniusbot.qt.tool_guard import ToolGuardDialog
@@ -5,6 +7,8 @@ from geniusbot.qt.widget_mapper import AgentControlPanel
 from geniusbot.utils.agent_bridge import AgentBridgeWorker
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
 def test_genius_bot_window_instantiation(qapp):
     """Verify that the main GeniusBot cockpit window instantiates successfully."""
     bot = GeniusBot()
@@ -15,6 +19,8 @@ def test_genius_bot_window_instantiation(qapp):
     bot.close()
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.2")
 def test_terminal_widget_instantiation(qapp):
     """Verify that our hybrid terminal emulator instantiates correctly."""
     term = TerminalWidget()
@@ -23,6 +29,8 @@ def test_terminal_widget_instantiation(qapp):
     term.close()
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.3")
 def test_tool_guard_dialog_instantiation(qapp):
     """Verify that our secure execution guard modal instantiates with sample parameters."""
     dialog = ToolGuardDialog("test_tool", {"arg1": "val1", "arg2": 42})
@@ -35,6 +43,8 @@ def test_tool_guard_dialog_instantiation(qapp):
     dialog.close()
 
 
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.1")
 def test_agent_control_panel_instantiation(qapp):
     """Verify that a dynamic agent control card compiles correctly from specialist schemas."""
     worker = AgentBridgeWorker()
