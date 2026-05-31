@@ -65,3 +65,11 @@ repos:
     rev: 1.8.5
     hooks:
       - id: nbqa-black
+  - repo: local
+    hooks:
+    - id: security-sanitizer
+      name: Security and Garbage Sanitizer
+      entry: python scripts/security_sanitizer.py
+      language: python
+      pass_filenames: false
+      always_run: true

@@ -2,11 +2,14 @@
 CONCEPT:GBOT-6.0
 Service layer for communicating with the agent-utilities gateway.
 """
+
 import json
 import logging
+
 import httpx
 
 logger = logging.getLogger("geniusbot.gateway")
+
 
 class GatewayClient:
     def __init__(self, base_url="http://localhost:8000"):
