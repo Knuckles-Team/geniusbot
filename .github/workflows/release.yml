@@ -11,5 +11,5 @@ permissions:
 
 jobs:
   release:
-    uses: Knuckles-Team/pipelines/.github/workflows/desktop_release_pipeline.yml@latest
+    uses: Knuckles-Team/pipelines/.github/workflows/desktop_release_pipeline.yml@main
     secrets: inherit
