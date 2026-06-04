@@ -3,20 +3,10 @@ import importlib.metadata
 import logging
 import os
 
-# Resolve centralized log directory
-try:
-    from agent_utilities.core.paths import log_dir
+# Resolve centralized log directory via the single backend seam
+from geniusbot.services.backend_adapter import backend
 
-    geniusbot_log_dir = log_dir()
-except ImportError:
-    from pathlib import Path
-
-    import platformdirs
-
-    geniusbot_log_dir = Path(
-        platformdirs.user_log_path("agent-utilities", "knuckles-team")
-    )
-
+geniusbot_log_dir = backend.resolve_log_dir()
 geniusbot_log_dir.mkdir(parents=True, exist_ok=True)
 geniusbot_log_path = geniusbot_log_dir / "geniusbot.log"
 

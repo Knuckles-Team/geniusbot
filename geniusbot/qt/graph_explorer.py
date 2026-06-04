@@ -149,11 +149,11 @@ class GraphExplorerPanel(QWidget):
 
             time.sleep(0.4)  # Simulate network traversal latency
 
-            # Connect natively to agent-utilities Cypher execute engine if available
+            # Connect natively to the backend Cypher execute engine if available
             try:
-                from agent_utilities.graph import run_graph_query
+                from geniusbot.services.backend_adapter import backend
 
-                res = await run_graph_query(query_text)
+                res = await backend.run_graph_query(query_text)
                 if res:
                     return res
             except Exception:

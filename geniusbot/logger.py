@@ -14,18 +14,9 @@ class Log:
 
     # Initialize the Class
     def __init__(self, logging_dir=""):
-        try:
-            from agent_utilities.core.paths import log_dir
+        from geniusbot.services.backend_adapter import backend
 
-            xdg_log_dir = log_dir()
-        except ImportError:
-            from pathlib import Path
-
-            import platformdirs
-
-            xdg_log_dir = Path(
-                platformdirs.user_log_path("agent-utilities", "knuckles-team")
-            )
+        xdg_log_dir = backend.resolve_log_dir()
 
         xdg_log_dir.mkdir(parents=True, exist_ok=True)
 

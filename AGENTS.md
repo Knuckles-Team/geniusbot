@@ -1,5 +1,8 @@
 # AGENTS.md — GeniusBot Desktop Cockpit Developer Guide
 
+> Claude Code loads this file via `CLAUDE.md` (`@AGENTS.md` import) — the two stay in sync. Edit this file, not `CLAUDE.md`.
+
+
 This document defines the architecture, standard commands, code design principles, and strict safety guidelines for maintaining and extending `geniusbot`.
 
 ## 🛠️ Tech Stack & Desktop Architecture
@@ -177,11 +180,21 @@ geniusbot/
 │   ├── img/
 │   │   ├── geniusbot.ico
 │   │   └── geniusbot.png
-│   ├── qt/
-│   │   ├── __init__.py
-│   │   ├── colors.py            # Standard color hex constants
-│   │   ├── terminal_widget.py   # Monospace shell rendering via xterm.js
-│   │   └── tool_guard.py        # Interactive tool approval dialog
+│   ├── qt/                      # 13 modules (4 are cockpits/dashboards, marked ★)
+│   │   ├── __init__.py          # Public re-exports for the qt package
+│   │   ├── colors.py            # AUTO-GENERATED color tokens + DARK_COCKPIT_STYLE QSS
+│   │   │                        #   (regenerate via `python3 ../design-system/gen_qss.py`)
+│   │   ├── finance_cockpit.py   # ★ Cockpit: live financial charts (candlestick/area/scatter)
+│   │   ├── graph_explorer.py    # Cypher query panel for the Epistemic Graph
+│   │   ├── infra_cockpit.py     # ★ Cockpit: host load, containers, SSH networks
+│   │   ├── scrollable_widget.py # ScrollLabel — reusable scrollable label widget
+│   │   ├── security_policy.py   # Zero-Trust authorization / permission strictness panel
+│   │   ├── service_dashboard.py # ★ Dashboard: Homepage-style service management
+│   │   ├── telemetry_dashboard.py # ★ Dashboard: latencies, success rates, Logfire traces
+│   │   ├── terminal_widget.py   # Monospace shell rendering / PTY bridge via xterm.js
+│   │   ├── tool_guard.py        # Interactive tool approval dialog (glassmorphic)
+│   │   ├── widget_mapper.py     # Dynamic per-agent control panel generator
+│   │   └── workflow_builder.py  # Sequential specialist workflows + agent-debate viewer
 │   └── utils/
 │       ├── __init__.py
 │       ├── agent_bridge.py      # Thread-safe agent worker
@@ -258,3 +271,15 @@ class AgentWorker(QRunnable):
 - Use `~/workspace/scratch/` for temporary scripts and experiments
 - Use `~/workspace/reports/` for command output and reports
 - Keep test scripts in the `tests/` directory following proper pytest conventions
+
+
+## ⛔ Keep the Repository Root Pristine
+
+The repository root must contain only canonical project files. The only hidden
+directories allowed at root are `.git/`, `.github/`, `.specify/` (plus a local,
+git-ignored `.venv/`). NEVER write scratch/debug/migration files to the repo —
+especially the root: no `fix_*.py`/`migrate_*.py`/`refactor_*.py`/root `test_*.py`,
+no `*.db`/`*.log`/scratch `*.txt`/`*.orig`/`*.rej`/`*.bak`, no build artifacts
+(`*.tsbuildinfo`), and no AI scratch dirs (`.agent/`, `.agents/`, `.agent_data/`,
+`.tmp/`, `.hypothesis/`). Put experiments in `~/workspace/scratch/`, tests in
+`tests/`. Run `git status` before finishing and confirm no stray root files.
