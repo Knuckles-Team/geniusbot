@@ -187,23 +187,16 @@ class AgentControlPanel(QFrame):
 
         # Define async target to run graph or specialist agent
         async def async_run():
-            from agent_utilities.graph import initialize_graph_from_workspace, run_graph
+            from geniusbot.services.backend_adapter import backend
 
-            # In a production layout, we can invoke run_graph dynamically
-            # Here we simulate or run the master graph on behalf of this specialist
-            # We bypass the complex loader if we just want a standard mock/test run
-            # but we can initialize and run the workspace graph natively!
+            # In a production layout, we can invoke the workspace graph
+            # dynamically on behalf of this specialist via the backend seam.
             try:
-                # Initialize workspace dynamically (Zero blocking calls)
-                from agent_utilities import initialize_workspace
-
-                initialize_workspace()
-                graph = initialize_graph_from_workspace()
                 config = {
                     "agent_model": "gemini-2.5-flash",
                     "router_model": "gemini-2.5-flash",
                 }
-                res = await run_graph(graph, config, query)
+                res = await backend.run_workspace_graph(query, config)
                 return res
             except Exception:
                 # Fallback to direct specialist response if full graph isn't loaded

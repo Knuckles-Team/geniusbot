@@ -10,7 +10,6 @@ Concept: AU-019 (GUI Dashboard Panel)
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from typing import Any
 
@@ -70,24 +69,9 @@ class _FetchWorker(QThread):
 
     def run(self):
         try:
-            from agent_utilities.gateway.aggregator import Aggregator
+            from geniusbot.services.backend_adapter import backend
 
-            self._aggregator = Aggregator()
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            data = loop.run_until_complete(self._aggregator.fetch_all())
-            # Convert WidgetData to serializable dicts
-            result = {}
-            for svc_id, wd in data.items():
-                fields = []
-                if wd.fields:
-                    for f in wd.fields:
-                        fields.append({"label": f.label, "value": str(f.value)})
-                result[svc_id] = {
-                    "status": wd.status,
-                    "fields": fields,
-                    "error": wd.error,
-                }
+            result = backend.fetch_service_widget_data()
             self.data_ready.emit(result)
         except ImportError:
             self.error.emit("agent-utilities gateway module not available.")
@@ -289,13 +273,11 @@ class ServiceDashboardPanel(QWidget):
         layout.addWidget(scroll)
 
     def _populate_dashboard(self) -> None:
-        """Load layout from agent_utilities.gateway and create cards."""
+        """Load layout via the backend seam and create cards."""
         try:
-            from agent_utilities.gateway.aggregator import Aggregator
-            from agent_utilities.gateway.config import ConfigManager
+            from geniusbot.services.backend_adapter import backend
 
-            config_mgr = ConfigManager()
-            layout = config_mgr.load()
+            layout = backend.load_service_layout()
         except ImportError:
             empty = QLabel(
                 "⚠ agent-utilities gateway not available.\nInstall agent-utilities with: pip install agent-utilities"
