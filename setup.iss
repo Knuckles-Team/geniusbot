@@ -2,7 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Geniusbot"
-#define MyAppVersion "3.29.6"
+; MyAppVersion is injected at build time via ISCC /DMyAppVersion=<pyproject version>.
+; The fallback below is only used for local manual builds.
+#ifndef MyAppVersion
+  #define MyAppVersion "3.40.0"
+#endif
 #define MyAppPublisher "Knuckles-Team"
 #define MyAppURL "https://github.com/Knuckles-Team/geniusbot"
 #define MyAppExeName "geniusbot.exe"
