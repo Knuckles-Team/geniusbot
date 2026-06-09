@@ -7,6 +7,10 @@
 
 *Version: 3.40.1*
 
+> **Documentation** — The architecture overview, security boundaries, quick-start
+> guidance, and the GeniusBot concept registry are maintained in the
+> [official documentation](https://knuckles-team.github.io/geniusbot/).
+
 GeniusBot is the premium, unified space cockpit and visual control deck built on top of the `agent-utilities` powerhouse backend. It integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
 
 ---
