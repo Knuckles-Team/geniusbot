@@ -197,6 +197,10 @@ class GeniusBot(QMainWindow):
         self.btn_fleet.clicked.connect(lambda: self.switch_view(10))
         sidebar_layout.addWidget(self.btn_fleet)
 
+        self.btn_usage = QPushButton("💰 Usage & Cost")
+        self.btn_usage.clicked.connect(lambda: self.switch_view(11))
+        sidebar_layout.addWidget(self.btn_usage)
+
         sidebar_layout.addStretch()
 
         # Sidebar footer status
@@ -243,8 +247,9 @@ class GeniusBot(QMainWindow):
         self.finance_panel = None
         self.dashboard_panel = None
         self.fleet_panel = None
+        self.usage_panel = None
 
-        for _ in range(8):
+        for _ in range(9):
             self.centralStackWidget.addWidget(QWidget())
 
         self.centralSplitter.addWidget(self.centralStackWidget)
@@ -405,6 +410,11 @@ class GeniusBot(QMainWindow):
 
             self.fleet_panel = FleetCockpitPanel(self.worker)
             self._swap_placeholder(10, self.fleet_panel)
+        elif index == 11 and self.usage_panel is None:
+            from geniusbot.qt.usage_cockpit import UsageCockpitPanel
+
+            self.usage_panel = UsageCockpitPanel(self.worker)
+            self._swap_placeholder(11, self.usage_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
 
@@ -421,6 +431,7 @@ class GeniusBot(QMainWindow):
             (8, self.btn_finance),
             (9, self.btn_dashboard),
             (10, self.btn_fleet),
+            (11, self.btn_usage),
         ]
 
         for idx, btn in buttons:
