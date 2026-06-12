@@ -86,6 +86,49 @@ class GatewayClient:
             logger.warning(f"Grant approval failed: {e}")
             return {"error": str(e)}
 
+    # ── Usage / cost / observability (CONCEPT:ECO-4.41) ─────────────────
+    async def fetch_usage_summary(self, **f):
+        try:
+            return await self._sdk.usage_summary(**f)
+        except Exception as e:
+            logger.warning(f"Usage summary fetch failed: {e}")
+            return {}
+
+    async def fetch_usage_by_model(self, **f):
+        try:
+            return await self._sdk.usage_by_model(**f)
+        except Exception as e:
+            logger.warning(f"Usage by-model fetch failed: {e}")
+            return []
+
+    async def fetch_usage_tools(self, **f):
+        try:
+            return await self._sdk.analytics_tools(**f)
+        except Exception as e:
+            logger.warning(f"Usage tools fetch failed: {e}")
+            return []
+
+    async def fetch_usage_activity(self, **f):
+        try:
+            return await self._sdk.analytics_activity(**f)
+        except Exception as e:
+            logger.warning(f"Usage activity fetch failed: {e}")
+            return []
+
+    async def fetch_usage_sessions(self, **f):
+        try:
+            return await self._sdk.usage_top_sessions(**f)
+        except Exception as e:
+            logger.warning(f"Usage sessions fetch failed: {e}")
+            return []
+
+    async def fetch_usage_traces(self):
+        try:
+            return await self._sdk.usage_traces()
+        except Exception as e:
+            logger.warning(f"Usage traces fetch failed: {e}")
+            return {"enabled": False, "traces": []}
+
     async def stream_copilot_query(self, query: str, progress_cb=None):
         """Execute master copilot query with streaming output."""
         try:
