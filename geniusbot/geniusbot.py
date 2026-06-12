@@ -193,6 +193,10 @@ class GeniusBot(QMainWindow):
         self.btn_dashboard.clicked.connect(lambda: self.switch_view(9))
         sidebar_layout.addWidget(self.btn_dashboard)
 
+        self.btn_fleet = QPushButton("🛰️ Fleet Supervisor")
+        self.btn_fleet.clicked.connect(lambda: self.switch_view(10))
+        sidebar_layout.addWidget(self.btn_fleet)
+
         sidebar_layout.addStretch()
 
         # Sidebar footer status
@@ -238,8 +242,9 @@ class GeniusBot(QMainWindow):
         self.infra_panel = None
         self.finance_panel = None
         self.dashboard_panel = None
+        self.fleet_panel = None
 
-        for _ in range(7):
+        for _ in range(8):
             self.centralStackWidget.addWidget(QWidget())
 
         self.centralSplitter.addWidget(self.centralStackWidget)
@@ -395,6 +400,11 @@ class GeniusBot(QMainWindow):
 
             self.dashboard_panel = ServiceDashboardPanel(self.worker)
             self._swap_placeholder(9, self.dashboard_panel)
+        elif index == 10 and self.fleet_panel is None:
+            from geniusbot.qt.fleet_cockpit import FleetCockpitPanel
+
+            self.fleet_panel = FleetCockpitPanel(self.worker)
+            self._swap_placeholder(10, self.fleet_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
 
@@ -410,6 +420,7 @@ class GeniusBot(QMainWindow):
             (7, self.btn_infra),
             (8, self.btn_finance),
             (9, self.btn_dashboard),
+            (10, self.btn_fleet),
         ]
 
         for idx, btn in buttons:

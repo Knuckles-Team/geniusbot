@@ -28,6 +28,7 @@ This document defines the architecture, standard commands, code design principle
 | **GBOT-6.3** | **Universal Tool Approval Gate** | Desktop modal prompt that intercepts critical commands triggered by backend agents. **(Must use glassmorphic depth/CONCEPT-HIG)** | `geniusbot/qt/tool_guard.py` |
 | **GBOT-6.4** | **Topological Cockpit Memory** | In-memory configuration syncing and local graph-store caching. | `geniusbot/utils/agent_bridge.py` |
 | **GBOT-6.5** | **Multi-Tenant Daemon & Tray** | Background system tray icon running scheduler loops for long-running agent tasks. | `geniusbot/utils/daemon.py` |
+| **GBOT-6.6** | **Fleet Supervisory Cockpit** | Surfaces the agent-utilities fleet autonomy control plane (OS-5.10/5.15/5.24) — worker placement topology and the ActionPolicy approval inbox — via the shared gateway SDK (ECO-4.37). | `geniusbot/qt/fleet_cockpit.py` |
 
 > **Note on UI Cohesion (`CONCEPT-HIG`)**: All PySide6 UI elements implemented under GBOT-6.0 and GBOT-6.3 must adhere to the ecosystem-wide **Human Interface Guidelines**. This includes supporting dynamic QPalette/stylesheet brand theming, rail-navigation sidebars (via QPropertyAnimation), and depth-aware/glassmorphic modals for disruptive prompts.
 

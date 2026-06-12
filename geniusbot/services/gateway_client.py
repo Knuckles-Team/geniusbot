@@ -62,6 +62,30 @@ class GatewayClient:
                 "result": f"❌ Gateway connection failed: {e}. Falling back to local run is not supported for slash commands."
             }
 
+    async def fetch_fleet_topology(self):
+        """Fetch the fleet/worker placement topology (OS-5.10)."""
+        try:
+            return await self._sdk.fleet_topology()
+        except Exception as e:
+            logger.warning(f"Fleet topology fetch failed: {e}")
+            return {}
+
+    async def fetch_fleet_approvals(self):
+        """Fetch pending ActionPolicy approvals awaiting a human decision (OS-5.24)."""
+        try:
+            return await self._sdk.fleet_approvals()
+        except Exception as e:
+            logger.warning(f"Fleet approvals fetch failed: {e}")
+            return []
+
+    async def grant_approval(self, approval_id: str):
+        """Grant a pending fleet approval by id."""
+        try:
+            return await self._sdk.grant_approval(approval_id)
+        except Exception as e:
+            logger.warning(f"Grant approval failed: {e}")
+            return {"error": str(e)}
+
     async def stream_copilot_query(self, query: str, progress_cb=None):
         """Execute master copilot query with streaming output."""
         try:
