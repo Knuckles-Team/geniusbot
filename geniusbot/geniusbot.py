@@ -169,6 +169,10 @@ class GeniusBot(QMainWindow):
         self.btn_graph.clicked.connect(lambda: self.switch_view(3))
         sidebar_layout.addWidget(self.btn_graph)
 
+        self.btn_extraction = QPushButton("🧬 KG Extraction")
+        self.btn_extraction.clicked.connect(lambda: self.switch_view(12))
+        sidebar_layout.addWidget(self.btn_extraction)
+
         self.btn_telemetry = QPushButton("📈 Live Telemetry")
         self.btn_telemetry.clicked.connect(lambda: self.switch_view(4))
         sidebar_layout.addWidget(self.btn_telemetry)
@@ -248,8 +252,10 @@ class GeniusBot(QMainWindow):
         self.dashboard_panel = None
         self.fleet_panel = None
         self.usage_panel = None
+        self.extraction_panel = None
 
-        for _ in range(9):
+        # Views 3-11 + 12 (KG extraction) — lazy-loaded placeholders.
+        for _ in range(10):
             self.centralStackWidget.addWidget(QWidget())
 
         self.centralSplitter.addWidget(self.centralStackWidget)
@@ -415,6 +421,11 @@ class GeniusBot(QMainWindow):
 
             self.usage_panel = UsageCockpitPanel(self.worker)
             self._swap_placeholder(11, self.usage_panel)
+        elif index == 12 and self.extraction_panel is None:
+            from geniusbot.qt.extraction_cockpit import ExtractionCockpitPanel
+
+            self.extraction_panel = ExtractionCockpitPanel(self.worker)
+            self._swap_placeholder(12, self.extraction_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
 
@@ -432,6 +443,7 @@ class GeniusBot(QMainWindow):
             (9, self.btn_dashboard),
             (10, self.btn_fleet),
             (11, self.btn_usage),
+            (12, self.btn_extraction),
         ]
 
         for idx, btn in buttons:
