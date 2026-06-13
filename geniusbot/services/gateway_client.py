@@ -129,13 +129,76 @@ class GatewayClient:
             logger.warning(f"Usage traces fetch failed: {e}")
             return {"enabled": False, "traces": []}
 
+    async def submit_and_stream_extraction(
+        self,
+        *,
+        text: str = "",
+        url: str = "",
+        rounds: int = 1,
+        dedup: bool = True,
+        progress_cb=None,
+    ):
+        """Submit a fact-extraction job and stream its events (ECO-4.43).
+
+        Each event (round_start|fact|…|job_done) is forwarded to ``progress_cb``
+        as a JSON string so the Qt panel can render facts live on the main thread.
+        Returns a summary dict; graceful-offline like every facade method.
+        """
+        import json
+
+        import httpx
+
+        try:
+            async with httpx.AsyncClient(timeout=None) as client:
+                resp = await client.post(
+                    f"{self.base_url}/api/enhanced/extract/submit",
+                    json={"text": text, "url": url, "rounds": rounds, "dedup": dedup},
+                    timeout=15.0,
+                )
+                resp.raise_for_status()
+                sub = resp.json()
+                job_id = sub.get("job_id")
+                if sub.get("status") != "submitted" or not job_id:
+                    return {"status": "unavailable", "message": sub.get("message", "")}
+
+                kept = 0
+                async with client.stream("GET", f"{self.base_url}/api/enhanced/extract/stream/{job_id}") as stream:
+                    async for line in stream.aiter_lines():
+                        if not line.startswith("data: "):
+                            continue
+                        try:
+                            ev = json.loads(line[6:])
+                        except json.JSONDecodeError:
+                            continue
+                        if ev.get("type") == "fact" and not ev.get("is_duplicate"):
+                            kept += 1
+                        if progress_cb:
+                            progress_cb(line[6:])
+                        if ev.get("type") == "job_done":
+                            break
+                return {"status": "done", "job_id": job_id, "facts": kept}
+        except Exception as e:
+            logger.warning(f"Extraction stream failed: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def fetch_extraction_jsonl(self, job_id: str) -> str:
+        """Fetch a finished job's facts as JSONL text (upstream parity)."""
+        import httpx
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.get(f"{self.base_url}/api/enhanced/extract/jsonl/{job_id}")
+                resp.raise_for_status()
+                return resp.text
+        except Exception as e:
+            logger.warning(f"JSONL fetch failed: {e}")
+            return ""
+
     async def stream_copilot_query(self, query: str, progress_cb=None):
         """Execute master copilot query with streaming output."""
         try:
             final_output = ""
-            async for event in self._sdk.stream(
-                query, mode="ask", topology="basic", timeout=60.0
-            ):
+            async for event in self._sdk.stream(query, mode="ask", topology="basic", timeout=60.0):
                 ev_type = event.get("type")
                 if ev_type == "final_output":
                     final_output = event.get("content", "")
@@ -144,9 +207,7 @@ class GatewayClient:
                 elif ev_type == "call_tool" and progress_cb:
                     progress_cb(f"🛠️ Tool: {event.get('tool', '')}")
                 elif progress_cb:
-                    progress_cb(
-                        f"📡 {ev_type}: {event.get('message', '') or event.get('error', '')}"
-                    )
+                    progress_cb(f"📡 {ev_type}: {event.get('message', '') or event.get('error', '')}")
             if final_output:
                 return {"result": final_output}
         except Exception as e:
