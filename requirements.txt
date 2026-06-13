@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml -o requirements.txt
 ag-ui-protocol==0.1.18
     # via pydantic-ai-slim
-agent-utilities==0.47.0
+agent-utilities==0.48.0
     # via geniusbot (pyproject.toml)
 aiofile==3.11.1
     # via py-key-value-aio
