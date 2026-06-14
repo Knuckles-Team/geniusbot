@@ -12,8 +12,11 @@ from pathlib import Path
 # Repo layout: <repo>/tests/this_file.py  and  <repo>/geniusbot/<package>
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent / "geniusbot"
 
-# Files allowed to import agent_utilities directly (the seam itself).
-ALLOWED = {"services/backend_adapter.py"}
+# Files allowed to import agent_utilities directly (the sanctioned seams).
+# Mirrors the authoritative allowlist in agent-utilities
+# scripts/check_coupling.py (ALLOWLISTED_ADAPTERS): the backend adapter plus the
+# gateway-client transport facade (ECO-4.37) both legitimately wrap the SDK.
+ALLOWED = {"services/backend_adapter.py", "services/gateway_client.py"}
 
 _IMPORT_RE = re.compile(r"^\s*(from agent_utilities|import agent_utilities)", re.M)
 
