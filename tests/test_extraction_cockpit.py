@@ -47,7 +47,7 @@ def test_force_graph_edge_click_emits_fact(qapp) -> None:
     # find the edge item and trigger its click handler
     for item in w._scene.items():
         if hasattr(item, "_fact"):
-            item._signal.emit(item._fact)
+            item._signal.emit(item._fact)  # type: ignore[attr-defined]  # test attaches a custom _signal probe to a Qt item
             break
     assert received and received[0]["subject"] == "A"
 

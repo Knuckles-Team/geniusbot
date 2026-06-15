@@ -148,7 +148,7 @@ class UsageCockpitPanel(QWidget):
     def _make_table(self, headers: list[str]) -> QTableWidget:
         table = QTableWidget(0, len(headers))
         table.setHorizontalHeaderLabels(headers)
-        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # type: ignore[attr-defined]  # PySide6 QHeaderView.Stretch enum (incomplete stubs)
         table.setStyleSheet(
             f"background-color: #121214; border: 1px solid {BORDER_COLOR}; "
             "border-radius: 6px;"

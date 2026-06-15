@@ -160,7 +160,7 @@ class ForceGraphWidget(QGraphicsView):
             x2, y2 = self._positions[t]
             fact = self._facts[i]
             dup = bool(fact.get("is_duplicate"))
-            line = _EdgeItem(x1, y1, x2, y2, fact, self.edge_selected)
+            line = _EdgeItem(x1, y1, x2, y2, fact, self.edge_selected)  # type: ignore[arg-type]  # PySide6 SignalInstance vs Signal (incomplete stubs)
             color = QColor(180, 60, 60) if dup else QColor(120, 120, 130)
             line.setPen(QPen(color, 2.4 if not dup else 1.0))
             self._scene.addItem(line)
@@ -196,8 +196,8 @@ class _EdgeItem(QGraphicsLineItem):
         self.setAcceptHoverEvents(True)
         title = fact.get("title") or (f"{fact.get('subject', '')} {fact.get('predicate', '')} {fact.get('object', '')}")
         self.setToolTip(title)
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.PointingHandCursor)  # type: ignore[attr-defined]  # PySide6 Qt.PointingHandCursor enum (incomplete stubs)
 
     def mousePressEvent(self, event) -> None:  # noqa: N802 (Qt override)
-        self._signal.emit(self._fact)
+        self._signal.emit(self._fact)  # type: ignore[attr-defined]  # PySide6 Signal.emit (incomplete stubs)
         super().mousePressEvent(event)
