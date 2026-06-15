@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **KG extraction cockpit with native force graph (`CONCEPT:ECO-4.43`)**: `extraction_cockpit.py` (`ExtractionCockpitPanel`) brings the document→KG experience to the Qt cockpit over the real gateway with live SSE — text/URL input streams extracted facts onto `force_graph.py`, a native `QGraphicsView` force-directed widget (pure, unit-testable Fruchterman-Reingold `relax_layout`) where each fact is a clickable directed edge and node keys are normalized to mirror the backend.
+- **Usage & Cost cockpit (`CONCEPT:ECO-4.41`)**: `UsageCockpitPanel` (sidebar 💰 Usage & Cost) with agentsview parity — KPI cards, cost-by-model, tool/skill/db-call metrics, a day×hour heatmap, top-sessions browser, and Langfuse links, all over the shared SDK facade via the `QThreadPool` worker (never blocks the Qt loop, graceful-offline).
 - Documented previously missing environment variables (`QT_QPA_PLATFORM`, `TERM`, `_MEIPASS`, `_MEIPASS2`) in `.env.example` and `README.md`.
 - Expanded `AGENTS.md` with explicit project structure rules.
 
