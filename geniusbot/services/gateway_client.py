@@ -162,7 +162,9 @@ class GatewayClient:
                     return {"status": "unavailable", "message": sub.get("message", "")}
 
                 kept = 0
-                async with client.stream("GET", f"{self.base_url}/api/enhanced/extract/stream/{job_id}") as stream:
+                async with client.stream(
+                    "GET", f"{self.base_url}/api/enhanced/extract/stream/{job_id}"
+                ) as stream:
                     async for line in stream.aiter_lines():
                         if not line.startswith("data: "):
                             continue
@@ -187,7 +189,9 @@ class GatewayClient:
 
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
-                resp = await client.get(f"{self.base_url}/api/enhanced/extract/jsonl/{job_id}")
+                resp = await client.get(
+                    f"{self.base_url}/api/enhanced/extract/jsonl/{job_id}"
+                )
                 resp.raise_for_status()
                 return resp.text
         except Exception as e:
@@ -198,7 +202,9 @@ class GatewayClient:
         """Execute master copilot query with streaming output."""
         try:
             final_output = ""
-            async for event in self._sdk.stream(query, mode="ask", topology="basic", timeout=60.0):
+            async for event in self._sdk.stream(
+                query, mode="ask", topology="basic", timeout=60.0
+            ):
                 ev_type = event.get("type")
                 if ev_type == "final_output":
                     final_output = event.get("content", "")
@@ -207,7 +213,9 @@ class GatewayClient:
                 elif ev_type == "call_tool" and progress_cb:
                     progress_cb(f"🛠️ Tool: {event.get('tool', '')}")
                 elif progress_cb:
-                    progress_cb(f"📡 {ev_type}: {event.get('message', '') or event.get('error', '')}")
+                    progress_cb(
+                        f"📡 {ev_type}: {event.get('message', '') or event.get('error', '')}"
+                    )
             if final_output:
                 return {"result": final_output}
         except Exception as e:

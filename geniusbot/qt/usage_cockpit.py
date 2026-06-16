@@ -101,8 +101,12 @@ class UsageCockpitPanel(QWidget):
         # --- KPI cards --------------------------------------------------- #
         kpi_row = QGridLayout()
         for col, (key, label) in enumerate(
-            [("cost", "Total cost"), ("tokens", "Tokens (in/out)"),
-             ("cache", "Cache hit"), ("sessions", "Sessions")]
+            [
+                ("cost", "Total cost"),
+                ("tokens", "Tokens (in/out)"),
+                ("cache", "Cache hit"),
+                ("sessions", "Sessions"),
+            ]
         ):
             card = _metric_card(label, "—")
             self._cards[key] = card.findChild(QLabel, "value")
@@ -116,7 +120,9 @@ class UsageCockpitPanel(QWidget):
 
         # --- Tool / skill / db calls ------------------------------------- #
         layout.addWidget(self._section("Tool, skill & database calls"))
-        self.tool_table = self._make_table(["Tool/Skill", "Category", "Calls", "Success"])
+        self.tool_table = self._make_table(
+            ["Tool/Skill", "Category", "Calls", "Success"]
+        )
         layout.addWidget(self.tool_table)
 
         # --- Activity heatmap -------------------------------------------- #
@@ -207,8 +213,12 @@ class UsageCockpitPanel(QWidget):
         for r, row in enumerate(rows[:20]):
             tok = (row.get("input_tokens", 0) or 0) + (row.get("output_tokens", 0) or 0)
             for c, val in enumerate(
-                [row.get("key", "?"), str(row.get("session_count", 0)),
-                 _fmt_num(tok), _fmt_usd(row.get("cost_usd", 0))]
+                [
+                    row.get("key", "?"),
+                    str(row.get("session_count", 0)),
+                    _fmt_num(tok),
+                    _fmt_usd(row.get("cost_usd", 0)),
+                ]
             ):
                 self.model_table.setItem(r, c, QTableWidgetItem(val))
 
@@ -216,15 +226,20 @@ class UsageCockpitPanel(QWidget):
         self.tool_table.setRowCount(len(rows[:20]))
         for r, row in enumerate(rows[:20]):
             for c, val in enumerate(
-                [row.get("name", "?"), row.get("category", "other"),
-                 str(row.get("calls", 0)),
-                 f"{round(row.get('success_rate', 0) * 100)}%"]
+                [
+                    row.get("name", "?"),
+                    row.get("category", "other"),
+                    str(row.get("calls", 0)),
+                    f"{round(row.get('success_rate', 0) * 100)}%",
+                ]
             ):
                 self.tool_table.setItem(r, c, QTableWidgetItem(val))
 
     def _fill_heatmap(self, cells: list):
         blocks = " ▁▂▃▄▅▆▇█"
-        grid = {(c.get("day_of_week"), c.get("hour")): c.get("sessions", 0) for c in cells}
+        grid = {
+            (c.get("day_of_week"), c.get("hour")): c.get("sessions", 0) for c in cells
+        }
         mx = max([v for v in grid.values()], default=1) or 1
         lines = []
         for di, day in enumerate(_DAYS):
@@ -240,9 +255,13 @@ class UsageCockpitPanel(QWidget):
         self.session_table.setRowCount(len(rows[:15]))
         for r, row in enumerate(rows[:15]):
             for c, val in enumerate(
-                [(row.get("project") or "—")[:40], row.get("agent", "?"),
-                 str(row.get("message_count", 0)), _fmt_usd(row.get("cost_usd", 0)),
-                 row.get("health_grade") or ""]
+                [
+                    (row.get("project") or "—")[:40],
+                    row.get("agent", "?"),
+                    str(row.get("message_count", 0)),
+                    _fmt_usd(row.get("cost_usd", 0)),
+                    row.get("health_grade") or "",
+                ]
             ):
                 self.session_table.setItem(r, c, QTableWidgetItem(val))
 

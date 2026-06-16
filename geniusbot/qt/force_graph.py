@@ -177,7 +177,9 @@ class ForceGraphWidget(QGraphicsView):
             text.setPos(x + r, y - r)
             self._scene.addItem(text)
         if self._scene.itemsBoundingRect().isValid():
-            self.setSceneRect(self._scene.itemsBoundingRect().adjusted(-40, -40, 40, 40))
+            self.setSceneRect(
+                self._scene.itemsBoundingRect().adjusted(-40, -40, 40, 40)
+            )
 
     def fact_count(self) -> int:
         return len(self._facts)
@@ -194,7 +196,9 @@ class _EdgeItem(QGraphicsLineItem):
         self._fact = fact
         self._signal = signal
         self.setAcceptHoverEvents(True)
-        title = fact.get("title") or (f"{fact.get('subject', '')} {fact.get('predicate', '')} {fact.get('object', '')}")
+        title = fact.get("title") or (
+            f"{fact.get('subject', '')} {fact.get('predicate', '')} {fact.get('object', '')}"
+        )
         self.setToolTip(title)
         self.setCursor(Qt.PointingHandCursor)  # type: ignore[attr-defined]  # PySide6 Qt.PointingHandCursor enum (incomplete stubs)
 

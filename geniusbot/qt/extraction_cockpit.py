@@ -89,7 +89,9 @@ class ExtractionCockpitPanel(QWidget):
         self.card = QTextEdit()
         self.card.setReadOnly(True)
         self.card.setMaximumWidth(320)
-        self.card.setHtml("<p style='color:#8A8A93;'>Hover or click an edge to see its fact.</p>")
+        self.card.setHtml(
+            "<p style='color:#8A8A93;'>Hover or click an edge to see its fact.</p>"
+        )
         splitter.addWidget(self.card)
         splitter.setSizes([700, 320])
         layout.addWidget(splitter, 1)
@@ -112,7 +114,9 @@ class ExtractionCockpitPanel(QWidget):
         self.status_lbl.setText("submitting…")
 
         async def runner(progress_cb=None):
-            return await self.gateway.submit_and_stream_extraction(text=text, url=url, progress_cb=progress_cb)
+            return await self.gateway.submit_and_stream_extraction(
+                text=text, url=url, progress_cb=progress_cb
+            )
 
         self.worker.run_agent_task(
             runner,
@@ -136,7 +140,8 @@ class ExtractionCockpitPanel(QWidget):
                 self._kept += 1
                 self.graph.add_fact(fact)
             self.status_lbl.setText(
-                f"streaming… {self._kept} facts" + (f" (+{self._dupes} dup)" if self._dupes else "")
+                f"streaming… {self._kept} facts"
+                + (f" (+{self._dupes} dup)" if self._dupes else "")
             )
         elif etype == "round_start":
             self.status_lbl.setText(f"round {ev.get('round')}…")
@@ -150,7 +155,9 @@ class ExtractionCockpitPanel(QWidget):
             self._job_id = result.get("job_id")
             self.btn_export.setEnabled(bool(self._job_id))
             if result.get("status") in ("unavailable", "error"):
-                self.status_lbl.setText(f"unavailable: {result.get('message', 'engine cold?')}")
+                self.status_lbl.setText(
+                    f"unavailable: {result.get('message', 'engine cold?')}"
+                )
             else:
                 self.status_lbl.setText(f"done — {self._kept} facts")
 
@@ -161,8 +168,15 @@ class ExtractionCockpitPanel(QWidget):
 
     def show_fact_card(self, fact: dict):
         """Render the clicked edge's fact as a card."""
-        tags = " ".join(f"<span style='color:#00E5FF;'>#{t}</span>" for t in (fact.get("tags") or []))
-        dup = "<span style='color:#FF1744;'>[duplicate]</span>" if fact.get("is_duplicate") else ""
+        tags = " ".join(
+            f"<span style='color:#00E5FF;'>#{t}</span>"
+            for t in (fact.get("tags") or [])
+        )
+        dup = (
+            "<span style='color:#FF1744;'>[duplicate]</span>"
+            if fact.get("is_duplicate")
+            else ""
+        )
         html = (
             f"<h3 style='color:#E4E4E7;'>{_esc(fact.get('title') or '')}</h3>"
             f"<p style='font-family:monospace;'>"
@@ -188,7 +202,9 @@ class ExtractionCockpitPanel(QWidget):
             return await self.gateway.fetch_extraction_jsonl(job_id)
 
         def on_done(text):
-            self.card.setHtml(f"<pre style='color:#E4E4E7; font-size:10px;'>{_esc((text or '').strip())}</pre>")
+            self.card.setHtml(
+                f"<pre style='color:#E4E4E7; font-size:10px;'>{_esc((text or '').strip())}</pre>"
+            )
 
         self.worker.run_agent_task(runner, on_finished=on_done, on_error=self._on_error)
 
