@@ -61,11 +61,18 @@ def test_panel_renders_streamed_facts_live(qapp) -> None:
             {
                 "type": "fact",
                 "is_duplicate": False,
-                "fact": {"subject": "A", "predicate": "rel", "object": "B", "tags": ["x"]},
+                "fact": {
+                    "subject": "A",
+                    "predicate": "rel",
+                    "object": "B",
+                    "tags": ["x"],
+                },
             }
         )
     )
-    panel._on_event(json.dumps({"type": "fact", "is_duplicate": True, "fact": {"subject": "A"}}))
+    panel._on_event(
+        json.dumps({"type": "fact", "is_duplicate": True, "fact": {"subject": "A"}})
+    )
     panel._on_event(json.dumps({"type": "job_done", "state": "done"}))
     assert panel.graph.fact_count() == 1  # duplicate not added to the graph
     assert panel._kept == 1 and panel._dupes == 1
@@ -130,7 +137,9 @@ async def test_gateway_submit_and_stream(monkeypatch) -> None:
 
     monkeypatch.setattr("httpx.AsyncClient", lambda *a, **k: _Client())
     events = []
-    out = await gw.submit_and_stream_extraction(text="doc", progress_cb=lambda s: events.append(s))
+    out = await gw.submit_and_stream_extraction(
+        text="doc", progress_cb=lambda s: events.append(s)
+    )
     assert out["status"] == "done" and out["facts"] == 1
     assert any("fact" in e for e in events)
 
