@@ -146,7 +146,9 @@ class FleetCockpitPanel(QWidget):
                 r, 1, QTableWidgetItem(str(appr.get("action", "—")))
             )
             self.appr_table.setItem(
-                r, 2, QTableWidgetItem(str(appr.get("target", appr.get("subject", "—"))))
+                r,
+                2,
+                QTableWidgetItem(str(appr.get("target", appr.get("subject", "—")))),
             )
             grant_btn = QPushButton("✅ Grant")
             grant_btn.clicked.connect(
