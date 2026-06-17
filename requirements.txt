@@ -4,7 +4,7 @@ ag-ui-protocol==0.1.18
     # via pydantic-ai-slim
 agent-client-protocol==0.9.0
     # via pydantic-acp
-agent-utilities==0.50.0
+agent-utilities==0.51.0
     # via geniusbot (pyproject.toml)
 aiofile==3.11.1
     # via py-key-value-aio
@@ -115,7 +115,7 @@ dspy-ai==3.2.1
     # via agent-utilities
 email-validator==2.3.0
     # via pydantic
-epistemic-graph==0.30.0
+epistemic-graph==0.31.0
     # via agent-utilities
 exceptiongroup==1.3.1
     # via fastmcp-slim
