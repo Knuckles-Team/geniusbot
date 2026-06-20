@@ -357,7 +357,7 @@ pydantic-graph==1.106.0
     # via pydantic-ai-slim
 pydantic-monty==0.0.18
     # via agent-utilities
-pydantic-settings==2.14.1
+pydantic-settings==2.14.2
     # via
     #   agent-utilities
     #   fastmcp-slim
