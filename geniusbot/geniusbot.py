@@ -169,6 +169,10 @@ class GeniusBot(QMainWindow):
         self.btn_graph.clicked.connect(lambda: self.switch_view(3))
         sidebar_layout.addWidget(self.btn_graph)
 
+        self.btn_temporal = QPushButton("🕰️ Temporal Graph")
+        self.btn_temporal.clicked.connect(lambda: self.switch_view(13))
+        sidebar_layout.addWidget(self.btn_temporal)
+
         self.btn_extraction = QPushButton("🧬 KG Extraction")
         self.btn_extraction.clicked.connect(lambda: self.switch_view(12))
         sidebar_layout.addWidget(self.btn_extraction)
@@ -209,9 +213,7 @@ class GeniusBot(QMainWindow):
 
         # Sidebar footer status
         self.lbl_status = QLabel("System Ready")
-        self.lbl_status.setStyleSheet(
-            "color: #8A8A93; font-size: 11px; padding-left: 10px;"
-        )
+        self.lbl_status.setStyleSheet("color: #8A8A93; font-size: 11px; padding-left: 10px;")
         sidebar_layout.addWidget(self.lbl_status)
         self.centralSplitter.addWidget(self.sidebar)
 
@@ -225,9 +227,7 @@ class GeniusBot(QMainWindow):
         # View 0: Agent Deck (Scroll Area)
         self.deck_scroll = QScrollArea()
         self.deck_scroll.setWidgetResizable(True)
-        self.deck_scroll.setStyleSheet(
-            "QScrollArea { border: none; background: transparent; }"
-        )
+        self.deck_scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         self.deck_container = QWidget()
         self.deck_layout = QVBoxLayout(self.deck_container)
         self.deck_layout.setSpacing(16)
@@ -253,9 +253,10 @@ class GeniusBot(QMainWindow):
         self.fleet_panel = None
         self.usage_panel = None
         self.extraction_panel = None
+        self.temporal_panel = None
 
-        # Views 3-11 + 12 (KG extraction) — lazy-loaded placeholders.
-        for _ in range(10):
+        # Views 3-12 + 13 (temporal graph) — lazy-loaded placeholders.
+        for _ in range(11):
             self.centralStackWidget.addWidget(QWidget())
 
         self.centralSplitter.addWidget(self.centralStackWidget)
@@ -305,9 +306,7 @@ class GeniusBot(QMainWindow):
         Setup the right slide-out telemetry detail drawer.
         """
         self.detail_drawer = QFrame()
-        self.detail_drawer.setStyleSheet(
-            f"background-color: {BG_SECONDARY}; border-left: 1px solid {BORDER_COLOR};"
-        )
+        self.detail_drawer.setStyleSheet(f"background-color: {BG_SECONDARY}; border-left: 1px solid {BORDER_COLOR};")
         self.detail_drawer.setMinimumWidth(320)
         self.detail_drawer.setMaximumWidth(400)
 
@@ -316,9 +315,7 @@ class GeniusBot(QMainWindow):
         drawer_layout.setSpacing(12)
 
         drawer_title = QLabel("🔮 TELEMETRY & LOGS")
-        drawer_title.setStyleSheet(
-            "font-size: 14px; font-weight: bold; color: #7C4DFF;"
-        )
+        drawer_title.setStyleSheet("font-size: 14px; font-weight: bold; color: #7C4DFF;")
         drawer_layout.addWidget(drawer_title)
 
         drawer_layout.addWidget(QLabel("Telemetry / Diagnostics Info:"))
@@ -426,6 +423,11 @@ class GeniusBot(QMainWindow):
 
             self.extraction_panel = ExtractionCockpitPanel(self.worker)
             self._swap_placeholder(12, self.extraction_panel)
+        elif index == 13 and self.temporal_panel is None:
+            from geniusbot.qt.temporal_graph_panel import TemporalGraphPanel
+
+            self.temporal_panel = TemporalGraphPanel(self.worker)
+            self._swap_placeholder(13, self.temporal_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
 
@@ -444,12 +446,11 @@ class GeniusBot(QMainWindow):
             (10, self.btn_fleet),
             (11, self.btn_usage),
             (12, self.btn_extraction),
+            (13, self.btn_temporal),
         ]
 
         for idx, btn in buttons:
-            btn.setStyleSheet(
-                "background-color: transparent; border: none;" if index != idx else ""
-            )
+            btn.setStyleSheet("background-color: transparent; border: none;" if index != idx else "")
 
         if index == 1 and not self.term_widget.fd:
             self.term_widget.start_shell("agent-terminal-ui")
@@ -457,9 +458,7 @@ class GeniusBot(QMainWindow):
     def setup_tray_daemon(self):
         """Bind Daemon trays and system states."""
         self.daemon.show_requested.connect(self.showNormal)
-        self.daemon.terminal_requested.connect(
-            lambda: (self.showNormal(), self.switch_view(1))
-        )
+        self.daemon.terminal_requested.connect(lambda: (self.showNormal(), self.switch_view(1)))
         self.daemon.health_check_requested.connect(self.run_health_check)
         self.daemon.exit_requested.connect(self.close)
         self.daemon.start()
@@ -492,9 +491,7 @@ class GeniusBot(QMainWindow):
             if widget:
                 widget.setParent(None)
 
-        cards = WidgetSchemaMapper.build_deck(
-            self.discovered_specialists, self.worker, self
-        )
+        cards = WidgetSchemaMapper.build_deck(self.discovered_specialists, self.worker, self)
         for card in cards:
             card.execution_started.connect(self.on_agent_started)
             card.execution_finished.connect(self.on_agent_finished)
@@ -530,12 +527,8 @@ class GeniusBot(QMainWindow):
 
         self.worker.run_agent_task(
             verify,
-            on_finished=lambda res: self.telemetry_log.append(
-                f"Diagnostics:\n{res.get('result')}\n"
-            ),
-            on_error=lambda err: self.telemetry_log.append(
-                f"Health check failed:\n{err}\n"
-            ),
+            on_finished=lambda res: self.telemetry_log.append(f"Diagnostics:\n{res.get('result')}\n"),
+            on_error=lambda err: self.telemetry_log.append(f"Health check failed:\n{err}\n"),
         )
 
     def handle_input_text_changed(self, text):
@@ -598,9 +591,7 @@ class GeniusBot(QMainWindow):
             self.telemetry_log.append(msg)
             self.lbl_status.setText("Agent thinking...")
 
-        self.worker.run_agent_task(
-            ask_copilot, on_finished=on_done, on_error=on_fail, on_progress=on_progress
-        )
+        self.worker.run_agent_task(ask_copilot, on_finished=on_done, on_error=on_fail, on_progress=on_progress)
 
     @Slot(str, bool)
     def log_to_console(self, text, is_stdout=True):
