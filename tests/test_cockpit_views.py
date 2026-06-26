@@ -9,6 +9,7 @@ from geniusbot.qt.graph_explorer import GraphExplorerPanel
 from geniusbot.qt.infra_cockpit import InfrastructureCockpitPanel
 from geniusbot.qt.security_policy import SecurityPolicyPanel
 from geniusbot.qt.telemetry_dashboard import TelemetryDashboardPanel
+from geniusbot.qt.temporal_graph_panel import TemporalGraphPanel
 from geniusbot.qt.workflow_builder import WorkflowBuilderPanel
 
 
@@ -22,6 +23,7 @@ def test_cockpit_panels_exist():
     assert inspect.isclass(SecurityPolicyPanel)
     assert inspect.isclass(InfrastructureCockpitPanel)
     assert inspect.isclass(FinanceCockpitPanel)
+    assert inspect.isclass(TemporalGraphPanel)
 
 
 @pytest.mark.unit
@@ -35,6 +37,7 @@ def test_cockpit_panels_exist():
         SecurityPolicyPanel,
         InfrastructureCockpitPanel,
         FinanceCockpitPanel,
+        TemporalGraphPanel,
     ],
 )
 def test_panel_signatures(cls):

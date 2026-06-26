@@ -23,6 +23,8 @@ from PySide6.QtWidgets import (
     QGraphicsView,
 )
 
+from geniusbot.qt.colors import EDGE_EXPIRED
+
 
 def normalize_key(s: str) -> str:
     """Canonical node key — mirrors ExtractedFact.normalize_key on the backend."""
@@ -160,9 +162,18 @@ class ForceGraphWidget(QGraphicsView):
             x2, y2 = self._positions[t]
             fact = self._facts[i]
             dup = bool(fact.get("is_duplicate"))
+            # Expired edges (no longer live at the temporal scrubber's AS OF
+            # instant) render greyed + dashed — the Qt equivalent of the webui
+            # greyed/dashed temporal edges (CONCEPT:GBOT-6.7).
+            expired = bool(fact.get("expired"))
             line = _EdgeItem(x1, y1, x2, y2, fact, self.edge_selected)  # type: ignore[arg-type]  # PySide6 SignalInstance vs Signal (incomplete stubs)
-            color = QColor(180, 60, 60) if dup else QColor(120, 120, 130)
-            line.setPen(QPen(color, 2.4 if not dup else 1.0))
+            if expired:
+                pen = QPen(QColor(EDGE_EXPIRED), 1.2)
+                pen.setStyle(Qt.DashLine)  # type: ignore[attr-defined]  # PySide6 Qt.DashLine enum (incomplete stubs)
+            else:
+                color = QColor(180, 60, 60) if dup else QColor(120, 120, 130)
+                pen = QPen(color, 2.4 if not dup else 1.0)
+            line.setPen(pen)
             self._scene.addItem(line)
         # nodes
         for key, (x, y) in self._positions.items():
@@ -177,9 +188,7 @@ class ForceGraphWidget(QGraphicsView):
             text.setPos(x + r, y - r)
             self._scene.addItem(text)
         if self._scene.itemsBoundingRect().isValid():
-            self.setSceneRect(
-                self._scene.itemsBoundingRect().adjusted(-40, -40, 40, 40)
-            )
+            self.setSceneRect(self._scene.itemsBoundingRect().adjusted(-40, -40, 40, 40))
 
     def fact_count(self) -> int:
         return len(self._facts)
@@ -196,9 +205,7 @@ class _EdgeItem(QGraphicsLineItem):
         self._fact = fact
         self._signal = signal
         self.setAcceptHoverEvents(True)
-        title = fact.get("title") or (
-            f"{fact.get('subject', '')} {fact.get('predicate', '')} {fact.get('object', '')}"
-        )
+        title = fact.get("title") or (f"{fact.get('subject', '')} {fact.get('predicate', '')} {fact.get('object', '')}")
         self.setToolTip(title)
         self.setCursor(Qt.PointingHandCursor)  # type: ignore[attr-defined]  # PySide6 Qt.PointingHandCursor enum (incomplete stubs)
 
