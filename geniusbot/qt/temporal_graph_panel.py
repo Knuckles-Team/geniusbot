@@ -89,7 +89,9 @@ def mark_expired(facts: list[dict[str, Any]], iso_ts: str) -> list[dict[str, Any
     out: list[dict[str, Any]] = []
     for fact in facts:
         valid_until = fact.get("valid_until")
-        expired = isinstance(valid_until, str) and bool(valid_until) and valid_until <= iso_ts
+        expired = (
+            isinstance(valid_until, str) and bool(valid_until) and valid_until <= iso_ts
+        )
         out.append({**fact, "expired": expired})
     return out
 
@@ -109,14 +111,18 @@ class TemporalGraphPanel(QWidget):
         layout.setSpacing(16)
 
         title_lbl = QLabel("🕰️ Temporal Graph Scrubber")
-        title_lbl.setStyleSheet("font-size: 20px; font-weight: bold; color: #7C4DFF; margin-bottom: 5px;")
+        title_lbl.setStyleSheet(
+            "font-size: 20px; font-weight: bold; color: #7C4DFF; margin-bottom: 5px;"
+        )
         layout.addWidget(title_lbl)
 
         subtitle_lbl = QLabel(
             "Scrub through time: the graph re-renders at the selected instant and "
             "edges expired by then are greyed and dashed."
         )
-        subtitle_lbl.setStyleSheet("color: #8A8A93; font-size: 12px; margin-bottom: 10px;")
+        subtitle_lbl.setStyleSheet(
+            "color: #8A8A93; font-size: 12px; margin-bottom: 10px;"
+        )
         layout.addWidget(subtitle_lbl)
 
         # ── Scrubber row ──
@@ -135,7 +141,9 @@ class TemporalGraphPanel(QWidget):
         layout.addLayout(scrub_row)
 
         self.ts_label = QLabel(f"AS OF {slider_to_iso(_SLIDER_MAX)}")
-        self.ts_label.setStyleSheet("color: #F5F5F7; font-family: monospace; font-size: 12px;")
+        self.ts_label.setStyleSheet(
+            "color: #F5F5F7; font-family: monospace; font-size: 12px;"
+        )
         layout.addWidget(self.ts_label)
 
         self.graph = ForceGraphWidget()
