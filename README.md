@@ -5,7 +5,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)
 ![PyPI - License](https://img.shields.io/pypi/l/geniusbot)
 
-*Version: 3.45.0*
+*Version: 4.0.0*
 
 > **Documentation** — The architecture overview, security boundaries, quick-start
 > guidance, and the GeniusBot concept registry are maintained in the

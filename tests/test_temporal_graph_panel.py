@@ -32,7 +32,10 @@ def test_slider_to_iso_endpoints() -> None:
     now = datetime(2026, 6, 30, 0, 0, 0, tzinfo=UTC)
     # Position 100 == now; position 0 == 30 days earlier.
     assert slider_to_iso(100, now=now) == now.isoformat()
-    assert slider_to_iso(0, now=now) == datetime(2026, 5, 31, 0, 0, 0, tzinfo=UTC).isoformat()
+    assert (
+        slider_to_iso(0, now=now)
+        == datetime(2026, 5, 31, 0, 0, 0, tzinfo=UTC).isoformat()
+    )
 
 
 def test_mark_expired_flags_old_edges() -> None:
