@@ -209,6 +209,18 @@ class GeniusBot(QMainWindow):
         self.btn_usage.clicked.connect(lambda: self.switch_view(11))
         sidebar_layout.addWidget(self.btn_usage)
 
+        self.btn_ask_data = QPushButton("🔎 Ask Data")
+        self.btn_ask_data.clicked.connect(lambda: self.switch_view(14))
+        sidebar_layout.addWidget(self.btn_ask_data)
+
+        self.btn_metrics = QPushButton("📊 Engine Metrics")
+        self.btn_metrics.clicked.connect(lambda: self.switch_view(15))
+        sidebar_layout.addWidget(self.btn_metrics)
+
+        self.btn_federated = QPushButton("🌐 Federated Search")
+        self.btn_federated.clicked.connect(lambda: self.switch_view(16))
+        sidebar_layout.addWidget(self.btn_federated)
+
         sidebar_layout.addStretch()
 
         # Sidebar footer status
@@ -258,9 +270,13 @@ class GeniusBot(QMainWindow):
         self.usage_panel = None
         self.extraction_panel = None
         self.temporal_panel = None
+        self.data_query_panel = None
+        self.metrics_panel = None
+        self.federated_panel = None
 
-        # Views 3-12 + 13 (temporal graph) — lazy-loaded placeholders.
-        for _ in range(11):
+        # Views 3-13 plus the epistemic-graph capability panels 14-16 —
+        # lazy-loaded placeholders (indices 3..16 inclusive).
+        for _ in range(14):
             self.centralStackWidget.addWidget(QWidget())
 
         self.centralSplitter.addWidget(self.centralStackWidget)
@@ -436,6 +452,21 @@ class GeniusBot(QMainWindow):
 
             self.temporal_panel = TemporalGraphPanel(self.worker)
             self._swap_placeholder(13, self.temporal_panel)
+        elif index == 14 and self.data_query_panel is None:
+            from geniusbot.qt.data_query_panel import DataQueryPanel
+
+            self.data_query_panel = DataQueryPanel(self.worker)
+            self._swap_placeholder(14, self.data_query_panel)
+        elif index == 15 and self.metrics_panel is None:
+            from geniusbot.qt.metrics_panel import MetricsPanel
+
+            self.metrics_panel = MetricsPanel(self.worker)
+            self._swap_placeholder(15, self.metrics_panel)
+        elif index == 16 and self.federated_panel is None:
+            from geniusbot.qt.federated_search_panel import FederatedSearchPanel
+
+            self.federated_panel = FederatedSearchPanel(self.worker)
+            self._swap_placeholder(16, self.federated_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
 
@@ -455,6 +486,9 @@ class GeniusBot(QMainWindow):
             (11, self.btn_usage),
             (12, self.btn_extraction),
             (13, self.btn_temporal),
+            (14, self.btn_ask_data),
+            (15, self.btn_metrics),
+            (16, self.btn_federated),
         ]
 
         for idx, btn in buttons:

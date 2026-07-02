@@ -198,6 +198,74 @@ class GatewayClient:
             logger.warning(f"JSONL fetch failed: {e}")
             return ""
 
+    # ── Epistemic-graph capability surface (W2) ─────────────────────────
+    # Thin POSTs to the gateway's action-routed ``/api/graph/*`` twins — the
+    # REST side of the graph-os MCP tools nl_query / ask_data / graph_promql /
+    # graph_kvcache / graph_federated_search (backend KG-2.305 / KG-2.308 /
+    # KG-2.310). Every call is graceful-offline like the rest of this facade:
+    # transport or tool errors collapse to a dict carrying an ``"error"`` key so
+    # the Qt event loop never sees an exception from a missing gateway/route.
+    async def _graph_post(self, route: str, payload: dict) -> dict:
+        """POST ``payload`` to ``/api/graph/{route}`` and unwrap the envelope."""
+        import httpx
+
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                resp = await client.post(
+                    f"{self.base_url}/api/graph/{route}", json=payload
+                )
+                resp.raise_for_status()
+                env = resp.json()
+        except Exception as e:
+            logger.warning(f"/api/graph/{route} call failed: {e}")
+            return {"error": f"gateway offline or route unavailable: {e}"}
+        if isinstance(env, dict) and env.get("status") == "error":
+            return {"error": env.get("message", "unknown gateway error")}
+        result = env.get("result") if isinstance(env, dict) else env
+        return result if isinstance(result, dict) else {"result": result}
+
+    async def ask_data(
+        self, question: str, *, dialect: str = "auto", limit: int = 50
+    ) -> dict:
+        """Answer a natural-language DATA question over the KG (backend KG-2.308).
+
+        Runs the DB-GPT-style multi-step data-analysis agent: schema-link →
+        generate a read-only query → execute → self-correct → synthesize an
+        answer. Returns answer + auditable query + rows + citations + trace.
+        """
+        return await self._graph_post(
+            "ask-data", {"question": question, "dialect": dialect, "limit": limit}
+        )
+
+    async def nl_query(
+        self, text: str, *, dialect: str = "auto", execute: bool = True, limit: int = 50
+    ) -> dict:
+        """Translate NL → one auditable read-only query and run it (backend KG-2.305).
+
+        Set ``execute=False`` to preview the generated query without running it.
+        """
+        return await self._graph_post(
+            "nl-query",
+            {"text": text, "dialect": dialect, "execute": execute, "limit": limit},
+        )
+
+    async def promql(self, query: str, *, action: str = "instant") -> dict:
+        """Query the engine's observability metrics with PromQL (backend KG-2.310)."""
+        return await self._graph_post("promql", {"query": query, "action": action})
+
+    async def kvcache_stats(self) -> dict:
+        """Shared content-addressed KV-cache occupancy + dedup counters (KG-2.310)."""
+        return await self._graph_post("kvcache", {"action": "stats"})
+
+    async def federated_search(
+        self, query: str, *, top_k: int = 10, references: str = ""
+    ) -> dict:
+        """Federated search across registered external graphs (backend KG-2.310)."""
+        payload: dict = {"query": query, "top_k": top_k}
+        if references:
+            payload["references"] = references
+        return await self._graph_post("federated-search", payload)
+
     async def stream_copilot_query(self, query: str, progress_cb=None):
         """Execute master copilot query with streaming output."""
         try:
