@@ -42,6 +42,9 @@ Operators can trigger actions, monitor running terminal inputs via the embedded 
 * **Zero-Trust Security Tool Guard**: Prompts native authorization dialogs to review arguments before executing dangerous mutations.
 * **Runnable Background Workers**: Utilizes thread pools (`QThreadPool`) to prevent GUI freezes during execution loops.
 * **Visual Trading Dashboard**: Snappy native C++ charting engine (`PySide6.QtCharts`) with OHLCV candlestick/line toggles, strategy indicator overlay crossovers (MACD/RSI), orderbook bids/asks depth volumes, and thread-safe crypto news feeds.
+* **Ask Data (NL→Query)**: Ask the Knowledge Graph a question in plain English; the engine generates an auditable read-only query (UQL/Cypher/SQL/SPARQL), runs it, and synthesizes an answer with citations — over the gateway `/api/graph/ask-data` and `/api/graph/nl-query` routes.
+* **Engine Metrics & Status**: Query engine observability with PromQL (`/api/graph/promql`) and watch the shared content-addressed KV-cache occupancy (`/api/graph/kvcache`).
+* **Federated Search**: Fan one query across every registered external graph and rank the merged results (`/api/graph/federated-search`).
 
 
 ---
