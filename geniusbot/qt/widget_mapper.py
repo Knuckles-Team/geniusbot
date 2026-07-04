@@ -21,7 +21,7 @@ from geniusbot.utils.agent_bridge import AgentBridgeWorker
 
 
 class AgentControlPanel(QFrame):
-    """Dynamic control panel generated for a single discovered agent Specialist (CONCEPT:GBOT-6.2)."""
+    """Dynamic control panel generated for a single discovered agent Specialist (CONCEPT:AU-GBOT.cockpit.concept-2)."""
 
     execution_started = Signal(str)  # Agent name
     execution_finished = Signal(str, dict)  # Agent name, result

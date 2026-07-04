@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CONCEPT:ECO-4.41 — Usage & Cost Cockpit.
+"""CONCEPT:AU-ECO.mcp.usage-cost-observability-surface — Usage & Cost Cockpit.
 
 Surfaces the agent-utilities observability plane (/api/observability/*) in the
 desktop cockpit: usage/cost KPIs, cost-by-model, tool/skill/db-call metrics, a

@@ -1,5 +1,5 @@
 """
-CONCEPT:GBOT-6.0
+CONCEPT:AU-GBOT.cockpit.through-gbot
 Single backend adapter seam for GeniusBot.
 
 This module is the ONLY place in the geniusbot package that is permitted to

@@ -1,4 +1,4 @@
-"""Native force-directed graph widget for knowledge-graph facts (CONCEPT:ECO-4.43).
+"""Native force-directed graph widget for knowledge-graph facts (CONCEPT:AU-ECO.connector.git-task-resolver).
 
 A lightweight QGraphicsView force graph: each fact is a directed edge
 ``(subject) -[predicate]-> (object)`` between canonical entity nodes; hovering or
@@ -164,7 +164,7 @@ class ForceGraphWidget(QGraphicsView):
             dup = bool(fact.get("is_duplicate"))
             # Expired edges (no longer live at the temporal scrubber's AS OF
             # instant) render greyed + dashed — the Qt equivalent of the webui
-            # greyed/dashed temporal edges (CONCEPT:GBOT-6.7).
+            # greyed/dashed temporal edges (CONCEPT:GB-GBOT.cockpit.gbot-7).
             expired = bool(fact.get("expired"))
             line = _EdgeItem(x1, y1, x2, y2, fact, self.edge_selected)  # type: ignore[arg-type]  # PySide6 SignalInstance vs Signal (incomplete stubs)
             if expired:

@@ -48,9 +48,9 @@ class FinanceCockpitPanel(QWidget):
     """
     High-Performance Visual Trading Dashboard Panel.
 
-    CONCEPT:GBOT-6.0: Snappy Native Finance Charts using hardware-accelerated QtCharts.
-    CONCEPT:GBOT-7.0: Multi-Backend Ingestion with simulated and active emerald-exchange support.
-    CONCEPT:GBOT-8.0: Unified Parity Finance Cockpit integrating charts, orderbooks, and RSS.
+    CONCEPT:AU-GBOT.cockpit.through-gbot: Snappy Native Finance Charts using hardware-accelerated QtCharts.
+    CONCEPT:GB-GBOT.cockpit.multi-backend-ingestion-simulated: Multi-Backend Ingestion with simulated and active emerald-exchange support.
+    CONCEPT:GB-GBOT.cockpit.unified-parity-finance-cockpit: Unified Parity Finance Cockpit integrating charts, orderbooks, and RSS.
     """
 
     def __init__(self, worker, parent=None):

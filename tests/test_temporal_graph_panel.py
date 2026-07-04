@@ -1,4 +1,4 @@
-"""Tests for the geniusbot temporal graph scrubber panel (CONCEPT:GBOT-6.7).
+"""Tests for the geniusbot temporal graph scrubber panel (CONCEPT:GB-GBOT.cockpit.gbot-7).
 
 Qt runs offscreen (conftest). The pure query/expiry math is tested without a
 display; the panel is exercised by feeding it fact rows directly and checking
