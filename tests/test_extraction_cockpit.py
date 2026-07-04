@@ -1,4 +1,4 @@
-"""Tests for the geniusbot KG extraction cockpit (CONCEPT:ECO-4.43).
+"""Tests for the geniusbot KG extraction cockpit (CONCEPT:AU-ECO.connector.git-task-resolver).
 
 Qt runs offscreen (conftest). The pure layout math is tested without a display;
 the panel is exercised by feeding it streamed events directly.

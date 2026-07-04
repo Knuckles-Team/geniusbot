@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CONCEPT:GBOT-6.8 — Ask-Data / NL→Query Cockpit.
+"""CONCEPT:GB-GBOT.cockpit.ask-data-nl-query — Ask-Data / NL→Query Cockpit.
 
 Surfaces the epistemic-graph natural-language query surface in the desktop
 cockpit: the user asks a data question in plain English and gets a synthesized

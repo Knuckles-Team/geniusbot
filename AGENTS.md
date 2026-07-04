@@ -22,19 +22,19 @@ This document defines the architecture, standard commands, code design principle
 
 | Concept ID | Name | Focus | Core Code Paths |
 | :--- | :--- | :--- | :--- |
-| **GBOT-6.0** | **Desktop Cockpit Orchestrator** | PySide6 window loops, async `QThreadPool` dispatching, central system tray, and styling. **(Must strictly adhere to CONCEPT-HIG)** | `geniusbot/geniusbot.py` |
-| **GBOT-6.1** | **Ecosystem Dynamic Tab Matrix** | Scans `agent-packages/agents/*` and dynamically injects Qt control widgets for each discovered agent. | `geniusbot/plugins/` |
-| **GBOT-6.2** | **Embedded Terminal Sandbox** | PTY process execution streaming `agent-terminal-ui` inside a custom text widget. | `geniusbot/qt/terminal_widget.py` |
-| **GBOT-6.3** | **Universal Tool Approval Gate** | Desktop modal prompt that intercepts critical commands triggered by backend agents. **(Must use glassmorphic depth/CONCEPT-HIG)** | `geniusbot/qt/tool_guard.py` |
-| **GBOT-6.4** | **Topological Cockpit Memory** | In-memory configuration syncing and local graph-store caching. | `geniusbot/utils/agent_bridge.py` |
-| **GBOT-6.5** | **Multi-Tenant Daemon & Tray** | Background system tray icon running scheduler loops for long-running agent tasks. | `geniusbot/utils/daemon.py` |
-| **GBOT-6.6** | **Fleet Supervisory Cockpit** | Surfaces the agent-utilities fleet autonomy control plane (OS-5.10/5.15/5.24) — worker placement topology and the ActionPolicy approval inbox — via the shared gateway SDK (ECO-4.37). | `geniusbot/qt/fleet_cockpit.py` |
-| **GBOT-6.7** | **Temporal Graph Scrubber** | Bi-temporal graph scrubber panel — replays the Knowledge Graph as-of any point in time. | `geniusbot/qt/temporal_graph_panel.py` |
-| **GBOT-6.8** | **Ask-Data / NL→Query Cockpit** | Ask the KG a data question in plain English → auditable generated query + rows + citations, over the gateway `/api/graph/ask-data` (KG-2.308) and `/api/graph/nl-query` (KG-2.305) twins. | `geniusbot/qt/data_query_panel.py` |
-| **GBOT-6.9** | **Engine Metrics & Status Cockpit** | PromQL metric queries + shared content-addressed KV-cache stats over `/api/graph/promql` and `/api/graph/kvcache` (KG-2.310). | `geniusbot/qt/metrics_panel.py` |
-| **GBOT-6.10** | **Federated Search Cockpit** | One query fanned across every registered external graph over `/api/graph/federated-search` (KG-2.310). | `geniusbot/qt/federated_search_panel.py` |
+| **AU-GBOT.cockpit.through-gbot** | **Desktop Cockpit Orchestrator** | PySide6 window loops, async `QThreadPool` dispatching, central system tray, and styling. **(Must strictly adhere to CONCEPT-HIG)** | `geniusbot/geniusbot.py` |
+| **AU-GBOT.cockpit.pillar-overview** | **Ecosystem Dynamic Tab Matrix** | Scans `agent-packages/agents/*` and dynamically injects Qt control widgets for each discovered agent. | `geniusbot/plugins/` |
+| **AU-GBOT.cockpit.concept-2** | **Embedded Terminal Sandbox** | PTY process execution streaming `agent-terminal-ui` inside a custom text widget. | `geniusbot/qt/terminal_widget.py` |
+| **AU-GBOT.cockpit.concept-3** | **Universal Tool Approval Gate** | Desktop modal prompt that intercepts critical commands triggered by backend agents. **(Must use glassmorphic depth/CONCEPT-HIG)** | `geniusbot/qt/tool_guard.py` |
+| **AU-GBOT.cockpit.concept-4** | **Topological Cockpit Memory** | In-memory configuration syncing and local graph-store caching. | `geniusbot/utils/agent_bridge.py` |
+| **AU-GBOT.cockpit.concept-5** | **Multi-Tenant Daemon & Tray** | Background system tray icon running scheduler loops for long-running agent tasks. | `geniusbot/utils/daemon.py` |
+| **AU-GBOT.cockpit.concept-6** | **Fleet Supervisory Cockpit** | Surfaces the agent-utilities fleet autonomy control plane (AU-OS.safety.ontological-guardrail/5.15/5.24) — worker placement topology and the ActionPolicy approval inbox — via the shared gateway SDK (AU-ECO.interop.gateway-client-sdk). | `geniusbot/qt/fleet_cockpit.py` |
+| **GB-GBOT.cockpit.gbot-7** | **Temporal Graph Scrubber** | Bi-temporal graph scrubber panel — replays the Knowledge Graph as-of any point in time. | `geniusbot/qt/temporal_graph_panel.py` |
+| **GB-GBOT.cockpit.ask-data-nl-query** | **Ask-Data / NL→Query Cockpit** | Ask the KG a data question in plain English → auditable generated query + rows + citations, over the gateway `/api/graph/ask-data` (KG-2.308) and `/api/graph/nl-query` (KG-2.305) twins. | `geniusbot/qt/data_query_panel.py` |
+| **GB-GBOT.cockpit.metrics-status-cockpit** | **Engine Metrics & Status Cockpit** | PromQL metric queries + shared content-addressed KV-cache stats over `/api/graph/promql` and `/api/graph/kvcache` (KG-2.310). | `geniusbot/qt/metrics_panel.py` |
+| **GB-GBOT.cockpit.federated-search-cockpit** | **Federated Search Cockpit** | One query fanned across every registered external graph over `/api/graph/federated-search` (KG-2.310). | `geniusbot/qt/federated_search_panel.py` |
 
-> **Note on UI Cohesion (`CONCEPT-HIG`)**: All PySide6 UI elements implemented under GBOT-6.0 and GBOT-6.3 must adhere to the ecosystem-wide **Human Interface Guidelines**. This includes supporting dynamic QPalette/stylesheet brand theming, rail-navigation sidebars (via QPropertyAnimation), and depth-aware/glassmorphic modals for disruptive prompts.
+> **Note on UI Cohesion (`CONCEPT-HIG`)**: All PySide6 UI elements implemented under AU-GBOT.cockpit.through-gbot and AU-GBOT.cockpit.concept-3 must adhere to the ecosystem-wide **Human Interface Guidelines**. This includes supporting dynamic QPalette/stylesheet brand theming, rail-navigation sidebars (via QPropertyAnimation), and depth-aware/glassmorphic modals for disruptive prompts.
 
 ---
 

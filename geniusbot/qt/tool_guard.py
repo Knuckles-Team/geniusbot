@@ -21,7 +21,7 @@ from geniusbot.qt.colors import (
 
 
 class ToolGuardDialog(QDialog):
-    """Polished, space-dark mode tool authorization dialog (CONCEPT:OS-5.4/OS-5.5)."""
+    """Polished, space-dark mode tool authorization dialog (CONCEPT:AU-OS.governance.wasm-micro-agent-sandbox/OS-5.5)."""
 
     def __init__(self, tool_name: str, arguments: dict, parent=None):
         super().__init__(parent)

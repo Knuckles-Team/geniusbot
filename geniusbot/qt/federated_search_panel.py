@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CONCEPT:GBOT-6.10 — Federated Search Cockpit.
+"""CONCEPT:GB-GBOT.cockpit.federated-search-cockpit — Federated Search Cockpit.
 
 Surfaces the epistemic-graph federated-search surface
 (``/api/graph/federated-search``, backend KG-2.310) in the desktop cockpit: a

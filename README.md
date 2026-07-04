@@ -172,7 +172,7 @@ iscc "./setup.iss"
 For deep architectural guidelines and code documentation, explore:
 * [docs/index.md](docs/index.md) — Documentation Entrypoint & Quickstart.
 * [docs/overview.md](docs/overview.md) — Detailed Architecture & Security Guardrails.
-* [docs/concepts.md](docs/concepts.md) — Concept Registries (`CONCEPT:GBOT-1.0` through `8.0`).
+* [docs/concepts.md](docs/concepts.md) — Concept Registries (`CONCEPT:GB-GBOT.cockpit.gbot` through `8.0`).
 
 ---
 

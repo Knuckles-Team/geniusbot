@@ -1,9 +1,9 @@
 """
-CONCEPT:GBOT-6.0
+CONCEPT:AU-GBOT.cockpit.through-gbot
 Service layer for communicating with the agent-utilities gateway.
 
 Thin geniusbot-facing facade over the shared surface SDK
-(:class:`agent_utilities.gateway_client.GatewayClient`, CONCEPT:ECO-4.37) — the
+(:class:`agent_utilities.gateway_client.GatewayClient`, CONCEPT:AU-ECO.interop.gateway-client-sdk) — the
 single client every surface uses, so transport/auth/retry live in one place. This
 facade preserves geniusbot's graceful-offline contract: every method swallows
 transport errors and returns a safe default so the Qt event loop never sees an
@@ -86,7 +86,7 @@ class GatewayClient:
             logger.warning(f"Grant approval failed: {e}")
             return {"error": str(e)}
 
-    # ── Usage / cost / observability (CONCEPT:ECO-4.41) ─────────────────
+    # ── Usage / cost / observability (CONCEPT:AU-ECO.mcp.usage-cost-observability-surface) ─────────────────
     async def fetch_usage_summary(self, **f):
         try:
             return await self._sdk.usage_summary(**f)

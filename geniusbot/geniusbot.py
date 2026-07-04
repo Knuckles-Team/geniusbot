@@ -90,7 +90,7 @@ class OutputWrapper(QObject):
 
 class GeniusBot(QMainWindow):
     """
-    CONCEPT:GBOT-6.0
+    CONCEPT:AU-GBOT.cockpit.through-gbot
     GeniusBot Cockpit Dashboard Window.
     """
 
@@ -110,7 +110,7 @@ class GeniusBot(QMainWindow):
 
     def initialize_user_interface(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Initialize the main user interface components.
         Refactored to orchestrate sub-components.
         """
@@ -127,7 +127,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_sidebar(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the left navigation sidebar.
         """
         self.sidebar = QFrame()
@@ -233,7 +233,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_central_pane(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the main central content stacked widget.
         """
         self.centralStackWidget = QStackedWidget()
@@ -283,7 +283,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_copilot_chat(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the Copilot chat pane inside the central stack.
         """
         self.chat_container = QWidget()
@@ -322,7 +322,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_detail_drawer(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the right slide-out telemetry detail drawer.
         """
         self.detail_drawer = QFrame()
@@ -362,7 +362,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_console_wrapper(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the bottom global terminal logger.
         """
         # Splitter sizing ratio: 15% sidebar, 50% central view, 35% right drawer
@@ -511,7 +511,7 @@ class GeniusBot(QMainWindow):
 
     def async_load_specialists(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Asynchronously load all specialists from the Knowledge Graph via the Gateway.
         """
         self.lbl_status.setText("Connecting Graph...")
@@ -602,7 +602,7 @@ class GeniusBot(QMainWindow):
 
     def send_chat_message(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Execute master copilot query with prompt injection scan and secure guard confirmations.
         """
         query = self.chat_input.text().strip()
@@ -616,7 +616,7 @@ class GeniusBot(QMainWindow):
 
     def _execute_copilot_request(self, query: str):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Internal async handler to route the copilot request to the gateway.
         """
 
