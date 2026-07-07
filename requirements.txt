@@ -211,7 +211,7 @@ jiter==0.15.0
     # via openai
 joblib==1.5.3
     # via nltk
-joserfc==1.6.7
+joserfc==1.6.8
     # via authlib
 json-repair==0.61.0
     # via dspy
