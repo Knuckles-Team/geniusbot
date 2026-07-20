@@ -76,7 +76,7 @@ class _FetchWorker(QThread):
         except ImportError:
             self.error.emit("agent-utilities gateway module not available.")
         except Exception as e:
-            self.error.emit(str(e))
+            self.error.emit(type(e).__name__)
 
 
 # ── ServiceCard QFrame ──────────────────────────────────────────────
@@ -179,7 +179,7 @@ class ServiceCard(QFrame):
                     widget.deleteLater()
 
         if error:
-            self.error_label.setText(f"⚠ {error}")
+            self.error_label.setText(f"⚠ {type(error).__name__}")
             self.error_label.show()
             return
 
@@ -289,8 +289,10 @@ class ServiceDashboardPanel(QWidget):
             self.grid_layout.addWidget(empty)
             return
         except Exception as e:
-            logger.error("Failed to load dashboard config: %s", e)
-            error_label = QLabel(f"⚠ Failed to load config: {e}")
+            logger.error(
+                "Failed to load dashboard config: error_type=%s", type(e).__name__
+            )
+            error_label = QLabel("⚠ Failed to load config")
             error_label.setStyleSheet("color: #FF5252; font-size: 14px;")
             self.grid_layout.addWidget(error_label)
             return
@@ -383,8 +385,8 @@ class ServiceDashboardPanel(QWidget):
 
     def _on_fetch_error(self, error_msg: str) -> None:
         """Handle fetch error."""
-        logger.error("Dashboard fetch failed: %s", error_msg)
-        self.stats_label.setText(f"⚠ Fetch error: {error_msg}")
+        logger.error("Dashboard fetch failed")
+        self.stats_label.setText("⚠ Fetch error")
 
     def _start_auto_refresh(self) -> None:
         """Start periodic auto-refresh (every 30 seconds)."""

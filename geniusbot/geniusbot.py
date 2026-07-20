@@ -525,7 +525,7 @@ class GeniusBot(QMainWindow):
             self.populate_specialist_deck()
 
         def on_error(err):
-            logger.error(f"Discovery failed: {err}")
+            logger.error("Specialist discovery failed")
             self.lbl_status.setText("Graph offline.")
 
         self.worker.run_agent_task(fetch, on_finished=on_finished, on_error=on_error)

@@ -1,6 +1,4 @@
 import asyncio
-import sys
-import traceback
 from collections.abc import Callable
 from typing import Any
 
@@ -41,9 +39,8 @@ class AgentRunnable(QRunnable):
                 self.signals.finished.emit(result)
             else:
                 self.signals.finished.emit({"status": "success", "result": str(result)})
-        except Exception:
-            err_trace = "".join(traceback.format_exception(*sys.exc_info()))
-            self.signals.error.emit(err_trace)
+        except Exception as exc:
+            self.signals.error.emit(f"Agent task failed ({type(exc).__name__})")
         finally:
             loop.close()
 

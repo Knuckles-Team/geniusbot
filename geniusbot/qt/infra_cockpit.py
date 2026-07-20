@@ -136,7 +136,7 @@ class InfrastructureCockpitPanel(QWidget):
         net_layout.addWidget(QLabel("Active Tunnel Connections Topology:"))
         self.network_details = QLabel(
             "📍 Local Loopback Tunnel : 127.0.0.1:5432 <=======> Postgres KG Staging Container\n"
-            "🌐 Secure SSH proxy tunnel: 10.0.1.14:22   <=======> Technitium DNS Server Staged"
+            "🌐 Secure SSH proxy tunnel configured   <=======> DNS service staged"
         )
         self.network_details.setStyleSheet(
             "background-color: #0b0b0d; font-family: monospace; font-size: 11px; padding: 15px; border-radius: 6px; border: 1px solid #1E1E22; color: #8A8A93;"
