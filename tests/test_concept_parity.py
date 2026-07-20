@@ -60,7 +60,7 @@ def extract_concepts_from_codebase(directory):
 
 
 @pytest.mark.unit
-@pytest.mark.concept("GBOT-6.0")
+@pytest.mark.concept("AU-GBOT.cockpit.through-gbot")
 def test_concept_parity():
     """
     Enforces that all concepts documented or used in geniusbot

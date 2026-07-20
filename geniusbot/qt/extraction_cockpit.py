@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Document → knowledge-graph extraction cockpit (CONCEPT:ECO-4.43).
+"""Document → knowledge-graph extraction cockpit (CONCEPT:AU-ECO.connector.git-task-resolver).
 
 Paste text or a URL, watch facts stream live onto a native force-directed graph,
 click an edge for its full fact card (confidence / evidence / tags / source),

@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import logging
-import os
 import shutil
-import sys
 
 
 # This creates the log object
@@ -26,7 +24,7 @@ class Log:
             self.logging_dir = logging_dir
 
         self.logging_file = str(xdg_log_dir / "geniusbot.log").replace("\\", "/")
-        print("Log File: ", self.logging_file)
+        print("File logging initialized")
         logging.basicConfig(
             filename=self.logging_file,
             format="%(asctime)s:%(levelname)s:%(name)s:%(message)s",
@@ -49,16 +47,12 @@ class Log:
         self.logger.info("Logging Module: Initializing")
 
     def log_stdout(self):
-        stdout_logger = logging.getLogger("STDOUT")
-        sl = StreamToLogger(stdout_logger, logging.INFO)
-        sys.stdout = sl
-        self.logger.debug(sys.stdout)
+        """Keep stdout attached to the caller instead of persisting raw output."""
+        self.logger.info("Raw stdout capture is disabled by privacy policy")
 
     def log_stderr(self):
-        stderr_logger = logging.getLogger("STDERR")
-        sl = StreamToLogger(stderr_logger, logging.ERROR)
-        sys.stderr = sl
-        self.logger.warning(sys.stderr)
+        """Keep stderr attached to the caller instead of persisting raw output."""
+        self.logger.info("Raw stderr capture is disabled by privacy policy")
 
     # Write msg to Log as Debug Line
     def debug(self, msg):
@@ -93,7 +87,7 @@ class Log:
         shutil.copy(self.logging_file, f"{self.logging_dir}log_dump.txt")
 
 
-# This class will write to the logfile in stream format
+# Compatibility adapter for callers that explicitly provide privacy-safe text.
 class StreamToLogger:
     def __init__(self, logger, log_level=logging.INFO):
         self.logger = logger
@@ -101,5 +95,9 @@ class StreamToLogger:
         self.linebuf = ""
 
     def write(self, buf):
-        for line in buf.rstrip().splitlines():
-            self.logger.log(self.log_level, line.rstrip())
+        if buf and buf.strip():
+            self.logger.log(
+                self.log_level,
+                "External stream activity: character_count=%d",
+                len(buf),
+            )

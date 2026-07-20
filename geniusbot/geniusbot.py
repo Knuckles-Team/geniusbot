@@ -90,7 +90,7 @@ class OutputWrapper(QObject):
 
 class GeniusBot(QMainWindow):
     """
-    CONCEPT:GBOT-6.0
+    CONCEPT:AU-GBOT.cockpit.through-gbot
     GeniusBot Cockpit Dashboard Window.
     """
 
@@ -110,7 +110,7 @@ class GeniusBot(QMainWindow):
 
     def initialize_user_interface(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Initialize the main user interface components.
         Refactored to orchestrate sub-components.
         """
@@ -127,7 +127,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_sidebar(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the left navigation sidebar.
         """
         self.sidebar = QFrame()
@@ -209,6 +209,18 @@ class GeniusBot(QMainWindow):
         self.btn_usage.clicked.connect(lambda: self.switch_view(11))
         sidebar_layout.addWidget(self.btn_usage)
 
+        self.btn_ask_data = QPushButton("🔎 Ask Data")
+        self.btn_ask_data.clicked.connect(lambda: self.switch_view(14))
+        sidebar_layout.addWidget(self.btn_ask_data)
+
+        self.btn_metrics = QPushButton("📊 Engine Metrics")
+        self.btn_metrics.clicked.connect(lambda: self.switch_view(15))
+        sidebar_layout.addWidget(self.btn_metrics)
+
+        self.btn_federated = QPushButton("🌐 Federated Search")
+        self.btn_federated.clicked.connect(lambda: self.switch_view(16))
+        sidebar_layout.addWidget(self.btn_federated)
+
         sidebar_layout.addStretch()
 
         # Sidebar footer status
@@ -221,7 +233,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_central_pane(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the main central content stacked widget.
         """
         self.centralStackWidget = QStackedWidget()
@@ -258,16 +270,20 @@ class GeniusBot(QMainWindow):
         self.usage_panel = None
         self.extraction_panel = None
         self.temporal_panel = None
+        self.data_query_panel = None
+        self.metrics_panel = None
+        self.federated_panel = None
 
-        # Views 3-12 + 13 (temporal graph) — lazy-loaded placeholders.
-        for _ in range(11):
+        # Views 3-13 plus the epistemic-graph capability panels 14-16 —
+        # lazy-loaded placeholders (indices 3..16 inclusive).
+        for _ in range(14):
             self.centralStackWidget.addWidget(QWidget())
 
         self.centralSplitter.addWidget(self.centralStackWidget)
 
     def _setup_copilot_chat(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the Copilot chat pane inside the central stack.
         """
         self.chat_container = QWidget()
@@ -306,7 +322,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_detail_drawer(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the right slide-out telemetry detail drawer.
         """
         self.detail_drawer = QFrame()
@@ -346,7 +362,7 @@ class GeniusBot(QMainWindow):
 
     def _setup_console_wrapper(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Setup the bottom global terminal logger.
         """
         # Splitter sizing ratio: 15% sidebar, 50% central view, 35% right drawer
@@ -436,6 +452,21 @@ class GeniusBot(QMainWindow):
 
             self.temporal_panel = TemporalGraphPanel(self.worker)
             self._swap_placeholder(13, self.temporal_panel)
+        elif index == 14 and self.data_query_panel is None:
+            from geniusbot.qt.data_query_panel import DataQueryPanel
+
+            self.data_query_panel = DataQueryPanel(self.worker)
+            self._swap_placeholder(14, self.data_query_panel)
+        elif index == 15 and self.metrics_panel is None:
+            from geniusbot.qt.metrics_panel import MetricsPanel
+
+            self.metrics_panel = MetricsPanel(self.worker)
+            self._swap_placeholder(15, self.metrics_panel)
+        elif index == 16 and self.federated_panel is None:
+            from geniusbot.qt.federated_search_panel import FederatedSearchPanel
+
+            self.federated_panel = FederatedSearchPanel(self.worker)
+            self._swap_placeholder(16, self.federated_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
 
@@ -455,6 +486,9 @@ class GeniusBot(QMainWindow):
             (11, self.btn_usage),
             (12, self.btn_extraction),
             (13, self.btn_temporal),
+            (14, self.btn_ask_data),
+            (15, self.btn_metrics),
+            (16, self.btn_federated),
         ]
 
         for idx, btn in buttons:
@@ -477,7 +511,7 @@ class GeniusBot(QMainWindow):
 
     def async_load_specialists(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Asynchronously load all specialists from the Knowledge Graph via the Gateway.
         """
         self.lbl_status.setText("Connecting Graph...")
@@ -491,7 +525,7 @@ class GeniusBot(QMainWindow):
             self.populate_specialist_deck()
 
         def on_error(err):
-            logger.error(f"Discovery failed: {err}")
+            logger.error("Specialist discovery failed")
             self.lbl_status.setText("Graph offline.")
 
         self.worker.run_agent_task(fetch, on_finished=on_finished, on_error=on_error)
@@ -568,7 +602,7 @@ class GeniusBot(QMainWindow):
 
     def send_chat_message(self):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Execute master copilot query with prompt injection scan and secure guard confirmations.
         """
         query = self.chat_input.text().strip()
@@ -582,7 +616,7 @@ class GeniusBot(QMainWindow):
 
     def _execute_copilot_request(self, query: str):
         """
-        CONCEPT:GBOT-6.0
+        CONCEPT:AU-GBOT.cockpit.through-gbot
         Internal async handler to route the copilot request to the gateway.
         """
 

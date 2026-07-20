@@ -22,15 +22,19 @@ This document defines the architecture, standard commands, code design principle
 
 | Concept ID | Name | Focus | Core Code Paths |
 | :--- | :--- | :--- | :--- |
-| **GBOT-6.0** | **Desktop Cockpit Orchestrator** | PySide6 window loops, async `QThreadPool` dispatching, central system tray, and styling. **(Must strictly adhere to CONCEPT-HIG)** | `geniusbot/geniusbot.py` |
-| **GBOT-6.1** | **Ecosystem Dynamic Tab Matrix** | Scans `agent-packages/agents/*` and dynamically injects Qt control widgets for each discovered agent. | `geniusbot/plugins/` |
-| **GBOT-6.2** | **Embedded Terminal Sandbox** | PTY process execution streaming `agent-terminal-ui` inside a custom text widget. | `geniusbot/qt/terminal_widget.py` |
-| **GBOT-6.3** | **Universal Tool Approval Gate** | Desktop modal prompt that intercepts critical commands triggered by backend agents. **(Must use glassmorphic depth/CONCEPT-HIG)** | `geniusbot/qt/tool_guard.py` |
-| **GBOT-6.4** | **Topological Cockpit Memory** | In-memory configuration syncing and local graph-store caching. | `geniusbot/utils/agent_bridge.py` |
-| **GBOT-6.5** | **Multi-Tenant Daemon & Tray** | Background system tray icon running scheduler loops for long-running agent tasks. | `geniusbot/utils/daemon.py` |
-| **GBOT-6.6** | **Fleet Supervisory Cockpit** | Surfaces the agent-utilities fleet autonomy control plane (OS-5.10/5.15/5.24) — worker placement topology and the ActionPolicy approval inbox — via the shared gateway SDK (ECO-4.37). | `geniusbot/qt/fleet_cockpit.py` |
+| **AU-GBOT.cockpit.through-gbot** | **Desktop Cockpit Orchestrator** | PySide6 window loops, async `QThreadPool` dispatching, central system tray, and styling. **(Must strictly adhere to CONCEPT-HIG)** | `geniusbot/geniusbot.py` |
+| **AU-GBOT.cockpit.pillar-overview** | **Ecosystem Dynamic Tab Matrix** | Scans `agent-packages/agents/*` and dynamically injects Qt control widgets for each discovered agent. | `geniusbot/plugins/` |
+| **AU-GBOT.cockpit.concept-2** | **Embedded Terminal Sandbox** | PTY process execution streaming `agent-terminal-ui` inside a custom text widget. | `geniusbot/qt/terminal_widget.py` |
+| **AU-GBOT.cockpit.concept-3** | **Universal Tool Approval Gate** | Desktop modal prompt that intercepts critical commands triggered by backend agents. **(Must use glassmorphic depth/CONCEPT-HIG)** | `geniusbot/qt/tool_guard.py` |
+| **AU-GBOT.cockpit.concept-4** | **Topological Cockpit Memory** | In-memory configuration syncing and local graph-store caching. | `geniusbot/utils/agent_bridge.py` |
+| **AU-GBOT.cockpit.concept-5** | **Multi-Tenant Daemon & Tray** | Background system tray icon running scheduler loops for long-running agent tasks. | `geniusbot/utils/daemon.py` |
+| **AU-GBOT.cockpit.concept-6** | **Fleet Supervisory Cockpit** | Surfaces the agent-utilities fleet autonomy control plane (AU-OS.safety.ontological-guardrail/5.15/5.24) — worker placement topology and the ActionPolicy approval inbox — via the shared gateway SDK (AU-ECO.interop.gateway-client-sdk). | `geniusbot/qt/fleet_cockpit.py` |
+| **GB-GBOT.cockpit.gbot-7** | **Temporal Graph Scrubber** | Bi-temporal graph scrubber panel — replays the Knowledge Graph as-of any point in time. | `geniusbot/qt/temporal_graph_panel.py` |
+| **GB-GBOT.cockpit.ask-data-nl-query** | **Ask-Data / NL→Query Cockpit** | Ask the KG a data question in plain English → auditable generated query + rows + citations, over the gateway `/api/graph/ask-data` (KG-2.308) and `/api/graph/nl-query` (KG-2.305) twins. | `geniusbot/qt/data_query_panel.py` |
+| **GB-GBOT.cockpit.metrics-status-cockpit** | **Engine Metrics & Status Cockpit** | PromQL metric queries + shared content-addressed KV-cache stats over `/api/graph/promql` and `/api/graph/kvcache` (KG-2.310). | `geniusbot/qt/metrics_panel.py` |
+| **GB-GBOT.cockpit.federated-search-cockpit** | **Federated Search Cockpit** | One query fanned across every registered external graph over `/api/graph/federated-search` (KG-2.310). | `geniusbot/qt/federated_search_panel.py` |
 
-> **Note on UI Cohesion (`CONCEPT-HIG`)**: All PySide6 UI elements implemented under GBOT-6.0 and GBOT-6.3 must adhere to the ecosystem-wide **Human Interface Guidelines**. This includes supporting dynamic QPalette/stylesheet brand theming, rail-navigation sidebars (via QPropertyAnimation), and depth-aware/glassmorphic modals for disruptive prompts.
+> **Note on UI Cohesion (`CONCEPT-HIG`)**: All PySide6 UI elements implemented under AU-GBOT.cockpit.through-gbot and AU-GBOT.cockpit.concept-3 must adhere to the ecosystem-wide **Human Interface Guidelines**. This includes supporting dynamic QPalette/stylesheet brand theming, rail-navigation sidebars (via QPropertyAnimation), and depth-aware/glassmorphic modals for disruptive prompts.
 
 ---
 
@@ -331,23 +335,23 @@ why rather than bypassing it.
 ## Working with Git Worktrees (multi-session)
 
 Multiple agents/sessions work the `agent-packages/*` repos concurrently. **Do not
-edit the canonical checkout** (`/home/apps/workspace/agent-packages/<repo>`) — a
+edit the canonical checkout** (`${WORKSPACE_ROOT}/agent-packages/<repo>`) — a
 background `repository-manager` sync can reset its working tree and discard
 uncommitted edits. Take your own git worktree on your own branch instead:
 
 ```bash
 # preferred — repository-manager MCP:
-rm_worktree add <repo> <your-branch>      # -> /home/apps/worktrees/<repo>/<your-branch>
+rm_worktree add <repo> <your-branch>      # -> ${WORKTREE_ROOT}/<repo>/<your-branch>
 
 # raw-git fallback:
 git -C agent-packages/<repo> checkout main
-git -C agent-packages/<repo> worktree add /home/apps/worktrees/<repo>/<branch> -b <branch>
+git -C agent-packages/<repo> worktree add ${WORKTREE_ROOT}/<repo>/<branch> -b <branch>
 ```
 
 Work in the worktree and **commit often** (commits survive a working-tree reset).
 Each session must use a **distinct branch** — git allows a branch in only one
 worktree, which is what keeps concurrent sessions from colliding. Worktrees live
-under `/home/apps/worktrees/` (outside the workspace scan, so the sync leaves them
+under `${WORKTREE_ROOT}/` (outside the workspace scan, so the sync leaves them
 alone).
 
 **Finishing work in a worktree** — run this sequence before calling it done:
@@ -359,3 +363,25 @@ alone).
 4. **Clean up** — remove the worktree and delete the merged branch:
    `rm_worktree remove <repo> <branch> --delete-branch`; `rm_worktree prune` clears
    stale entries. (Raw-git: `git worktree remove <path> && git branch -d <branch>`.)
+
+## Version & lockfile drift edict (keep the version mirrors AND the lock in sync)
+
+The two most common release-breakers in this fleet are **version drift** (the version in
+`pyproject.toml`/`.bumpversion.cfg` advancing while `README.md`, `docker/Dockerfile`, and the
+module `__version__`s lag) and a **stale `uv.lock`** (shipping known-vulnerable transitive deps).
+A version mismatch makes the next `bump-my-version` throw `VersionNotFoundException`; a stale lock
+is what Dependabot flags. Rules:
+
+1. **Never hand-edit a version string.** Change the version ONLY via
+   `bump-my-version bump {patch|minor|major}` (a.k.a. `bump2version`), which rewrites every file
+   registered in `.bumpversion.cfg` in one atomic, tagged commit. If you edited the version in
+   `pyproject.toml` by hand, you created drift — revert and use the bumper.
+2. **Every version-bearing file must be registered in `.bumpversion.cfg`** — at minimum
+   `pyproject.toml` AND `README.md`, plus `docker/Dockerfile` and any module `__version__`. Never
+   add a file that embeds the version without a `[bumpversion:file:...]` entry for it.
+3. **Re-lock on every dependency change.** After editing `pyproject.toml` deps/extras, run
+   `uv lock` and commit `uv.lock` in the SAME change. The `uv-lock` pre-commit hook runs with
+   `--locked` and fails on drift — never bypass it. The committed `uv.lock` is the
+   Dependabot/security surface.
+4. **Patch CVEs with a version floor at the source, then re-lock.** `uv` resolves one version
+   graph-wide, so a lower-bound in the extra that pulls a dependency raises it for the whole lock.
