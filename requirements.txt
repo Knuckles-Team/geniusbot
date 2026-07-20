@@ -304,7 +304,7 @@ pathable==0.6.0
     # via jsonschema-path
 pathspec==1.1.1
     # via agent-utilities
-pillow==12.2.0
+pillow==12.3.0
     # via llama-index-core
 platformdirs==4.10.0
     # via
