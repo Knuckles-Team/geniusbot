@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11, <3.15"
 license = { text = "MIT" }
 authors = [
-    { name = "Audel Rouhi", email = "knucklessg1@gmail.com" }
+    { name = "Project Maintainers", email = "maintainers@users.noreply.github.com" }
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",

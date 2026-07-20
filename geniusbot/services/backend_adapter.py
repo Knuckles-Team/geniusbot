@@ -73,7 +73,7 @@ class BackendAdapter:
 
             return await run_graph_query(query_text)
         except Exception as exc:  # ImportError or runtime failure
-            logger.debug("run_graph_query unavailable: %s", exc)
+            logger.debug("Operation failed: error_type=%s", type(exc).__name__)
             return None
 
     # ── Workspace graph execution ────────────────────────────────────
