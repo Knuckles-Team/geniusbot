@@ -252,7 +252,7 @@ markupsafe==3.0.3
     # via jinja2
 marshmallow==3.26.2
     # via dataclasses-json
-mcp==1.27.1
+mcp==1.28.1
     # via fastmcp-slim
 mdurl==0.1.2
     # via markdown-it-py
