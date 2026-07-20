@@ -168,7 +168,7 @@ class TerminalWidget(QWebEngineView):
             try:
                 os.execvp(cmd, [cmd] + args)
             except Exception as e:
-                print(f"Failed to exec {cmd}: {e}")
+                print(f"Command execution failed: {type(e).__name__}")
                 os._exit(1)
         else:
             # Parent process: set non-blocking and start background PTY reader thread

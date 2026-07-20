@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Temporal graph scrubber panel (CONCEPT:GBOT-6.7).
+"""Temporal graph scrubber panel (CONCEPT:GB-GBOT.cockpit.gbot-7).
 
 A thin cockpit panel that adds a bi-temporal time scrubber over the existing
 force-directed graph renderer (:class:`ForceGraphWidget`). The user drags a

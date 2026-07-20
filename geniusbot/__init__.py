@@ -8,7 +8,7 @@ The unified cockpit dashboard for our multi-agent ecosystem.
 """
 
 __version__ = "4.0.0"
-__author__ = "Audel Rouhi"
-__credits__ = "Audel Rouhi"
+__author__ = "Project Maintainers"
+__credits__ = "Project Maintainers"
 
 __all__ = ["geniusbot", "GeniusBot"]
