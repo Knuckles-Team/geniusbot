@@ -32,22 +32,22 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.15.15",
-    "pytest>=8.0.0",
+    "ruff>=0.15.22",
+    "pytest>=9.1.1",
     "pytest-qt>=4.5.0",
-    "mypy>=1.0.0",
-    "types-requests",
-    "types-docker",
+    "mypy>=2.3.0",
+    "types-requests>=2.33.0.20260712",
+    "types-docker>=7.2.0.20260720",
 ]
 test = [
-    "ruff>=0.15.15",
-    "pytest>=8.0.0",
+    "ruff>=0.15.22",
+    "pytest>=9.1.1",
     "pytest-qt>=4.5.0",
 ]
 types = [
-    "mypy>=1.0.0",
-    "types-requests",
-    "types-docker",
+    "mypy>=2.3.0",
+    "types-requests>=2.33.0.20260712",
+    "types-docker>=7.2.0.20260720",
 ]
 
 [project.urls]
