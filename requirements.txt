@@ -81,7 +81,7 @@ colorama==0.4.6
     # via griffecli
 confluent-kafka==2.14.2
     # via agent-utilities
-cryptography==48.0.0
+cryptography==48.0.1
     # via
     #   agent-utilities
     #   authlib
@@ -211,7 +211,7 @@ jiter==0.15.0
     # via openai
 joblib==1.5.3
     # via nltk
-joserfc==1.6.7
+joserfc==1.6.8
     # via authlib
 json-repair==0.61.0
     # via dspy
@@ -252,7 +252,7 @@ markupsafe==3.0.3
     # via jinja2
 marshmallow==3.26.2
     # via dataclasses-json
-mcp==1.27.1
+mcp==1.28.1
     # via fastmcp-slim
 mdurl==0.1.2
     # via markdown-it-py
@@ -260,7 +260,7 @@ more-itertools==11.1.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-msgpack==1.2.0
+msgpack==1.2.1
     # via epistemic-graph
 multidict==6.7.1
     # via
@@ -304,7 +304,7 @@ pathable==0.6.0
     # via jsonschema-path
 pathspec==1.1.1
     # via agent-utilities
-pillow==12.2.0
+pillow==12.3.0
     # via llama-index-core
 platformdirs==4.10.0
     # via
@@ -357,7 +357,7 @@ pydantic-graph==1.106.0
     # via pydantic-ai-slim
 pydantic-monty==0.0.18
     # via agent-utilities
-pydantic-settings==2.14.1
+pydantic-settings==2.14.2
     # via
     #   agent-utilities
     #   fastmcp-slim
@@ -386,7 +386,7 @@ python-dotenv==1.2.2
     #   fastmcp-slim
     #   litellm
     #   pydantic-settings
-python-multipart==0.0.29
+python-multipart==0.0.31
     # via
     #   fastmcp-slim
     #   mcp
@@ -444,7 +444,7 @@ sqlalchemy==2.0.51
     # via llama-index-core
 sse-starlette==3.4.4
     # via mcp
-starlette==1.1.0
+starlette==1.3.1
     # via
     #   fasta2a
     #   mcp
