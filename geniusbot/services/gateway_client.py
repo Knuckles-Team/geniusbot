@@ -147,9 +147,7 @@ class GatewayClient:
         try:
             return await self._sdk.autocomplete(query)
         except Exception as e:
-            logger.debug(
-                "Autocomplete fetch failed: error_type=%s", type(e).__name__
-            )
+            logger.debug("Autocomplete fetch failed: error_type=%s", type(e).__name__)
             return []
 
     async def execute_slash_command(self, query: str):
@@ -213,9 +211,7 @@ class GatewayClient:
         try:
             return await self._sdk.analytics_tools(**f)
         except Exception as e:
-            logger.warning(
-                "Usage tools fetch failed: error_type=%s", type(e).__name__
-            )
+            logger.warning("Usage tools fetch failed: error_type=%s", type(e).__name__)
             return []
 
     async def fetch_usage_activity(self, **f):
@@ -240,9 +236,7 @@ class GatewayClient:
         try:
             return await self._sdk.usage_traces()
         except Exception as e:
-            logger.warning(
-                "Usage traces fetch failed: error_type=%s", type(e).__name__
-            )
+            logger.warning("Usage traces fetch failed: error_type=%s", type(e).__name__)
             return {"enabled": False, "traces": []}
 
     async def submit_and_stream_extraction(
@@ -313,9 +307,7 @@ class GatewayClient:
                         break
             return {"status": "done", "job_id": job_id, "facts": kept}
         except Exception as e:
-            logger.warning(
-                "Extraction stream failed: error_type=%s", type(e).__name__
-            )
+            logger.warning("Extraction stream failed: error_type=%s", type(e).__name__)
             return {"status": "error", "message": "Extraction stream failed"}
 
     async def fetch_extraction_jsonl(self, job_id: str) -> str:
