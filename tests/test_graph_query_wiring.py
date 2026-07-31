@@ -47,9 +47,7 @@ class _RecordingTransport(httpx.AsyncBaseTransport):
 
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         self.requests.append(request)
-        return httpx.Response(
-            self.status_code, json=self.payload, request=request
-        )
+        return httpx.Response(self.status_code, json=self.payload, request=request)
 
 
 def _adapter_with(transport: httpx.AsyncBaseTransport) -> BackendAdapter:
