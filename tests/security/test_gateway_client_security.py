@@ -8,12 +8,11 @@ import httpx
 import pytest
 
 _MODULE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "geniusbot"
-    / "services"
-    / "gateway_client.py"
+    Path(__file__).resolve().parents[2] / "geniusbot" / "services" / "gateway_client.py"
 )
-_SPEC = importlib.util.spec_from_file_location("gateway_client_security_target", _MODULE_PATH)
+_SPEC = importlib.util.spec_from_file_location(
+    "gateway_client_security_target", _MODULE_PATH
+)
 assert _SPEC is not None and _SPEC.loader is not None
 _MODULE = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_MODULE)
