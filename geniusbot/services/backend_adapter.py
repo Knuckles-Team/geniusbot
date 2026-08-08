@@ -40,6 +40,19 @@ class BackendAdapter:
 
     def __init__(self, gateway_base_url: str = "http://localhost:8000") -> None:
         self._gateway_base_url = gateway_base_url
+        self._gateway_client: Any = None
+
+    def _gateway(self) -> Any:
+        """The shared :class:`GatewayClient` for this adapter's base URL.
+
+        Built once, lazily — ``gateway_base_url`` was stored by ``__init__``
+        and never used by anything before.
+        """
+        if self._gateway_client is None:
+            from geniusbot.services.gateway_client import GatewayClient
+
+            self._gateway_client = GatewayClient(self._gateway_base_url)
+        return self._gateway_client
 
     # ── Paths / telemetry ────────────────────────────────────────────
     @staticmethod
@@ -62,19 +75,28 @@ class BackendAdapter:
 
     # ── Knowledge Graph query ────────────────────────────────────────
     async def run_graph_query(self, query_text: str) -> Any:
-        """Execute a Cypher/graph query against the agent-utilities engine.
+        """Execute a read-only Cypher/graph query and return its result rows.
 
-        Returns the engine result, or ``None`` if the engine is unavailable
-        or the query produced no result (callers fall back to a local
-        simulator in that case).
+        Goes through the gateway's ``/api/graph/query`` action twin — the REST
+        side of the ``graph_query`` MCP tool — like every other backend read in
+        this facade.
+
+        It previously did ``from agent_utilities.graph import run_graph_query``,
+        a symbol that does not exist in ``agent_utilities.graph`` (which exports
+        ``run_graph`` / ``run_graph_stream`` / ``validate_graph`` / builder
+        helpers). The ``ImportError`` was caught and logged at DEBUG, so both
+        callers — the Graph Explorer and the temporal-graph panel — silently
+        fell through to their local simulators on *every* run and never once
+        displayed real graph data.
+
+        Returns the result rows, or ``None`` when the gateway is unreachable or
+        the query produced none (callers fall back to a local simulator then).
         """
-        try:
-            from agent_utilities.graph import run_graph_query
-
-            return await run_graph_query(query_text)
-        except Exception as exc:  # ImportError or runtime failure
-            logger.debug("Operation failed: error_type=%s", type(exc).__name__)
+        result = await self._gateway().graph_query(query_text)
+        if not isinstance(result, dict) or "error" in result:
             return None
+        rows = result.get("evidence_spans")
+        return rows if isinstance(rows, list) and rows else None
 
     # ── Workspace graph execution ────────────────────────────────────
     async def run_workspace_graph(self, query: str, config: dict | None = None) -> Any:
