@@ -156,7 +156,8 @@ class MetricsPanel(QWidget):
             self._on_error(str(data["error"]))
             return
         # Envelope shape: {"surface":"kvcache","action":"stats","result": {...}}
-        stats = data.get("result") if isinstance(data.get("result"), dict) else data
+        result = data.get("result")
+        stats = result if isinstance(result, dict) else data
         self.status_lbl.setText("KV-cache stats updated.")
         self._cards["entries"].setText(
             str(stats.get("entries", stats.get("count", "—")))

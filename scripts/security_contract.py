@@ -139,7 +139,10 @@ def load_contract(root: Path, reference: str) -> dict[str, Any]:
         if (
             not isinstance(values, list)
             or len(values) > 1_024
-            or any(not isinstance(value, str) or not _LICENSE_ID.fullmatch(value) for value in values)
+            or any(
+                not isinstance(value, str) or not _LICENSE_ID.fullmatch(value)
+                for value in values
+            )
             or len(set(values)) != len(values)
         ):
             raise SecurityContractError("license policy identifiers are invalid")
@@ -173,10 +176,14 @@ def _hook_environment() -> dict[str, str]:
 
 
 def _limit_hook_output() -> None:
-    resource.setrlimit(resource.RLIMIT_FSIZE, (MAX_HOOK_OUTPUT_BYTES, MAX_HOOK_OUTPUT_BYTES))
+    resource.setrlimit(
+        resource.RLIMIT_FSIZE, (MAX_HOOK_OUTPUT_BYTES, MAX_HOOK_OUTPUT_BYTES)
+    )
 
 
-def _validate_hook_evidence(kind: str, hook: dict[str, Any], evidence: dict[str, Any]) -> None:
+def _validate_hook_evidence(
+    kind: str, hook: dict[str, Any], evidence: dict[str, Any]
+) -> None:
     required = {"version", "kind", "passed", "cases", "failures"}
     if not required.issubset(evidence) or evidence.get("version") != 1:
         raise SecurityContractError("security hook evidence schema is invalid")
@@ -221,7 +228,9 @@ def run_hook(root: Path, contract: dict[str, Any], kind: str, result_root: str) 
     try:
         evidence.relative_to(resolved_results)
     except ValueError as exc:
-        raise SecurityContractError("security hook evidence must stay in the result root") from exc
+        raise SecurityContractError(
+            "security hook evidence must stay in the result root"
+        ) from exc
     evidence.unlink(missing_ok=True)
     log_path = results.joinpath(f"{kind}.log")
     try:
@@ -242,7 +251,9 @@ def run_hook(root: Path, contract: dict[str, Any], kind: str, result_root: str) 
             except subprocess.TimeoutExpired as exc:
                 os.killpg(process.pid, signal.SIGKILL)
                 process.wait()
-                raise SecurityContractError("security hook exceeded its time boundary") from exc
+                raise SecurityContractError(
+                    "security hook exceeded its time boundary"
+                ) from exc
     except SecurityContractError:
         raise
     except Exception as exc:
@@ -274,7 +285,9 @@ def _component_licenses(component: dict[str, Any]) -> set[str]:
             continue
         expression = declaration.get("expression")
         license_value = declaration.get("license")
-        identifier = license_value.get("id") if isinstance(license_value, dict) else None
+        identifier = (
+            license_value.get("id") if isinstance(license_value, dict) else None
+        )
         name = license_value.get("name") if isinstance(license_value, dict) else None
         value = expression or identifier or name
         if isinstance(value, str) and _LICENSE_ID.fullmatch(value):
@@ -306,7 +319,9 @@ def check_licenses(
     violations = 0
     for component in components:
         if not isinstance(component, dict):
-            raise SecurityContractError("software bill of materials component is invalid")
+            raise SecurityContractError(
+                "software bill of materials component is invalid"
+            )
         licenses = _component_licenses(component)
         if not licenses:
             unknown += 1
@@ -343,7 +358,9 @@ def check_licenses(
         encoding="utf-8",
     )
     if not passed:
-        raise SecurityContractError("software bill of materials violates license policy")
+        raise SecurityContractError(
+            "software bill of materials violates license policy"
+        )
 
 
 def main(argv: list[str] | None = None) -> int:
