@@ -1,0 +1,57 @@
+# Merge-queue gate declaration for `geniusbot` (a PYTHON repository).
+#
+# Bootstrapped directly onto `main` the same way agent-utilities'/epistemic-graph's/
+# agent-webui's/agent-terminal-ui's own `.mergequeue.yaml` were (D-MQR-1's
+# "chore(merge-queue): bootstrap .mergequeue.yaml" pattern) -- a direct commit, not
+# landed through the queue itself, because a repo with no queue declaration cannot
+# enqueue the declaration through its own queue. Every change to this file AFTER this
+# bootstrap goes through the queue like any other candidate.
+#
+# ★ w6-true-green (2026-08-07): this repo had NO `.mergequeue.yaml` at all -- same gap,
+# same fix, as agent-terminal-ui's sibling file landed alongside this one. See that
+# file's header for the full "why this is a structural true-green gap" rationale
+# (03-true-green-not-baselined-green.md).
+#
+# Same "never rely on a per-worktree .venv, never bare `uv run`" discipline as
+# agent-webui's/agent-terminal-ui's own files: every gate self-provisions an isolated
+# `.venv-mq` and then invokes that venv's `python` binary directly by path -- never
+# `uv run`, which silently falls back to the system interpreter when workspace-root
+# discovery fails (D-UVR-1).
+
+base: main
+batch_size: 8
+
+environment_signature: ["bash", "-c", "python3 --version && uv --version"]
+
+gates:
+  # `uvx ruff@<pin>` (an ephemeral, cached tool env -- NOT `uv run`, so D-UVR-1's
+  # workspace-root/system-interpreter fallback does not apply), version-pinned
+  # to match .pre-commit-config.yaml's `rev: ... # v0.15.15` exactly so the
+  # queue enforces the identical ruleset a real commit would.
+  - name: ruff
+    command: ["bash", "-c", "uvx ruff@0.15.15 check --output-format concise ."]
+    tier: fast
+    timeout: 60
+    baseline_timeout: 120
+    compare: lines
+    when_changed: ['*.py', '**/*.py']
+
+  - name: pytest
+    command: ["bash", "-c",
+      "test -d .venv-mq || uv venv .venv-mq --python 3.11 >/dev/null; uv pip install --python .venv-mq/bin/python -q -e '.[dev]' >/dev/null; .venv-mq/bin/python -m pytest -q --tb=short -rfE -m 'not integration'"]
+    tier: fast
+    timeout: 300
+    baseline_timeout: 600
+    compare: pytest-ids
+    on_timeout: defer
+    when_changed: ['*.py', '**/*.py', 'pyproject.toml']
+
+  - name: full-suite
+    command: ["bash", "-c",
+      "test -d .venv-mq || uv venv .venv-mq --python 3.11 >/dev/null; uv pip install --python .venv-mq/bin/python -q -e '.[dev]' >/dev/null; .venv-mq/bin/python -m pytest -q --tb=short -rfE"]
+    tier: slow
+    timeout: 900
+    compare: pytest-ids
+
+generated_files: []
+regenerate: []
