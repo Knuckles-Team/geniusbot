@@ -29,7 +29,7 @@ _MAX_STREAM_EVENTS = 100_000
 _MAX_STREAM_LINE_BYTES = 256 * 1024
 _SAFE_JOB_ID = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
 _GRAPH_ROUTES = frozenset(
-    {"ask-data", "nl-query", "promql", "kvcache", "federated-search"}
+    {"ask-data", "nl-query", "promql", "kvcache", "federated-search", "query"}
 )
 
 
@@ -374,6 +374,21 @@ class GatewayClient:
             "nl-query",
             {"text": text, "dialect": dialect, "execute": execute, "limit": limit},
         )
+
+    async def graph_query(
+        self, cypher: str, *, scope: str = "local", as_of: str = ""
+    ) -> dict:
+        """Run one read-only graph query and return its EvidenceBundle.
+
+        The REST twin of the ``graph_query`` MCP tool. ``scope`` selects the
+        dialect (``local`` Cypher | ``sql`` | ``sparql`` | ``federated``) and
+        ``as_of`` pins a bitemporal instant. Result rows arrive in the bundle's
+        ``evidence_spans``.
+        """
+        payload: dict = {"cypher": cypher, "scope": scope}
+        if as_of:
+            payload["as_of"] = as_of
+        return await self._graph_post("query", payload)
 
     async def promql(self, query: str, *, action: str = "instant") -> dict:
         """Query the engine's observability metrics with PromQL (backend KG-2.310)."""
