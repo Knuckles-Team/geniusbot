@@ -385,3 +385,31 @@ is what Dependabot flags. Rules:
    Dependabot/security surface.
 4. **Patch CVEs with a version floor at the source, then re-lock.** `uv` resolves one version
    graph-wide, so a lower-bound in the extra that pulls a dependency raises it for the whole lock.
+
+### Known, unavoidable limitation — `agent-utilities` resolves via the monorepo workspace only (D-FE-1)
+
+`agent-utilities>=2.0.0` (declared in `[project.dependencies]`) is **not yet published** to the
+index this project otherwise resolves against (only `<=1.26.4` is there), so `pyproject.toml`
+carries `[tool.uv.sources] agent-utilities = { workspace = true }` — the same pattern
+`agent-webui` already uses — to satisfy it from the co-versioned sibling checkout
+(`agent-packages/agent-utilities`) instead.
+
+Two consequences follow, both structural to `uv`'s workspace model, not bugs in this repo:
+
+- **The pre-commit `pytest` hook cannot pass from an isolated git worktree.** `uv`'s workspace
+  discovery walks up the directory tree looking for the ambient
+  `${WORKSPACE_ROOT}/pyproject.toml`; a worktree under `${WORKTREE_ROOT}/` sits outside that tree,
+  so `agent-utilities` is not resolvable as a workspace member there and `uv run`/`uv sync` fails
+  with *"references a workspace ... but is not a workspace member"*. This mirrors the identical,
+  already-documented hazard for `agent-webui` (D-FE-7, `reports/deferred/lane-frontends.md`).
+  **Workaround:** verify by pointing `UV_PROJECT_ENVIRONMENT` at a scratch path and running
+  `uv sync --frozen --all-extras` / `uv run --frozen --all-extras pytest ...` from the **canonical**
+  checkout (never write to its tracked files; a diff-then-`git checkout --` round trip keeps it
+  read-only) instead of the worktree. Do not `SKIP=pytest` silently — call it out explicitly, as
+  this section does.
+- **This repo's own `uv.lock`/`requirements.txt` cannot be regenerated to reflect this** — they
+  are single-project artifacts for the case where this repo is cloned/CI'd **standalone** (no
+  ambient monorepo present), and in that context there is no sibling `agent-utilities` checkout for
+  `workspace = true` to resolve at all. They stay pinned at the last version the index actually
+  offered until `agent-utilities` 2.x is published, at which point `[tool.uv.sources]` above can be
+  dropped and a normal `uv lock` will pick up the published floor directly.

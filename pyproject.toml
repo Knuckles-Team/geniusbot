@@ -56,6 +56,15 @@ Homepage = "https://github.com/Knuckles-Team/geniusbot"
 [project.scripts]
 geniusbot = "geniusbot.geniusbot:main"
 
+# Development and ecosystem validation use the co-versioned sibling source so
+# the lock cannot silently fall back to a stale published floor: agent-utilities
+# 2.x is not yet published to the index this project resolves from (only
+# <=1.26.4 is available there), so >=2.0.0 above is otherwise unsatisfiable.
+# Mirrors the identical pattern already used by the agent-webui frontend.
+# This table is uv-only and is not included in the wheel's dependency metadata.
+[tool.uv.sources]
+agent-utilities = { workspace = true }
+
 [tool.hatch.build.targets.wheel]
 packages = ["geniusbot"]
 
