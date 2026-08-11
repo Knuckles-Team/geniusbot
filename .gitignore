@@ -116,6 +116,14 @@ ENV/
 env.bak/
 venv.bak/
 
+# `[tool.uv.sources]` in pyproject.toml pins agent-utilities as an editable
+# path dependency at this path, symlinked to the real sibling checkout
+# already present on the dev/lane machine (no clone, no copy) -- a plain
+# path dep has no "nested uv workspace" restriction, unlike `{ workspace =
+# true }` (see pyproject.toml's matching comment; agent-webui is the
+# precedent for this fix). Dev/lane-machine-only, never tracked.
+.uv-workspace-siblings/
+
 # Spyder project settings
 .spyderproject
 .spyproject

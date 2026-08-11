@@ -99,28 +99,41 @@ def test_panel_shows_fact_card_on_edge_click(qapp) -> None:
 async def test_gateway_submit_and_stream(monkeypatch) -> None:
     from geniusbot.services.gateway_client import GatewayClient
 
-    gw = GatewayClient(base_url="http://localhost:8000")
-
-    class _Resp:
-        def __init__(self, payload):
-            self._p = payload
+    # `GatewayClient.__init__` builds its pooled `self._direct_http` eagerly
+    # (one client for the app's lifetime), so `httpx.AsyncClient` must be
+    # patched *before* construction — patching it after leaves the instance
+    # holding a real, unmocked client that dials the (non-existent) gateway.
+    # `_json_request` (used for the submit POST) and the event stream (the
+    # GET) both go through `AsyncClient.stream(...)`, not `.post()`/`.json()`,
+    # so both mocks below are response-like stream context managers.
+    class _SubmitStream:
+        headers: dict[str, str] = {}
 
         def raise_for_status(self):
             return None
 
-        def json(self):
-            return self._p
+        async def aiter_bytes(self):
+            yield json.dumps({"status": "submitted", "job_id": "j1"}).encode()
 
-    class _Stream:
         async def __aenter__(self):
             return self
 
         async def __aexit__(self, *a):
             return False
 
+    class _EventStream:
+        def raise_for_status(self):
+            return None
+
         async def aiter_lines(self):
             yield 'data: {"type": "fact", "is_duplicate": false, "fact": {"subject": "A"}}'
             yield 'data: {"type": "job_done", "state": "done"}'
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *a):
+            return False
 
     class _Client:
         async def __aenter__(self):
@@ -129,13 +142,11 @@ async def test_gateway_submit_and_stream(monkeypatch) -> None:
         async def __aexit__(self, *a):
             return False
 
-        async def post(self, *a, **k):
-            return _Resp({"status": "submitted", "job_id": "j1"})
-
-        def stream(self, *a, **k):
-            return _Stream()
+        def stream(self, method, path, **k):
+            return _SubmitStream() if path.endswith("/submit") else _EventStream()
 
     monkeypatch.setattr("httpx.AsyncClient", lambda *a, **k: _Client())
+    gw = GatewayClient(base_url="http://localhost:8000")
     events = []
     out = await gw.submit_and_stream_extraction(
         text="doc", progress_cb=lambda s: events.append(s)

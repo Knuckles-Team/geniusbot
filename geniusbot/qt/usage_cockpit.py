@@ -82,7 +82,7 @@ class UsageCockpitPanel(QWidget):
 
         subtitle = QLabel(
             "Token usage, cost, and tool/skill/database-call metrics across every "
-            "agent and our own runtime — assimilated agentsview (ECO-4.41)."
+            "agent and our own runtime — assimilated agentsview."
         )
         subtitle.setStyleSheet("color: #8A8A93; font-size: 12px;")
         subtitle.setWordWrap(True)
