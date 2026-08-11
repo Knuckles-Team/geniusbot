@@ -248,7 +248,7 @@ class GatewayClient:
         dedup: bool = True,
         progress_cb=None,
     ):
-        """Submit a fact-extraction job and stream its events (ECO-4.43).
+        """Submit a fact-extraction job and stream its events (AU-ECO.connector.git-task-resolver).
 
         Each event (round_start|fact|…|job_done) is forwarded to ``progress_cb``
         as a JSON string so the Qt panel can render facts live on the main thread.
