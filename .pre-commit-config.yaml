@@ -1,8 +1,14 @@
 default_language_version:
   python: python3
-# Phase 0 dev-velocity contract (graph-os-completion-program): a hook with no
-# explicit `stages:` below is commit-only, never both.
-default_stages: [pre-commit]
+# `git push` must run the FULL gate, not a subset. Without
+# `default_install_hook_types`, `pre-commit install` wires ONLY the pre-commit
+# hook, so `git push` runs nothing and any hook staged pre-push is dead code.
+# `default_stages` then makes every hook that names no stages of its own run at
+# BOTH stages, so a push is a strict superset of a commit. Heavy hooks below
+# (pytest) carry an explicit `stages: [pre-push, manual]` so they still run
+# ONLY at push, never at commit.
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit, pre-push]
 exclude: 'dotnet'
 ci:
   autofix_prs: true
