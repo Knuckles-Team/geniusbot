@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "geniusbot"
-version = "5.1.0"
+version = "5.2.0"
 description = "The Ever-learning and ever-improving tool!"
 readme = "README.md"
 requires-python = ">=3.12, <3.15"

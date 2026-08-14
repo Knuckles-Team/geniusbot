@@ -37,7 +37,7 @@ from geniusbot.services.gateway_client import GatewayClient
 from geniusbot.utils.agent_bridge import AgentBridgeWorker
 from geniusbot.utils.daemon import GeniusBotDaemon
 
-__version__ = "5.1.0"
+__version__ = "5.2.0"
 
 
 # Resolve centralized log directory via the single backend seam
