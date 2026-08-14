@@ -78,6 +78,9 @@ geniusbot = "geniusbot.geniusbot:main"
 # untracked symlink to the real sibling checkout (see `.gitignore`'s
 # matching comment); dev/lane-machine-only, materialized once per checkout.
 # This table is uv-only and is not included in the wheel's dependency metadata.
+[tool.uv.workspace]
+members = ["."]
+
 [tool.uv.sources]
 agent-utilities = { path = ".uv-workspace-siblings/agent-utilities", editable = true }
 
