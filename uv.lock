@@ -43,7 +43,7 @@ requires-dist = [
     { name = "agent-utilities", extras = ["mcp", "sandbox"], marker = "extra == 'agent-headless'", editable = ".uv-workspace-siblings/agent-utilities" },
     { name = "agent-utilities", extras = ["messaging-discord", "messaging-googlechat", "messaging-googlemeet", "messaging-irc", "messaging-line", "messaging-matrix", "messaging-mattermost", "messaging-nextcloud", "messaging-signal", "messaging-slack", "messaging-synology", "messaging-teams", "messaging-telegram", "messaging-twitch", "messaging-voicecall", "messaging-whatsapp"], marker = "extra == 'messaging'", editable = ".uv-workspace-siblings/agent-utilities" },
     { name = "agent-utilities", extras = ["owl"], marker = "extra == 'stardog'", editable = ".uv-workspace-siblings/agent-utilities" },
-    { name = "agent-webui", marker = "extra == 'ag-ui'", specifier = ">=1.1.0" },
+    { name = "agent-webui", marker = "extra == 'ag-ui'", specifier = ">=2.4.0" },
     { name = "aiohttp", marker = "extra == 'documents'", specifier = ">=3.14.1" },
     { name = "aiokafka", marker = "extra == 'kafka'", specifier = ">=0.14.0" },
     { name = "banks", marker = "extra == 'documents'", specifier = ">=2.4.5" },
