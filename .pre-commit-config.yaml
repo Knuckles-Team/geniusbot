@@ -64,6 +64,13 @@ repos:
       args: ["--ignore-missing-imports"]
   - repo: local
     hooks:
+    - id: dependency-readiness
+      name: Dependency readiness — every declared intra-fleet constraint is installable
+      entry: bash -c 'uv run --with repository-manager python -m repository_manager.dependency_readiness .'
+      language: system
+      pass_filenames: false
+      always_run: true
+      stages: [manual, pre-push]
     - id: okf-no-legacy-concepts
       name: OKF-CIS — no legacy CONCEPT ids
       entry: bash -c 'repo=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)"); root=${AGENT_UTILITIES_ROOT:-"$(dirname "$repo")/agent-utilities"}; python3 "$root/scripts/check_no_legacy_markers.py" . "$@"' --
