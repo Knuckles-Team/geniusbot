@@ -221,6 +221,10 @@ class GeniusBot(QMainWindow):
         self.btn_federated.clicked.connect(lambda: self.switch_view(16))
         sidebar_layout.addWidget(self.btn_federated)
 
+        self.btn_voice = QPushButton("🎙️ Voice Dictation")
+        self.btn_voice.clicked.connect(lambda: self.switch_view(17))
+        sidebar_layout.addWidget(self.btn_voice)
+
         sidebar_layout.addStretch()
 
         # Sidebar footer status
@@ -273,10 +277,11 @@ class GeniusBot(QMainWindow):
         self.data_query_panel = None
         self.metrics_panel = None
         self.federated_panel = None
+        self.voice_panel = None
 
-        # Views 3-13 plus the epistemic-graph capability panels 14-16 —
-        # lazy-loaded placeholders (indices 3..16 inclusive).
-        for _ in range(14):
+        # Views 3-13 plus the epistemic-graph capability panels 14-17 —
+        # lazy-loaded placeholders (indices 3..17 inclusive).
+        for _ in range(15):
             self.centralStackWidget.addWidget(QWidget())
 
         self.centralSplitter.addWidget(self.centralStackWidget)
@@ -467,6 +472,11 @@ class GeniusBot(QMainWindow):
 
             self.federated_panel = FederatedSearchPanel(self.worker)
             self._swap_placeholder(16, self.federated_panel)
+        elif index == 17 and self.voice_panel is None:
+            from geniusbot.qt.voice_panel import VoicePanel
+
+            self.voice_panel = VoicePanel(self.worker)
+            self._swap_placeholder(17, self.voice_panel)
 
         self.centralStackWidget.setCurrentIndex(index)
 
@@ -489,6 +499,7 @@ class GeniusBot(QMainWindow):
             (14, self.btn_ask_data),
             (15, self.btn_metrics),
             (16, self.btn_federated),
+            (17, self.btn_voice),
         ]
 
         for idx, btn in buttons:

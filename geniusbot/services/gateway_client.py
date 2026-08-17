@@ -407,6 +407,55 @@ class GatewayClient:
             payload["references"] = references
         return await self._graph_post("federated-search", payload)
 
+    # ── Voice dictation (CONCEPT:AU-ECO.mcp.webui-voice-transcription-delegation) ──
+    async def transcribe_voice(
+        self, audio_bytes: bytes, *, content_type: str = "audio/wav"
+    ) -> dict:
+        """Transcribe one bounded audio clip via the WebUI's voice route.
+
+        POSTs a multipart upload to ``POST /api/enhanced/voice/transcribe``
+        (``agent_webui.api_extensions``, mounted on this SAME gateway app --
+        ``build_agent_app`` embeds the WebUI's whole backend at ``/`` -- and
+        delegated server-side through
+        ``agent_utilities.server.webui_voice_delegation`` to the governed
+        ``audio-transcriber-mcp`` sidecar). The same route the web dictation
+        control calls; no separate backend for the desktop client.
+
+        Returns ``{"text": "..."}`` on success. On failure, graceful-offline
+        like the rest of this facade: ``{"error": "..."}`` for a genuine
+        error, or ``{"error": "...", "unavailable": True}`` specifically
+        when the route answers 404/501 (no ``transcribe_voice`` workspace
+        helper registered server-side) -- distinct so a caller can tell
+        "not enabled here" from "something broke" instead of collapsing
+        both into one generic failure message.
+        """
+        try:
+            if len(audio_bytes) > 25 * 1024 * 1024:
+                raise ValueError("Audio clip exceeds the transcription size limit")
+            files = {"file": ("clip.wav", audio_bytes, content_type)}
+            async with self._direct_http.stream(
+                "POST",
+                "/api/enhanced/voice/transcribe",
+                files=files,
+                follow_redirects=False,
+            ) as response:
+                if response.status_code in (404, 501):
+                    return {
+                        "error": "voice transcription is not enabled on this server",
+                        "unavailable": True,
+                    }
+                response.raise_for_status()
+                body = await self._bounded_body(response)
+            value = json.loads(body)
+            if not isinstance(value, dict):
+                raise RuntimeError("Gateway returned an invalid envelope")
+            return value
+        except Exception as e:
+            logger.warning(
+                "Voice transcription failed: error_type=%s", type(e).__name__
+            )
+            return {"error": "voice transcription failed"}
+
     async def stream_copilot_query(self, query: str, progress_cb=None):
         """Execute master copilot query with streaming output."""
         try:
