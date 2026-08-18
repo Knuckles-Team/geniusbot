@@ -1,0 +1,57 @@
+# Frozen baseline of pre-existing privacy leaks that D-CIP-10's scope
+# fix made VISIBLE for the first time (a ratchet — burn down toward
+# zero, same convention as scripts/security/cypher_write_subset_baseline.txt).
+#
+# Until D-CIP-10, check_tracked_privacy had two passes with a hole
+# between them: the whole-tree pass was location-filtered to docs/,
+# .github/, top-level and *.toml, and the unrestricted pass was scoped
+# to `git diff`. Anything committed earlier under docker/ or
+# agent_utilities/ was scanned by neither, so these leaks were public
+# and invisible. They are NOT new — only newly seen.
+#
+# These entries are tracked debt, not exemptions. Two are the personal
+# account name in live kaniko Job manifests (D-PCC-1, owned by
+# lane-release-0801); the rest are internal endpoints and shared-account
+# paths. GitHub is public-facing and gets STRICT standards, so this file
+# must reach zero before the repository is pushed.
+#
+# BUG-241 (2026-08-16, OWNER-SECURITY): 29 more entries added here.
+# The runtime-source internal-endpoint pass required a URL scheme
+# (`https?://`) before the host, so a BARE hostname literal (a YAML
+# `ingress_host: graph-os.arpa` value, a Python `"vllm.arpa"` string) was
+# structurally invisible to it -- proven with a planted two-line canary
+# where the schemed form was caught and the bare form was not. Closing
+# that pattern gap surfaces real production hostnames already tracked in
+# `deploy/`/`docker/` config (not new leaks -- newly SEEN, same as the
+# D-CIP-10 debt above) plus a family of test fixtures that deliberately
+# use a hostname-shaped literal (`model.internal`, `gl.corp`, ...) to
+# exercise OTHER gates'/modules' own host-detection logic (private-host
+# allowlists, loopback-bind checks, endpoint resolvers) -- already named
+# as known, deferred debt in `_is_runtime_source_path`'s docstring. The
+# one occurrence that was a genuinely real, non-fixture leak in a test
+# (`tests/unit/core/test_airgap_mode.py:53`'s `"vllm.arpa"`) was fixed
+# directly, not baselined -- it is not in this file.
+#
+# TAB-separated: path\tline\tcategory\tcontent_hash\tordinal. The KEY is
+# (path, category, content_hash, ordinal) -- content_hash is an
+# irreversible fingerprint of the offending line, so the entry is stable
+# under pure line motion elsewhere in the file (D-W2P: this file used to
+# key on line number alone and reported moved-not-new leaks as phantom
+# NEW findings). `line` is informational only, for a human to locate the
+# site; it is never compared. A NEW leak (not listed here) FAILS the
+# gate. Fixing a listed site shrinks this file on the next
+# --update-baseline; never hand-add an entry to make a real leak
+# disappear.
+pyproject.toml	12	non-neutral package author identity	6ace93762eac4e01	0
+scripts/check_tracked_privacy.py	972	hard-coded internal endpoint in runtime source	246fc936ec5297bc	0
+scripts/check_tracked_privacy.py	977	hard-coded internal endpoint in runtime source	5ebc938d6ccb1c31	0
+scripts/check_tracked_privacy.py	278	hard-coded internal endpoint in runtime source	73f618394831e3f0	0
+scripts/check_tracked_privacy.py	258	hard-coded internal endpoint in runtime source	7628c9aeb09a5d18	0
+scripts/check_tracked_privacy.py	269	hard-coded internal endpoint in runtime source	974fb4904f6cbd5c	0
+scripts/check_tracked_privacy.py	279	hard-coded internal endpoint in runtime source	af804a7c6a128110	0
+scripts/check_tracked_privacy.py	212	hard-coded internal endpoint in runtime source	bce432905486641d	0
+scripts/check_tracked_privacy.py	966	hard-coded internal endpoint in runtime source	eedad12b3e083b45	0
+scripts/check_tracked_privacy.py	259	hard-coded internal endpoint in runtime source	f88fe1ed48c7e554	0
+scripts/check_tracked_privacy.py	111	machine-specific home path in runtime source	3823e6ff7b6b0fda	0
+scripts/check_tracked_privacy.py	107	machine-specific home path in runtime source	630b2bf15cab764e	0
+scripts/check_tracked_privacy.py	113	machine-specific home path in runtime source	689c275d61d58dc2	0
