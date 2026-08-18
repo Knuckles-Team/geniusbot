@@ -415,15 +415,15 @@ Two consequences follow:
 - **`uv lock`/`uv sync`/`pytest` all resolve correctly from an isolated `git worktree` now** (this
   is *not* a limitation, unlike the old `{ workspace = true }` mechanism) — a plain PATH dependency
   has no workspace-membership requirement, so it works identically whether the checkout is
-  canonical or a worktree, and whether or not the ambient `/home/apps/workspace` ecosystem
+  canonical or a worktree, and whether or not the ambient `${WORKSPACE_ROOT}` ecosystem
   workspace is even present. The only remaining requirement is materializing
   `.uv-workspace-siblings/agent-utilities` (a symlink to the sibling checkout) once per checkout —
   see `.gitignore`'s matching entry. (Running `uv lock` from this repo's canonical, *ecosystem*-nested
   location, as opposed to an isolated worktree, can still fail with a `Nested workspaces are not
-  supported` error — that is a separate, pre-existing fact about `/home/apps/workspace`'s own
+  supported` error — that is a separate, pre-existing fact about `${WORKSPACE_ROOT}`'s own
   layout (agent-utilities is itself a nested workspace root there), not something this repo's own
   `pyproject.toml` can fix; it is exactly why this program's standing convention is to do all work
-  from a `git worktree add` outside `/home/apps/workspace` in the first place.)
+  from a `git worktree add` outside `${WORKSPACE_ROOT}` in the first place.)
 - **A fully re-locked, portable `requirements.txt` (pinned versions resolvable by plain `pip`, no
   local paths) is still blocked on the same external fact** — the original `uv pip compile
   --no-sources pyproject.toml` invocation deliberately ignores `[tool.uv.sources]` so the output
