@@ -9,9 +9,6 @@ description = "The Ever-learning and ever-improving tool!"
 readme = "README.md"
 requires-python = ">=3.12, <3.15"
 license = { text = "MIT" }
-authors = [
-    { name = "Project Maintainers", email = "maintainers@users.noreply.github.com" }
-]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
@@ -28,6 +25,10 @@ dependencies = [
     "winshell>=0.6; sys_platform == 'win32'",
     "pywin32; sys_platform == 'win32'"
 ]
+
+[[project.authors]]
+name = "Repository Maintainers"
+email = "maintainers@example.invalid"
 
 [project.optional-dependencies]
 dev = [
