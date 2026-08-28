@@ -239,18 +239,35 @@ def _is_reserved_hostname(host: str) -> bool:
     candidate = host.strip().rstrip(".").casefold()
     if not candidate:
         return False
-    if candidate == "localhost" or candidate.endswith(".localhost"):
-        return True
-    # CX-RAT-09: ``host.docker.internal`` is Docker's OWN published, universal
-    # convention (Docker Desktop's `extra_hosts: host.docker.internal:host-
-    # gateway` special value, documented at docs.docker.com and used in
-    # millions of public docker-compose.yml files) -- it names no host
-    # specific to any one deployment; every Docker install answers to it
-    # identically. A single fixed literal, not a wildcard/prefix rule, so
-    # this cannot mask a genuine ``*.internal`` leak the way widening the
-    # general suffix match would.
-    if candidate == "host.docker.internal":
-        return True
+    return (
+        _is_localhost_like(candidate)
+        or _is_reserved_example_domain(candidate)
+        or _is_reserved_documentation_address(candidate)
+    )
+
+
+def _is_localhost_like(candidate: str) -> bool:
+    """RFC 6761 ``localhost`` (bare or any subdomain), plus Docker Desktop's
+    OWN published, universal ``host.docker.internal`` convention
+    (`extra_hosts: host.docker.internal:host-gateway`, documented at
+    docs.docker.com and used in millions of public docker-compose.yml files)
+    -- it names no host specific to any one deployment; every Docker install
+    answers to it identically. A single fixed literal, not a wildcard/prefix
+    rule, so this cannot mask a genuine ``*.internal`` leak the way widening
+    the general suffix match would (CX-RAT-09)."""
+    return (
+        candidate == "localhost"
+        or candidate.endswith(".localhost")
+        or candidate == "host.docker.internal"
+    )
+
+
+def _is_reserved_example_domain(candidate: str) -> bool:
+    """RFC 2606 example.com/.net/.org (+ any subdomain), this repo's own
+    leading-``example``/``example-`` label convention (BUG-241, scoped to
+    the FIRST label only -- see :func:`_is_reserved_hostname`'s docstring),
+    and any RFC 2606/6761 documentation TLD (``.test``/``.example``/
+    ``.invalid``/``.localhost``)."""
     if candidate in _RESERVED_EXAMPLE_DOMAINS or any(
         candidate.endswith(f".{domain}") for domain in _RESERVED_EXAMPLE_DOMAINS
     ):
@@ -258,9 +275,12 @@ def _is_reserved_hostname(host: str) -> bool:
     labels = candidate.split(".")
     if labels[0] == "example" or labels[0].startswith("example-"):
         return True
-    last_label = labels[-1]
-    if last_label in _RESERVED_DOCUMENTATION_TLDS:
-        return True
+    return labels[-1] in _RESERVED_DOCUMENTATION_TLDS
+
+
+def _is_reserved_documentation_address(candidate: str) -> bool:
+    """RFC 5737 (TEST-NET-1/2/3), RFC 3927 (link-local), and RFC 3849
+    (IPv6 documentation) address blocks."""
     try:
         address = ipaddress.ip_address(candidate)
     except ValueError:
@@ -517,12 +537,25 @@ def derive_local_identifiers(root: Path = ROOT) -> frozenset[str]:
         declared = {
             value.strip() for value in re.split(r"[,\n]", override) if value.strip()
         }
-        return frozenset(
-            value.casefold()
-            for value in declared
-            if len(value) >= 4 and value.casefold() not in _GENERIC_IDENTIFIERS
-        )
+        return _filter_identifiers(declared)
 
+    candidates = _ambient_identifier_candidates()
+    candidates.update(_git_common_dir_identifiers(root))
+    candidates.update(_git_config_identifiers(root))
+    return _filter_identifiers(candidates)
+
+
+def _filter_identifiers(candidates) -> frozenset[str]:
+    return frozenset(
+        value.casefold()
+        for value in candidates
+        if value and len(value) >= 4 and value.casefold() not in _GENERIC_IDENTIFIERS
+    )
+
+
+def _ambient_identifier_candidates() -> set[str]:
+    """OS username, hostname (bare and short-form), user/login env vars, and
+    the home directory's own name/path -- the non-Git ambient candidates."""
     candidates = {
         getpass.getuser(),
         socket.gethostname(),
@@ -535,6 +568,10 @@ def derive_local_identifiers(root: Path = ROOT) -> frozenset[str]:
     if pwd is not None:  # POSIX: one more redundant source, see import above
         candidates.add(pwd.getpwuid(os.getuid()).pw_name)
     candidates.update(_identifier_from_path(str(Path.home())))
+    return candidates
+
+
+def _git_common_dir_identifiers(root: Path) -> set[str]:
     try:
         result = subprocess.run(
             ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
@@ -544,9 +581,13 @@ def derive_local_identifiers(root: Path = ROOT) -> frozenset[str]:
             text=True,
             env=sanitized_git_env(),
         )
-        candidates.update(_identifier_from_path(result.stdout.strip()))
     except (OSError, subprocess.SubprocessError):
-        pass
+        return set()
+    return _identifier_from_path(result.stdout.strip())
+
+
+def _git_config_identifiers(root: Path) -> set[str]:
+    candidates: set[str] = set()
     for command in (
         ["git", "config", "--get", "user.name"],
         ["git", "config", "--get", "user.email"],
@@ -560,15 +601,11 @@ def derive_local_identifiers(root: Path = ROOT) -> frozenset[str]:
                 text=True,
                 env=sanitized_git_env(),
             )
-            for value in result.stdout.splitlines():
-                candidates.add(value.strip())
         except OSError:
-            pass
-    return frozenset(
-        value.casefold()
-        for value in candidates
-        if value and len(value) >= 4 and value.casefold() not in _GENERIC_IDENTIFIERS
-    )
+            continue
+        for value in result.stdout.splitlines():
+            candidates.add(value.strip())
+    return candidates
 
 
 def _is_deployment_doc(path: Path) -> bool:
@@ -586,6 +623,47 @@ def _is_deployment_doc(path: Path) -> bool:
     )
 
 
+def _persisted_machine_path_category(line: str) -> str | None:
+    persisted = _PERSISTED_FIELD_RE.search(line)
+    if not persisted or _NEUTRAL_URI_RE.search(persisted.group("value")):
+        return None
+    value = persisted.group("value").strip(" \t,;)}]\"'").casefold()
+    field = persisted.group("field")
+    # A shell/template interpolation placeholder (``${WORKSPACE_ROOT}``, closing
+    # brace already stripped above) is resolved at runtime by whatever consumes
+    # the file, never a baked-in machine path — safe regardless of the field's
+    # own casing, same reasoning as the existing uppercase-field exemption.
+    is_template_placeholder = value.startswith("${")
+    runtime_relative = (field.isupper() or is_template_placeholder) and not re.match(
+        r"^(?:[a-z]:|[/\\]|~)", value, re.IGNORECASE
+    )
+    if value in {"", "none", "null", "unset"} or runtime_relative:
+        return None
+    return "persisted machine path"
+
+
+def _identifier_hit(line: str, identifiers: frozenset[str]) -> bool:
+    folded = line.casefold()
+    return any(
+        re.search(rf"(?<![\w-]){re.escape(value)}(?![\w-])", folded)
+        for value in identifiers
+    )
+
+
+def _deployment_doc_categories(line: str, deployment_doc: bool) -> set[str]:
+    categories: set[str] = set()
+    if not deployment_doc:
+        return categories
+    if _INTERNAL_ENDPOINT_RE.search(line):
+        categories.add("hard-coded internal endpoint")
+    credential_match = _CREDENTIAL_URI_RE.search(line)
+    if credential_match and not _is_credential_exempt(credential_match):
+        categories.add("credential-bearing URI")
+    if _HOST_IDENTITY_RE.search(line):
+        categories.add("hard-coded remote account")
+    return categories
+
+
 def classify_line(
     line: str,
     *,
@@ -593,38 +671,16 @@ def classify_line(
     deployment_doc: bool,
 ) -> frozenset[str]:
     categories: set[str] = set()
-    persisted = _PERSISTED_FIELD_RE.search(line)
-    if persisted and not _NEUTRAL_URI_RE.search(persisted.group("value")):
-        value = persisted.group("value").strip(" \t,;)}]\"'").casefold()
-        field = persisted.group("field")
-        # A shell/template interpolation placeholder (``${WORKSPACE_ROOT}``, closing
-        # brace already stripped above) is resolved at runtime by whatever consumes
-        # the file, never a baked-in machine path — safe regardless of the field's
-        # own casing, same reasoning as the existing uppercase-field exemption.
-        is_template_placeholder = value.startswith("${")
-        runtime_relative = (
-            field.isupper() or is_template_placeholder
-        ) and not re.match(r"^(?:[a-z]:|[/\\]|~)", value, re.IGNORECASE)
-        if value not in {"", "none", "null", "unset"} and not runtime_relative:
-            categories.add("persisted machine path")
-    if "persisted machine path" not in categories and _has_real_home_path(line):
+    persisted_category = _persisted_machine_path_category(line)
+    if persisted_category is not None:
+        categories.add(persisted_category)
+    elif _has_real_home_path(line):
         categories.add("machine-specific home path")
-    folded = line.casefold()
-    if any(
-        re.search(rf"(?<![\w-]){re.escape(value)}(?![\w-])", folded)
-        for value in identifiers
-    ):
+    if _identifier_hit(line, identifiers):
         categories.add("local account or host identifier")
     if _MACHINE_HOST_ID_RE.search(line):
         categories.add("machine-specific host identifier")
-    if deployment_doc and _INTERNAL_ENDPOINT_RE.search(line):
-        categories.add("hard-coded internal endpoint")
-    if deployment_doc:
-        credential_match = _CREDENTIAL_URI_RE.search(line)
-        if credential_match and not _is_credential_exempt(credential_match):
-            categories.add("credential-bearing URI")
-    if deployment_doc and _HOST_IDENTITY_RE.search(line):
-        categories.add("hard-coded remote account")
+    categories.update(_deployment_doc_categories(line, deployment_doc))
     return frozenset(categories)
 
 
@@ -689,27 +745,37 @@ def _is_public_artifact(name: str) -> bool:
     )
 
 
+def _is_traversable_dir(current: Path, name: str) -> bool:
+    if name in _SCAN_EXCLUDED_DIRECTORIES or name.endswith(".egg-info"):
+        return False
+    metadata = (current / name).lstat()
+    if stat.S_ISLNK(metadata.st_mode):
+        return False
+    return stat.S_ISDIR(metadata.st_mode)
+
+
+def _regular_files_in(current: Path, file_names) -> list[Path]:
+    found: list[Path] = []
+    for name in sorted(file_names):
+        path = current / name
+        metadata = path.lstat()
+        if stat.S_ISREG(metadata.st_mode):
+            found.append(path)
+    return found
+
+
 def _filesystem_files(root: Path) -> list[Path]:
     """Enumerate a bounded no-Git source snapshot without following links."""
 
     files: list[Path] = []
     for directory, directory_names, file_names in os.walk(root, topdown=True):
         current = Path(directory)
-        traversable: list[str] = []
-        for name in sorted(directory_names):
-            if name in _SCAN_EXCLUDED_DIRECTORIES or name.endswith(".egg-info"):
-                continue
-            metadata = (current / name).lstat()
-            if stat.S_ISLNK(metadata.st_mode):
-                continue
-            if stat.S_ISDIR(metadata.st_mode):
-                traversable.append(name)
-        directory_names[:] = traversable
-        for name in sorted(file_names):
-            path = current / name
-            metadata = path.lstat()
-            if not stat.S_ISREG(metadata.st_mode):
-                continue
+        directory_names[:] = [
+            name
+            for name in sorted(directory_names)
+            if _is_traversable_dir(current, name)
+        ]
+        for path in _regular_files_in(current, file_names):
             files.append(path)
             if len(files) > _MAX_SCAN_FILES:
                 raise RuntimeError("privacy source inventory exceeds its file bound")
@@ -830,6 +896,19 @@ def _is_bundled_connector_profile(path: Path) -> bool:
     ) and path.suffix.casefold() in {".py", ".json", ".yaml", ".yml"}
 
 
+def _is_non_neutral_author_line(folded: str, in_project_authors: bool) -> bool:
+    if re.match(r"authors\s*=", folded):
+        return (
+            _NEUTRAL_AUTHOR_NAME not in folded
+            or _NEUTRAL_AUTHOR_EMAIL_SUFFIX not in folded
+        )
+    if in_project_authors and re.match(r"name\s*=", folded):
+        return _NEUTRAL_AUTHOR_NAME not in folded
+    if in_project_authors and re.match(r"email\s*=", folded):
+        return _NEUTRAL_AUTHOR_EMAIL_SUFFIX not in folded
+    return False
+
+
 def _author_metadata_lines(path: Path, lines: list[str]) -> list[int]:
     """Return non-neutral package-author lines without returning their values."""
     if path.suffix.casefold() != ".toml":
@@ -843,19 +922,8 @@ def _author_metadata_lines(path: Path, lines: list[str]) -> list[int]:
             continue
         if in_project_authors and stripped.startswith("["):
             in_project_authors = False
-        folded = stripped.casefold()
-        if re.match(r"authors\s*=", folded):
-            if (
-                _NEUTRAL_AUTHOR_NAME not in folded
-                or _NEUTRAL_AUTHOR_EMAIL_SUFFIX not in folded
-            ):
-                violations.append(number)
-        elif in_project_authors and re.match(r"name\s*=", folded):
-            if _NEUTRAL_AUTHOR_NAME not in folded:
-                violations.append(number)
-        elif in_project_authors and re.match(r"email\s*=", folded):
-            if _NEUTRAL_AUTHOR_EMAIL_SUFFIX not in folded:
-                violations.append(number)
+        if _is_non_neutral_author_line(stripped.casefold(), in_project_authors):
+            violations.append(number)
     return violations
 
 
@@ -867,6 +935,63 @@ def _next_ordinal(
     return ordinal
 
 
+def _tracked_artifact_violations(
+    path: Path,
+    root: Path,
+    identifiers: frozenset[str],
+    ordinals: dict[tuple[str, str, str], int],
+) -> list[Violation]:
+    relative = path.relative_to(root)
+    rel_str = relative.as_posix()
+    deployment_doc = _is_deployment_doc(relative)
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    violations: list[Violation] = []
+    for number in _author_metadata_lines(path, lines):
+        category = "non-neutral package author identity"
+        content_hash = _content_hash(lines[number - 1])
+        ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
+        violations.append(Violation(rel_str, number, category, content_hash, ordinal))
+    for number, line in enumerate(lines, 1):
+        for category in classify_line(
+            line,
+            identifiers=identifiers,
+            deployment_doc=deployment_doc,
+        ):
+            content_hash = _content_hash(line)
+            ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
+            violations.append(
+                Violation(rel_str, number, category, content_hash, ordinal)
+            )
+    return violations
+
+
+def _runtime_source_violations(
+    path: Path,
+    root: Path,
+    identifiers: frozenset[str],
+    ordinals: dict[tuple[str, str, str], int],
+) -> list[Violation]:
+    relative = path.relative_to(root)
+    rel_str = relative.as_posix()
+    violations: list[Violation] = []
+    if _is_bundled_connector_profile(relative):
+        category = "bundled environment-specific connector profile"
+        # Whole-file finding, not line-anchored: hash the path itself so
+        # it stays stable regardless of the file's own line churn.
+        content_hash = _content_hash(rel_str)
+        ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
+        violations.append(Violation(rel_str, 1, category, content_hash, ordinal))
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    for number, line in enumerate(lines, 1):
+        for category in classify_runtime_source_line(line, identifiers=identifiers):
+            content_hash = _content_hash(line)
+            ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
+            violations.append(
+                Violation(rel_str, number, category, content_hash, ordinal)
+            )
+    return violations
+
+
 def scan(root: Path = ROOT) -> list[Violation]:
     identifiers = derive_local_identifiers(root)
     violations: list[Violation] = []
@@ -876,50 +1001,15 @@ def scan(root: Path = ROOT) -> list[Violation]:
     # otherwise report a moved (not new) leak as a phantom NEW finding.
     ordinals: dict[tuple[str, str, str], int] = {}
     for path in _tracked_artifacts(root):
-        if not path.is_file():
-            continue
-        relative = path.relative_to(root)
-        rel_str = relative.as_posix()
-        deployment_doc = _is_deployment_doc(relative)
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-        for number in _author_metadata_lines(path, lines):
-            category = "non-neutral package author identity"
-            content_hash = _content_hash(lines[number - 1])
-            ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
-            violations.append(
-                Violation(rel_str, number, category, content_hash, ordinal)
+        if path.is_file():
+            violations.extend(
+                _tracked_artifact_violations(path, root, identifiers, ordinals)
             )
-        for number, line in enumerate(lines, 1):
-            for category in classify_line(
-                line,
-                identifiers=identifiers,
-                deployment_doc=deployment_doc,
-            ):
-                content_hash = _content_hash(line)
-                ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
-                violations.append(
-                    Violation(rel_str, number, category, content_hash, ordinal)
-                )
     for path in _runtime_source_artifacts(root):
-        if not path.is_file():
-            continue
-        relative = path.relative_to(root)
-        rel_str = relative.as_posix()
-        if _is_bundled_connector_profile(relative):
-            category = "bundled environment-specific connector profile"
-            # Whole-file finding, not line-anchored: hash the path itself so
-            # it stays stable regardless of the file's own line churn.
-            content_hash = _content_hash(rel_str)
-            ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
-            violations.append(Violation(rel_str, 1, category, content_hash, ordinal))
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-        for number, line in enumerate(lines, 1):
-            for category in classify_runtime_source_line(line, identifiers=identifiers):
-                content_hash = _content_hash(line)
-                ordinal = _next_ordinal(ordinals, (rel_str, category, content_hash))
-                violations.append(
-                    Violation(rel_str, number, category, content_hash, ordinal)
-                )
+        if path.is_file():
+            violations.extend(
+                _runtime_source_violations(path, root, identifiers, ordinals)
+            )
     return violations
 
 
