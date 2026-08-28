@@ -429,7 +429,7 @@ rpds-py==0.30.0
     #   referencing
 secretstorage==3.5.0
     # via keyring
-setuptools==82.0.1
+setuptools==83.0.0
     # via llama-index-core
 shellingham==1.5.4
     # via typer
