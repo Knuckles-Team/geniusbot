@@ -201,27 +201,33 @@ class MetricsPanel(QWidget):
             self.result_table.setItem(r, 1, QTableWidgetItem(value))
 
     @staticmethod
-    def _extract_series(data: dict) -> list[tuple[str, str]]:
-        """Flatten a Prometheus-style result into (series-label, value) rows."""
-        result = data.get("result", data)
-        # Prometheus wire: {"data": {"result": [{"metric": {...}, "value": [ts, v]}]}}
+    def _unwrap_promql_payload(result):
+        """Peel Prometheus's {"data": {"result": [...]}} wire envelope, if
+        present, down to the bare result list/scalar."""
         payload = result
         if isinstance(result, dict):
             payload = result.get("data", result)
             if isinstance(payload, dict):
                 payload = payload.get("result", payload)
-        rows: list[tuple[str, str]] = []
+        return payload
+
+    @staticmethod
+    def _series_row_from_item(item) -> tuple[str, str]:
+        if not isinstance(item, dict):
+            return ("", str(item))
+        metric = item.get("metric", {})
+        label = ", ".join(f"{k}={v}" for k, v in metric.items()) or "value"
+        value = item.get("value") or item.get("values") or ""
+        if isinstance(value, list) and len(value) == 2:
+            value = value[1]
+        return (label, str(value))
+
+    @staticmethod
+    def _extract_series(data: dict) -> list[tuple[str, str]]:
+        """Flatten a Prometheus-style result into (series-label, value) rows."""
+        payload = MetricsPanel._unwrap_promql_payload(data.get("result", data))
         if isinstance(payload, list):
-            for item in payload:
-                if not isinstance(item, dict):
-                    rows.append(("", str(item)))
-                    continue
-                metric = item.get("metric", {})
-                label = ", ".join(f"{k}={v}" for k, v in metric.items()) or "value"
-                value = item.get("value") or item.get("values") or ""
-                if isinstance(value, list) and len(value) == 2:
-                    value = value[1]
-                rows.append((label, str(value)))
-        elif payload not in (None, ""):
-            rows.append(("result", str(payload)))
-        return rows
+            return [MetricsPanel._series_row_from_item(item) for item in payload]
+        if payload not in (None, ""):
+            return [("result", str(payload))]
+        return []
