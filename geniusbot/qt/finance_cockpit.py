@@ -386,16 +386,13 @@ class FinanceCockpitPanel(QWidget):
         now_str = datetime.now().strftime("%H:%M:%S")
         self.txt_news.append(f"📰 [{now_str}] {random.choice(topics)}")
 
-    def replot_charts(self):
-        """snappily clear and re-populate the QtCharts."""
-        # 1. Replot main price series
-        self.price_chart.removeAllSeries()
+    @staticmethod
+    def _clear_chart(chart: QChart) -> None:
+        chart.removeAllSeries()
+        for axis in list(chart.axes()):
+            chart.removeAxis(axis)
 
-        # Remove axes if present
-        for axis in list(self.price_chart.axes()):
-            self.price_chart.removeAxis(axis)
-
-        # Axes creation
+    def _build_price_axes(self) -> tuple[QDateTimeAxis, QValueAxis]:
         axis_x = QDateTimeAxis()
         axis_x.setFormat("hh:mm:ss")
         axis_x.setTitleText("Time (Tick Series)")
@@ -409,9 +406,120 @@ class FinanceCockpitPanel(QWidget):
 
         self.price_chart.addAxis(axis_x, Qt.AlignBottom)
         self.price_chart.addAxis(axis_y, Qt.AlignLeft)
+        return axis_x, axis_y
+
+    def _plot_candlestick_series(self, axis_x, axis_y) -> tuple[float, float]:
+        # Replot Candlestick OHLCV Bars
+        candle_series = QCandlestickSeries()
+        candle_series.setName("OHLCV Bars")
+        candle_series.setIncreasingColor(QColor(COLOR_SUCCESS))
+        candle_series.setDecreasingColor(QColor(COLOR_DANGER))
 
         min_price = float("inf")
         max_price = float("-inf")
+        for t in self.ticks_data:
+            ts = int(t["time"].timestamp() * 1000)
+            candle_set = QCandlestickSet(t["open"], t["high"], t["low"], t["close"], ts)
+            candle_series.append(candle_set)
+
+            min_price = min(min_price, t["low"])
+            max_price = max(max_price, t["high"])
+
+        self.price_chart.addSeries(candle_series)
+        candle_series.attachAxis(axis_x)
+        candle_series.attachAxis(axis_y)
+        return min_price, max_price
+
+    def _plot_line_series(self, axis_x, axis_y) -> tuple[float, float]:
+        # Replot snappy illuminated Line Series
+        line_series = QLineSeries()
+        line_series.setName("Close Price")
+        pen = QPen(QColor(COLOR_ACCENT))
+        pen.setWidth(2)
+        line_series.setPen(pen)
+
+        min_price = float("inf")
+        max_price = float("-inf")
+        for t in self.ticks_data:
+            ts = int(t["time"].timestamp() * 1000)
+            line_series.append(ts, t["close"])
+
+            min_price = min(min_price, t["close"])
+            max_price = max(max_price, t["close"])
+
+        self.price_chart.addSeries(line_series)
+        line_series.attachAxis(axis_x)
+        line_series.attachAxis(axis_y)
+        return min_price, max_price
+
+    def _plot_signal_overlays(self, axis_x, axis_y) -> None:
+        # Visual indicator overlays scatter plots (Feature parity requested)
+        if not self.chk_signals.isChecked():
+            return
+        scatter_buy = QScatterSeries()
+        scatter_buy.setName("Auto Strategy Buy Signals")
+        scatter_buy.setMarkerShape(QScatterSeries.MarkerShapeTriangle)
+        scatter_buy.setMarkerSize(12)
+        scatter_buy.setColor(QColor(COLOR_SUCCESS))
+        scatter_buy.setBorderColor(QColor(COLOR_SUCCESS))
+
+        scatter_sell = QScatterSeries()
+        scatter_sell.setName("Auto Strategy Sell Signals")
+        scatter_sell.setMarkerShape(QScatterSeries.MarkerShapeRectangle)
+        scatter_sell.setMarkerSize(12)
+
+        scatter_sell.setColor(QColor(COLOR_DANGER))
+        scatter_sell.setBorderColor(QColor(COLOR_DANGER))
+
+        # Populate mock signals along the series
+        for i, t in enumerate(self.ticks_data):
+            if i % 8 == 3:  # Mock crossover scatter spots
+                ts = int(t["time"].timestamp() * 1000)
+                scatter_buy.append(ts, t["low"] - 30.0)
+            elif i % 8 == 6:
+                ts = int(t["time"].timestamp() * 1000)
+                scatter_sell.append(ts, t["high"] + 30.0)
+
+        self.price_chart.addSeries(scatter_buy)
+        scatter_buy.attachAxis(axis_x)
+        scatter_buy.attachAxis(axis_y)
+
+        self.price_chart.addSeries(scatter_sell)
+        scatter_sell.attachAxis(axis_x)
+        scatter_sell.attachAxis(axis_y)
+
+    def _plot_bollinger_bands(self, axis_x, axis_y) -> None:
+        # Bollinger Bands lines rendering
+        if not self.chk_bollinger.isChecked():
+            return
+        upper_band = QLineSeries()
+        upper_band.setName("Bollinger Upper (2.0σ)")
+        lower_band = QLineSeries()
+        lower_band.setName("Bollinger Lower (2.0σ)")
+
+        pen_b = QPen(QColor(COLOR_TEXT_MUTED))
+        pen_b.setStyle(Qt.DashLine)
+        pen_b.setWidth(1)
+        upper_band.setPen(pen_b)
+        lower_band.setPen(pen_b)
+
+        for t in self.ticks_data:
+            ts = int(t["time"].timestamp() * 1000)
+            upper_band.append(ts, t["close"] + 250.0)
+            lower_band.append(ts, t["close"] - 250.0)
+
+        self.price_chart.addSeries(upper_band)
+        upper_band.attachAxis(axis_x)
+        upper_band.attachAxis(axis_y)
+
+        self.price_chart.addSeries(lower_band)
+        lower_band.attachAxis(axis_x)
+        lower_band.attachAxis(axis_y)
+
+    def _replot_price_chart(self) -> None:
+        self._clear_chart(self.price_chart)
+        axis_x, axis_y = self._build_price_axes()
+
         min_time = QDateTime.fromMSecsSinceEpoch(
             int(self.ticks_data[0]["time"].timestamp() * 1000)
         )
@@ -420,114 +528,21 @@ class FinanceCockpitPanel(QWidget):
         )
 
         if self.chart_style_candlestick:
-            # Replot Candlestick OHLCV Bars
-            candle_series = QCandlestickSeries()
-            candle_series.setName("OHLCV Bars")
-            candle_series.setIncreasingColor(QColor(COLOR_SUCCESS))
-            candle_series.setDecreasingColor(QColor(COLOR_DANGER))
-
-            for t in self.ticks_data:
-                ts = int(t["time"].timestamp() * 1000)
-                candle_set = QCandlestickSet(
-                    t["open"], t["high"], t["low"], t["close"], ts
-                )
-                candle_series.append(candle_set)
-
-                min_price = min(min_price, t["low"])
-                max_price = max(max_price, t["high"])
-
-            self.price_chart.addSeries(candle_series)
-            candle_series.attachAxis(axis_x)
-            candle_series.attachAxis(axis_y)
+            min_price, max_price = self._plot_candlestick_series(axis_x, axis_y)
         else:
-            # Replot snappy illuminated Line Series
-            line_series = QLineSeries()
-            line_series.setName("Close Price")
-            pen = QPen(QColor(COLOR_ACCENT))
-            pen.setWidth(2)
-            line_series.setPen(pen)
+            min_price, max_price = self._plot_line_series(axis_x, axis_y)
 
-            for t in self.ticks_data:
-                ts = int(t["time"].timestamp() * 1000)
-                line_series.append(ts, t["close"])
-
-                min_price = min(min_price, t["close"])
-                max_price = max(max_price, t["close"])
-
-            self.price_chart.addSeries(line_series)
-            line_series.attachAxis(axis_x)
-            line_series.attachAxis(axis_y)
-
-        # Visual indicator overlays scatter plots (Feature parity requested)
-        if self.chk_signals.isChecked():
-            scatter_buy = QScatterSeries()
-            scatter_buy.setName("Auto Strategy Buy Signals")
-            scatter_buy.setMarkerShape(QScatterSeries.MarkerShapeTriangle)
-            scatter_buy.setMarkerSize(12)
-            scatter_buy.setColor(QColor(COLOR_SUCCESS))
-            scatter_buy.setBorderColor(QColor(COLOR_SUCCESS))
-
-            scatter_sell = QScatterSeries()
-            scatter_sell.setName("Auto Strategy Sell Signals")
-            scatter_sell.setMarkerShape(QScatterSeries.MarkerShapeRectangle)
-            scatter_sell.setMarkerSize(12)
-
-            scatter_sell.setColor(QColor(COLOR_DANGER))
-            scatter_sell.setBorderColor(QColor(COLOR_DANGER))
-
-            # Populate mock signals along the series
-            for i, t in enumerate(self.ticks_data):
-                if i % 8 == 3:  # Mock crossover scatter spots
-                    ts = int(t["time"].timestamp() * 1000)
-                    scatter_buy.append(ts, t["low"] - 30.0)
-                elif i % 8 == 6:
-                    ts = int(t["time"].timestamp() * 1000)
-                    scatter_sell.append(ts, t["high"] + 30.0)
-
-            self.price_chart.addSeries(scatter_buy)
-            scatter_buy.attachAxis(axis_x)
-            scatter_buy.attachAxis(axis_y)
-
-            self.price_chart.addSeries(scatter_sell)
-            scatter_sell.attachAxis(axis_x)
-            scatter_sell.attachAxis(axis_y)
-
-        # Bollinger Bands lines rendering
-        if self.chk_bollinger.isChecked():
-            upper_band = QLineSeries()
-            upper_band.setName("Bollinger Upper (2.0σ)")
-            lower_band = QLineSeries()
-            lower_band.setName("Bollinger Lower (2.0σ)")
-
-            pen_b = QPen(QColor(COLOR_TEXT_MUTED))
-            pen_b.setStyle(Qt.DashLine)
-            pen_b.setWidth(1)
-            upper_band.setPen(pen_b)
-            lower_band.setPen(pen_b)
-
-            for t in self.ticks_data:
-                ts = int(t["time"].timestamp() * 1000)
-                upper_band.append(ts, t["close"] + 250.0)
-                lower_band.append(ts, t["close"] - 250.0)
-
-            self.price_chart.addSeries(upper_band)
-            upper_band.attachAxis(axis_x)
-            upper_band.attachAxis(axis_y)
-
-            self.price_chart.addSeries(lower_band)
-            lower_band.attachAxis(axis_x)
-            lower_band.attachAxis(axis_y)
+        self._plot_signal_overlays(axis_x, axis_y)
+        self._plot_bollinger_bands(axis_x, axis_y)
 
         # Set axes ranges
         axis_x.setRange(min_time, max_time)
         # Margin scaling padding
         axis_y.setRange(min_price * 0.998, max_price * 1.002)
 
-        # ── 2. Replot cumulative orderbook bid/ask depth (FinceptTerminal style) ──
-        self.depth_chart.removeAllSeries()
-
-        for axis in list(self.depth_chart.axes()):
-            self.depth_chart.removeAxis(axis)
+    def _replot_depth_chart(self) -> None:
+        # ── Replot cumulative orderbook bid/ask depth (FinceptTerminal style) ──
+        self._clear_chart(self.depth_chart)
 
         # Depth axis definition
         axis_depth_x = QValueAxis()
@@ -584,3 +599,8 @@ class FinanceCockpitPanel(QWidget):
         # Set ranges
         axis_depth_x.setRange(mid_price - 160.0, mid_price + 160.0)
         axis_depth_y.setRange(0.0, max(accum_bid, accum_ask) * 1.1)
+
+    def replot_charts(self):
+        """snappily clear and re-populate the QtCharts."""
+        self._replot_price_chart()
+        self._replot_depth_chart()
