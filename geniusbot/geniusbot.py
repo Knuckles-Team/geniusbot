@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import importlib
 import logging
 import os
 import sys
@@ -93,6 +94,63 @@ class GeniusBot(QMainWindow):
     CONCEPT:AU-GBOT.cockpit.through-gbot
     GeniusBot Cockpit Dashboard Window.
     """
+
+    # index -> (panel attribute name, module path, class name). Every lazily
+    # loaded view (3..17) follows the identical pattern: import on first
+    # visit, instantiate with the shared worker, cache on the instance
+    # attribute, and swap the placeholder widget in the stack.
+    _PANEL_SPECS: dict[int, tuple[str, str, str]] = {
+        3: ("graph_panel", "geniusbot.qt.graph_explorer", "GraphExplorerPanel"),
+        4: (
+            "telemetry_panel",
+            "geniusbot.qt.telemetry_dashboard",
+            "TelemetryDashboardPanel",
+        ),
+        5: ("workflow_panel", "geniusbot.qt.workflow_builder", "WorkflowBuilderPanel"),
+        6: ("security_panel", "geniusbot.qt.security_policy", "SecurityPolicyPanel"),
+        7: ("infra_panel", "geniusbot.qt.infra_cockpit", "InfrastructureCockpitPanel"),
+        8: ("finance_panel", "geniusbot.qt.finance_cockpit", "FinanceCockpitPanel"),
+        9: ("dashboard_panel", "geniusbot.qt.service_dashboard", "ServiceDashboardPanel"),
+        10: ("fleet_panel", "geniusbot.qt.fleet_cockpit", "FleetCockpitPanel"),
+        11: ("usage_panel", "geniusbot.qt.usage_cockpit", "UsageCockpitPanel"),
+        12: (
+            "extraction_panel",
+            "geniusbot.qt.extraction_cockpit",
+            "ExtractionCockpitPanel",
+        ),
+        13: ("temporal_panel", "geniusbot.qt.temporal_graph_panel", "TemporalGraphPanel"),
+        14: ("data_query_panel", "geniusbot.qt.data_query_panel", "DataQueryPanel"),
+        15: ("metrics_panel", "geniusbot.qt.metrics_panel", "MetricsPanel"),
+        16: (
+            "federated_panel",
+            "geniusbot.qt.federated_search_panel",
+            "FederatedSearchPanel",
+        ),
+        17: ("voice_panel", "geniusbot.qt.voice_panel", "VoicePanel"),
+    }
+
+    # index -> sidebar button attribute name, for the active-view styling
+    # pass at the end of switch_view.
+    _SIDEBAR_BUTTON_ATTRS: dict[int, str] = {
+        0: "btn_deck",
+        1: "btn_term",
+        2: "btn_chat",
+        3: "btn_graph",
+        4: "btn_telemetry",
+        5: "btn_workflow",
+        6: "btn_security",
+        7: "btn_infra",
+        8: "btn_finance",
+        9: "btn_dashboard",
+        10: "btn_fleet",
+        11: "btn_usage",
+        12: "btn_extraction",
+        13: "btn_temporal",
+        14: "btn_ask_data",
+        15: "btn_metrics",
+        16: "btn_federated",
+        17: "btn_voice",
+    }
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -401,111 +459,36 @@ class GeniusBot(QMainWindow):
         placeholder.deleteLater()
         self.centralStackWidget.insertWidget(index, new_widget)
 
-    def switch_view(self, index: int):
-        if index == 3 and self.graph_panel is None:
-            from geniusbot.qt.graph_explorer import GraphExplorerPanel
+    def _ensure_panel_loaded(self, index: int) -> None:
+        """Lazily import + instantiate the panel for `index`, if any, and
+        swap it into the placeholder slot. No-op if already loaded."""
+        spec = self._PANEL_SPECS.get(index)
+        if spec is None:
+            return
+        attr_name, module_path, class_name = spec
+        if getattr(self, attr_name) is not None:
+            return
+        module = importlib.import_module(module_path)
+        panel_cls = getattr(module, class_name)
+        panel = panel_cls(self.worker)
+        setattr(self, attr_name, panel)
+        self._swap_placeholder(index, panel)
 
-            self.graph_panel = GraphExplorerPanel(self.worker)
-            self._swap_placeholder(3, self.graph_panel)
-        elif index == 4 and self.telemetry_panel is None:
-            from geniusbot.qt.telemetry_dashboard import TelemetryDashboardPanel
-
-            self.telemetry_panel = TelemetryDashboardPanel(self.worker)
-            self._swap_placeholder(4, self.telemetry_panel)
-        elif index == 5 and self.workflow_panel is None:
-            from geniusbot.qt.workflow_builder import WorkflowBuilderPanel
-
-            self.workflow_panel = WorkflowBuilderPanel(self.worker)
-            self._swap_placeholder(5, self.workflow_panel)
-        elif index == 6 and self.security_panel is None:
-            from geniusbot.qt.security_policy import SecurityPolicyPanel
-
-            self.security_panel = SecurityPolicyPanel(self.worker)
-            self._swap_placeholder(6, self.security_panel)
-        elif index == 7 and self.infra_panel is None:
-            from geniusbot.qt.infra_cockpit import InfrastructureCockpitPanel
-
-            self.infra_panel = InfrastructureCockpitPanel(self.worker)
-            self._swap_placeholder(7, self.infra_panel)
-        elif index == 8 and self.finance_panel is None:
-            from geniusbot.qt.finance_cockpit import FinanceCockpitPanel
-
-            self.finance_panel = FinanceCockpitPanel(self.worker)
-            self._swap_placeholder(8, self.finance_panel)
-        elif index == 9 and self.dashboard_panel is None:
-            from geniusbot.qt.service_dashboard import ServiceDashboardPanel
-
-            self.dashboard_panel = ServiceDashboardPanel(self.worker)
-            self._swap_placeholder(9, self.dashboard_panel)
-        elif index == 10 and self.fleet_panel is None:
-            from geniusbot.qt.fleet_cockpit import FleetCockpitPanel
-
-            self.fleet_panel = FleetCockpitPanel(self.worker)
-            self._swap_placeholder(10, self.fleet_panel)
-        elif index == 11 and self.usage_panel is None:
-            from geniusbot.qt.usage_cockpit import UsageCockpitPanel
-
-            self.usage_panel = UsageCockpitPanel(self.worker)
-            self._swap_placeholder(11, self.usage_panel)
-        elif index == 12 and self.extraction_panel is None:
-            from geniusbot.qt.extraction_cockpit import ExtractionCockpitPanel
-
-            self.extraction_panel = ExtractionCockpitPanel(self.worker)
-            self._swap_placeholder(12, self.extraction_panel)
-        elif index == 13 and self.temporal_panel is None:
-            from geniusbot.qt.temporal_graph_panel import TemporalGraphPanel
-
-            self.temporal_panel = TemporalGraphPanel(self.worker)
-            self._swap_placeholder(13, self.temporal_panel)
-        elif index == 14 and self.data_query_panel is None:
-            from geniusbot.qt.data_query_panel import DataQueryPanel
-
-            self.data_query_panel = DataQueryPanel(self.worker)
-            self._swap_placeholder(14, self.data_query_panel)
-        elif index == 15 and self.metrics_panel is None:
-            from geniusbot.qt.metrics_panel import MetricsPanel
-
-            self.metrics_panel = MetricsPanel(self.worker)
-            self._swap_placeholder(15, self.metrics_panel)
-        elif index == 16 and self.federated_panel is None:
-            from geniusbot.qt.federated_search_panel import FederatedSearchPanel
-
-            self.federated_panel = FederatedSearchPanel(self.worker)
-            self._swap_placeholder(16, self.federated_panel)
-        elif index == 17 and self.voice_panel is None:
-            from geniusbot.qt.voice_panel import VoicePanel
-
-            self.voice_panel = VoicePanel(self.worker)
-            self._swap_placeholder(17, self.voice_panel)
-
-        self.centralStackWidget.setCurrentIndex(index)
-
-        # Style active sidebar button
-        buttons = [
-            (0, self.btn_deck),
-            (1, self.btn_term),
-            (2, self.btn_chat),
-            (3, self.btn_graph),
-            (4, self.btn_telemetry),
-            (5, self.btn_workflow),
-            (6, self.btn_security),
-            (7, self.btn_infra),
-            (8, self.btn_finance),
-            (9, self.btn_dashboard),
-            (10, self.btn_fleet),
-            (11, self.btn_usage),
-            (12, self.btn_extraction),
-            (13, self.btn_temporal),
-            (14, self.btn_ask_data),
-            (15, self.btn_metrics),
-            (16, self.btn_federated),
-            (17, self.btn_voice),
-        ]
-
-        for idx, btn in buttons:
+    def _style_sidebar_buttons(self, active_index: int) -> None:
+        """Clear styling on the active view's sidebar button; transparent
+        the rest."""
+        for idx, attr_name in self._SIDEBAR_BUTTON_ATTRS.items():
+            btn = getattr(self, attr_name)
             btn.setStyleSheet(
-                "background-color: transparent; border: none;" if index != idx else ""
+                "background-color: transparent; border: none;"
+                if active_index != idx
+                else ""
             )
+
+    def switch_view(self, index: int):
+        self._ensure_panel_loaded(index)
+        self.centralStackWidget.setCurrentIndex(index)
+        self._style_sidebar_buttons(index)
 
         if index == 1 and not self.term_widget.fd:
             self.term_widget.start_shell("agent-terminal-ui")
