@@ -146,13 +146,8 @@ class DataQueryPanel(QWidget):
             f"<span style='color:#FF1744;'>Query failed:<br>{message}</span>"
         )
 
-    def _on_answer(self, data: dict):
-        self.btn_ask.setEnabled(True)
-        if data.get("error"):
-            self._on_error(str(data["error"]))
-            return
-        self.status_lbl.setText("Done.")
-
+    @staticmethod
+    def _build_answer_html(data: dict) -> str:
         answer = data.get("answer") or data.get("result") or "(no answer synthesized)"
         query = data.get("query") or data.get("generated_query") or ""
         citations = data.get("citations") or []
@@ -168,10 +163,34 @@ class DataQueryPanel(QWidget):
             html.append(
                 f"<br><b style='color:#FFAB40;'>Citations</b><br><span style='color:#8A8A93;'>{cites}</span>"
             )
-        self.answer_view.setHtml("".join(html))
+        return "".join(html)
 
-        rows = data.get("rows") or data.get("results") or []
-        self._render_rows(rows)
+    def _on_answer(self, data: dict):
+        self.btn_ask.setEnabled(True)
+        if data.get("error"):
+            self._on_error(str(data["error"]))
+            return
+        self.status_lbl.setText("Done.")
+        self.answer_view.setHtml(self._build_answer_html(data))
+        self._render_rows(data.get("rows") or data.get("results") or [])
+
+    def _render_dict_rows(self, rows: list[dict]) -> None:
+        columns = list(rows[0].keys())
+        self.rows_table.setColumnCount(len(columns))
+        self.rows_table.setHorizontalHeaderLabels([str(c) for c in columns])
+        self.rows_table.setRowCount(len(rows))
+        for r, row in enumerate(rows):
+            for c, col in enumerate(columns):
+                self.rows_table.setItem(r, c, QTableWidgetItem(str(row.get(col, ""))))
+
+    def _render_positional_rows(self, rows: list) -> None:
+        width = max(len(r) for r in rows)
+        self.rows_table.setColumnCount(width)
+        self.rows_table.setHorizontalHeaderLabels([f"col{i}" for i in range(width)])
+        self.rows_table.setRowCount(len(rows))
+        for r, row in enumerate(rows):
+            for c, val in enumerate(row):
+                self.rows_table.setItem(r, c, QTableWidgetItem(str(val)))
 
     def _render_rows(self, rows: list):
         self.rows_table.clear()
@@ -181,21 +200,7 @@ class DataQueryPanel(QWidget):
             return
         # Rows may be list[dict] (column-keyed) or list[list] (positional).
         if isinstance(rows[0], dict):
-            columns = list(rows[0].keys())
-            self.rows_table.setColumnCount(len(columns))
-            self.rows_table.setHorizontalHeaderLabels([str(c) for c in columns])
-            self.rows_table.setRowCount(len(rows))
-            for r, row in enumerate(rows):
-                for c, col in enumerate(columns):
-                    self.rows_table.setItem(
-                        r, c, QTableWidgetItem(str(row.get(col, "")))
-                    )
+            self._render_dict_rows(rows)
         else:
-            width = max(len(r) for r in rows)
-            self.rows_table.setColumnCount(width)
-            self.rows_table.setHorizontalHeaderLabels([f"col{i}" for i in range(width)])
-            self.rows_table.setRowCount(len(rows))
-            for r, row in enumerate(rows):
-                for c, val in enumerate(row):
-                    self.rows_table.setItem(r, c, QTableWidgetItem(str(val)))
+            self._render_positional_rows(rows)
         self.rows_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # type: ignore[attr-defined]
