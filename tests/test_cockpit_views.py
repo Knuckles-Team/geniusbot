@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import inspect
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -104,3 +105,105 @@ def test_metrics_panel_extract_series(data, expected):
     2-element `value` unwrapping vs. multi-point `values` left as a repr,
     and the None/empty/scalar/no-result-key fallbacks."""
     assert MetricsPanel._extract_series(data) == expected
+
+
+def _make_data_query_panel(qapp) -> DataQueryPanel:
+    return DataQueryPanel(MagicMock())
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+def test_render_rows_dict_shaped(qapp) -> None:
+    """dict rows (column-keyed): columns come from the first row's keys, in
+    order, and each cell falls back to "" for a missing key."""
+    panel = _make_data_query_panel(qapp)
+    panel._render_rows([{"a": 1, "b": 2}, {"a": 3}])
+    assert panel.rows_table.columnCount() == 2
+    assert panel.rows_table.rowCount() == 2
+    headers = [
+        panel.rows_table.horizontalHeaderItem(c).text() for c in range(2)
+    ]
+    assert headers == ["a", "b"]
+    assert panel.rows_table.item(0, 0).text() == "1"
+    assert panel.rows_table.item(0, 1).text() == "2"
+    assert panel.rows_table.item(1, 0).text() == "3"
+    assert panel.rows_table.item(1, 1).text() == ""
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+def test_render_rows_positional_shaped(qapp) -> None:
+    """list rows (positional): column count is the WIDEST row; headers are
+    synthesized as col0/col1/...."""
+    panel = _make_data_query_panel(qapp)
+    panel._render_rows([[1, 2, 3], [4, 5]])
+    assert panel.rows_table.columnCount() == 3
+    assert panel.rows_table.rowCount() == 2
+    headers = [
+        panel.rows_table.horizontalHeaderItem(c).text() for c in range(3)
+    ]
+    assert headers == ["col0", "col1", "col2"]
+    assert panel.rows_table.item(0, 2).text() == "3"
+    assert panel.rows_table.item(1, 0).text() == "4"
+    assert panel.rows_table.item(1, 1).text() == "5"
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+def test_render_rows_empty_clears_table(qapp) -> None:
+    panel = _make_data_query_panel(qapp)
+    panel._render_rows([{"a": 1}])
+    assert panel.rows_table.rowCount() == 1
+    panel._render_rows([])
+    assert panel.rows_table.rowCount() == 0
+    assert panel.rows_table.columnCount() == 0
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+def test_on_answer_builds_html_with_query_and_citations(qapp) -> None:
+    panel = _make_data_query_panel(qapp)
+    panel._on_answer(
+        {
+            "answer": "42 agents.",
+            "query": "MATCH (a:Agent) RETURN count(a)",
+            "citations": ["doc-1", "doc-2"],
+            "rows": [{"count": 42}],
+        }
+    )
+    html = panel.answer_view.toHtml()
+    assert "42 agents." in html
+    assert "MATCH (a:Agent) RETURN count(a)" in html
+    assert "doc-1" in html and "doc-2" in html
+    assert panel.btn_ask.isEnabled()
+    assert "Done." in panel.status_lbl.text()
+    assert panel.rows_table.rowCount() == 1
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+def test_on_answer_omits_query_and_citations_sections_when_absent(qapp) -> None:
+    panel = _make_data_query_panel(qapp)
+    panel._on_answer({"answer": "just an answer"})
+    html = panel.answer_view.toHtml()
+    assert "just an answer" in html
+    assert "Generated query" not in html
+    assert "Citations" not in html
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+def test_on_answer_falls_back_to_result_when_no_answer_key(qapp) -> None:
+    panel = _make_data_query_panel(qapp)
+    panel._on_answer({"result": "fallback text"})
+    assert "fallback text" in panel.answer_view.toHtml()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+def test_on_answer_routes_error_payload_to_on_error(qapp) -> None:
+    panel = _make_data_query_panel(qapp)
+    panel._on_answer({"error": "gateway is offline"})
+    assert "gateway is offline" in panel.answer_view.toHtml()
+    assert "❌" in panel.status_lbl.text()
+    assert panel.btn_ask.isEnabled()
