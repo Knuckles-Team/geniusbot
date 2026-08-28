@@ -53,3 +53,54 @@ def test_panel_signatures(cls):
     """Verify constructors have the expected signature with worker parameter."""
     sig = inspect.signature(cls.__init__)
     assert "worker" in sig.parameters
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+@pytest.mark.parametrize(
+    "data,expected",
+    [
+        (
+            {
+                "result": [
+                    {
+                        "metric": {"job": "x", "instance": "y"},
+                        "value": [12345, "3.5"],
+                    }
+                ]
+            },
+            [("job=x, instance=y", "3.5")],
+        ),
+        ({"result": [{"metric": {}, "value": [1, "v"]}]}, [("value", "v")]),
+        (
+            {
+                "result": [
+                    {"metric": {"a": "b"}, "values": [[1, "1"], [2, "2"]]}
+                ]
+            },
+            [("a=b", "[2, '2']")],
+        ),
+        ({"result": ["plain-string-item"]}, [("", "plain-string-item")]),
+        (
+            {
+                "result": {
+                    "data": {
+                        "result": [{"metric": {"z": "w"}, "value": [1, "9"]}]
+                    }
+                }
+            },
+            [("z=w", "9")],
+        ),
+        ({"result": {"data": {}}}, [("result", "{}")]),
+        ({"result": None}, []),
+        ({"result": ""}, []),
+        ({"result": "scalar-value"}, [("result", "scalar-value")]),
+        ({"other": "no result key"}, [("result", "{'other': 'no result key'}")]),
+    ],
+)
+def test_metrics_panel_extract_series(data, expected):
+    """Characterize _extract_series's Prometheus-shaped-payload flattening:
+    nested data.result unwrapping, bare-list results, non-dict items,
+    2-element `value` unwrapping vs. multi-point `values` left as a repr,
+    and the None/empty/scalar/no-result-key fallbacks."""
+    assert MetricsPanel._extract_series(data) == expected
