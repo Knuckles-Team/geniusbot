@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import itertools
 import json
 import sys
 import tomllib
@@ -58,31 +59,38 @@ def _exercise(suffix: str, payload: bytes) -> None:
         tomllib.loads(text)
 
 
-def main() -> int:
-    if len(sys.argv) != 2:
-        return 2
-    corpus = _corpus(Path.cwd()) or [(".json", b'{"seed": true}')]
-    cases = 0
+def _fuzz_pairs(corpus: list[tuple[str, bytes]]):
+    for suffix, payload in corpus:
+        for mutation in _mutations(payload):
+            yield suffix, mutation
+
+
+def _case_crashed(suffix: str, payload: bytes) -> bool:
+    """Run one fuzz case. True only if the parser raised something other
+    than an expected decode error -- an unexpected crash."""
+    try:
+        _exercise(suffix, payload)
+    except (UnicodeDecodeError, json.JSONDecodeError, tomllib.TOMLDecodeError):
+        return False
+    except Exception:
+        return True
+    return False
+
+
+def _run_cases(corpus: list[tuple[str, bytes]], limit: int) -> tuple[int, int]:
+    """Exercise up to `limit` (suffix, mutation) fuzz cases, cycling the
+    corpus if it's smaller than `limit`. Returns (cases, crashes)."""
+    pairs = list(_fuzz_pairs(corpus))
     crashes = 0
-    while cases < 64:
-        for suffix, payload in corpus:
-            for mutation in _mutations(payload):
-                try:
-                    _exercise(suffix, mutation)
-                except (
-                    UnicodeDecodeError,
-                    json.JSONDecodeError,
-                    tomllib.TOMLDecodeError,
-                ):
-                    pass
-                except Exception:
-                    crashes += 1
-                cases += 1
-                if cases >= 64:
-                    break
-            if cases >= 64:
-                break
-    output = Path(sys.argv[1])
+    cases = 0
+    for suffix, mutation in itertools.islice(itertools.cycle(pairs), limit):
+        cases += 1
+        if _case_crashed(suffix, mutation):
+            crashes += 1
+    return cases, crashes
+
+
+def _write_report(output: Path, cases: int, crashes: int) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
         json.dumps(
@@ -98,6 +106,14 @@ def main() -> int:
         ),
         encoding="utf-8",
     )
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        return 2
+    corpus = _corpus(Path.cwd()) or [(".json", b'{"seed": true}')]
+    cases, crashes = _run_cases(corpus, 64)
+    _write_report(Path(sys.argv[1]), cases, crashes)
     return 0 if crashes == 0 else 1
 
 
