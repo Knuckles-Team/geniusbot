@@ -207,3 +207,43 @@ def test_on_answer_routes_error_payload_to_on_error(qapp) -> None:
     assert "gateway is offline" in panel.answer_view.toHtml()
     assert "❌" in panel.status_lbl.text()
     assert panel.btn_ask.isEnabled()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.0")
+@pytest.mark.parametrize(
+    "data,expected",
+    [
+        (
+            {"result": [{"reference": "kg1", "text": "hit1", "score": 0.9}]},
+            [{"source": "kg1", "text": "hit1", "score": 0.9}],
+        ),
+        (
+            {"result": {"results": [{"source": "kg2", "title": "t", "rank": 3}]}},
+            [{"source": "kg2", "text": "t", "score": 3}],
+        ),
+        (
+            {"result": {"hits": [{"graph": "kg3", "name": "n", "score": 1}]}},
+            [{"source": "kg3", "text": "n", "score": 1}],
+        ),
+        (
+            {"result": [{"id": "only-id-no-text"}]},
+            [{"source": "", "text": "only-id-no-text", "score": ""}],
+        ),
+        (
+            {"result": ["plain string result"]},
+            [{"source": "", "text": "plain string result", "score": ""}],
+        ),
+        ({"result": {"results": []}}, []),
+        ({"result": {}}, []),
+        ({"result": "scalar"}, []),
+        ({"other": "no result key"}, []),
+    ],
+)
+def test_federated_search_panel_extract_results(data, expected):
+    """Characterize _extract_results's envelope-unwrap (data.result ->
+    results/hits) and per-item field-precedence fallbacks (reference >
+    source > graph for `source`; text > title > name > id > raw item for
+    `text`; score > rank for `score`), plus the non-dict-item and
+    non-list/empty-payload fallbacks."""
+    assert FederatedSearchPanel._extract_results(data) == expected
