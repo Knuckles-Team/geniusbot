@@ -99,64 +99,8 @@ class AgentControlPanel(QFrame):
         form_layout.setSpacing(10)
         form_layout.setContentsMargins(0, 0, 0, 0)
 
-        capabilities = agent_data.get("skills", [])
-        if not capabilities and agent_data.get("capabilities"):
-            if isinstance(agent_data["capabilities"], str):
-                capabilities = [
-                    c.strip() for c in agent_data["capabilities"].split(",")
-                ]
-            else:
-                capabilities = list(agent_data["capabilities"])
-
-        # Compile input elements for each skill/capability parameter dynamically
-        if capabilities:
-            form_layout.addWidget(QLabel("<b>Parameters & Instructions:</b>"))
-            for cap in capabilities:
-                # Provide standard line edit parameters
-                cap_layout = QVBoxLayout()
-                cap_layout.setSpacing(4)
-
-                label = QLabel(cap.replace("_", " ").title())
-                label.setStyleSheet("font-size: 11px; color: #A9B2C3;")
-                cap_layout.addWidget(label)
-
-                line_edit = QLineEdit()
-                line_edit.setPlaceholderText(f"Specify input for {cap}...")
-                line_edit.setStyleSheet(
-                    f"""
-                    QLineEdit {{
-                        background-color: {BG_PRIMARY};
-                        border: 1px solid {BORDER_COLOR};
-                        border-radius: 6px;
-                        padding: 6px 10px;
-                        color: {TEXT_MAIN};
-                    }}
-                    QLineEdit:focus {{
-                        border: 1px solid {ACCENT_PRIMARY};
-                    }}
-                """
-                )
-                cap_layout.addWidget(line_edit)
-                layout_obj = form_widget.layout()
-                if layout_obj is not None:
-                    form_layout.addWidget(layout_obj.parentWidget())  # Safe add
-                form_layout.addLayout(cap_layout)
-                self.inputs[cap] = line_edit
-        else:
-            # Fallback direct user instruction input
-            cap_layout = QVBoxLayout()
-            cap_layout.setSpacing(4)
-            label = QLabel("Dynamic Task Query")
-            label.setStyleSheet("font-size: 11px; color: #A9B2C3;")
-            cap_layout.addWidget(label)
-
-            line_edit = QLineEdit()
-            line_edit.setPlaceholderText(
-                "Enter instructions or task for the specialist..."
-            )
-            cap_layout.addWidget(line_edit)
-            form_layout.addLayout(cap_layout)
-            self.inputs["task_query"] = line_edit
+        capabilities = self._resolve_capabilities(agent_data)
+        self._populate_capability_form(form_layout, form_widget, capabilities)
 
         layout.addWidget(form_widget)
 
@@ -164,6 +108,81 @@ class AgentControlPanel(QFrame):
         self.btn_run = QPushButton("⚡ Execute Specialist")
         self.btn_run.clicked.connect(self.run_specialist)
         layout.addWidget(self.btn_run)
+
+    @staticmethod
+    def _resolve_capabilities(agent_data: dict) -> list:
+        """`skills` wins if present; otherwise `capabilities` (a comma-
+        separated string, or an already-iterable list) is parsed as the
+        fallback source."""
+        capabilities = agent_data.get("skills", [])
+        if capabilities or not agent_data.get("capabilities"):
+            return capabilities
+        raw = agent_data["capabilities"]
+        if isinstance(raw, str):
+            return [c.strip() for c in raw.split(",")]
+        return list(raw)
+
+    def _populate_capability_form(
+        self, form_layout: QVBoxLayout, form_widget: QWidget, capabilities: list
+    ) -> None:
+        """Compile input elements for each skill/capability parameter
+        dynamically, or fall back to a single free-text task-query input."""
+        if not capabilities:
+            self._add_fallback_field(form_layout)
+            return
+        form_layout.addWidget(QLabel("<b>Parameters & Instructions:</b>"))
+        for cap in capabilities:
+            self._add_capability_field(form_layout, form_widget, cap)
+
+    def _add_capability_field(
+        self, form_layout: QVBoxLayout, form_widget: QWidget, cap: str
+    ) -> None:
+        # Provide standard line edit parameters
+        cap_layout = QVBoxLayout()
+        cap_layout.setSpacing(4)
+
+        label = QLabel(cap.replace("_", " ").title())
+        label.setStyleSheet("font-size: 11px; color: #A9B2C3;")
+        cap_layout.addWidget(label)
+
+        line_edit = QLineEdit()
+        line_edit.setPlaceholderText(f"Specify input for {cap}...")
+        line_edit.setStyleSheet(
+            f"""
+            QLineEdit {{
+                background-color: {BG_PRIMARY};
+                border: 1px solid {BORDER_COLOR};
+                border-radius: 6px;
+                padding: 6px 10px;
+                color: {TEXT_MAIN};
+            }}
+            QLineEdit:focus {{
+                border: 1px solid {ACCENT_PRIMARY};
+            }}
+        """
+        )
+        cap_layout.addWidget(line_edit)
+        layout_obj = form_widget.layout()
+        if layout_obj is not None:
+            form_layout.addWidget(layout_obj.parentWidget())  # Safe add
+        form_layout.addLayout(cap_layout)
+        self.inputs[cap] = line_edit
+
+    def _add_fallback_field(self, form_layout: QVBoxLayout) -> None:
+        # Fallback direct user instruction input
+        cap_layout = QVBoxLayout()
+        cap_layout.setSpacing(4)
+        label = QLabel("Dynamic Task Query")
+        label.setStyleSheet("font-size: 11px; color: #A9B2C3;")
+        cap_layout.addWidget(label)
+
+        line_edit = QLineEdit()
+        line_edit.setPlaceholderText(
+            "Enter instructions or task for the specialist..."
+        )
+        cap_layout.addWidget(line_edit)
+        form_layout.addLayout(cap_layout)
+        self.inputs["task_query"] = line_edit
 
     def run_specialist(self):
         """Build the query string from inputs and schedule async run via AgentBridgeWorker."""
