@@ -34,6 +34,65 @@ def normalize_key(s: str) -> str:
     return s.strip()
 
 
+def _apply_repulsion(
+    pos: dict[str, list[float]],
+    disp: dict[str, list[float]],
+    nodes: list[str],
+    repulsion: float,
+) -> None:
+    """Pairwise repulsion between every node, accumulated into `disp`."""
+    for i, a in enumerate(nodes):
+        for b in nodes[i + 1 :]:
+            dx = pos[a][0] - pos[b][0]
+            dy = pos[a][1] - pos[b][1]
+            dist2 = dx * dx + dy * dy or 0.01
+            force = repulsion / dist2
+            dist = math.sqrt(dist2)
+            ux, uy = dx / dist, dy / dist
+            disp[a][0] += ux * force
+            disp[a][1] += uy * force
+            disp[b][0] -= ux * force
+            disp[b][1] -= uy * force
+
+
+def _apply_attraction(
+    pos: dict[str, list[float]],
+    disp: dict[str, list[float]],
+    edges: list[tuple[str, str]],
+    k: float,
+) -> None:
+    """Spring attraction along every edge, accumulated into `disp`."""
+    for s, t in edges:
+        if s not in pos or t not in pos:
+            continue
+        dx = pos[s][0] - pos[t][0]
+        dy = pos[s][1] - pos[t][1]
+        dist = math.sqrt(dx * dx + dy * dy) or 0.01
+        force = (dist * dist) / k
+        ux, uy = dx / dist, dy / dist
+        disp[s][0] -= ux * force
+        disp[s][1] -= uy * force
+        disp[t][0] += ux * force
+        disp[t][1] += uy * force
+
+
+def _apply_gravity_and_integrate(
+    pos: dict[str, list[float]],
+    disp: dict[str, list[float]],
+    nodes: list[str],
+    center: tuple[float, float],
+) -> None:
+    """Gravity toward `center`, then integrate the accumulated `disp` into
+    `pos` in place, with a capped step size."""
+    for n in nodes:
+        disp[n][0] += (center[0] - pos[n][0]) * 0.02
+        disp[n][1] += (center[1] - pos[n][1]) * 0.02
+        mag = math.sqrt(disp[n][0] ** 2 + disp[n][1] ** 2) or 1.0
+        step = min(mag, 30.0)
+        pos[n][0] += disp[n][0] / mag * step
+        pos[n][1] += disp[n][1] / mag * step
+
+
 def relax_layout(
     positions: dict[str, tuple[float, float]],
     edges: list[tuple[str, str]],
@@ -53,40 +112,9 @@ def relax_layout(
     nodes = list(pos.keys())
     for _ in range(max(1, iterations)):
         disp = {n: [0.0, 0.0] for n in nodes}
-        # repulsion between every pair
-        for i, a in enumerate(nodes):
-            for b in nodes[i + 1 :]:
-                dx = pos[a][0] - pos[b][0]
-                dy = pos[a][1] - pos[b][1]
-                dist2 = dx * dx + dy * dy or 0.01
-                force = repulsion / dist2
-                dist = math.sqrt(dist2)
-                ux, uy = dx / dist, dy / dist
-                disp[a][0] += ux * force
-                disp[a][1] += uy * force
-                disp[b][0] -= ux * force
-                disp[b][1] -= uy * force
-        # attraction along edges
-        for s, t in edges:
-            if s not in pos or t not in pos:
-                continue
-            dx = pos[s][0] - pos[t][0]
-            dy = pos[s][1] - pos[t][1]
-            dist = math.sqrt(dx * dx + dy * dy) or 0.01
-            force = (dist * dist) / k
-            ux, uy = dx / dist, dy / dist
-            disp[s][0] -= ux * force
-            disp[s][1] -= uy * force
-            disp[t][0] += ux * force
-            disp[t][1] += uy * force
-        # gravity toward center + integrate (capped step)
-        for n in nodes:
-            disp[n][0] += (center[0] - pos[n][0]) * 0.02
-            disp[n][1] += (center[1] - pos[n][1]) * 0.02
-            mag = math.sqrt(disp[n][0] ** 2 + disp[n][1] ** 2) or 1.0
-            step = min(mag, 30.0)
-            pos[n][0] += disp[n][0] / mag * step
-            pos[n][1] += disp[n][1] / mag * step
+        _apply_repulsion(pos, disp, nodes, repulsion)
+        _apply_attraction(pos, disp, edges, k)
+        _apply_gravity_and_integrate(pos, disp, nodes, center)
     return {n: (xy[0], xy[1]) for n, xy in pos.items()}
 
 
