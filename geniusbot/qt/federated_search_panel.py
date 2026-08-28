@@ -149,29 +149,28 @@ class FederatedSearchPanel(QWidget):
             self.results_table.setItem(r, 2, QTableWidgetItem(str(item["score"])))
 
     @staticmethod
+    def _result_row_from_item(item) -> dict:
+        if not isinstance(item, dict):
+            return {"source": "", "text": item, "score": ""}
+        return {
+            "source": item.get("reference")
+            or item.get("source")
+            or item.get("graph")
+            or "",
+            "text": item.get("text")
+            or item.get("title")
+            or item.get("name")
+            or item.get("id")
+            or item,
+            "score": item.get("score", item.get("rank", "")),
+        }
+
+    @staticmethod
     def _extract_results(data: dict) -> list[dict]:
         """Normalize the federated-search envelope into row dicts."""
         payload = data.get("result", data)
         if isinstance(payload, dict):
             payload = payload.get("results", payload.get("hits", []))
-        rows: list[dict] = []
-        if isinstance(payload, list):
-            for item in payload:
-                if isinstance(item, dict):
-                    rows.append(
-                        {
-                            "source": item.get("reference")
-                            or item.get("source")
-                            or item.get("graph")
-                            or "",
-                            "text": item.get("text")
-                            or item.get("title")
-                            or item.get("name")
-                            or item.get("id")
-                            or item,
-                            "score": item.get("score", item.get("rank", "")),
-                        }
-                    )
-                else:
-                    rows.append({"source": "", "text": item, "score": ""})
-        return rows
+        if not isinstance(payload, list):
+            return []
+        return [FederatedSearchPanel._result_row_from_item(item) for item in payload]
