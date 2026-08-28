@@ -1,4 +1,5 @@
 import pytest
+from PySide6.QtWidgets import QLineEdit
 
 from geniusbot.geniusbot import GeniusBot
 from geniusbot.qt.terminal_widget import TerminalBridge, TerminalWidget
@@ -57,6 +58,63 @@ def test_agent_control_panel_instantiation(qapp):
     panel = AgentControlPanel(agent_data, worker)
     assert panel is not None
     assert "scrape_web" in panel.inputs or "task_query" in panel.inputs
+    panel.close()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.1")
+def test_agent_control_panel_builds_one_input_per_skill(qapp):
+    """Characterize AgentControlPanel.__init__'s capability-form branch:
+    a `skills` list produces exactly one QLineEdit per skill, keyed by
+    skill name in `panel.inputs`."""
+    worker = AgentBridgeWorker()
+    agent_data = {
+        "name": "Data Explorer",
+        "skills": ["scrape_web", "git_operations", "summarize"],
+    }
+    panel = AgentControlPanel(agent_data, worker)
+    assert set(panel.inputs.keys()) == {"scrape_web", "git_operations", "summarize"}
+    for widget in panel.inputs.values():
+        assert isinstance(widget, QLineEdit)
+    panel.close()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.1")
+def test_agent_control_panel_parses_comma_separated_capabilities_string(qapp):
+    """Characterize the `capabilities` (str) fallback path used when
+    `skills` is absent/empty: a comma-separated string is split and
+    stripped into individual capability names."""
+    worker = AgentBridgeWorker()
+    agent_data = {
+        "name": "Comma Agent",
+        "capabilities": "alpha,  beta ,gamma",
+    }
+    panel = AgentControlPanel(agent_data, worker)
+    assert set(panel.inputs.keys()) == {"alpha", "beta", "gamma"}
+    panel.close()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.1")
+def test_agent_control_panel_parses_list_capabilities(qapp):
+    """Characterize the `capabilities` (list) fallback path."""
+    worker = AgentBridgeWorker()
+    agent_data = {"name": "List Agent", "capabilities": ["one", "two"]}
+    panel = AgentControlPanel(agent_data, worker)
+    assert set(panel.inputs.keys()) == {"one", "two"}
+    panel.close()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.1")
+def test_agent_control_panel_falls_back_to_task_query_when_no_capabilities(qapp):
+    """Characterize the no-capabilities-at-all fallback: a single
+    `task_query` free-text input."""
+    worker = AgentBridgeWorker()
+    agent_data = {"name": "Bare Agent"}
+    panel = AgentControlPanel(agent_data, worker)
+    assert set(panel.inputs.keys()) == {"task_query"}
     panel.close()
 
 
