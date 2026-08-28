@@ -239,6 +239,57 @@ class GatewayClient:
             logger.warning("Usage traces fetch failed: error_type=%s", type(e).__name__)
             return {"enabled": False, "traces": []}
 
+    @staticmethod
+    def _validate_extraction_request(text: str, url: str, rounds: int) -> None:
+        if len(text.encode("utf-8")) > 4 * 1024 * 1024 or len(url) > 8_192:
+            raise ValueError("Extraction request exceeded its size limit")
+        if not 1 <= int(rounds) <= 100:
+            raise ValueError("Extraction rounds are outside the allowed range")
+
+    @staticmethod
+    def _check_extraction_stream_limits(event_count: int, line: str) -> None:
+        if event_count > _MAX_STREAM_EVENTS:
+            raise RuntimeError("Gateway event stream exceeded its limit")
+        if len(line.encode("utf-8")) > _MAX_STREAM_LINE_BYTES:
+            raise RuntimeError("Gateway event exceeded its size limit")
+
+    @staticmethod
+    def _parse_extraction_event(payload: str) -> dict[str, Any] | None:
+        try:
+            ev = json.loads(payload)
+        except json.JSONDecodeError:
+            return None
+        return ev if isinstance(ev, dict) else None
+
+    async def _consume_extraction_stream(self, job_id: str, progress_cb) -> int:
+        """Stream one submitted job's SSE events, forwarding each ``data: ``
+        payload to ``progress_cb``. Returns the count of kept (non-duplicate)
+        facts seen."""
+        kept = 0
+        event_count = 0
+        async with self._direct_http.stream(
+            "GET",
+            f"/api/enhanced/extract/stream/{job_id}",
+            follow_redirects=False,
+        ) as stream:
+            stream.raise_for_status()
+            async for line in stream.aiter_lines():
+                event_count += 1
+                self._check_extraction_stream_limits(event_count, line)
+                if not line.startswith("data: "):
+                    continue
+                payload = line[6:]
+                ev = self._parse_extraction_event(payload)
+                if ev is None:
+                    continue
+                if ev.get("type") == "fact" and not ev.get("is_duplicate"):
+                    kept += 1
+                if progress_cb:
+                    progress_cb(payload)
+                if ev.get("type") == "job_done":
+                    break
+        return kept
+
     async def submit_and_stream_extraction(
         self,
         *,
@@ -255,10 +306,7 @@ class GatewayClient:
         Returns a summary dict; graceful-offline like every facade method.
         """
         try:
-            if len(text.encode("utf-8")) > 4 * 1024 * 1024 or len(url) > 8_192:
-                raise ValueError("Extraction request exceeded its size limit")
-            if not 1 <= int(rounds) <= 100:
-                raise ValueError("Extraction rounds are outside the allowed range")
+            self._validate_extraction_request(text, url, rounds)
             sub = await self._json_request(
                 "POST",
                 "/api/enhanced/extract/submit",
@@ -277,34 +325,7 @@ class GatewayClient:
             ):
                 return {"status": "unavailable", "message": "Request unavailable"}
 
-            kept = 0
-            event_count = 0
-            async with self._direct_http.stream(
-                "GET",
-                f"/api/enhanced/extract/stream/{job_id}",
-                follow_redirects=False,
-            ) as stream:
-                stream.raise_for_status()
-                async for line in stream.aiter_lines():
-                    event_count += 1
-                    if event_count > _MAX_STREAM_EVENTS:
-                        raise RuntimeError("Gateway event stream exceeded its limit")
-                    if len(line.encode("utf-8")) > _MAX_STREAM_LINE_BYTES:
-                        raise RuntimeError("Gateway event exceeded its size limit")
-                    if not line.startswith("data: "):
-                        continue
-                    try:
-                        ev = json.loads(line[6:])
-                    except json.JSONDecodeError:
-                        continue
-                    if not isinstance(ev, dict):
-                        continue
-                    if ev.get("type") == "fact" and not ev.get("is_duplicate"):
-                        kept += 1
-                    if progress_cb:
-                        progress_cb(line[6:])
-                    if ev.get("type") == "job_done":
-                        break
+            kept = await self._consume_extraction_stream(job_id, progress_cb)
             return {"status": "done", "job_id": job_id, "facts": kept}
         except Exception as e:
             logger.warning("Extraction stream failed: error_type=%s", type(e).__name__)
@@ -456,6 +477,20 @@ class GatewayClient:
             )
             return {"error": "voice transcription failed"}
 
+    @staticmethod
+    def _emit_copilot_progress(ev_type: str, event: dict[str, Any], progress_cb) -> None:
+        """Forward one non-final-output copilot event to progress_cb, if any."""
+        if not progress_cb:
+            return
+        if ev_type == "thought":
+            progress_cb(f"💭 {event.get('thought', '')}")
+        elif ev_type == "call_tool":
+            progress_cb(f"🛠️ Tool: {event.get('tool', '')}")
+        else:
+            progress_cb(
+                f"📡 {ev_type}: {event.get('message', '') or event.get('error', '')}"
+            )
+
     async def stream_copilot_query(self, query: str, progress_cb=None):
         """Execute master copilot query with streaming output."""
         try:
@@ -466,14 +501,8 @@ class GatewayClient:
                 ev_type = event.get("type")
                 if ev_type == "final_output":
                     final_output = event.get("content", "")
-                elif ev_type == "thought" and progress_cb:
-                    progress_cb(f"💭 {event.get('thought', '')}")
-                elif ev_type == "call_tool" and progress_cb:
-                    progress_cb(f"🛠️ Tool: {event.get('tool', '')}")
-                elif progress_cb:
-                    progress_cb(
-                        f"📡 {ev_type}: {event.get('message', '') or event.get('error', '')}"
-                    )
+                else:
+                    self._emit_copilot_progress(ev_type, event, progress_cb)
             if final_output:
                 return {"result": final_output}
         except Exception as e:
