@@ -1,57 +1,29 @@
-# Technical Architecture Overview
+# Geniusbot architecture
 
-GeniusBot acts as the premium visual cockpit wrapper shell of the agent-utilities ecosystem. It connects the human operator directly with the dynamic planning models, the Epistemic Knowledge Graph, and the specialist agent toolsets.
+Geniusbot is a PySide6 desktop entry point for the agent platform. It provides operator-facing graph, fleet, metrics, search, tool, and terminal panels.
 
----
+## Platform boundary
 
-## 🏛️ Application Architecture
+Graph OS is the governed gateway and composition host. Agent Utilities owns agent execution and control-plane behavior. Epistemic Graph owns durable graph storage, ontology, and reasoning. Agent Connector SDK connects external systems to the graph.
 
-GeniusBot is designed with a **Flat Single-Pane Layout** (Zero-Nesting UX) that splits components into focused, thread-safe spaces:
+![Knuckles-Team runtime architecture](https://raw.githubusercontent.com/Knuckles-Team/pipelines/64e34ca63385200f5ddfef5286e6886bf7dc80b4/templates/mkdocs-theme/assets/runtime-architecture.svg)
 
-```mermaid
-graph TD
-    subgraph UI ["GeniusBot UI Shell (PySide6)"]
-        Sidebar["Left Category Sidebar"]
-        GridDeck["Central Dynamic Card Grid"]
-        DetailDrawer["Right Detail Drawer (35%)"]
-        ConsoleOverlay["Retractable Console Panel"]
-        ToolGuard["Tool Guard Dialog Interceptor"]
-    end
+## Geniusbot request paths
 
-    subgraph Engine ["Unified Backend (agent-utilities)"]
-        Discovery["Specialist Schema Discovery"]
-        Registry["Concept Registry Database"]
-        Executor["Background Agent Execution Loop"]
-    end
+Most networked panels use `GatewayClient` to call Graph OS. The desktop UI sends longer work through background workers so the Qt event loop remains responsive.
 
-    Sidebar -->|Category Swapping| GridDeck
-    GridDeck -->|Schema Introspection| Discovery
-    Discovery -->|Dynamic Rendering| GridDeck
-    GridDeck -->|Sensitive Action Check| ToolGuard
-    ToolGuard -->|User Approved| Executor
-    Executor -->|Thread-safe Callback| ConsoleOverlay
-```
+`BackendAdapter` retains a limited in-process Agent Utilities path for workspace graph execution, service-dashboard configuration and aggregation, and local log-directory resolution. This path is used by specific panels; it is not the gateway contract.
 
-### 1. Zero-Nesting Layout
-* **Left Category Sidebar**: Provides 5 flat navigation buttons: Dashboard, Infra & Network, Media & Files, Productivity, and Research & Data. Clicking a category swaps the view instantly.
-* **Central Grid Deck**: Displays agents as visual cards. Tools are populated with fields that map directly to parameters using a dynamic schema mapper.
-* **Right Detail Drawer**: Slides out to host long-running console output and advanced settings without causing the operator to lose active context.
-* **Retractable Console Panel**: Swings from the bottom on a `Ctrl+~` key-trigger to expose the running `agent-terminal-ui` inside an embedded `QWebEngineView`.
+## Operator approvals
 
----
+The tool guard presents sensitive actions and their arguments for operator approval before execution. The UI provides the confirmation step; Graph OS remains the platform gateway and policy boundary for governed service requests.
 
-## 🔒 Security boundary: Tool-Guard Interceptor
+## Related documentation
 
-To prevent the agent from executing dangerous mutations or running destructive shell commands behind the user's back, GeniusBot implements a **Zero-Trust Tool Guard**:
-1. When a tool action is triggered by the core reasoning planner, the event loop catches the command signature.
-2. If the tool is flagged as sensitive (e.g. system packages, file deletion, network tunnel creation), a native modal pops up.
-3. The modal highlights the JSON arguments, the exact CLI command to be run, and the risk explanation.
-4. Execution is blocked until the operator clicks **"Approve Execution"**.
-
----
-
-## 🧵 Thread Safety & Non-Blocking Design
-
-To keep the UI running at a buttery-smooth 60fps without locking the interface during deep web requests or long transcribing tasks, we adhere to strict non-blocking practices:
-* All specialist discovery imports are handled via background thread pools (`QThreadPool` and `QRunnable`).
-* Stream logs from standard output/stderr are redirected asynchronously through thread-safe Qt Signals (`QObject` and `Signal(str)` bridges).
+- [Geniusbot documentation home](index.md)
+- [Concept registry](concepts.md)
+- [Epistemic Graph](https://knuckles-team.github.io/epistemic-graph/)
+- [Agent Utilities](https://knuckles-team.github.io/agent-utilities/)
+- [Graph OS](https://knuckles-team.github.io/graph-os/)
+- [Agent Connector SDK](https://knuckles-team.github.io/agent-connector-sdk/)
+- [Agent Web UI](https://knuckles-team.github.io/agent-webui/)
