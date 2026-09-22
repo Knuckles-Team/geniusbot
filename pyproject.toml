@@ -102,3 +102,9 @@ markers = [
     "integration: mark test as an integration test",
     "concept(name): mark test with a specific concept ID for traceability"
 ]
+
+[tool.pipelines_hooks.public_surface]
+repository = "Knuckles-Team/geniusbot"
+distribution = "geniusbot"
+pages_url = "https://knuckles-team.github.io/geniusbot/"
+mcp_server = false

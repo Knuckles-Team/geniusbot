@@ -1,41 +1,44 @@
 # Geniusbot
 
-<p align="center"><img src="https://raw.githubusercontent.com/Knuckles-Team/pipelines/64e34ca63385200f5ddfef5286e6886bf7dc80b4/templates/mkdocs-theme/assets/brands/geniusbot-logo-v1.png" alt="Geniusbot logo" width="160"></p>
+<p align="center"><img src="docs/assets/brands/geniusbot-logo-v1.png" alt="Geniusbot logo" width="160"></p>
 
-[![PyPI version](https://img.shields.io/pypi/v/geniusbot)](https://pypi.org/project/geniusbot/)
-[![License](https://img.shields.io/github/license/Knuckles-Team/geniusbot)](LICENSE)
+<p align="center"><strong>A desktop cockpit for governed agent operations.</strong><br><sub>Explore graph-backed panels, agent tools, approvals, and an embedded terminal.</sub></p>
+
+[![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)](https://pypi.org/project/geniusbot/) [![PyPI - Downloads](https://img.shields.io/pypi/dd/geniusbot)](https://pypi.org/project/geniusbot/) [![PyPI - License](https://img.shields.io/pypi/l/geniusbot)](https://pypi.org/project/geniusbot/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/geniusbot)](https://pypi.org/project/geniusbot/) [![PyPI - Implementation](https://img.shields.io/pypi/implementation/geniusbot)](https://pypi.org/project/geniusbot/)
+
+[![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot) [![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot) [![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot) [![GitHub license](https://img.shields.io/github/license/Knuckles-Team/geniusbot)](LICENSE) [![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/commits/main)
+
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/pulls) [![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/pulls?q=is%3Apr+is%3Aclosed) [![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/issues) [![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot) [![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot) [![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot) [![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot)
+
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-526CFE)](https://knuckles-team.github.io/geniusbot/)
 
-Geniusbot is the desktop cockpit for the agent platform. It gives operators a native PySide6 interface for graph-backed panels, agent tools, approvals, and an embedded terminal.
+<p align="center"><a href="https://knuckles-team.github.io/geniusbot/">Documentation</a> · <a href="https://knuckles-team.github.io/geniusbot/capabilities/">Capabilities</a> · <a href="https://knuckles-team.github.io/geniusbot/interfaces/">Interfaces</a> · <a href="https://knuckles-team.github.io/geniusbot/status/">Status</a></p>
 
 ## Overview
 
-Geniusbot is a user entry point alongside Agent Terminal UI, Agent Web UI, and Graph OS messaging. Its primary panels use Graph OS as the governed gateway and composition host. Agent Utilities supplies the agent control plane, and Epistemic Graph owns durable graph data and reasoning.
+Geniusbot is a PySide6 desktop entry point for the agent platform. Its primary panels use [Graph OS](https://knuckles-team.github.io/graph-os/) as the governed gateway and composition host. [Agent Utilities](https://knuckles-team.github.io/agent-utilities/) provides the agent control plane, while [Epistemic Graph](https://knuckles-team.github.io/epistemic-graph/) owns durable graph data and reasoning.
 
 ## Key capabilities
 
-- Desktop dashboards and panels for graph queries, metrics, fleet status, and federated search.
+- Graph-backed dashboards for metrics, fleet status, and federated search.
 - Dynamic tool forms built from discovered agent schemas.
-- Operator approval prompts for sensitive actions.
-- Background workers that keep long-running requests off the Qt event loop.
-- An embedded xterm.js terminal.
+- Operator confirmation for sensitive actions.
+- Background workers for long-running requests and an embedded terminal.
 
 ## Documentation
 
-- [Geniusbot documentation](https://knuckles-team.github.io/geniusbot/)
-- [Current architecture](docs/overview.md)
-- [Concept registry](docs/concepts.md)
-- [Epistemic Graph](https://knuckles-team.github.io/epistemic-graph/)
-- [Agent Utilities](https://knuckles-team.github.io/agent-utilities/)
-- [Graph OS](https://knuckles-team.github.io/graph-os/)
-- [Agent Connector SDK](https://knuckles-team.github.io/agent-connector-sdk/)
-- [Agent Web UI](https://knuckles-team.github.io/agent-webui/)
+- [Documentation home](https://knuckles-team.github.io/geniusbot/)
+- [Capabilities](https://knuckles-team.github.io/geniusbot/capabilities/)
+- [Interfaces](https://knuckles-team.github.io/geniusbot/interfaces/)
+- [Status](https://knuckles-team.github.io/geniusbot/status/)
+- [Architecture](docs/overview.md)
+- Core projects: [Epistemic Graph](https://knuckles-team.github.io/epistemic-graph/), [Agent Utilities](https://knuckles-team.github.io/agent-utilities/), [Graph OS](https://knuckles-team.github.io/graph-os/), [Agent Connector SDK](https://knuckles-team.github.io/agent-connector-sdk/), and [Agent Web UI](https://knuckles-team.github.io/agent-webui/).
 
 ## Architecture
 
-![Knuckles-Team runtime architecture](https://raw.githubusercontent.com/Knuckles-Team/pipelines/64e34ca63385200f5ddfef5286e6886bf7dc80b4/templates/mkdocs-theme/assets/runtime-architecture.svg)
+![Knuckles-Team runtime architecture](docs/assets/runtime-architecture.svg)
 
-Graph OS owns the governed gateway and composes the platform services. Most Geniusbot panels reach those services through the shared gateway client. A limited in-process adapter path remains for workspace graph execution and service-dashboard configuration/data, and the adapter resolves the local log directory through Agent Utilities.
+Most networked panels call Graph OS through the shared gateway client. A limited in-process adapter path remains for workspace graph execution, service-dashboard configuration and aggregation, and local log-directory resolution. See the [current architecture](docs/overview.md) for these boundaries.
 
 ## Quick start
 
