@@ -1,5 +1,5 @@
-site_name: "geniusbot"
-site_description: "GeniusBot — the unified desktop cockpit and visual control deck for the agent-utilities multi-agent ecosystem."
+site_name: "Geniusbot"
+site_description: "PySide6 desktop cockpit for Graph OS agent operations, graph-backed panels, capability workflows, approvals, and terminal access."
 site_url: "https://knuckles-team.github.io/geniusbot/"
 repo_name: "Knuckles-Team/geniusbot"
 repo_url: "https://github.com/Knuckles-Team/geniusbot"
@@ -8,10 +8,11 @@ copyright: "Copyright &copy; Knuckles-Team — MIT licensed"
 
 theme:
   name: material
+  custom_dir: overrides
+  logo: assets/brands/geniusbot-logo-v1.png
   icon:
     repo: fontawesome/brands/github
-    logo: material/graph-outline
-  favicon: https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/material/templates/assets/images/favicon.png
+  favicon: assets/brands/geniusbot-logo-v1.png
   features:
     - navigation.tabs
     - navigation.tabs.sticky
@@ -52,6 +53,9 @@ theme:
 plugins:
   - search
 
+extra_css:
+  - stylesheets/extra.css
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -78,6 +82,44 @@ markdown_extensions:
       permalink: true
 
 extra:
+  ecosystem:
+    current: geniusbot
+    sites:
+      - slug: geniusbot
+        name: Geniusbot
+        role: desktop operator cockpit
+        url: https://knuckles-team.github.io/geniusbot/
+        repository: https://github.com/Knuckles-Team/geniusbot
+      - slug: agent-terminal-ui
+        name: Agent Terminal UI
+        role: terminal operator interface
+        url: https://knuckles-team.github.io/agent-terminal-ui/
+        repository: https://github.com/Knuckles-Team/agent-terminal-ui
+      - slug: agent-webui
+        name: Agent Web UI
+        role: operator experience
+        url: https://knuckles-team.github.io/agent-webui/
+        repository: https://github.com/Knuckles-Team/agent-webui
+      - slug: graph-os
+        name: Graph OS
+        role: public runtime gateway
+        url: https://knuckles-team.github.io/graph-os/
+        repository: https://github.com/Knuckles-Team/graph-os
+      - slug: agent-utilities
+        name: Agent Utilities
+        role: agent control plane
+        url: https://knuckles-team.github.io/agent-utilities/
+        repository: https://github.com/Knuckles-Team/agent-utilities
+      - slug: epistemic-graph
+        name: Epistemic Graph
+        role: durable multimodal knowledge and reasoning engine
+        url: https://knuckles-team.github.io/epistemic-graph/
+        repository: https://github.com/Knuckles-Team/epistemic-graph
+      - slug: agent-connector-sdk
+        name: Agent Connector SDK
+        role: governed source integration boundary
+        url: https://knuckles-team.github.io/agent-connector-sdk/
+        repository: https://github.com/Knuckles-Team/agent-connector-sdk
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Knuckles-Team/geniusbot
@@ -86,7 +128,8 @@ extra:
 
 nav:
   - Home: index.md
-  - Architecture:
-      - Technical Overview: overview.md
-  - Reference:
-      - Concept Registry: concepts.md
+  - Capabilities: capabilities.md
+  - Interfaces: interfaces.md
+  - Architecture: overview.md
+  - Status: status.md
+  - Reference: concepts.md

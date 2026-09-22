@@ -6,7 +6,7 @@ Geniusbot is a PySide6 desktop entry point for the agent platform. It provides o
 
 Graph OS is the governed gateway and composition host. Agent Utilities owns agent execution and control-plane behavior. Epistemic Graph owns durable graph storage, ontology, and reasoning. Agent Connector SDK connects external systems to the graph.
 
-![Knuckles-Team runtime architecture](https://raw.githubusercontent.com/Knuckles-Team/pipelines/64e34ca63385200f5ddfef5286e6886bf7dc80b4/templates/mkdocs-theme/assets/runtime-architecture.svg)
+![Knuckles-Team runtime architecture](assets/runtime-architecture.svg)
 
 ## Geniusbot request paths
 
