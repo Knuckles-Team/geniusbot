@@ -1,180 +1,57 @@
-# GeniusBot — Desktop Cockpit for AI Agents
+# Geniusbot
 
-![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)
-![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)
-![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)
-![PyPI - License](https://img.shields.io/pypi/l/geniusbot)
+<p align="center"><img src="https://raw.githubusercontent.com/Knuckles-Team/pipelines/64e34ca63385200f5ddfef5286e6886bf7dc80b4/templates/mkdocs-theme/assets/brands/geniusbot-logo-v1.png" alt="Geniusbot logo" width="160"></p>
 
-*Version: 5.2.0*
+[![PyPI version](https://img.shields.io/pypi/v/geniusbot)](https://pypi.org/project/geniusbot/)
+[![License](https://img.shields.io/github/license/Knuckles-Team/geniusbot)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-526CFE)](https://knuckles-team.github.io/geniusbot/)
 
-> **Documentation** — The architecture overview, security boundaries, quick-start
-> guidance, and the GeniusBot concept registry are maintained in the
-> [official documentation](https://knuckles-team.github.io/geniusbot/).
+Geniusbot is the desktop cockpit for the agent platform. It gives operators a native PySide6 interface for graph-backed panels, agent tools, approvals, and an embedded terminal.
 
-GeniusBot is the premium, unified space cockpit and visual control deck built on top of the `agent-utilities` powerhouse backend. It integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
+## Overview
 
----
+Geniusbot is a user entry point alongside Agent Terminal UI, Agent Web UI, and Graph OS messaging. Its primary panels use Graph OS as the governed gateway and composition host. Agent Utilities supplies the agent control plane, and Epistemic Graph owns durable graph data and reasoning.
 
-## 📖 Table of Contents
-1. [Overview](#-overview)
-2. [Features](#-features)
-3. [Architecture](#-architecture)
-4. [Installation](#-installation)
-5. [Usage](#-usage)
-6. [Packaging & Executables](#-packaging--executables)
-7. [Documentation References](#-documentation-references)
-8. [License](#-license)
+## Key capabilities
 
----
+- Desktop dashboards and panels for graph queries, metrics, fleet status, and federated search.
+- Dynamic tool forms built from discovered agent schemas.
+- Operator approval prompts for sensitive actions.
+- Background workers that keep long-running requests off the Qt event loop.
+- An embedded xterm.js terminal.
 
-## 🌐 Overview
-GeniusBot provides a centralized graphical cockpit designed to eliminate tedious click-through fatigue. It maps specialist agent parameter schemas directly to custom QSS-themed form widgets on the fly.
+## Documentation
 
-Operators can trigger actions, monitor running terminal inputs via the embedded `agent-terminal-ui`, and secure dangerous CLI calls using the Zero-Trust Tool-Guard interceptor.
+- [Geniusbot documentation](https://knuckles-team.github.io/geniusbot/)
+- [Current architecture](docs/overview.md)
+- [Concept registry](docs/concepts.md)
+- [Epistemic Graph](https://knuckles-team.github.io/epistemic-graph/)
+- [Agent Utilities](https://knuckles-team.github.io/agent-utilities/)
+- [Graph OS](https://knuckles-team.github.io/graph-os/)
+- [Agent Connector SDK](https://knuckles-team.github.io/agent-connector-sdk/)
+- [Agent Web UI](https://knuckles-team.github.io/agent-webui/)
 
----
+## Architecture
 
-## ✨ Features
+![Knuckles-Team runtime architecture](https://raw.githubusercontent.com/Knuckles-Team/pipelines/64e34ca63385200f5ddfef5286e6886bf7dc80b4/templates/mkdocs-theme/assets/runtime-architecture.svg)
 
-* **Zero-Nesting Dynamic UI**: Navigation categorized into flat category menus (Dashboard, Infra, Media, Productivity, Research).
-* **Dynamic Card Schema Grid**: PySide6 widgets are built automatically from specialist agent tool specifications.
-* **Embedded Hybrid Terminal**: Hosts local `xterm.js` to run interactive terminal loops directly in the cockpit.
-* **Zero-Trust Security Tool Guard**: Prompts native authorization dialogs to review arguments before executing dangerous mutations.
-* **Runnable Background Workers**: Utilizes thread pools (`QThreadPool`) to prevent GUI freezes during execution loops.
-* **Visual Trading Dashboard**: Snappy native C++ charting engine (`PySide6.QtCharts`) with OHLCV candlestick/line toggles, strategy indicator overlay crossovers (MACD/RSI), orderbook bids/asks depth volumes, and thread-safe crypto news feeds.
-* **Ask Data (NL→Query)**: Ask the Knowledge Graph a question in plain English; the engine generates an auditable read-only query (UQL/Cypher/SQL/SPARQL), runs it, and synthesizes an answer with citations — over the gateway `/api/graph/ask-data` and `/api/graph/nl-query` routes.
-* **Engine Metrics & Status**: Query engine observability with PromQL (`/api/graph/promql`) and watch the shared content-addressed KV-cache occupancy (`/api/graph/kvcache`).
-* **Federated Search**: Fan one query across every registered external graph and rank the merged results (`/api/graph/federated-search`).
+Graph OS owns the governed gateway and composes the platform services. Most Geniusbot panels reach those services through the shared gateway client. A limited in-process adapter path remains for workspace graph execution and service-dashboard configuration/data, and the adapter resolves the local log directory through Agent Utilities.
 
+## Quick start
 
----
+Start Graph OS with its platform services, then install Geniusbot with Python 3.12–3.14:
 
-## 🏛️ Architecture
-GeniusBot is engineered as a lightweight PySide6 GUI client wrapper around the `agent-utilities` logic engine.
-
-```mermaid
-graph TD
-    subgraph GUI ["GeniusBot Cockpit (PySide6)"]
-        Sidebar["Left Category Sidebar"]
-        GridDeck["Central Dynamic Card Grid"]
-        ToolGuard["Tool Guard Modal Interceptor"]
-        TerminalPanel["xterm.js WebEngine Panel"]
-    end
-
-    subgraph Backend ["agent-utilities Powerhouse"]
-        Discovery["Agent Specialist Discovery"]
-        Executor["Background Agent Worker Loop"]
-        KG["Epistemic Knowledge Graph"]
-    end
-
-    Sidebar --> GridDeck
-    GridDeck -->|Introspect Schemas| Discovery
-    GridDeck -->|Trigger Safe Action| Executor
-    GridDeck -->|Sensitive Action| ToolGuard
-    ToolGuard -->|Operator Approved| Executor
-    TerminalPanel -.->|Interactive Terminal| Executor
-```
-
-Detailed architectural diagrams and component breakdowns are located in the [Documentation Overview](docs/overview.md).
-
----
-
-## 🛠️ Installation
-
-### 1. Modern Virtual Environment (via uv)
-Create a virtual environment and sync standard requirements:
 ```bash
-# Setup virtual environment
-uv venv
-
-# Sync requirements
-uv pip sync requirements.txt
+python -m pip install geniusbot
+geniusbot
 ```
 
-### 2. Standard pip
-Install standard stable packages:
-```bash
-pip install geniusbot
-```
+Gateway-backed panels use `http://localhost:8000` by default. See the [Graph OS deployment guide](https://knuckles-team.github.io/graph-os/) for service configuration.
 
-Install with all ecosystem plugins:
-```bash
-pip install geniusbot[all]
-```
+## Contributing
 
----
+Issues and pull requests are welcome in the [Geniusbot repository](https://github.com/Knuckles-Team/geniusbot).
 
-## 🌍 Environment Variables
+## License
 
-GeniusBot can be configured using environment variables or a `.env` file in the project root:
-
-| Variable | Description | Default / Example |
-|----------|-------------|-------------------|
-| `QT_QPA_PLATFORM` | Headless Qt Platform (set to `offscreen` for CI/CD or Docker) | `offscreen` |
-| `LANGFUSE_PUBLIC_KEY` | Langfuse Observability Public Key | `pk-lf-...` |
-| `LANGFUSE_SECRET_KEY` | Langfuse Observability Secret Key | `sk-lf-...` |
-| `LANGFUSE_HOST` | Langfuse Host URL | `https://cloud.langfuse.com` |
-| `LOGFIRE_TOKEN` | Pydantic Logfire Telemetry Token | |
-| `TERM` | Terminal type for the embedded terminal emulator | `xterm-256color` |
-| `_MEIPASS` / `_MEIPASS2` | PyInstaller temp directories for bundled app context | *(Used internally)* |
-
----
-
-## 🚀 Usage
-
-Launch the desktop cockpit:
-```bash
-uv run geniusbot
-```
-
-To run in headless or virtual Linux environments (CI/CD):
-```bash
-QT_QPA_PLATFORM=offscreen uv run geniusbot
-```
-
----
-
-## 📦 Packaging & Executables
-
-### PyInstaller Compiling
-Compiling GeniusBot as a single standalone executable:
-```powershell
-python -m pip install --upgrade pyinstaller
-git clone https://github.com/Knuckles-Team/geniusbot.git
-cd geniusbot
-python -m venv .venv
-./.venv/Scripts/activate
-python -m pip install -r ./requirements.txt
-python -m pip install -r ./build-requirements.txt
-python -m pip install --upgrade pandas scipy numpy pydantic
-pyinstaller --name geniusbot `
-  --log-level DEBUG `
-  --onefile --windowed `
-  --paths "./geniusbot" `
-  --icon='./geniusbot/img/geniusbot.ico' `
-  --recursive-copy-metadata=opentelemetry_api `
-  --recursive-copy-metadata=opentelemetry_sdk `
-  --recursive-copy-metadata=opentelemetry_exporter_otlp_proto_grpc `
-  --exclude-module pygame `
-  --exclude-module tkinter `
-   ./geniusbot/geniusbot.py
-```
-
-### Windows Setup Installer
-Generate a Windows MSI setup package:
-```bash
-iscc "./setup.iss"
-```
-
----
-
-## 📚 Documentation References
-For deep architectural guidelines and code documentation, explore:
-* [docs/index.md](docs/index.md) — Documentation Entrypoint & Quickstart.
-* [docs/overview.md](docs/overview.md) — Detailed Architecture & Security Guardrails.
-* [docs/concepts.md](docs/concepts.md) — Concept Registries (`CONCEPT:GB-GBOT.cockpit.gbot` through `8.0`).
-
----
-
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Geniusbot is released under the [MIT License](LICENSE).
