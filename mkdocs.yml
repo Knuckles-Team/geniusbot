@@ -69,3 +69,4 @@ nav:
       - Concepts: concepts.md
       - Knowledge graph extraction: kg-extraction.md
       - Ecosystem glossary: glossary.md
+      - Skill graph reference: reference/skill-graph.generated.md
