@@ -12,6 +12,9 @@
 #define MyAppExeName "geniusbot.exe"
 
 [Setup]
+; This script lives in packaging\windows\; every relative path below is
+; resolved against the repository root.
+SourceDir=..\..
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{40E3E132-1207-4128-80CF-8B31B308E2C9}

@@ -8,7 +8,7 @@ copyright: "Copyright &copy; Knuckles-Team — MIT licensed"
 
 theme:
   name: material
-  custom_dir: overrides
+  custom_dir: .config/mkdocs-overrides
   logo: assets/brands/geniusbot-logo-v1.png
   icon:
     repo: fontawesome/brands/github

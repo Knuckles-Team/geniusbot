@@ -26,7 +26,7 @@ environment_signature: ["bash", "-c", "python3 --version && uv --version"]
 gates:
   # `uvx ruff@<pin>` (an ephemeral, cached tool env -- NOT `uv run`, so D-UVR-1's
   # workspace-root/system-interpreter fallback does not apply), version-pinned
-  # to match .pre-commit-config.yaml's `rev: ... # v0.15.15` exactly so the
+  # to match .config/pre-commit.yaml's `rev: ... # v0.15.15` exactly so the
   # queue enforces the identical ruleset a real commit would.
   - name: ruff
     command: ["bash", "-c", "uvx ruff@0.15.15 check --output-format concise ."]
