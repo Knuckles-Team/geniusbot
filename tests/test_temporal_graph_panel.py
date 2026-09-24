@@ -17,15 +17,27 @@ from geniusbot.qt.temporal_graph_panel import (
     TemporalGraphPanel,
     mark_expired,
     slider_to_iso,
-    with_as_of,
+    temporal_uql,
 )
 
 
-def test_with_as_of_appends_operator() -> None:
+def test_base_query_is_uql_not_cypher() -> None:
+    assert BASE_UQL == "MATCH () |> LIMIT 200"
+
+
+def test_as_of_is_a_stage_in_unix_seconds_before_the_cap() -> None:
     assert (
-        with_as_of("MATCH (n) RETURN n", "2026-06-01T00:00:00+00:00")
-        == "MATCH (n) RETURN n |> AS OF @2026-06-01T00:00:00+00:00"
+        temporal_uql("2026-06-01T00:00:00+00:00")
+        == "MATCH () |> AS OF @1780272000 |> LIMIT 200"
     )
+    assert temporal_uql("2026-06-01T02:00:00+02:00") == temporal_uql(
+        "2026-06-01T00:00:00"
+    )
+
+
+def test_a_non_iso_timestamp_is_refused() -> None:
+    with pytest.raises(ValueError):
+        temporal_uql("yesterday")
 
 
 def test_slider_to_iso_endpoints() -> None:
@@ -79,8 +91,8 @@ def test_panel_renders_and_flags_expired(qapp) -> None:
 def test_panel_current_query_carries_as_of(qapp) -> None:
     panel = TemporalGraphPanel(MagicMock())
     query = panel.current_query()
-    assert query.startswith(BASE_UQL)
-    assert "|> AS OF @" in query
+    assert query.startswith("MATCH () |> AS OF @")
+    assert query.endswith("|> LIMIT 200")
 
 
 def test_rows_to_facts_handles_triples_and_dicts() -> None:

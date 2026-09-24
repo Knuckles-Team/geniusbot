@@ -3,13 +3,14 @@
 
 A thin cockpit panel that adds a bi-temporal time scrubber over the existing
 force-directed graph renderer (:class:`ForceGraphWidget`). The user drags a
-``QSlider`` to pick a historical instant; on change the panel re-issues the base
-graph query with the engine's ``|> AS OF @<ts>`` operator (KG-2.250) appended,
-and rebuilds the graph at that instant. Edges that have expired by the selected
+``QSlider`` to pick a historical instant; on change the panel issues the graph
+query pinned to that instant with the engine's bi-temporal
+``|> AS OF @<unix-seconds>`` stage (KG-2.250), and rebuilds the graph at that
+instant. Edges that have expired by the selected
 timestamp render greyed and dashed (see ``ForceGraphWidget._redraw``).
 
-The panel holds no business logic: it adapts the slider position into a query
-suffix (via :func:`with_as_of`) and into an ``expired`` flag per fact (via
+The panel holds no business logic: it adapts the slider position into a UQL
+query (via :func:`temporal_uql`) and into an ``expired`` flag per fact (via
 :func:`mark_expired`), then hands facts to the renderer. Query/expiry math are
 pure functions so they are unit-testable without a display, and the only backend
 seam used is ``backend.run_graph_query`` through the worker — keeping the
@@ -32,25 +33,35 @@ from PySide6.QtWidgets import (
 
 from geniusbot.qt.force_graph import ForceGraphWidget
 
-# Base query re-issued at each scrubber instant; the backend translates UQL.
-BASE_UQL = "MATCH (n) RETURN n LIMIT 200"
+# The scrubber's UQL: every node (`MATCH ()`), capped at 200 rows. `AS OF` is a
+# pipeline stage placed before the cap, and it takes unix seconds, not an ISO
+# string (`MATCH (n) RETURN n …` is Cypher and never parsed as UQL).
+_ALL_NODES = "MATCH ()"
+_ROW_CAP = "|> LIMIT 200"
+BASE_UQL = f"{_ALL_NODES} {_ROW_CAP}"
 
 # Scrubber span: the last 30 days mapped onto a 0..100 slider.
 _WINDOW_DAYS = 30
 _SLIDER_MAX = 100
 
 
-def with_as_of(query: str, iso_ts: str) -> str:
-    """Append the bi-temporal ``|> AS OF @<ts>`` operator to a UQL query.
+def temporal_uql(iso_ts: str) -> str:
+    """The scrubber's UQL query pinned to ``iso_ts``.
 
     Args:
-        query: The base UQL query string.
-        iso_ts: An ISO-8601 timestamp.
+        iso_ts: An ISO-8601 timestamp (unzoned is read as UTC).
 
     Returns:
-        The query with the temporal operator appended.
+        ``MATCH () |> AS OF @<unix-seconds> |> LIMIT 200``.
+
+    Raises:
+        ValueError: ``iso_ts`` is not an ISO-8601 timestamp.
     """
-    return f"{query.strip()} |> AS OF @{iso_ts}"
+    instant = datetime.fromisoformat(iso_ts.strip().replace("Z", "+00:00"))
+    if instant.tzinfo is None:
+        instant = instant.replace(tzinfo=UTC)
+    seconds = int(instant.timestamp() // 1)
+    return f"{_ALL_NODES} |> AS OF @{seconds} {_ROW_CAP}"
 
 
 def slider_to_iso(pos: int, *, now: datetime | None = None) -> str:
@@ -152,14 +163,14 @@ class TemporalGraphPanel(QWidget):
     # -- scrubbing -------------------------------------------------------- #
 
     def current_query(self) -> str:
-        """The UQL query for the current slider position, with AS OF appended."""
-        return with_as_of(BASE_UQL, slider_to_iso(self.slider.value()))
+        """The UQL query for the current slider position, pinned with AS OF."""
+        return temporal_uql(slider_to_iso(self.slider.value()))
 
     def on_scrub(self, pos: int) -> None:
         """Re-issue the AS OF query for the new slider position and re-render."""
         iso_ts = slider_to_iso(pos)
         self.ts_label.setText(f"AS OF {iso_ts}")
-        query = with_as_of(BASE_UQL, iso_ts)
+        query = temporal_uql(iso_ts)
 
         async def query_runner():
             from geniusbot.services.backend_adapter import backend
