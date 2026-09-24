@@ -22,6 +22,7 @@ keywords = ["genius", "geniusbot", "desktop", "qt", "agent", "mcp"]
 dependencies = [
     "PySide6>=6.11.1",
     "agent-utilities>=2.0.0",
+    "httpx>=0.28.1",
     "winshell>=0.6; sys_platform == 'win32'",
     "pywin32; sys_platform == 'win32'"
 ]
