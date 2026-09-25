@@ -17,42 +17,6 @@ theme:
 extra:
   ecosystem:
     current: geniusbot
-    sites:
-      - slug: geniusbot
-        name: Geniusbot
-        role: desktop operator cockpit
-        url: https://knuckles-team.github.io/geniusbot/
-        repository: https://github.com/Knuckles-Team/geniusbot
-      - slug: agent-terminal-ui
-        name: Agent Terminal UI
-        role: terminal operator interface
-        url: https://knuckles-team.github.io/agent-terminal-ui/
-        repository: https://github.com/Knuckles-Team/agent-terminal-ui
-      - slug: agent-webui
-        name: Agent Web UI
-        role: operator experience
-        url: https://knuckles-team.github.io/agent-webui/
-        repository: https://github.com/Knuckles-Team/agent-webui
-      - slug: graph-os
-        name: Graph OS
-        role: public runtime gateway
-        url: https://knuckles-team.github.io/graph-os/
-        repository: https://github.com/Knuckles-Team/graph-os
-      - slug: agent-utilities
-        name: Agent Utilities
-        role: agent control plane
-        url: https://knuckles-team.github.io/agent-utilities/
-        repository: https://github.com/Knuckles-Team/agent-utilities
-      - slug: epistemic-graph
-        name: Epistemic Graph
-        role: durable multimodal knowledge and reasoning engine
-        url: https://knuckles-team.github.io/epistemic-graph/
-        repository: https://github.com/Knuckles-Team/epistemic-graph
-      - slug: agent-connector-sdk
-        name: Agent Connector SDK
-        role: governed source integration boundary
-        url: https://knuckles-team.github.io/agent-connector-sdk/
-        repository: https://github.com/Knuckles-Team/agent-connector-sdk
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Knuckles-Team/geniusbot
