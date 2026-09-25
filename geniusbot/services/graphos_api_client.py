@@ -87,18 +87,43 @@ class GraphOSAPIClient:
         """Confirm a PLAN-bound action through the caller's A2A session."""
         if not plan_ref or not op or not isinstance(params, dict):
             raise ValueError("complete plan binding is required")
+        return await self._a2a_operation(
+            "graphos.plan/confirm",
+            {
+                "plan_ref": plan_ref,
+                "op": op,
+                "params": params,
+                "idempotency_key": idempotency_key or uuid.uuid4().hex,
+            },
+        )
+
+    async def invoke_a2a(
+        self,
+        op: str,
+        params: dict[str, Any],
+        *,
+        idempotency_key: str | None = None,
+    ) -> Any:
+        """Start an A2A op and return its result, including PLAN preview status."""
+        if not op or not isinstance(params, dict):
+            raise ValueError("operation id and object params are required")
+        return await self._a2a_operation(
+            "graphos.op/invoke",
+            {
+                "op": op,
+                "params": params,
+                "idempotency_key": idempotency_key or uuid.uuid4().hex,
+            },
+        )
+
+    async def _a2a_operation(self, method: str, params: dict[str, Any]) -> Any:
         response = await self._http.post(
             f"{self.base_url}/a2a",
             json={
                 "jsonrpc": "2.0",
                 "id": uuid.uuid4().hex,
-                "method": "graphos.plan/confirm",
-                "params": {
-                    "plan_ref": plan_ref,
-                    "op": op,
-                    "params": params,
-                    "idempotency_key": idempotency_key or uuid.uuid4().hex,
-                },
+                "method": method,
+                "params": params,
             },
         )
         body = response.json()

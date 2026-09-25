@@ -86,3 +86,38 @@ def test_remote_plaintext_and_missing_identity_fail_closed():
         GraphOSAPIClient("http://remote.example:8000", "token")
     with pytest.raises(ValueError):
         GraphOSAPIClient("https://remote.example", "")
+
+
+@pytest.mark.asyncio
+async def test_a2a_invoke_returns_bound_plan_preview():
+    seen = []
+    preview = {
+        "state": "input-required",
+        "status": {
+            "message": {
+                "metadata": {
+                    "graphOsPlan": {
+                        "plan_ref": "p1",
+                        "op": "query.uql",
+                        "params": {"query": "MATCH ()"},
+                        "confirm": "plan",
+                    }
+                }
+            }
+        },
+    }
+
+    def reply(request):
+        seen.append(json.loads(request.content))
+        return httpx.Response(200, json={"jsonrpc": "2.0", "result": preview})
+
+    client = GraphOSAPIClient("http://localhost:8000", "caller-token")
+    await client._http.aclose()
+    client._http = httpx.AsyncClient(
+        transport=httpx.MockTransport(reply),
+        headers={"Authorization": "Bearer caller-token"},
+    )
+    assert await client.invoke_a2a("query.uql", {"query": "MATCH ()"}) == preview
+    assert seen[0]["method"] == "graphos.op/invoke"
+    assert seen[0]["params"]["params"] == {"query": "MATCH ()"}
+    await client.aclose()
