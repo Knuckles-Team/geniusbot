@@ -1,3 +1,6 @@
+# Run and install with the relocated config:
+#   pre-commit install -c .config/pre-commit.yaml -t pre-commit -t pre-push
+#   pre-commit run -c .config/pre-commit.yaml --all-files
 default_language_version:
   python: python3
 # `git push` must run the FULL gate, not a subset. Without
@@ -62,6 +65,15 @@ repos:
     - id: mypy
       additional_dependencies: [pydantic==2.13.4, types-PyYAML==6.0.12.20260518, types-requests==2.33.0.20260518, types-setuptools==83.0.0.20260706, PySide6==6.11.1]
       args: ["--ignore-missing-imports"]
+  # Shared repository-hygiene gates (Knuckles-Team/pipelines, at main -- the
+  # sanctioned exception to this repo's immutable-pin policy): the root
+  # carries only the entries .config/repo-layout.toml justifies, and .gitignore
+  # carries the fleet-shared REQUIRED set with no tracked cache or build output.
+  - repo: https://github.com/Knuckles-Team/pipelines
+    rev: main # gate inputs under .config/
+    hooks:
+      - id: root-hygiene
+      - id: gitignore-convergence
   - repo: local
     hooks:
     - id: dependency-readiness

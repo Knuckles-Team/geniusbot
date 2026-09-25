@@ -166,3 +166,19 @@ trace.txt
 .tmp/
 .pytest_tmp/
 .hypothesis/
+
+# Root-hygiene: tool caches, scratch and generated output never tracked
+target-*/
+dist-*/
+.ruff_cache/
+node_modules/
+.specify/
+*maturin.lock
+.kiss/
+.kissconfig
+security-results/
+reports/
+scratch/
+# Shared pipelines checkouts the Pages workflow (and a local docs build) creates
+.pipeline-theme/
+.pipeline-contract/

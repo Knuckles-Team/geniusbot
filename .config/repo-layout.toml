@@ -1,0 +1,30 @@
+# Tracked root entries of geniusbot, read by the shared root-hygiene hook
+# (Knuckles-Team/pipelines). An allowlist, not a baseline: a new root entry needs
+# a reason here or the gate fails, and an entry that is no longer tracked fails
+# as stale. Every tool input that accepts a path override lives in .config/; the
+# root keeps only what a tool discovers nowhere else.
+
+[dirs]
+".config" = "tool configuration: pre-commit suite (pre-commit -c), bump2version (--config-file), security-gate contract + harnesses, env example, MkDocs theme overrides (custom_dir), this manifest"
+".github" = "GitHub Actions workflows (GitHub discovers only .github/)"
+docs = "MkDocs sources for the public GitHub Pages site, including the application screenshots"
+geniusbot = "the desktop application package"
+packaging = "desktop packaging inputs read by the shared desktop_release_pipeline: linux/ (.deb control + .desktop entry) and windows/setup.iss (Inno Setup)"
+scripts = "gate and maintenance scripts run by pre-commit"
+tests = "the pytest suite"
+
+[files]
+"AGENTS.md" = "agent-facing repository guide (discovered at the root)"
+"CHANGELOG.md" = "release changelog"
+"CLAUDE.md" = "Claude Code instructions (discovered at the root)"
+"LICENSE" = "license text (GitHub and packaging detect it at the root; the Windows installer shows it)"
+"README.md" = "project readme and PyPI long description (GitHub/PyPI render the root readme)"
+"mkdocs.yml" = "Pages site configuration; mkdocs and the shared pages_pipeline read it only at the root"
+"pyproject.toml" = "package metadata and tool configuration"
+"requirements.txt" = "runtime requirements the shared python_pipeline publish action and desktop_release_pipeline install from the root (uv pip install -r requirements.txt)"
+"uv.lock" = "uv lockfile (uv reads it only beside pyproject.toml)"
+
+[dotfiles]
+".gitattributes" = "git attributes (git reads only the root file)"
+".gitignore" = "git exclusion patterns (git reads only the root file; carries the fleet-shared REQUIRED set)"
+".mergequeue.yaml" = "merge-queue gate declaration; repository-manager's merge queue, lane doctor and validation policy read <repo>/.mergequeue.yaml only"
