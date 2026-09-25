@@ -24,6 +24,7 @@ imports here without touching any UI code.
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -57,21 +58,13 @@ class BackendAdapter:
     # ── Paths / telemetry ────────────────────────────────────────────
     @staticmethod
     def resolve_log_dir() -> Path:
-        """Resolve the centralized log directory.
+        """Resolve the existing XDG log directory without an AU private import."""
+        import platformdirs
 
-        Prefers ``agent_utilities.core.paths.log_dir`` and falls back to a
-        platformdirs-derived path when agent-utilities is not installed. This
-        replaces the duplicated try/except blocks previously scattered across
-        ``logger.py``, ``utils.py`` and ``geniusbot.py``.
-        """
-        try:
-            from agent_utilities.core.paths import log_dir
-
-            return log_dir()
-        except Exception:  # ImportError or any engine-side failure
-            import platformdirs
-
-            return Path(platformdirs.user_log_path("agent-utilities", "knuckles-team"))
+        override = os.environ.get("AGENT_UTILITIES_LOG_DIR")
+        if override:
+            return Path(override).expanduser()
+        return Path(platformdirs.user_log_path("agent-utilities", "knuckles-team"))
 
     # ── Knowledge Graph query ────────────────────────────────────────
     async def run_graph_query(self, query_text: str) -> Any:
@@ -125,19 +118,19 @@ class BackendAdapter:
 
     # ── Gateway service dashboard ────────────────────────────────────
     def load_service_layout(self) -> Any:
-        """Load the service dashboard layout via the gateway ConfigManager.
+        """Load the service dashboard layout via Graph OS configuration.
 
         Returns the layout object (with ``.groups``) or raises ImportError if
         the gateway config module is unavailable, so the caller can render its
         "gateway not available" placeholder. Other exceptions propagate for
         the caller's error placeholder.
         """
-        from agent_utilities.gateway.config import ConfigManager
+        from graph_os.gateway.config import ConfigManager
 
         return ConfigManager().load()
 
     def fetch_service_widget_data(self) -> dict:
-        """Fetch and serialize all service widget data via the aggregator.
+        """Fetch and serialize all service widget data via Graph OS.
 
         Runs the gateway :class:`Aggregator` to completion and converts the
         returned ``WidgetData`` objects into plain serializable dicts suitable
@@ -146,7 +139,7 @@ class BackendAdapter:
         """
         import asyncio
 
-        from agent_utilities.gateway.aggregator import Aggregator
+        from graph_os.gateway.aggregator import Aggregator
 
         aggregator = Aggregator()
         loop = asyncio.new_event_loop()
