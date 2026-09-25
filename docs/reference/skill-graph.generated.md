@@ -9,14 +9,29 @@ Every concept and component this repo's own registries and documentation nav dec
 
 ## Architecture
 
-- **Technical Overview** — `overview.md`
+- **Architecture** — `overview.md`
+
+## Capabilities
+
+- **Capabilities** — `capabilities.md`
 
 ## Home
 
 - **Home** — `index.md`
 
+## Interfaces
+
+- **Interfaces** — `interfaces.md`
+
 ## Reference
 
-- **Concept Registry** — `concepts.md`
+- **Concepts** — `concepts.md`
+- **Knowledge graph extraction** — `kg-extraction.md`
+- **Ecosystem glossary** — `glossary.md`
+- **Skill graph reference** — `reference/skill-graph.generated.md`
+
+## Status
+
+- **Status** — `status.md`
 
 </div>
