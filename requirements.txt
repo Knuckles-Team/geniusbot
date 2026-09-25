@@ -177,6 +177,7 @@ pydantic==2.13.4
     # via
     #   agent-connector-sdk
     #   agent-utilities
+    #   epistemic-graph
     #   fastmcp-slim
     #   mcp
     #   mcp-types
