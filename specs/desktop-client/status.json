@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "spec_id": "GENIUSBOT-CLIENT-001",
+  "owner_repo": "geniusbot",
+  "requirement_ids": [
+    "GENIUSBOT-CLIENT-R001",
+    "GENIUSBOT-CLIENT-R002",
+    "GENIUSBOT-CLIENT-R003",
+    "GENIUSBOT-CLIENT-R004",
+    "GENIUSBOT-CLIENT-R005",
+    "GENIUSBOT-CLIENT-R006",
+    "GENIUSBOT-CLIENT-R007",
+    "GENIUSBOT-CLIENT-R008",
+    "GENIUSBOT-CLIENT-R009",
+    "GENIUSBOT-CLIENT-R010",
+    "GENIUSBOT-CLIENT-R011",
+    "GENIUSBOT-CLIENT-R012"
+  ],
+  "delivery_state": "SPECIFIED",
+  "acceptance_state": "NOT_AUDITED",
+  "evidence": [],
+  "requirements": [
+    {
+      "id": "GENIUSBOT-CLIENT-R001",
+      "title": "One backend-adapter import seam",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
+          "description": "Implemented on the default branch; exercised by tests/test_backend_adapter_seam.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R002",
+      "title": "Operation validated against the installed generated registry",
+      "delivery_state": "SPECIFIED",
+      "evidence": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R003",
+      "title": "Verified credential over TLS, bounded responses",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
+          "description": "Implemented on the default branch; exercised by tests/security/test_gateway_client_security.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R004",
+      "title": "Off-thread, non-blocking dispatch",
+      "delivery_state": "SPECIFIED",
+      "evidence": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R005",
+      "title": "Fail-closed, typed errors",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "b68ffd2a32270b4be7006e625898eb4e5631e570",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/b68ffd2a32270b4be7006e625898eb4e5631e570",
+          "description": "Implemented on the default branch; exercised by tests/test_gateway_client_copilot.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R006",
+      "title": "No local approval authority",
+      "delivery_state": "SPECIFIED",
+      "evidence": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R007",
+      "title": "Embedded terminal sandbox",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
+          "description": "Implemented on the default branch; exercised by tests/test_geniusbot_window.py::test_terminal_widget_instantiation and test_switch_view_lazily_loads_every_panel_and_styles_sidebar."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R008",
+      "title": "Lazy, on-demand cockpit panel loading",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "5e6e561f4dff1bd99ac0dbbcd34bf5cd6dd8edf5",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/5e6e561f4dff1bd99ac0dbbcd34bf5cd6dd8edf5",
+          "description": "Implemented on the default branch; exercised by tests/test_geniusbot_window.py::test_switch_view_lazily_loads_every_panel_and_styles_sidebar."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R009",
+      "title": "Honest voice-dictation states",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "57eda603efd1209ab84b4c255af1016fbcc0f391",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/57eda603efd1209ab84b4c255af1016fbcc0f391",
+          "description": "Implemented on the default branch; exercised by tests/test_voice_panel.py and tests/test_gateway_client_voice.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R010",
+      "title": "Background tray residency",
+      "delivery_state": "SPECIFIED",
+      "evidence": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R011",
+      "title": "Dynamic specialist discovery and schema-driven execution deck",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "c21deec29cfbdcf86cab5afb3fe860bb06146d74",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/c21deec29cfbdcf86cab5afb3fe860bb06146d74",
+          "description": "Implemented on the default branch; exercised by tests/test_geniusbot_window.py's AgentControlPanel field-generation tests."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R012",
+      "title": "Cross-platform packaging and distribution",
+      "delivery_state": "SPECIFIED",
+      "evidence": []
+    }
+  ]
+}
