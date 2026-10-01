@@ -1,5 +1,5 @@
 import pytest
-from PySide6.QtWidgets import QLineEdit
+from PySide6.QtWidgets import QLineEdit, QVBoxLayout
 
 from geniusbot.geniusbot import GeniusBot
 from geniusbot.qt.terminal_widget import TerminalBridge, TerminalWidget
@@ -76,6 +76,26 @@ def test_agent_control_panel_builds_one_input_per_skill(qapp):
     assert set(panel.inputs.keys()) == {"scrape_web", "git_operations", "summarize"}
     for widget in panel.inputs.values():
         assert isinstance(widget, QLineEdit)
+    panel.close()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.1")
+def test_agent_control_panel_skips_reparenting_when_layout_has_no_parent_widget(
+    qapp, monkeypatch
+):
+    """`_add_capability_field` guards `QLayout.parentWidget()` returning
+    `None` (its PySide6 stub is `QWidget | None`): previously an
+    unconditional `addWidget(layout_obj.parentWidget())` would hand Qt's
+    strict-typed binding a `None` argument where a `QWidget` is required.
+    Simulate the no-parent-widget case directly and confirm construction
+    no longer raises and the capability form still completes."""
+    worker = AgentBridgeWorker()
+    agent_data = {"name": "Data Explorer", "skills": ["scrape_web"]}
+
+    monkeypatch.setattr(QVBoxLayout, "parentWidget", lambda self: None)
+    panel = AgentControlPanel(agent_data, worker)
+    assert "scrape_web" in panel.inputs
     panel.close()
 
 

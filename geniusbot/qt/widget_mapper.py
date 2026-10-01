@@ -32,7 +32,7 @@ class AgentControlPanel(QFrame):
         self.setObjectName("AgentCard")
         self.agent_data = agent_data
         self.worker = worker
-        self.inputs = {}
+        self.inputs: dict[str, QLineEdit] = {}
 
         # Set up a beautiful space-dark container frame
         self.setStyleSheet(
@@ -164,7 +164,9 @@ class AgentControlPanel(QFrame):
         cap_layout.addWidget(line_edit)
         layout_obj = form_widget.layout()
         if layout_obj is not None:
-            form_layout.addWidget(layout_obj.parentWidget())  # Safe add
+            parent_widget = layout_obj.parentWidget()
+            if parent_widget is not None:
+                form_layout.addWidget(parent_widget)  # Safe add
         form_layout.addLayout(cap_layout)
         self.inputs[cap] = line_edit
 
@@ -177,9 +179,7 @@ class AgentControlPanel(QFrame):
         cap_layout.addWidget(label)
 
         line_edit = QLineEdit()
-        line_edit.setPlaceholderText(
-            "Enter instructions or task for the specialist..."
-        )
+        line_edit.setPlaceholderText("Enter instructions or task for the specialist...")
         cap_layout.addWidget(line_edit)
         form_layout.addLayout(cap_layout)
         self.inputs["task_query"] = line_edit
