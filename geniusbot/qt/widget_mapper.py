@@ -164,7 +164,9 @@ class AgentControlPanel(QFrame):
         cap_layout.addWidget(line_edit)
         layout_obj = form_widget.layout()
         if layout_obj is not None:
-            form_layout.addWidget(layout_obj.parentWidget())  # Safe add
+            parent_widget = layout_obj.parentWidget()
+            if parent_widget is not None:
+                form_layout.addWidget(parent_widget)  # Safe add
         form_layout.addLayout(cap_layout)
         self.inputs[cap] = line_edit
 
