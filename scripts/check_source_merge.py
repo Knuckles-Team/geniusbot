@@ -11,6 +11,9 @@ from pathlib import Path
 
 SOURCE_SCOPE = {
     "geniusbot/services/gateway_client.py",
+    "geniusbot/geniusbot.py",
+    "tests/test_specialist_discovery.py",
+    "tests/test_extraction_cockpit.py",
     "tests/test_graph_query_wiring.py",
     "tests/test_source_merge.py",
     "scripts/check_source_merge.py",
@@ -69,7 +72,15 @@ def main() -> int:
         with tarfile.open(fileobj=io.BytesIO(archive)) as source:
             source.extractall(directory, filter="data")
         subprocess.run(command, cwd=directory, check=True)
-    subprocess.run([*command, "tests/test_source_merge.py"], check=True)
+    subprocess.run(
+        [
+            *command,
+            "tests/test_source_merge.py",
+            "tests/test_specialist_discovery.py",
+            "tests/test_extraction_cockpit.py",
+        ],
+        check=True,
+    )
     print(
         "Both baseline and candidate focused tests passed; full release qualification deferred."
     )
