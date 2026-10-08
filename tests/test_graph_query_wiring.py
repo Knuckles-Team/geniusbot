@@ -47,7 +47,12 @@ class _RecordingTransport(httpx.AsyncBaseTransport):
 
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         self.requests.append(request)
-        return httpx.Response(self.status_code, json=self.payload, request=request)
+        headers = (
+            {"location": "/redirect-target"} if 300 <= self.status_code < 400 else {}
+        )
+        return httpx.Response(
+            self.status_code, json=self.payload, request=request, headers=headers
+        )
 
 
 def _adapter_with(transport: httpx.AsyncBaseTransport) -> BackendAdapter:
@@ -111,3 +116,52 @@ def test_graph_routes_the_client_will_post_to_are_declared(route: str) -> None:
     from geniusbot.services import gateway_client
 
     assert route in gateway_client._GRAPH_ROUTES
+
+
+def test_typed_failed_operation_keeps_its_own_error() -> None:
+    """A 403 ``{"status": "failed"}`` envelope is the tool's answer.
+
+    It must not collapse into "gateway offline". ``run_graph_query`` still
+    falls back (None) because the result carries ``error``.
+    """
+    failed = {
+        "status": "failed",
+        "operation_id": "op-1",
+        "error": {"code": "permission_denied", "message": "not authorized"},
+    }
+    transport = _RecordingTransport(
+        {"status": "failed", "result": failed}, status_code=403
+    )
+    adapter = _adapter_with(transport)
+
+    assert asyncio.run(adapter._gateway().graph_query("MATCH (n) RETURN n")) == failed
+    assert asyncio.run(adapter.run_graph_query("MATCH (n) RETURN n")) is None
+
+
+def test_non_envelope_gateway_error_still_reads_as_unavailable() -> None:
+    transport = _RecordingTransport({"detail": "bad gateway"}, status_code=502)
+    adapter = _adapter_with(transport)
+
+    result = asyncio.run(adapter._gateway().graph_query("MATCH (n) RETURN n"))
+    assert result == {"error": "gateway offline or route unavailable"}
+
+
+@pytest.mark.parametrize("status_code", [301, 302, 303, 307, 308])
+@pytest.mark.parametrize(
+    "envelope",
+    [
+        {"status": "success", "result": {"rows": []}},
+        {"status": "failed", "result": {"error": {"code": "permission_denied"}}},
+    ],
+)
+def test_redirect_envelopes_are_rejected_without_following(
+    status_code: int, envelope: dict[str, Any]
+) -> None:
+    transport = _RecordingTransport(envelope, status_code=status_code)
+    adapter = _adapter_with(transport)
+
+    result = asyncio.run(adapter._gateway().graph_query("MATCH (n) RETURN n"))
+
+    assert result == {"error": "gateway offline or route unavailable"}
+    assert len(transport.requests) == 1
+    assert transport.requests[0].url.path == "/api/graph/query"

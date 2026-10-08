@@ -315,6 +315,22 @@ judgment; the bias here is correctness over speed.
   validation" → "tests for the invalid inputs pass". For multi-step work, state the short
   plan and the check for each step, then loop until the checks pass.
 
+## Bounded source-only merge policy
+
+The gateway-client source lane may merge with focused regression tests, normal
+lint, type and security checks, and no new failures against the same current main.
+The mandatory push hook verifies remote main, then runs the gateway wiring and
+security suites on both that baseline and the candidate with one interpreter.
+Changes outside its explicit scope retain full pytest enforcement. Record exact
+revisions, commands, results, known failures and deferred qualification in the PR.
+
+Dependency readiness and lockfile checks run when dependency inputs change;
+their known failures are not reported as passes on a source-only PR. The manual
+pytest hook and release workflows retain full qualification. Native changes
+still require full native validation. This bounded policy supersedes the
+whole-repository-green prerequisite below for source merging only, and does not
+authorize release, live acceptance, disabling hooks or suppressing diagnostics.
+
 ## Quality Bar — Leave the Codebase Clean (REQUIRED)
 
 After completing any code change, run the project's pre-commit suite and drive it
