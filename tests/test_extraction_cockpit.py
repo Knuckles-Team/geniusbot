@@ -108,6 +108,7 @@ async def test_gateway_submit_and_stream(monkeypatch) -> None:
     # so both mocks below are response-like stream context managers.
     class _SubmitStream:
         headers: dict[str, str] = {}
+        is_error = False
 
         def raise_for_status(self):
             return None

@@ -110,7 +110,11 @@ class GeniusBot(QMainWindow):
         6: ("security_panel", "geniusbot.qt.security_policy", "SecurityPolicyPanel"),
         7: ("infra_panel", "geniusbot.qt.infra_cockpit", "InfrastructureCockpitPanel"),
         8: ("finance_panel", "geniusbot.qt.finance_cockpit", "FinanceCockpitPanel"),
-        9: ("dashboard_panel", "geniusbot.qt.service_dashboard", "ServiceDashboardPanel"),
+        9: (
+            "dashboard_panel",
+            "geniusbot.qt.service_dashboard",
+            "ServiceDashboardPanel",
+        ),
         10: ("fleet_panel", "geniusbot.qt.fleet_cockpit", "FleetCockpitPanel"),
         11: ("usage_panel", "geniusbot.qt.usage_cockpit", "UsageCockpitPanel"),
         12: (
@@ -118,7 +122,11 @@ class GeniusBot(QMainWindow):
             "geniusbot.qt.extraction_cockpit",
             "ExtractionCockpitPanel",
         ),
-        13: ("temporal_panel", "geniusbot.qt.temporal_graph_panel", "TemporalGraphPanel"),
+        13: (
+            "temporal_panel",
+            "geniusbot.qt.temporal_graph_panel",
+            "TemporalGraphPanel",
+        ),
         14: ("data_query_panel", "geniusbot.qt.data_query_panel", "DataQueryPanel"),
         15: ("metrics_panel", "geniusbot.qt.metrics_panel", "MetricsPanel"),
         16: (
@@ -511,9 +519,10 @@ class GeniusBot(QMainWindow):
         self.lbl_status.setText("Connecting Graph...")
 
         async def fetch(progress_cb=None):
-            return await self.gateway.fetch_specialists()
+            return {"specialists": await self.gateway.fetch_specialists()}
 
-        def on_finished(specs):
+        def on_finished(result):
+            specs = result["specialists"]
             self.discovered_specialists = specs
             self.lbl_status.setText(f"{len(specs)} specialists loaded.")
             self.populate_specialist_deck()
