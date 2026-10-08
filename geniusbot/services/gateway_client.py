@@ -33,6 +33,25 @@ _GRAPH_ROUTES = frozenset(
 )
 
 
+def _decode_envelope(body: bytes) -> dict[str, Any] | None:
+    """The gateway's JSON object envelope, or ``None`` when the body is not one."""
+    try:
+        value = json.loads(body)
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def _is_failed_envelope(value: dict[str, Any] | None) -> bool:
+    """``{"status": "failed", "result": {...error...}}`` from a REST tool twin."""
+    return (
+        value is not None
+        and value.get("status") == "failed"
+        and isinstance(value.get("result"), dict)
+        and "error" in value["result"]
+    )
+
+
 class GatewayClient:
     def __init__(
         self,
@@ -100,13 +119,15 @@ class GatewayClient:
         async with self._direct_http.stream(
             method, path, json=payload, follow_redirects=False
         ) as response:
-            response.raise_for_status()
             body = await self._bounded_body(response)
-        try:
-            value = json.loads(body)
-        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-            raise RuntimeError("Gateway returned invalid JSON") from exc
-        if not isinstance(value, dict):
+            value = _decode_envelope(body)
+            # The gateway answers a typed failed operation with its
+            # public HTTP status (400/403/500/503) and a ``{"status":
+            # "failed"}`` envelope. That envelope is the tool's answer, not a
+            # transport error, so it is returned for the caller to classify.
+            if not (response.is_error and _is_failed_envelope(value)):
+                response.raise_for_status()
+        if value is None:
             raise RuntimeError("Gateway returned an invalid envelope")
         return value
 
@@ -156,8 +177,7 @@ class GatewayClient:
             return await self._sdk.execute_command(query)
         except Exception as e:
             return {
-                "result": "❌ Gateway connection failed. Falling back to local run "
-                "is not supported for slash commands."
+                "result": "❌ Gateway connection failed. Falling back to local run is not supported for slash commands."
             }
 
     async def fetch_fleet_topology(self):
@@ -366,9 +386,14 @@ class GatewayClient:
         except Exception as e:
             logger.warning("Graph request failed: error_type=%s", type(e).__name__)
             return {"error": "gateway offline or route unavailable"}
-        if isinstance(env, dict) and env.get("status") == "error":
+        if env.get("status") == "error":
             return {"error": "gateway graph request failed"}
-        result = env.get("result") if isinstance(env, dict) else env
+        if _is_failed_envelope(env):
+            # A typed failed operation keeps its own public error, so the
+            # caller shows why, not a misleading "gateway offline".
+            failed = env.get("result")
+            return failed if isinstance(failed, dict) else {"error": "failed"}
+        result = env.get("result")
         return result if isinstance(result, dict) else {"result": result}
 
     async def ask_data(
@@ -478,7 +503,9 @@ class GatewayClient:
             return {"error": "voice transcription failed"}
 
     @staticmethod
-    def _emit_copilot_progress(ev_type: str, event: dict[str, Any], progress_cb) -> None:
+    def _emit_copilot_progress(
+        ev_type: str, event: dict[str, Any], progress_cb
+    ) -> None:
         """Forward one non-final-output copilot event to progress_cb, if any."""
         if not progress_cb:
             return
