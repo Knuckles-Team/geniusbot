@@ -4,10 +4,7 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
-      - 'README.md'
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -19,3 +16,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
+    with:
+      content_source: docs
+      spec_dashboard_enabled: true
+      spec_dashboard_config: .github/spec-dashboard.json
