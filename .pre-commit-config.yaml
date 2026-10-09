@@ -62,6 +62,14 @@ repos:
     - id: mypy
       additional_dependencies: [pydantic==2.13.4, types-PyYAML==6.0.12.20260518, types-requests==2.33.0.20260518, types-setuptools==83.0.0.20260706, PySide6==6.11.1]
       args: ["--ignore-missing-imports"]
+  - repo: https://github.com/Knuckles-Team/pipelines
+    rev: main
+    hooks:
+    - id: spec-status
+    - id: spec-decomposition
+    - id: spec-trailers
+      stages: [pre-push, manual]
+      args: ["--base-ref", "origin/main"]
   - repo: local
     hooks:
     - id: dependency-readiness
