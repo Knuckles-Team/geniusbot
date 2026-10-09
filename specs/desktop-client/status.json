@@ -57,8 +57,16 @@
     {
       "id": "GENIUSBOT-CLIENT-R004",
       "title": "Off-thread, non-blocking dispatch",
-      "delivery_state": "SPECIFIED",
-      "evidence": []
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "e2227928ace392e1823560f7343bb15afd8964f3",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/e2227928ace392e1823560f7343bb15afd8964f3",
+          "description": "AgentBridgeWorker (QRunnable/QThreadPool) already implemented on the default branch; started/finished/error/progress signal contract exercised by tests/test_agent_bridge_worker.py."
+        }
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R005",
@@ -77,8 +85,16 @@
     {
       "id": "GENIUSBOT-CLIENT-R006",
       "title": "No local approval authority",
-      "delivery_state": "SPECIFIED",
-      "evidence": []
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "e2227928ace392e1823560f7343bb15afd8964f3",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/e2227928ace392e1823560f7343bb15afd8964f3",
+          "description": "FleetCockpitPanel._grant already forwards every approval to GatewayClient.grant_approval on the default branch; round-trip and fail-closed-on-gateway-failure behavior exercised by tests/test_fleet_cockpit_approval.py."
+        }
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R007",
@@ -125,8 +141,16 @@
     {
       "id": "GENIUSBOT-CLIENT-R010",
       "title": "Background tray residency",
-      "delivery_state": "SPECIFIED",
-      "evidence": []
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "e2227928ace392e1823560f7343bb15afd8964f3",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/e2227928ace392e1823560f7343bb15afd8964f3",
+          "description": "GeniusBotDaemon tray + GeniusBot.closeEvent minimize-to-tray already implemented on the default branch; close-while-active and tray-action-to-window-behavior paths exercised by new tests in tests/test_geniusbot_window.py."
+        }
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R011",
