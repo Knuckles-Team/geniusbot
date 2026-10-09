@@ -34,33 +34,25 @@
     {
       "id": "GENIUSBOT-CLIENT-R002.1",
       "title": "Typed registry-entry model and validator",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "a443c69a2a0d"
       ],
-      "verified_by": [
-        "tests/test_operation_registry.py:14",
-        "tests/test_operation_registry.py:22",
-        "tests/test_operation_registry.py:28"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R002.2",
       "title": "Operation validated against the installed generated registry at the call site",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "951f65308c5b"
       ],
-      "verified_by": [
-        "tests/test_packaging_cli.py:19",
-        "tests/test_packaging_cli.py:35",
-        "tests/test_packaging_cli.py:9"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R002",
       "title": "Typed registry-entry model and validator (rollup of 1, 2)",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "951f65308c5b",
         "a443c69a2a0d"
@@ -83,29 +75,21 @@
     {
       "id": "GENIUSBOT-CLIENT-R004",
       "title": "Off-thread, non-blocking dispatch",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "6c100b813e85",
         "e2227928ace3"
       ],
-      "verified_by": [
-        "tests/test_agent_bridge_worker.py:23",
-        "tests/test_agent_bridge_worker.py:53",
-        "tests/test_fleet_cockpit_approval.py:27"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R005",
       "title": "Fail-closed, typed errors",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "b68ffd2a3227"
       ],
-      "verified_by": [
-        "tests/test_gateway_client_copilot.py:25",
-        "tests/test_gateway_client_copilot.py:46",
-        "tests/test_gateway_client_copilot.py:62"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R006",
@@ -137,15 +121,11 @@
     {
       "id": "GENIUSBOT-CLIENT-R009",
       "title": "Honest voice-dictation states",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "57eda603efd1"
       ],
-      "verified_by": [
-        "tests/test_gateway_client_voice.py:26",
-        "tests/test_gateway_client_voice.py:48",
-        "tests/test_gateway_client_voice.py:63"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R010",
@@ -159,46 +139,34 @@
     {
       "id": "GENIUSBOT-CLIENT-R011",
       "title": "Dynamic specialist discovery and schema-driven execution deck",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "c21deec29cfb"
       ],
-      "verified_by": [
-        "tests/test_geniusbot_window.py:47",
-        "tests/test_geniusbot_window.py:65",
-        "tests/test_geniusbot_window.py:84"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R012.1",
       "title": "Typed packaging manifest model and validator",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "a443c69a2a0d"
       ],
-      "verified_by": [
-        "tests/test_operation_registry.py:14",
-        "tests/test_operation_registry.py:22",
-        "tests/test_operation_registry.py:28"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R012.2",
       "title": "Cross-platform packaging and distribution",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "951f65308c5b"
       ],
-      "verified_by": [
-        "tests/test_packaging_cli.py:19",
-        "tests/test_packaging_cli.py:35",
-        "tests/test_packaging_cli.py:9"
-      ]
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R012",
       "title": "Typed packaging manifest model and validator (rollup of 1, 2)",
-      "delivery_state": "VERIFIED",
+      "delivery_state": "LANDED",
       "landed_in": [
         "951f65308c5b",
         "a443c69a2a0d"
