@@ -166,3 +166,7 @@ trace.txt
 .tmp/
 .pytest_tmp/
 .hypothesis/
+
+# CI-materialized shared Pages theme checkout (see pages_pipeline.yml); never tracked.
+.pipeline-theme/
+.pipeline-contract/

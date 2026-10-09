@@ -18,5 +18,6 @@ jobs:
       id-token: write
     with:
       content_source: docs
+      shared_theme_enabled: true
       spec_dashboard_enabled: true
       spec_dashboard_config: .github/spec-dashboard.json
