@@ -59,6 +59,7 @@ Homepage = "https://github.com/Knuckles-Team/geniusbot"
 
 [project.scripts]
 geniusbot = "geniusbot.geniusbot:main"
+geniusbot-package = "geniusbot.services.packaging_cli:main"
 
 # Development and ecosystem validation use the co-versioned sibling source so
 # the lock cannot silently fall back to a stale published floor: agent-utilities
