@@ -20,6 +20,7 @@ def _pump_until(predicate, attempts=200):
     return False
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R004")
 @pytest.mark.unit
 @pytest.mark.concept("GBOT-6.4")
 def test_agent_bridge_worker_reports_success_only_through_signals(qapp):
@@ -49,6 +50,7 @@ def test_agent_bridge_worker_reports_success_only_through_signals(qapp):
     assert "error" not in kinds
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R004")
 @pytest.mark.unit
 @pytest.mark.concept("GBOT-6.4")
 def test_agent_bridge_worker_reports_failure_only_through_error_signal(qapp):

@@ -44,6 +44,7 @@ def test_tool_guard_dialog_instantiation(qapp):
     dialog.close()
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R011")
 @pytest.mark.unit
 @pytest.mark.concept("GBOT-6.1")
 def test_agent_control_panel_instantiation(qapp):
@@ -61,6 +62,7 @@ def test_agent_control_panel_instantiation(qapp):
     panel.close()
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R011")
 @pytest.mark.unit
 @pytest.mark.concept("GBOT-6.1")
 def test_agent_control_panel_builds_one_input_per_skill(qapp):
@@ -79,6 +81,7 @@ def test_agent_control_panel_builds_one_input_per_skill(qapp):
     panel.close()
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R011")
 @pytest.mark.unit
 @pytest.mark.concept("GBOT-6.1")
 def test_agent_control_panel_skips_reparenting_when_layout_has_no_parent_widget(

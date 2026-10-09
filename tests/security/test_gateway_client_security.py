@@ -37,11 +37,17 @@ class _Stream(httpx.AsyncByteStream):
         "http://example.test",
     ],
 )
+@pytest.mark.spec(
+    "GENIUSBOT-CLIENT-R001", "GENIUSBOT-CLIENT-R003", "GENIUSBOT-CLIENT-R007"
+)
 def test_gateway_rejects_unsafe_endpoint_configuration(url: str) -> None:
     with pytest.raises(ValueError):
         GatewayClient(url)
 
 
+@pytest.mark.spec(
+    "GENIUSBOT-CLIENT-R001", "GENIUSBOT-CLIENT-R003", "GENIUSBOT-CLIENT-R007"
+)
 def test_gateway_bounded_body_rejects_stream_over_limit() -> None:
     response = httpx.Response(200, stream=_Stream([b"1234", b"5678"]))
 
@@ -49,6 +55,9 @@ def test_gateway_bounded_body_rejects_stream_over_limit() -> None:
         asyncio.run(GatewayClient._bounded_body(response, limit=7))
 
 
+@pytest.mark.spec(
+    "GENIUSBOT-CLIENT-R001", "GENIUSBOT-CLIENT-R003", "GENIUSBOT-CLIENT-R007"
+)
 def test_gateway_bounded_body_rejects_declared_oversize() -> None:
     response = httpx.Response(
         200,
