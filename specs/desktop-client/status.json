@@ -4,7 +4,8 @@
   "owner_repo": "geniusbot",
   "requirement_ids": [
     "GENIUSBOT-CLIENT-R001",
-    "GENIUSBOT-CLIENT-R002",
+    "GENIUSBOT-CLIENT-R002.1",
+    "GENIUSBOT-CLIENT-R002.2",
     "GENIUSBOT-CLIENT-R003",
     "GENIUSBOT-CLIENT-R004",
     "GENIUSBOT-CLIENT-R005",
@@ -14,7 +15,8 @@
     "GENIUSBOT-CLIENT-R009",
     "GENIUSBOT-CLIENT-R010",
     "GENIUSBOT-CLIENT-R011",
-    "GENIUSBOT-CLIENT-R012"
+    "GENIUSBOT-CLIENT-R012.1",
+    "GENIUSBOT-CLIENT-R012.2"
   ],
   "delivery_state": "SPECIFIED",
   "acceptance_state": "NOT_AUDITED",
@@ -35,8 +37,22 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R002",
-      "title": "Operation validated against the installed generated registry",
+      "id": "GENIUSBOT-CLIENT-R002.1",
+      "title": "Typed registry-entry model and validator",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "PENDING_MERGE_SHA",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/PENDING_MERGE_SHA",
+          "description": "geniusbot/services/operation_registry.py adds OperationRegistryEntry/OperationRegistry plus build_registry; exercised by tests/test_operation_registry.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R002.2",
+      "title": "Operation validated against the installed generated registry at the call site",
       "delivery_state": "SPECIFIED",
       "evidence": []
     },
@@ -167,7 +183,21 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R012",
+      "id": "GENIUSBOT-CLIENT-R012.1",
+      "title": "Typed packaging manifest model and validator",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "PENDING_MERGE_SHA",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/PENDING_MERGE_SHA",
+          "description": "geniusbot/services/packaging_manifest.py adds PackagingManifest/PackagingTarget plus build_manifest; exercised by tests/test_packaging_manifest.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R012.2",
       "title": "Cross-platform packaging and distribution",
       "delivery_state": "SPECIFIED",
       "evidence": []

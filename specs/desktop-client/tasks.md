@@ -3,9 +3,11 @@
 - [ ] Review the existing `GatewayClient` facade, `BackendAdapter` seam, `AgentBridgeWorker`
       dispatch, and panel-loading dispatch table against this spec; preserve unrelated
       concurrent edits and reuse every existing path instead of adding a parallel one.
+- [x] Add the typed `OperationRegistryEntry`/`OperationRegistry` model and `build_registry`
+      validator (closes `GENIUSBOT-CLIENT-R002.1`).
 - [ ] Confirm Graph OS's public generated operation registry and endpoint in an installed
       wheel; wire specialist/slash-command invocation to validate against it before any
-      network call (closes `GENIUSBOT-CLIENT-R002`).
+      network call (closes `GENIUSBOT-CLIENT-R002.2`).
 - [ ] Decide and implement `ToolGuardDialog`'s wiring: either route specialist execution and
       governed slash commands through it before dispatch, or explicitly scope it out of this
       release with a recorded reason (closes the open question under `GENIUSBOT-CLIENT-R006`).
@@ -16,9 +18,11 @@
 - [ ] Run the repository's configured Ruff, mypy and pytest checks; define and run CCCC,
       `jscpd` and Dupehound commands/thresholds or document their explicit acceptance
       exception.
+- [x] Add the typed `PackagingManifest`/`PackagingTarget` model and `build_manifest`
+      validator (closes `GENIUSBOT-CLIENT-R012.1`).
 - [ ] Build and smoke-test each packaged artifact (PyInstaller onefile, Windows installer,
       Linux desktop entry) from a tagged revision against both a reachable and an
-      unreachable Graph OS gateway (closes `GENIUSBOT-CLIENT-R012`).
+      unreachable Graph OS gateway (closes `GENIUSBOT-CLIENT-R012.2`).
 - [ ] Reconcile the `pip install geniusbot[all]` instruction in `README.md` with
       `pyproject.toml`'s actual optional-dependency groups (`dev`, `test`, `types`; no `all`
       group is currently defined), and reconcile the supported Python range stated in
