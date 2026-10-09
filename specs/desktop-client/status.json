@@ -44,8 +44,8 @@
         {
           "kind": "merged_head",
           "result": "passed",
-          "commit": "PENDING_MERGE_SHA",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/PENDING_MERGE_SHA",
+          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
           "description": "geniusbot/services/operation_registry.py adds OperationRegistryEntry/OperationRegistry plus build_registry; exercised by tests/test_operation_registry.py."
         }
       ]
@@ -190,8 +190,8 @@
         {
           "kind": "merged_head",
           "result": "passed",
-          "commit": "PENDING_MERGE_SHA",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/PENDING_MERGE_SHA",
+          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
           "description": "geniusbot/services/packaging_manifest.py adds PackagingManifest/PackagingTarget plus build_manifest; exercised by tests/test_packaging_manifest.py."
         }
       ]
