@@ -31,3 +31,8 @@
 - [ ] Publish the exact merged revision, checks, and packaging/consumer receipts in
       `status.json`; move a requirement to `LANDED` only after merge, and to `ACCEPTED` only
       after the served end-to-end approval and packaging proof.
+
+## Decomposition children (tracked)
+
+- [x] **GENIUSBOT-CLIENT-R002:** Typed registry-entry model and validator (rollup of 1, 2)
+- [x] **GENIUSBOT-CLIENT-R012:** Typed packaging manifest model and validator (rollup of 1, 2)

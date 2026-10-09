@@ -16,11 +16,21 @@
     "GENIUSBOT-CLIENT-R010",
     "GENIUSBOT-CLIENT-R011",
     "GENIUSBOT-CLIENT-R012.1",
-    "GENIUSBOT-CLIENT-R012.2"
+    "GENIUSBOT-CLIENT-R012.2",
+    "GENIUSBOT-CLIENT-R002",
+    "GENIUSBOT-CLIENT-R012"
   ],
-  "delivery_state": "SPECIFIED",
+  "delivery_state": "LANDED",
   "acceptance_state": "NOT_AUDITED",
-  "evidence": [],
+  "evidence": [
+    {
+      "kind": "merged_head",
+      "result": "passed",
+      "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
+      "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
+      "description": "Every requirement in this spec is merged to the default branch."
+    }
+  ],
   "requirements": [
     {
       "id": "GENIUSBOT-CLIENT-R001",
@@ -209,6 +219,48 @@
       "title": "Cross-platform packaging and distribution",
       "delivery_state": "LANDED",
       "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
+          "description": "geniusbot-package --check console script validates the packaging manifest via build_manifest and prints the build plan; exercised by tests/test_packaging_cli.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R002",
+      "title": "Typed registry-entry model and validator (rollup of 1, 2)",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
+          "description": "geniusbot/services/operation_registry.py adds OperationRegistryEntry/OperationRegistry plus build_registry; exercised by tests/test_operation_registry.py."
+        },
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
+          "description": "GeniusBot.__init__ calls load_installed_registry() before building the UI, refusing startup on a missing/malformed registry; exercised by tests/test_startup.py."
+        }
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R012",
+      "title": "Typed packaging manifest model and validator (rollup of 1, 2)",
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
+          "description": "geniusbot/services/packaging_manifest.py adds PackagingManifest/PackagingTarget plus build_manifest; exercised by tests/test_packaging_manifest.py."
+        },
         {
           "kind": "merged_head",
           "result": "passed",
