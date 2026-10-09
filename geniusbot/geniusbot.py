@@ -35,6 +35,7 @@ from geniusbot.qt.colors import BG_SECONDARY, BORDER_COLOR, DARK_COCKPIT_STYLE
 from geniusbot.qt.terminal_widget import TerminalWidget
 from geniusbot.qt.widget_mapper import WidgetSchemaMapper
 from geniusbot.services.gateway_client import GatewayClient
+from geniusbot.services.operation_registry import load_installed_registry
 from geniusbot.utils.agent_bridge import AgentBridgeWorker
 from geniusbot.utils.daemon import GeniusBotDaemon
 
@@ -162,6 +163,9 @@ class GeniusBot(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # R002.2: refuse to start the application if the installed generated
+        # operation registry is missing or malformed.
+        self.operation_registry = load_installed_registry()
         self.worker = AgentBridgeWorker()
         self.daemon = GeniusBotDaemon(self)
         self.gateway = GatewayClient()
