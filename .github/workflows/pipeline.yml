@@ -4,14 +4,33 @@ on:
   push:
     branches:
       - 'main'
+  pull_request:
+    branches:
+      - 'main'
 
 permissions:
   contents: read
 
 jobs:
   publish:
+    if: github.event_name == 'push'
     uses: Knuckles-Team/pipelines/.github/workflows/python_pipeline.yml@main
     permissions:
       contents: write
     secrets:
       PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+  spec-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: spec-status
+        run: uvx --from 'git+https://github.com/Knuckles-Team/pipelines@main' pipelines-hook spec-status
+      - name: spec-decomposition
+        run: uvx --from 'git+https://github.com/Knuckles-Team/pipelines@main' pipelines-hook spec-decomposition
+      - name: spec-trailers
+        if: github.event_name == 'pull_request'
+        run: uvx --from 'git+https://github.com/Knuckles-Team/pipelines@main' pipelines-hook spec-trailers --base-ref "origin/${{ github.base_ref }}"

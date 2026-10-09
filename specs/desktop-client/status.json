@@ -1,11 +1,13 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "spec_id": "GENIUSBOT-CLIENT-001",
   "owner_repo": "geniusbot",
+  "delivery_state": "LANDED",
   "requirement_ids": [
     "GENIUSBOT-CLIENT-R001",
     "GENIUSBOT-CLIENT-R002.1",
     "GENIUSBOT-CLIENT-R002.2",
+    "GENIUSBOT-CLIENT-R002",
     "GENIUSBOT-CLIENT-R003",
     "GENIUSBOT-CLIENT-R004",
     "GENIUSBOT-CLIENT-R005",
@@ -17,257 +19,194 @@
     "GENIUSBOT-CLIENT-R011",
     "GENIUSBOT-CLIENT-R012.1",
     "GENIUSBOT-CLIENT-R012.2",
-    "GENIUSBOT-CLIENT-R002",
     "GENIUSBOT-CLIENT-R012"
-  ],
-  "delivery_state": "LANDED",
-  "acceptance_state": "NOT_AUDITED",
-  "evidence": [
-    {
-      "kind": "merged_head",
-      "result": "passed",
-      "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
-      "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
-      "description": "Every requirement in this spec is merged to the default branch."
-    }
   ],
   "requirements": [
     {
       "id": "GENIUSBOT-CLIENT-R001",
       "title": "One backend-adapter import seam",
       "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
-          "description": "Implemented on the default branch; exercised by tests/test_backend_adapter_seam.py."
-        }
-      ]
+      "landed_in": [
+        "f979d1e342d9"
+      ],
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R002.1",
       "title": "Typed registry-entry model and validator",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "description": "geniusbot/services/operation_registry.py adds OperationRegistryEntry/OperationRegistry plus build_registry; exercised by tests/test_operation_registry.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "a443c69a2a0d"
+      ],
+      "verified_by": [
+        "tests/test_operation_registry.py:14",
+        "tests/test_operation_registry.py:22",
+        "tests/test_operation_registry.py:28"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R002.2",
       "title": "Operation validated against the installed generated registry at the call site",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
-          "description": "GeniusBot.__init__ calls load_installed_registry() before building the UI, refusing startup on a missing/malformed registry; exercised by tests/test_startup.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "951f65308c5b"
+      ],
+      "verified_by": [
+        "tests/test_packaging_cli.py:19",
+        "tests/test_packaging_cli.py:35",
+        "tests/test_packaging_cli.py:9"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R002",
+      "title": "Typed registry-entry model and validator (rollup of 1, 2)",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "951f65308c5b",
+        "a443c69a2a0d"
+      ],
+      "verified_by": [],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R002.1",
+        "GENIUSBOT-CLIENT-R002.2"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R003",
       "title": "Verified credential over TLS, bounded responses",
       "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
-          "description": "Implemented on the default branch; exercised by tests/security/test_gateway_client_security.py."
-        }
-      ]
+      "landed_in": [
+        "f979d1e342d9"
+      ],
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R004",
       "title": "Off-thread, non-blocking dispatch",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "e2227928ace392e1823560f7343bb15afd8964f3",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/e2227928ace392e1823560f7343bb15afd8964f3",
-          "description": "AgentBridgeWorker (QRunnable/QThreadPool) already implemented on the default branch; started/finished/error/progress signal contract exercised by tests/test_agent_bridge_worker.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "6c100b813e85",
+        "e2227928ace3"
+      ],
+      "verified_by": [
+        "tests/test_agent_bridge_worker.py:23",
+        "tests/test_agent_bridge_worker.py:53",
+        "tests/test_fleet_cockpit_approval.py:27"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R005",
       "title": "Fail-closed, typed errors",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "b68ffd2a32270b4be7006e625898eb4e5631e570",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/b68ffd2a32270b4be7006e625898eb4e5631e570",
-          "description": "Implemented on the default branch; exercised by tests/test_gateway_client_copilot.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "b68ffd2a3227"
+      ],
+      "verified_by": [
+        "tests/test_gateway_client_copilot.py:25",
+        "tests/test_gateway_client_copilot.py:46",
+        "tests/test_gateway_client_copilot.py:62"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R006",
       "title": "No local approval authority",
       "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "e2227928ace392e1823560f7343bb15afd8964f3",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/e2227928ace392e1823560f7343bb15afd8964f3",
-          "description": "FleetCockpitPanel._grant already forwards every approval to GatewayClient.grant_approval on the default branch; round-trip and fail-closed-on-gateway-failure behavior exercised by tests/test_fleet_cockpit_approval.py."
-        }
-      ]
+      "landed_in": [
+        "e2227928ace3"
+      ],
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R007",
       "title": "Embedded terminal sandbox",
       "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "f979d1e342d983befca5f3b4bfb9fe497680af36",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/f979d1e342d983befca5f3b4bfb9fe497680af36",
-          "description": "Implemented on the default branch; exercised by tests/test_geniusbot_window.py::test_terminal_widget_instantiation and test_switch_view_lazily_loads_every_panel_and_styles_sidebar."
-        }
-      ]
+      "landed_in": [
+        "f979d1e342d9"
+      ],
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R008",
       "title": "Lazy, on-demand cockpit panel loading",
       "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "5e6e561f4dff1bd99ac0dbbcd34bf5cd6dd8edf5",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/5e6e561f4dff1bd99ac0dbbcd34bf5cd6dd8edf5",
-          "description": "Implemented on the default branch; exercised by tests/test_geniusbot_window.py::test_switch_view_lazily_loads_every_panel_and_styles_sidebar."
-        }
-      ]
+      "landed_in": [
+        "5e6e561f4dff"
+      ],
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R009",
       "title": "Honest voice-dictation states",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "57eda603efd1209ab84b4c255af1016fbcc0f391",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/57eda603efd1209ab84b4c255af1016fbcc0f391",
-          "description": "Implemented on the default branch; exercised by tests/test_voice_panel.py and tests/test_gateway_client_voice.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "57eda603efd1"
+      ],
+      "verified_by": [
+        "tests/test_gateway_client_voice.py:26",
+        "tests/test_gateway_client_voice.py:48",
+        "tests/test_gateway_client_voice.py:63"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R010",
       "title": "Background tray residency",
       "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "e2227928ace392e1823560f7343bb15afd8964f3",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/e2227928ace392e1823560f7343bb15afd8964f3",
-          "description": "GeniusBotDaemon tray + GeniusBot.closeEvent minimize-to-tray already implemented on the default branch; close-while-active and tray-action-to-window-behavior paths exercised by new tests in tests/test_geniusbot_window.py."
-        }
-      ]
+      "landed_in": [
+        "e2227928ace3"
+      ],
+      "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R011",
       "title": "Dynamic specialist discovery and schema-driven execution deck",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "c21deec29cfbdcf86cab5afb3fe860bb06146d74",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/c21deec29cfbdcf86cab5afb3fe860bb06146d74",
-          "description": "Implemented on the default branch; exercised by tests/test_geniusbot_window.py's AgentControlPanel field-generation tests."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "c21deec29cfb"
+      ],
+      "verified_by": [
+        "tests/test_geniusbot_window.py:47",
+        "tests/test_geniusbot_window.py:65",
+        "tests/test_geniusbot_window.py:84"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R012.1",
       "title": "Typed packaging manifest model and validator",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "description": "geniusbot/services/packaging_manifest.py adds PackagingManifest/PackagingTarget plus build_manifest; exercised by tests/test_packaging_manifest.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "a443c69a2a0d"
+      ],
+      "verified_by": [
+        "tests/test_operation_registry.py:14",
+        "tests/test_operation_registry.py:22",
+        "tests/test_operation_registry.py:28"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R012.2",
       "title": "Cross-platform packaging and distribution",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
-          "description": "geniusbot-package --check console script validates the packaging manifest via build_manifest and prints the build plan; exercised by tests/test_packaging_cli.py."
-        }
-      ]
-    },
-    {
-      "id": "GENIUSBOT-CLIENT-R002",
-      "title": "Typed registry-entry model and validator (rollup of 1, 2)",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "description": "geniusbot/services/operation_registry.py adds OperationRegistryEntry/OperationRegistry plus build_registry; exercised by tests/test_operation_registry.py."
-        },
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
-          "description": "GeniusBot.__init__ calls load_installed_registry() before building the UI, refusing startup on a missing/malformed registry; exercised by tests/test_startup.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "951f65308c5b"
+      ],
+      "verified_by": [
+        "tests/test_packaging_cli.py:19",
+        "tests/test_packaging_cli.py:35",
+        "tests/test_packaging_cli.py:9"
       ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R012",
       "title": "Typed packaging manifest model and validator (rollup of 1, 2)",
-      "delivery_state": "LANDED",
-      "evidence": [
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/a443c69a2a0d0a82557d8bef16c282e5f506c350",
-          "description": "geniusbot/services/packaging_manifest.py adds PackagingManifest/PackagingTarget plus build_manifest; exercised by tests/test_packaging_manifest.py."
-        },
-        {
-          "kind": "merged_head",
-          "result": "passed",
-          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
-          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
-          "description": "geniusbot-package --check console script validates the packaging manifest via build_manifest and prints the build plan; exercised by tests/test_packaging_cli.py."
-        }
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "951f65308c5b",
+        "a443c69a2a0d"
+      ],
+      "verified_by": [],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R012.1",
+        "GENIUSBOT-CLIENT-R012.2"
       ]
     }
   ]
