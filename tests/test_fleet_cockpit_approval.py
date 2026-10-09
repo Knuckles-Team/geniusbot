@@ -24,6 +24,7 @@ class _RecordingWorker:
         self.last_task = async_func
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R004")
 @pytest.mark.unit
 @pytest.mark.concept("GBOT-6.5")
 def test_grant_forwards_to_gateway_approval_endpoint(qapp, monkeypatch):

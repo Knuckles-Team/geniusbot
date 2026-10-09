@@ -101,5 +101,6 @@ ignore = ["E501", "F841", "F401", "E402"]
 markers = [
     "unit: mark test as a unit test",
     "integration: mark test as an integration test",
-    "concept(name): mark test with a specific concept ID for traceability"
+    "concept(name): mark test with a specific concept ID for traceability",
+    "spec: binds a test to a spec requirement ID",
 ]

@@ -22,6 +22,7 @@ async def _events(*evs):
         yield ev
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R005")
 @pytest.mark.asyncio
 async def test_stream_copilot_query_returns_final_output_and_progress() -> None:
     client = _client()
@@ -42,6 +43,7 @@ async def test_stream_copilot_query_returns_final_output_and_progress() -> None:
     ]
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R005")
 @pytest.mark.asyncio
 async def test_stream_copilot_query_final_output_event_does_not_call_progress_cb() -> (
     None
@@ -57,6 +59,7 @@ async def test_stream_copilot_query_final_output_event_does_not_call_progress_cb
     assert seen == []
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R005")
 @pytest.mark.asyncio
 async def test_stream_copilot_query_no_progress_cb_does_not_raise() -> None:
     client = _client()
