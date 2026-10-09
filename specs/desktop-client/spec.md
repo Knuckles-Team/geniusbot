@@ -40,7 +40,8 @@ consumer implementation and states its own desktop-specific requirements here.
 | ID | Requirement | Acceptance evidence |
 |---|---|---|
 | GENIUSBOT-CLIENT-R001 | Every panel and the main window reach Graph OS only through the shared gateway client facade and the single `BackendAdapter` seam. | Source-tree import-scan test |
-| GENIUSBOT-CLIENT-R002 | `/op`-equivalent and specialist invocations validate against the installed generated operation registry before any network call. | Unit tests on unknown/mismatched operations |
+| GENIUSBOT-CLIENT-R002.1 | A typed registry-entry model and validator refuse a malformed or duplicate registry entry. | `tests/test_operation_registry.py` |
+| GENIUSBOT-CLIENT-R002.2 | `/op`-equivalent and specialist invocations validate against the installed generated operation registry before any network call. | Unit tests on unknown/mismatched operations |
 | GENIUSBOT-CLIENT-R003 | The caller's verified credential reaches Graph OS only over TLS for non-loopback hosts; every response is bounded. | Endpoint-validation and bounded-body tests |
 | GENIUSBOT-CLIENT-R004 | All network/reasoning work dispatches off the Qt UI thread through typed signals. | Worker signal-contract tests |
 | GENIUSBOT-CLIENT-R005 | Every facade failure mode resolves to a typed error/offline result, never an uncaught exception or false success. | Timeout/disconnect/exception unit tests |
@@ -50,7 +51,8 @@ consumer implementation and states its own desktop-specific requirements here.
 | GENIUSBOT-CLIENT-R009 | The voice-dictation panel renders no-device, recorder-failure, backend-unavailable and generic-error states distinctly. | Per-state unit tests |
 | GENIUSBOT-CLIENT-R010 | A tray daemon keeps the cockpit resident; closing the window minimizes to tray while the tray is active. | Tray action + close-event tests |
 | GENIUSBOT-CLIENT-R011 | The specialist deck is discovered and rendered dynamically from declared skills/capabilities. | Discovery + control-card field tests |
-| GENIUSBOT-CLIENT-R012 | The client packages as a pip install, a bundled executable, a Windows installer and a Linux desktop entry. | Packaging build + launch check |
+| GENIUSBOT-CLIENT-R012.1 | A typed packaging manifest model and validator refuse an incomplete manifest (missing target, missing field, or version mismatch), with no build tool invoked. | `tests/test_packaging_manifest.py` |
+| GENIUSBOT-CLIENT-R012.2 | The client packages as a pip install, a bundled executable, a Windows installer and a Linux desktop entry. | Packaging build + launch check |
 
 ## Scenarios and failure behavior
 
