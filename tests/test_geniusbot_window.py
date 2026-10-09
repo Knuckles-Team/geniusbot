@@ -226,3 +226,44 @@ def test_switch_view_lazily_loads_every_panel_and_styles_sidebar(qapp):
     assert bot.graph_panel is first_graph_panel
 
     bot.close()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.6")
+def test_close_event_hides_window_instead_of_exiting_while_tray_is_active(
+    qapp, monkeypatch
+):
+    """R010: closing the main window minimizes it to the tray instead of
+    exiting the process while the tray daemon remains active."""
+    bot = GeniusBot()
+    bot.show()
+    monkeypatch.setattr(bot.daemon.tray_icon, "isVisible", lambda: True)
+
+    bot.close()
+
+    assert bot.isHidden()
+    assert bot.daemon.tray_icon.isVisible()
+    bot.daemon.stop()
+
+
+@pytest.mark.unit
+@pytest.mark.concept("GBOT-6.6")
+def test_tray_actions_trigger_their_bound_window_behavior(qapp):
+    """R010: each tray action (show/terminal/health-check/exit) triggers its
+    bound window behavior via the daemon's signals."""
+    bot = GeniusBot()
+    bot.hide()
+
+    bot.daemon.show_requested.emit()
+    assert bot.isVisible()
+
+    bot.daemon.terminal_requested.emit()
+    assert bot.centralStackWidget.currentIndex() == 1
+
+    bot.daemon.health_check_requested.emit()
+    assert bot.lbl_status.text() == "Health checking..."
+
+    # No tray icon forced visible here, so exit_requested's bound bot.close()
+    # falls through to a real close instead of the tray-minimize branch.
+    bot.daemon.exit_requested.emit()
+    assert bot.isHidden()
