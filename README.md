@@ -1,36 +1,66 @@
-# GeniusBot — Desktop Cockpit for AI Agents
+# GeniusBot
 
-![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)
-![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)
-![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)
-![PyPI - License](https://img.shields.io/pypi/l/geniusbot)
+<p align="center">
+  <img src="docs/assets/brands/geniusbot-logo-v1.png" alt="GeniusBot logo" width="220">
+</p>
+
+<p align="center">
+  <b>The desktop cockpit for Graph OS.</b><br>
+  <sub>A unified, visual control deck over the Graph OS multi-agent ecosystem.</sub>
+</p>
+
+[![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/forks)
+[![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/graphs/contributors)
+[![GitHub license](https://img.shields.io/github/license/Knuckles-Team/geniusbot)](LICENSE)
+[![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/issues)
+[![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot)
+[![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)](https://pypi.org/project/geniusbot/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dd/geniusbot)](https://pypi.org/project/geniusbot/)
+[![PyPI - License](https://img.shields.io/pypi/l/geniusbot)](https://pypi.org/project/geniusbot/)
+[![Build](https://github.com/Knuckles-Team/geniusbot/actions/workflows/release.yml/badge.svg)](https://github.com/Knuckles-Team/geniusbot/actions/workflows/release.yml)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://knuckles-team.github.io/geniusbot/)
+
+<p align="center">
+  <a href="https://knuckles-team.github.io/geniusbot/">Documentation</a> ·
+  <a href="https://knuckles-team.github.io/geniusbot/overview/">Architecture</a> ·
+  <a href="https://knuckles-team.github.io/geniusbot/concepts/">Concepts</a>
+</p>
 
 *Version: 5.2.0*
 
-> **Documentation** — The architecture overview, security boundaries, quick-start
-> guidance, and the GeniusBot concept registry are maintained in the
-> [official documentation](https://knuckles-team.github.io/geniusbot/).
+## Overview
 
-GeniusBot is the premium, unified space cockpit and visual control deck built on top of the `agent-utilities` powerhouse backend. It integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
+GeniusBot is the premium, unified cockpit and visual control deck built on top of
+[Graph OS](https://knuckles-team.github.io/graph-os/) and its `agent-utilities`
+control plane. It integrates every specialist agent and MCP package in the fleet
+into a single-pane-of-glass user interface, offering 1-click execution, embedded
+hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware
+protection layer.
 
----
-
-## 📖 Table of Contents
-1. [Overview](#-overview)
-2. [Features](#-features)
-3. [Architecture](#-architecture)
-4. [Installation](#-installation)
-5. [Usage](#-usage)
-6. [Packaging & Executables](#-packaging--executables)
-7. [Documentation References](#-documentation-references)
-8. [License](#-license)
-
----
-
-## 🌐 Overview
 GeniusBot provides a centralized graphical cockpit designed to eliminate tedious click-through fatigue. It maps specialist agent parameter schemas directly to custom QSS-themed form widgets on the fly.
 
 Operators can trigger actions, monitor running terminal inputs via the embedded `agent-terminal-ui`, and secure dangerous CLI calls using the Zero-Trust Tool-Guard interceptor.
+
+## Key Capabilities
+
+- Dynamic, schema-driven control panels for every specialist agent and MCP package in the fleet.
+- An embedded hybrid terminal (`xterm.js`) for interactive, in-cockpit sessions.
+- A zero-trust Tool-Guard that intercepts and confirms sensitive mutations before execution.
+- Ask-Data (NL→Query), engine metrics/PromQL, and federated search over the Graph OS gateway.
+- A fleet supervisory cockpit: worker topology and the ActionPolicy approval inbox.
+
+## Table of Contents
+1. [Overview](#overview)
+2. [Key Capabilities](#key-capabilities)
+3. [Features](#-features)
+4. [Architecture](#-architecture)
+5. [Installation](#-installation)
+6. [Usage](#-usage)
+7. [Packaging & Executables](#-packaging--executables)
+8. [Documentation References](#-documentation-references)
+9. [License](#-license)
 
 ---
 
@@ -174,7 +204,14 @@ For deep architectural guidelines and code documentation, explore:
 * [docs/overview.md](docs/overview.md) — Detailed Architecture & Security Guardrails.
 * [docs/concepts.md](docs/concepts.md) — Concept Registries (`CONCEPT:GB-GBOT.cockpit.gbot` through `8.0`).
 
+Start at the [GeniusBot documentation](https://knuckles-team.github.io/geniusbot/) for the
+hosted, always-current version of the same material.
+
 ---
+
+## Contributing
+
+See [AGENTS.md](AGENTS.md) for contribution and validation guidance.
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
