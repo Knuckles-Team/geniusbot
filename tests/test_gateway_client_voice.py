@@ -23,7 +23,6 @@ def _client_with_transport(handler) -> GatewayClient:
     return client
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R009")
 @pytest.mark.asyncio
 async def test_transcribe_voice_posts_multipart_and_returns_text() -> None:
     captured: dict = {}
@@ -45,7 +44,6 @@ async def test_transcribe_voice_posts_multipart_and_returns_text() -> None:
     assert b"raw-wav-bytes" in captured["body"]
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R009")
 @pytest.mark.asyncio
 async def test_transcribe_voice_marks_501_as_unavailable_not_a_generic_error() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
@@ -60,7 +58,6 @@ async def test_transcribe_voice_marks_501_as_unavailable_not_a_generic_error() -
     }
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R009")
 @pytest.mark.asyncio
 async def test_transcribe_voice_marks_404_as_unavailable_too() -> None:
     def handler(request: httpx.Request) -> httpx.Response:

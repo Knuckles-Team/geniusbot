@@ -6,7 +6,6 @@ from geniusbot.services.packaging_cli import check, main
 from geniusbot.services.packaging_manifest import PackagingManifestError
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R002.2", "GENIUSBOT-CLIENT-R012.2")
 @pytest.mark.unit
 @pytest.mark.concept("GENIUSBOT-CLIENT-R012.2")
 def test_check_validates_default_targets():
@@ -16,7 +15,6 @@ def test_check_validates_default_targets():
     assert "linux_desktop_entry" in names
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R002.2", "GENIUSBOT-CLIENT-R012.2")
 @pytest.mark.unit
 @pytest.mark.concept("GENIUSBOT-CLIENT-R012.2")
 def test_check_rejects_incomplete_targets():
@@ -32,7 +30,6 @@ def test_check_rejects_incomplete_targets():
         )
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R002.2", "GENIUSBOT-CLIENT-R012.2")
 @pytest.mark.unit
 @pytest.mark.concept("GENIUSBOT-CLIENT-R012.2")
 def test_main_check_prints_build_plan(capsys):
