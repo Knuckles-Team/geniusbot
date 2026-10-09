@@ -53,8 +53,16 @@
     {
       "id": "GENIUSBOT-CLIENT-R002.2",
       "title": "Operation validated against the installed generated registry at the call site",
-      "delivery_state": "SPECIFIED",
-      "evidence": []
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
+          "description": "GeniusBot.__init__ calls load_installed_registry() before building the UI, refusing startup on a missing/malformed registry; exercised by tests/test_startup.py."
+        }
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R003",
@@ -199,8 +207,16 @@
     {
       "id": "GENIUSBOT-CLIENT-R012.2",
       "title": "Cross-platform packaging and distribution",
-      "delivery_state": "SPECIFIED",
-      "evidence": []
+      "delivery_state": "LANDED",
+      "evidence": [
+        {
+          "kind": "merged_head",
+          "result": "passed",
+          "commit": "951f65308c5b3b027601aa49afb0efb59582d00b",
+          "url": "https://github.com/Knuckles-Team/geniusbot/commit/951f65308c5b3b027601aa49afb0efb59582d00b",
+          "description": "geniusbot-package --check console script validates the packaging manifest via build_manifest and prints the build plan; exercised by tests/test_packaging_cli.py."
+        }
+      ]
     }
   ]
 }
