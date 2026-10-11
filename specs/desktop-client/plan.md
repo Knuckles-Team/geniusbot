@@ -1,4 +1,4 @@
-# GENIUSBOT-CLIENT-001 design and integration plan
+# GENIUSBOT-CLIENT design and integration plan
 
 ## Existing wiring and architecture
 

@@ -1,4 +1,4 @@
-# GENIUSBOT-CLIENT-001 implementation tasks
+# GENIUSBOT-CLIENT implementation tasks
 
 - [ ] Review the existing `GatewayClient` facade, `BackendAdapter` seam, `AgentBridgeWorker`
       dispatch, and panel-loading dispatch table against this spec; preserve unrelated

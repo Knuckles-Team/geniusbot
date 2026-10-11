@@ -1,4 +1,4 @@
-# GENIUSBOT-CLIENT-001: Desktop GraphOS operation client
+# GENIUSBOT-CLIENT — Desktop GraphOS operation client
 
 **Owner:** geniusbot
 

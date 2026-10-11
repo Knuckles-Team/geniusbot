@@ -1,4 +1,4 @@
-# GENIUSBOT-CLIENT-001 requirements
+# GENIUSBOT-CLIENT requirements
 
 Every requirement this specification owns, with the proof that closes it. Delivery state
 and public evidence for each ID are recorded in [`status.json`](status.json); this file

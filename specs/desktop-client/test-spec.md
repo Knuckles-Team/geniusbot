@@ -1,4 +1,4 @@
-# GENIUSBOT-CLIENT-001 test specification
+# GENIUSBOT-CLIENT test specification
 
 | Requirement | Layer and fixture | Expected positive result | Required negative proof |
 |---|---|---|---|

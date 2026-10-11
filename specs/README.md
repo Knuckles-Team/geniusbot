@@ -1,5 +1,7 @@
 # geniusbot specifications
 
+These specs follow the ecosystem [spec standard](https://github.com/Knuckles-Team/pipelines/blob/main/reference/spec-standard.md): one owning spec per capability, extend an existing spec before creating one, audits and reviews land in the owning spec, one ID and title form, one file set. The `spec-standard` gate enforces it.
+
 This tracked directory contains public, owner-native build contracts for the desktop
 cockpit client. A contributor can implement a spec from this repository and its linked
 public contracts without access to private notes or infrastructure.
@@ -47,3 +49,5 @@ updating status. The ecosystem's [spec generator](https://github.com/Knuckles-Te
 [spec verifier](https://github.com/Knuckles-Team/universal-skills/tree/main/universal_skills/development/spec-verifier),
 and [Graph OS development skill](https://github.com/Knuckles-Team/graph-os/tree/main/graph_os/skills/graph-os-development)
 describe the same workflow.
+
+- [`GENIUSBOT-CLIENT`](desktop-client/spec.md) — Desktop GraphOS operation client
