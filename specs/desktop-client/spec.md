@@ -94,3 +94,9 @@ Current delivery and acceptance state for each requirement ID above is recorded 
 |---|---|
 | This cockpit's gateway facade, backend-adapter seam, cockpit/dashboard views, tray daemon and packaging (`GENIUSBOT-CLIENT-R001`-`R012`) | Graph OS's generated operation client, versioned HTTP envelope and server-side authorization/approval boundary (see the links above); `agent-terminal-ui` implements its own consumer |
 | Displaying and forwarding an approval decision, never deciding it locally | Graph OS's signed approval authority and durable human identity, proven end to end before an approval action can be accepted |
+
+## Run observation
+
+`GENIUSBOT-CLIENT-R019` and its six children define the read-only run surface.
+The owning requirements, plan and test specification define its producer dependencies and acceptance.
+The surface must distinguish unavailable values from measured zero and aggregate values from per-run values.

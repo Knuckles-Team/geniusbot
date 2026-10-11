@@ -56,9 +56,18 @@
 No manual-only proof substitutes for the negative tests above. If a live Graph OS gateway
 is unavailable, keep the approval and registry-validation requirements' acceptance pending
 rather than requiring private infrastructure to run the baseline tests.
-| GENIUSBOT-CLIENT-R019.1 | `tests/test_run_view.py::test_run_view_loads_run` | Run view exists. | The absent or malformed input shows "not available" |
-| GENIUSBOT-CLIENT-R019.2 | `tests/x::test_harness_config_shown` | Applied harness configuration is shown. | The absent or malformed input shows "not available" |
-| GENIUSBOT-CLIENT-R019.3 | `tests/x::test_context_and_cost_shown` | Context use is shown against the budget. | The absent or malformed input shows "not available" |
-| GENIUSBOT-CLIENT-R019.4 | `tests/x::test_plan_read_only` | Current plan is shown read-only. | The absent or malformed input shows "not available" |
-| GENIUSBOT-CLIENT-R019.5 | `tests/x::test_termination_reasons_distinct` | Each termination reason has a distinct state. | The absent or malformed input shows "not available" |
-| GENIUSBOT-CLIENT-R019.6 | `tests/x::test_run_surface_end_to_end` | End-to-end proof on the hot path. | The absent or malformed input shows "not available" |
+
+## Planned run-surface acceptance
+
+These tests are planned, not execution receipts. Each test must bind its exact requirement ID.
+Each case must enter the production UI, existing client, and a served GraphOS operation fixture.
+A mocked widget value alone must not count as served evidence.
+
+| Requirement | Planned test | Positive served requirement | Negative served requirement |
+|---|---|---|---|
+| GENIUSBOT-CLIENT-R019.1 | `tests/test_run_view.py::test_run_read_uses_graphos_operations` | A selected run must render through the served operation and existing client. | Absent registration, timeout or denial must show unavailable without direct engine calls. |
+| GENIUSBOT-CLIENT-R019.2 | `tests/test_run_view.py::test_harness_config_shown` | A committed configuration must retain its reference and values through the client. | Missing or inaccessible configuration must not use defaults or the latest configuration. |
+| GENIUSBOT-CLIENT-R019.3 | `tests/test_run_view.py::test_context_and_cost_shown` | Measured zero must render as zero; aggregate cost must retain its solved-task label. | Null values must show unavailable; zero-solved abstention must not render zero cost. |
+| GENIUSBOT-CLIENT-R019.4 | `tests/test_run_view.py::test_plan_read_only` | A fresh matching snapshot must preserve item order, revision and AU statuses. | Expired, wrong-run, regressing or unavailable snapshots must reveal no items or edit controls. |
+| GENIUSBOT-CLIENT-R019.5 | `tests/test_run_view.py::test_termination_reasons_distinct` | Each of final_answer, context_overflow, stuck, step_budget and error must have its own label. | Unknown or missing reasons must show unavailable; overflow and stuck must not collapse to generic failure. |
+| GENIUSBOT-CLIENT-R019.6 | `tests/test_run_view.py::test_run_surface_end_to_end` | A served fixture must render summary, configuration, context, cost and an available plan. | Denied reads after success must clear prior protected values; the UI must stay responsive without fabricated data. |
