@@ -103,3 +103,7 @@ markers = [
     "integration: mark test as an integration test",
     "concept(name): mark test with a specific concept ID for traceability"
 ]
+
+[tool.pipelines_hooks.ste]
+paths = ["README.md", "AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md", "CHANGELOG.md", "docs", "specs"]
+exempt = ["specs/_template/*"]
