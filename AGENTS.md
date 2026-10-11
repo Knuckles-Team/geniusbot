@@ -455,3 +455,50 @@ Two consequences follow:
 ## Specs: extend first
 
 Find the spec row that owns the behavior before any code change. Search with `git grep -n "<term>" -- specs`. Cite the row ID in the commit `Spec:` trailer. Extend the owning spec before any new spec text. Add a child row, a new rollup, or a dated `plan.md` "Amendments" entry. Create a new spec only for a capability that no spec owns. Audits, reviews, and carry-overs land in the owning spec. They never get a spec directory. Reuse an existing function, module, or store before adding one. The rules are the ecosystem [spec standard](https://github.com/Knuckles-Team/pipelines/blob/main/reference/spec-standard.md).
+
+## What this repository owns
+
+The GeniusBot desktop cockpit: a PySide6 (Qt6) application with an embedded
+xterm.js terminal, the cockpit panels, and the packaging commands for the
+standalone executable. Agent orchestration, graph memory and tool-guard
+policy belong to `agent-utilities`. Reuse its clients and do not add a second
+implementation here.
+
+## Commands
+
+```bash
+uv sync --all-extras                        # install the locked environment
+uv run geniusbot                            # run the cockpit
+uv run ruff check . --fix                   # lint
+uv run ruff format .                        # format
+uv run pyinstaller --clean geniusbot.spec   # build the executable
+QT_QPA_PLATFORM=offscreen uv run --all-extras pytest tests -q -m "not slow and not integration" --timeout=60
+```
+
+## Quality gates
+
+The pre-commit config in `.pre-commit-config.yaml` defines the gates: ruff,
+black, mypy, codespell, the `pipelines` spec and docs hooks, and the local
+guardrails under `scripts/`. The push stage also runs
+`scripts/check_source_merge.py`. The `pipeline.yml` and `release.yml`
+workflows run the same checks in CI.
+
+## Development rules
+
+- Keep changes small, typed, and tied to one observable outcome.
+- Never stage with `git add -A` or `git add .`. Stage an explicit path list.
+- Run Qt calls on the UI thread and long work on `QThreadPool`.
+- Keep scratch files out of the repository.
+- Bind every delivered spec row to a test with `@pytest.mark.spec("<ID>")`.
+
+## Documentation
+
+Pages live in `docs/` and the nav lives in `mkdocs.yml`. Prose follows the
+STE rules that `ste-staged` enforces. Specs live in `specs/`; extend the
+owning spec before you add a new one.
+
+## Branching & isolation
+
+Never edit the canonical checkout and never run `git stash`. Create a real
+worktree per lane with `git worktree add <path> -b <branch> origin/main`.
+Never use a harness-managed isolated worktree against this repository.
