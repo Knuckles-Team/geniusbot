@@ -2,7 +2,7 @@
   "schema_version": 2,
   "spec_id": "GENIUSBOT-CLIENT-001",
   "owner_repo": "geniusbot",
-  "delivery_state": "LANDED",
+  "delivery_state": "SPECIFIED",
   "requirement_ids": [
     "GENIUSBOT-CLIENT-R001",
     "GENIUSBOT-CLIENT-R002.1",
@@ -19,7 +19,13 @@
     "GENIUSBOT-CLIENT-R011",
     "GENIUSBOT-CLIENT-R012.1",
     "GENIUSBOT-CLIENT-R012.2",
-    "GENIUSBOT-CLIENT-R012"
+    "GENIUSBOT-CLIENT-R012",
+    "GENIUSBOT-CLIENT-R013",
+    "GENIUSBOT-CLIENT-R014",
+    "GENIUSBOT-CLIENT-R015",
+    "GENIUSBOT-CLIENT-R016",
+    "GENIUSBOT-CLIENT-R017",
+    "GENIUSBOT-CLIENT-R018"
   ],
   "requirements": [
     {
@@ -176,6 +182,48 @@
         "GENIUSBOT-CLIENT-R012.1",
         "GENIUSBOT-CLIENT-R012.2"
       ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R013",
+      "title": "Generated design-token colors",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R014",
+      "title": "Finance cockpit panel contract",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R015",
+      "title": "Packaged `geniusbot-development` skill",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R016",
+      "title": "Spec and docs hooks in pre-commit",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R017",
+      "title": "Docs layout parity",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R018",
+      "title": "AGENTS.md section parity",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
     }
   ]
 }

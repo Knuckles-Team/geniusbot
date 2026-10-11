@@ -1,10 +1,10 @@
-# GENIUSBOT-CLIENT-001: Desktop GraphOS operation client
+# GENIUSBOT-CLIENT — Desktop GraphOS operation client
 
 **Owner:** geniusbot
 
 **Delivery:** specified; implementation and acceptance require separate evidence.
 
-**Requirement:** GENIUSBOT-CLIENT-R001 through GENIUSBOT-CLIENT-R012 (the desktop cockpit's
+**Requirement:** GENIUSBOT-CLIENT-R001 through GENIUSBOT-CLIENT-R018 (the desktop cockpit's
 share of the GraphOS operation-client contract, plus its desktop-specific cockpit, approval
 and packaging surfaces). See [`requirements.md`](requirements.md) for the full definition of
 every requirement ID this spec owns and [`status.json`](status.json) for their current
