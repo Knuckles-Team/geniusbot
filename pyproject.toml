@@ -101,8 +101,15 @@ ignore = ["E501", "F841", "F401", "E402"]
 markers = [
     "unit: mark test as a unit test",
     "integration: mark test as an integration test",
-    "concept(name): mark test with a specific concept ID for traceability"
+    "concept(name): mark test with a specific concept ID for traceability",
+    "spec(id): bind a test to a specification row ID"
 ]
+
+[tool.pipelines_hooks.public_surface]
+repository = "Knuckles-Team/geniusbot"
+distribution = "geniusbot"
+pages_url = "https://knuckles-team.github.io/geniusbot/"
+mcp_server = false
 
 [tool.pipelines_hooks.ste]
 paths = ["README.md", "AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md", "CHANGELOG.md", "docs", "specs"]

@@ -200,30 +200,46 @@
     {
       "id": "GENIUSBOT-CLIENT-R015",
       "title": "Packaged `geniusbot-development` skill",
-      "delivery_state": "SPECIFIED",
-      "landed_in": [],
-      "verified_by": []
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "34e20c635c6d"
+      ],
+      "verified_by": [
+        "tests/test_development_skill.py:8"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R016",
       "title": "Spec and docs hooks in pre-commit",
-      "delivery_state": "SPECIFIED",
-      "landed_in": [],
-      "verified_by": []
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "34e20c635c6d"
+      ],
+      "verified_by": [
+        "tests/test_precommit_hooks.py:10"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R017",
       "title": "Docs layout parity",
-      "delivery_state": "SPECIFIED",
-      "landed_in": [],
-      "verified_by": []
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "34e20c635c6d"
+      ],
+      "verified_by": [
+        "tests/test_docs_layout.py:9"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R018",
       "title": "AGENTS.md section parity",
-      "delivery_state": "SPECIFIED",
-      "landed_in": [],
-      "verified_by": []
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "34e20c635c6d"
+      ],
+      "verified_by": [
+        "tests/test_agents_md_sections.py:16"
+      ]
     }
   ]
 }

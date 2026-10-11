@@ -47,7 +47,18 @@ extra:
 
 nav:
   - Home: index.md
-  - Architecture:
-      - Technical Overview: overview.md
+  - Start: start.md
+  - Guides:
+      - Architecture:
+          - Architecture: architecture.md
+          - Technical Overview: overview.md
+      - Agents: agents.md
+      - Apps: apps.md
+      - Design system: design-system.md
   - Reference:
+      - Features: features.md
+      - Knowledge extraction: kg-extraction.md
       - Concept Registry: concepts.md
+      - Ecosystem glossary: glossary.md
+      - Status: status.md
+  - Operate: deployment.md

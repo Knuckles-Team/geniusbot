@@ -68,7 +68,9 @@ repos:
     - id: spec-status
     - id: spec-decomposition
     - id: spec-standard
+    - id: public-surface
     - id: ste-staged
+    - id: ste-staleness-staged
     - id: spec-trailers
       stages: [pre-push, manual]
       args: ["--base-ref", "origin/main"]
