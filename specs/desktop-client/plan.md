@@ -14,8 +14,8 @@ package directly (log-directory resolution, the workspace graph runner, the gate
 `geniusbot/qt/*` panels are presentation consumers built on this facade and worker;
 `geniusbot/utils/agent_bridge.py` (`AgentBridgeWorker`/`AgentRunnable`/`QThreadPool`) is the
 one dispatch path off the Qt UI thread; `geniusbot/utils/daemon.py` owns the system tray.
-This is the path to extend; no panel should open a second gateway client, a second import
-of the engine package, or a second thread-dispatch mechanism.
+This is the path to extend. No panel should open a second gateway client.
+No panel should add a second import of the engine package or a second thread-dispatch mechanism.
 
 ```text
 sidebar click / chat input / tray action
@@ -115,6 +115,23 @@ Area decisions.
 - API consumer: `geniusbot/services/operation_registry.py` and R002 already own the generated registry. No change.
 - App surfaces: R008 and R011 already own the cockpit shell and panels. No change.
 - Identity and access: `git grep` finds no browser identity or elevation surface. Not implemented; no spec.
+
+## Run harness surface (GENIUSBOT-CLIENT-R019)
+
+Data flow: new run panel → `GatewayClient` run read (beside `fetch_usage_traces`, `gateway_client.py:255`) → graph-os `runs.get` / `runs.metrics` → panel.
+
+Types and fields (names from the design brief): `harness_config` (`context_policy` with `soft_threshold`, `hard_threshold`, `recent_window_fraction`; `plan_scaffold`; `action_space`), `peakContextTokens`, `contextBudgetTokens`, `costUsd`, `terminationReason` (`final_answer` | `context_overflow` | `stuck` | `step_budget` | `error`), and the run's plan state.
+
+Attach point: no run panel exists. The nearest panels are `UsageCockpitPanel` (`geniusbot/qt/usage_cockpit.py:61`) and `FleetCockpitPanel` (`geniusbot/qt/fleet_cockpit.py:27`). The new facade methods attach to `GatewayClient` (`geniusbot/services/gateway_client.py:55`) next to `fetch_usage_traces` (:255).
+
+Failure behaviour: a refused or absent operation yields "not available". The client invents no value and displays no zero for an absent number. Each termination reason has its own label; `context_overflow` and `stuck` carry their own text.
+
+Reuse and new: no run view exists; the gateway read, the view and the harness block are all new, and the first child adds the view.
+
+Decisions: the client reads `runs.get` and `runs.metrics` only. Rejected alternative: computing context use or cost in the client.
+The engine owns the run trace, and a client copy drifts.
+
+Cross-repository: depends on three rows. The `GRAPHOS-OPS` row for run metrics serves `runs.get` and `runs.metrics`. The `AU-HARNESS` row for the run trace writes the fields. The `AU-HARNESS` row for `update_plan` owns the plan state.
 
 ## Amendments
 

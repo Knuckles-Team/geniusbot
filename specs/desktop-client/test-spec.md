@@ -56,3 +56,9 @@
 No manual-only proof substitutes for the negative tests above. If a live Graph OS gateway
 is unavailable, keep the approval and registry-validation requirements' acceptance pending
 rather than requiring private infrastructure to run the baseline tests.
+| GENIUSBOT-CLIENT-R019.1 | `tests/test_run_view.py::test_run_view_loads_run` | Run view exists. | The absent or malformed input shows "not available" |
+| GENIUSBOT-CLIENT-R019.2 | `tests/x::test_harness_config_shown` | Applied harness configuration is shown. | The absent or malformed input shows "not available" |
+| GENIUSBOT-CLIENT-R019.3 | `tests/x::test_context_and_cost_shown` | Context use is shown against the budget. | The absent or malformed input shows "not available" |
+| GENIUSBOT-CLIENT-R019.4 | `tests/x::test_plan_read_only` | Current plan is shown read-only. | The absent or malformed input shows "not available" |
+| GENIUSBOT-CLIENT-R019.5 | `tests/x::test_termination_reasons_distinct` | Each termination reason has a distinct state. | The absent or malformed input shows "not available" |
+| GENIUSBOT-CLIENT-R019.6 | `tests/x::test_run_surface_end_to_end` | End-to-end proof on the hot path. | The absent or malformed input shows "not available" |

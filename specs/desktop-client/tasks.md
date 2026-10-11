@@ -43,3 +43,10 @@
 
 - [x] **GENIUSBOT-CLIENT-R002:** Typed registry-entry model and validator (rollup of 1, 2)
 - [x] **GENIUSBOT-CLIENT-R012:** Typed packaging manifest model and validator (rollup of 1, 2)
+- [ ] **GENIUSBOT-CLIENT-R019:** Run harness surface (rollup of 1 to 6)
+- [ ] **GENIUSBOT-CLIENT-R019.1:** Run view exists.
+- [ ] **GENIUSBOT-CLIENT-R019.2:** Applied harness configuration is shown.
+- [ ] **GENIUSBOT-CLIENT-R019.3:** Context use is shown against the budget.
+- [ ] **GENIUSBOT-CLIENT-R019.4:** Current plan is shown read-only.
+- [ ] **GENIUSBOT-CLIENT-R019.5:** Each termination reason has a distinct state.
+- [ ] **GENIUSBOT-CLIENT-R019.6:** End-to-end proof on the hot path.
