@@ -32,6 +32,13 @@
       `status.json`; move a requirement to `LANDED` only after merge, and to `ACCEPTED` only
       after the served end-to-end approval and packaging proof.
 
+- [ ] Generated design-token colors. (closes `GENIUSBOT-CLIENT-R013`; proof `tests/test_design_tokens.py::test_colors_match_generated_output`).
+- [ ] Finance cockpit panel contract. (closes `GENIUSBOT-CLIENT-R014`; proof `tests/test_finance_cockpit.py::test_panel_unavailable_state`).
+- [ ] Packaged `geniusbot-development` skill. (closes `GENIUSBOT-CLIENT-R015`; proof `tests/test_development_skill.py::test_skill_packaged_and_valid`).
+- [ ] Spec and docs hooks in pre-commit. (closes `GENIUSBOT-CLIENT-R016`; proof `tests/test_precommit_hooks.py::test_required_pipelines_hook_ids_present`).
+- [ ] Docs layout parity. (closes `GENIUSBOT-CLIENT-R017`; proof `tests/test_docs_layout.py::test_nav_lists_every_page`).
+- [ ] AGENTS.md section parity. (closes `GENIUSBOT-CLIENT-R018`; proof `tests/test_agents_md_sections.py::test_required_headings_present`).
+
 ## Decomposition children (tracked)
 
 - [x] **GENIUSBOT-CLIENT-R002:** Typed registry-entry model and validator (rollup of 1, 2)

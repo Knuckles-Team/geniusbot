@@ -87,3 +87,35 @@ an unconfigured pass.
 - The Fleet Supervisor's "Grant" action already calls the gateway's `grant_approval`
   endpoint; this plan treats that round trip, not any local state change, as the
   authorization act, consistent with GENIUSBOT-CLIENT-R006.
+
+## Structure parity with agent-webui (2026-10-11)
+
+Gap table. Reference: `agent-webui` branch `spec-standard-conform`.
+
+| Structural element | agent-webui | geniusbot | Action |
+|---|---|---|---|
+| Root layout | App, `agent/`, `e2e/`, `docker/`, `CONTRIBUTING.md` | Flat `geniusbot/` package, `packaging/`, `setup.iss` | Differs by product type; no action |
+| Specs by area | Six specs | One spec, `desktop-client` | Area decisions below; rows R013, R014 |
+| Spec files | Standard file set, `_template/` | Standard file set, `_template/` | Same |
+| Docs | `agents`, `apps`, `architecture`, `deployment`, `design-system`, `features`, `start`, `status` and more | `index`, `overview`, `concepts`, `glossary`, `kg-extraction` | Missing pages; row R017 |
+| Workflows | `advisory.yml`, `release.yml` | `pages.yml`, `pipeline.yml`, `release.yml` | Differs; no action |
+| Reusable `pipelines` calls | `pages_pipeline.yml` | `pages_pipeline.yml`, `python_pipeline.yml`, `desktop_release_pipeline.yml` | Same Pages caller |
+| Pre-commit location | `.config/pre-commit.yaml` | `.pre-commit-config.yaml` | Differs; no action |
+| Pre-commit spec hooks | `spec-status`, `spec-decomposition`, `spec-trailers`, `public-surface`, `ste-staged`, `ste-staleness-staged`, `check-public-specs` | `spec-status`, `spec-decomposition`, `spec-trailers` | Missing four; row R016 |
+| `pyproject.toml` hook sections | `public_surface`, `ste` | None | Missing; row R016 |
+| `AGENTS.md` sections | Owns, Commands, Quality gates, Development rules, Documentation, Branching, Specs | Stack, Concept IDs, Structure, Safety, Git worktrees, Specs | Differs; row R018 |
+| Packaged development skill | `agent-webui-development` | None | Missing; row R015 |
+| Spec-delivery page | `spec_dashboard_enabled: true` | `spec_dashboard_enabled: true` and `.github/spec-dashboard.json` | Same |
+
+Area decisions.
+
+- Design system: the desktop client has `geniusbot/qt/colors.py`, generated from tokens. Extend `desktop-client` with R013. The generator and token files are not in the repository, so R013 adds them.
+- Decision evidence: `git grep` finds no decision or calibration surface. Not implemented; no spec.
+- Finance asset manager: `geniusbot/qt/finance_cockpit.py` has 606 lines and R008 already owns its lazy loading. It is a panel, not a distinct capability. Extend with R014; no new directory.
+- API consumer: `geniusbot/services/operation_registry.py` and R002 already own the generated registry. No change.
+- App surfaces: R008 and R011 already own the cockpit shell and panels. No change.
+- Identity and access: `git grep` finds no browser identity or elevation surface. Not implemented; no spec.
+
+## Amendments
+
+- 2026-10-11, rows R013 to R018: the operator required geniusbot to share the exact structure of agent-webui. Old statement: the spec ended at R012. New statement: R013 to R018 close the structural gaps above. Evidence: the gap table in this file.

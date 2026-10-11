@@ -14,6 +14,12 @@
 | GENIUSBOT-CLIENT-R010 | `GeniusBotDaemon` signal wiring; `GeniusBot.closeEvent` | Each tray action (show/terminal/health-check/exit) triggers its bound window method | Closing the main window while the tray icon is visible hides the window and leaves the process running; exiting via the tray stops the daemon and allows the close |
 | GENIUSBOT-CLIENT-R011 | `WidgetSchemaMapper.build_deck` / `AgentControlPanel` with synthetic specialist records | A `skills` list produces one input field per skill; a specialist with no capabilities produces the `task_query` fallback field | A malformed or empty specialist list produces an empty deck rather than a crash |
 | GENIUSBOT-CLIENT-R012 | PyInstaller onefile build, Inno Setup compile, and a lint of the Linux desktop-entry/control file, each against a tagged revision | Each artifact builds without error and the resulting entry point launches the cockpit window | A build against a revision with a missing/renamed entry point or icon path fails the build step, not the launch |
+| GENIUSBOT-CLIENT-R013 | Unit test comparing `geniusbot/qt/colors.py` with generator output | Regenerated file is byte-identical | A hand-edited constant fails |
+| GENIUSBOT-CLIENT-R014 | Offscreen Qt test of `FinanceCockpitPanel` with a fake failing gateway | Panel shows the unavailable state | A gateway exception never escapes |
+| GENIUSBOT-CLIENT-R015 | Packaging test reading `geniusbot/skills/geniusbot-development/SKILL.md` | Front matter parses and the file ships in the wheel | Missing front matter fails |
+| GENIUSBOT-CLIENT-R016 | Parse `.pre-commit-config.yaml` and `pyproject.toml` | All required hook ids and tool sections exist | A removed hook id fails |
+| GENIUSBOT-CLIENT-R017 | Parse `mkdocs.yml` and list `docs/` | Every page is in nav | A page absent from nav fails |
+| GENIUSBOT-CLIENT-R018 | Read `AGENTS.md` headings | Required headings exist in order | A missing heading fails |
 
 ## Negative and boundary cases
 
