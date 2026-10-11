@@ -25,7 +25,14 @@
     "GENIUSBOT-CLIENT-R015",
     "GENIUSBOT-CLIENT-R016",
     "GENIUSBOT-CLIENT-R017",
-    "GENIUSBOT-CLIENT-R018"
+    "GENIUSBOT-CLIENT-R018",
+    "GENIUSBOT-CLIENT-R019",
+    "GENIUSBOT-CLIENT-R019.1",
+    "GENIUSBOT-CLIENT-R019.2",
+    "GENIUSBOT-CLIENT-R019.3",
+    "GENIUSBOT-CLIENT-R019.4",
+    "GENIUSBOT-CLIENT-R019.5",
+    "GENIUSBOT-CLIENT-R019.6"
   ],
   "requirements": [
     {
@@ -240,6 +247,63 @@
       "verified_by": [
         "tests/test_agents_md_sections.py:16"
       ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R019",
+      "title": "Run harness surface is read-only and honest",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": [],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R019.1",
+        "GENIUSBOT-CLIENT-R019.2",
+        "GENIUSBOT-CLIENT-R019.3",
+        "GENIUSBOT-CLIENT-R019.4",
+        "GENIUSBOT-CLIENT-R019.5",
+        "GENIUSBOT-CLIENT-R019.6"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R019.1",
+      "title": "Run view exists",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R019.2",
+      "title": "Applied harness configuration is shown",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R019.3",
+      "title": "Context use is shown against the budget",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R019.4",
+      "title": "Current plan is shown read-only",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R019.5",
+      "title": "Each termination reason has a distinct state",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R019.6",
+      "title": "End-to-end proof on the hot path",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
     }
   ]
 }
