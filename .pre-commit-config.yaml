@@ -67,6 +67,8 @@ repos:
     hooks:
     - id: spec-status
     - id: spec-decomposition
+    - id: spec-standard
+    - id: ste-staged
     - id: spec-trailers
       stages: [pre-push, manual]
       args: ["--base-ref", "origin/main"]
