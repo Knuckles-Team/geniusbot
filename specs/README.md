@@ -18,25 +18,14 @@ requirement ID remains in the documents and status file even when the directory 
 descriptive name. A requirement counts as delivered only once its evidence includes a
 merged-head commit on the default branch.
 
-| Spec | Requirement | Delivery | Acceptance | Scope |
-|---|---|---|---|---|
-| [Desktop GraphOS operation client](desktop-client/spec.md) | GENIUSBOT-CLIENT-001 | SPECIFIED | NOT_AUDITED | Desktop cockpit's gateway transport, cockpit/dashboard surfaces, approval boundary and packaging |
+| Spec | Requirement family | Scope |
+|---|---|---|
+| [Desktop GraphOS operation client](desktop-client/spec.md) | GENIUSBOT-CLIENT | Desktop cockpit's gateway transport, cockpit/dashboard surfaces, approval boundary and packaging |
 
 ## State legend
 
-The report reads `status.json` as the source of truth. Delivery states are `UNKNOWN`
-(not classified), `SPECIFIED` (complete design awaiting verified build), `BUILDING`
-(implementation in progress), `BUILT` (implementation exists but is not merged),
-`LANDED` (merged revision recorded), `CLOSED` (delivered and closed), `DEFERRED`
-(postponed), and `REJECTED` (not proceeding). Acceptance states are `NOT_AUDITED` (no
-complete evidence review), `PENDING` (review in progress or missing proof), `ACCEPTED`
-(all specified checks and consumer receipts pass), and `FAILED` (a required check
-failed). Delivery and acceptance are independent; a merge never implies acceptance.
-
-`LANDED` requires a public merged revision in the evidence array. `ACCEPTED` also
-requires checked-in test, installed-package, live contract, consumer and release
-receipts specified by the feature. Do not promote state from an isolated source branch,
-a local test pass, or a generated report alone.
+Generated `status.json` records `SPECIFIED`, `LANDED` or `VERIFIED`, according to the ecosystem spec standard.
+Planned acceptance paths must not count as passed tests.
 
 ## Contribution path
 
@@ -51,3 +40,5 @@ and [Graph OS development skill](https://github.com/Knuckles-Team/graph-os/tree/
 describe the same workflow.
 
 - [`GENIUSBOT-CLIENT`](desktop-client/spec.md) — Desktop GraphOS operation client
+
+`GENIUSBOT-CLIENT-R019` includes children `.1` through `.6` for run observation, producer wiring and served refusal evidence.

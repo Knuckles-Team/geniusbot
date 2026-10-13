@@ -265,42 +265,42 @@
     },
     {
       "id": "GENIUSBOT-CLIENT-R019.1",
-      "title": "Run view exists",
+      "title": "Run operation wiring",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R019.2",
-      "title": "Applied harness configuration is shown",
+      "title": "Applied configuration",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R019.3",
-      "title": "Context use is shown against the budget",
+      "title": "Context and cost",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R019.4",
-      "title": "Current plan is shown read-only",
+      "title": "Read-only current plan",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R019.5",
-      "title": "Each termination reason has a distinct state",
+      "title": "Distinct terminal reasons",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "GENIUSBOT-CLIENT-R019.6",
-      "title": "End-to-end proof on the hot path",
+      "title": "Served surface proof",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
