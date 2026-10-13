@@ -286,7 +286,7 @@ directories allowed at root are `.git/`, `.github/`, `.specify/` (plus a local,
 git-ignored `.venv/`). NEVER write scratch/debug/migration files to the repo —
 especially the root: no `fix_*.py`/`migrate_*.py`/`refactor_*.py`/root `test_*.py`,
 no `*.db`/`*.log`/scratch `*.txt`/`*.orig`/`*.rej`/`*.bak`, no build artifacts
-(`*.tsbuildinfo`), and no AI scratch dirs (`.agent/`, `.agents/`, `.agent_data/`,
+(`*.tsbuildinfo`), and no SI scratch dirs (`.agent/`, `.agents/`, `.agent_data/`,
 `.tmp/`, `.hypothesis/`). Put experiments in `~/workspace/scratch/`, tests in
 `tests/`. Run `git status` before finishing and confirm no stray root files.
 

@@ -159,7 +159,7 @@ dmypy.json
 failed_tests.txt
 trace.txt
 
-# AI agent scratch (do not commit) — keep repo roots pristine
+# SI agent scratch (do not commit) — keep repo roots pristine
 .agent/
 .agents/
 .agent_data/
