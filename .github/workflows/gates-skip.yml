@@ -1,4 +1,4 @@
-name: Gates skip
+name: gates
 
 # Companion of a caller whose gates workflow uses paths-ignore: a docs/spec-only
 # change skips the real workflow, so this one reports the same required check
