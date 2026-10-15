@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   publish-pages:
     uses: Knuckles-Team/pipelines/.github/workflows/pages_pipeline.yml@main

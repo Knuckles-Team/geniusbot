@@ -1,0 +1,38 @@
+name: CI
+
+# PR: diff-scoped gates. Push to main: full gates (--all-files), no publish.
+# Publishing lives only in release.yml (v* tag or workflow_dispatch).
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - specs/**
+      - docs/**
+      - '**/*.md'
+      - plans/**
+      - LICENSE
+  push:
+    branches: [main]
+    paths-ignore:
+      - specs/**
+      - docs/**
+      - '**/*.md'
+      - plans/**
+      - LICENSE
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.workflow, github.event.pull_request.number) || format('main-{0}', github.workflow) }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    uses: Knuckles-Team/pipelines/.github/workflows/gates_pipeline.yml@main
+    with:
+      config: .pre-commit-config.yaml
+      test-scope: tests
+      all-files: ${{ github.event_name == 'push' }}
+      timeout-minutes: ${{ github.event_name == 'push' && 60 || 15 }}
