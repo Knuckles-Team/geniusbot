@@ -34,5 +34,8 @@ jobs:
     with:
       config: .pre-commit-config.yaml
       test-scope: tests
+      # These hooks run scripts from a sibling agent-utilities checkout that a
+      # hosted runner does not have; they stay enforced at local pre-push.
+      skip-hooks: okf-no-legacy-concepts,lane-guard,check-stubs,check-sprawl,check-coupling,check-lockfile-version-mirrors
       all-files: ${{ github.event_name == 'push' }}
       timeout-minutes: ${{ github.event_name == 'push' && 60 || 15 }}
