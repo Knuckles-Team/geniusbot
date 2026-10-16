@@ -212,7 +212,7 @@ def get_repo_files(repo_path: Path):
 def _check_root_level_naming(file_path: Path, repo_path: Path):
     """Root-level garbage checks: only allow-listed .txt names, and no
     transient/temporary .py scripts, directly under the repo root."""
-    violations = []
+    violations: list[str] = []
     if file_path.parent != repo_path:
         return violations
     if file_path.suffix == ".txt":

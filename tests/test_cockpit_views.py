@@ -74,20 +74,14 @@ def test_panel_signatures(cls):
         ),
         ({"result": [{"metric": {}, "value": [1, "v"]}]}, [("value", "v")]),
         (
-            {
-                "result": [
-                    {"metric": {"a": "b"}, "values": [[1, "1"], [2, "2"]]}
-                ]
-            },
+            {"result": [{"metric": {"a": "b"}, "values": [[1, "1"], [2, "2"]]}]},
             [("a=b", "[2, '2']")],
         ),
         ({"result": ["plain-string-item"]}, [("", "plain-string-item")]),
         (
             {
                 "result": {
-                    "data": {
-                        "result": [{"metric": {"z": "w"}, "value": [1, "9"]}]
-                    }
+                    "data": {"result": [{"metric": {"z": "w"}, "value": [1, "9"]}]}
                 }
             },
             [("z=w", "9")],
@@ -120,9 +114,7 @@ def test_render_rows_dict_shaped(qapp) -> None:
     panel._render_rows([{"a": 1, "b": 2}, {"a": 3}])
     assert panel.rows_table.columnCount() == 2
     assert panel.rows_table.rowCount() == 2
-    headers = [
-        panel.rows_table.horizontalHeaderItem(c).text() for c in range(2)
-    ]
+    headers = [panel.rows_table.horizontalHeaderItem(c).text() for c in range(2)]
     assert headers == ["a", "b"]
     assert panel.rows_table.item(0, 0).text() == "1"
     assert panel.rows_table.item(0, 1).text() == "2"
@@ -139,9 +131,7 @@ def test_render_rows_positional_shaped(qapp) -> None:
     panel._render_rows([[1, 2, 3], [4, 5]])
     assert panel.rows_table.columnCount() == 3
     assert panel.rows_table.rowCount() == 2
-    headers = [
-        panel.rows_table.horizontalHeaderItem(c).text() for c in range(3)
-    ]
+    headers = [panel.rows_table.horizontalHeaderItem(c).text() for c in range(3)]
     assert headers == ["col0", "col1", "col2"]
     assert panel.rows_table.item(0, 2).text() == "3"
     assert panel.rows_table.item(1, 0).text() == "4"

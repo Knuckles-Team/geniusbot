@@ -54,7 +54,10 @@ class PackagingManifest:
 
 def validate_packaging_manifest(manifest: PackagingManifest) -> None:
     """Validate a packaging manifest, raising PackagingManifestError if incomplete."""
-    if not isinstance(manifest.source_version, str) or not manifest.source_version.strip():
+    if (
+        not isinstance(manifest.source_version, str)
+        or not manifest.source_version.strip()
+    ):
         raise PackagingManifestError("source_version must be a non-empty string")
 
     names = [target.name for target in manifest.targets]
@@ -63,7 +66,9 @@ def validate_packaging_manifest(manifest: PackagingManifest) -> None:
 
     missing = [name for name in REQUIRED_TARGETS if name not in names]
     if missing:
-        raise PackagingManifestError(f"packaging manifest missing required targets: {missing}")
+        raise PackagingManifestError(
+            f"packaging manifest missing required targets: {missing}"
+        )
 
     for target in manifest.targets:
         if not isinstance(target.build_tool, str) or not target.build_tool.strip():
@@ -95,5 +100,7 @@ def build_manifest(source_version: str, raw_targets: list[dict]) -> PackagingMan
                 )
             )
         except KeyError as exc:
-            raise PackagingManifestError(f"packaging target missing required field: {exc}") from exc
+            raise PackagingManifestError(
+                f"packaging target missing required field: {exc}"
+            ) from exc
     return PackagingManifest(source_version=source_version, targets=tuple(targets))
