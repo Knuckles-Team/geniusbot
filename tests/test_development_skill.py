@@ -2,7 +2,10 @@ from pathlib import Path
 
 import pytest
 
-SKILL = Path(__file__).resolve().parent.parent / "geniusbot/skills/geniusbot-development/SKILL.md"
+SKILL = (
+    Path(__file__).resolve().parent.parent
+    / "geniusbot/skills/geniusbot-development/SKILL.md"
+)
 
 
 @pytest.mark.spec("GENIUSBOT-CLIENT-R015")

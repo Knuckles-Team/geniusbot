@@ -404,8 +404,8 @@ class FinanceCockpitPanel(QWidget):
         axis_y.setTitleBrush(QBrush(QColor(COLOR_TEXT_MUTED)))
         axis_y.setLabelsColor(QColor(COLOR_TEXT_MUTED))
 
-        self.price_chart.addAxis(axis_x, Qt.AlignBottom)
-        self.price_chart.addAxis(axis_y, Qt.AlignLeft)
+        self.price_chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
+        self.price_chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
         return axis_x, axis_y
 
     def _plot_candlestick_series(self, axis_x, axis_y) -> tuple[float, float]:
@@ -458,14 +458,14 @@ class FinanceCockpitPanel(QWidget):
             return
         scatter_buy = QScatterSeries()
         scatter_buy.setName("Auto Strategy Buy Signals")
-        scatter_buy.setMarkerShape(QScatterSeries.MarkerShapeTriangle)
+        scatter_buy.setMarkerShape(QScatterSeries.MarkerShape.MarkerShapeTriangle)
         scatter_buy.setMarkerSize(12)
         scatter_buy.setColor(QColor(COLOR_SUCCESS))
         scatter_buy.setBorderColor(QColor(COLOR_SUCCESS))
 
         scatter_sell = QScatterSeries()
         scatter_sell.setName("Auto Strategy Sell Signals")
-        scatter_sell.setMarkerShape(QScatterSeries.MarkerShapeRectangle)
+        scatter_sell.setMarkerShape(QScatterSeries.MarkerShape.MarkerShapeRectangle)
         scatter_sell.setMarkerSize(12)
 
         scatter_sell.setColor(QColor(COLOR_DANGER))
@@ -498,7 +498,7 @@ class FinanceCockpitPanel(QWidget):
         lower_band.setName("Bollinger Lower (2.0σ)")
 
         pen_b = QPen(QColor(COLOR_TEXT_MUTED))
-        pen_b.setStyle(Qt.DashLine)
+        pen_b.setStyle(Qt.PenStyle.DashLine)
         pen_b.setWidth(1)
         upper_band.setPen(pen_b)
         lower_band.setPen(pen_b)
@@ -555,8 +555,8 @@ class FinanceCockpitPanel(QWidget):
         axis_depth_y.setTitleBrush(QBrush(QColor(COLOR_TEXT_MUTED)))
         axis_depth_y.setLabelsColor(QColor(COLOR_TEXT_MUTED))
 
-        self.depth_chart.addAxis(axis_depth_x, Qt.AlignBottom)
-        self.depth_chart.addAxis(axis_depth_y, Qt.AlignLeft)
+        self.depth_chart.addAxis(axis_depth_x, Qt.AlignmentFlag.AlignBottom)
+        self.depth_chart.addAxis(axis_depth_y, Qt.AlignmentFlag.AlignLeft)
 
         # Populate snappy bid/ask curves
         mid_price = self.ticks_data[-1]["close"]
