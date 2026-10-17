@@ -73,7 +73,7 @@ async def test_stream_copilot_query_falls_back_when_no_final_output() -> None:
     client._sdk.stream = lambda *a, **k: _events({"type": "thought", "thought": "t"})
     result = await client.stream_copilot_query("hi")
     assert result == {
-        "result": "❌ Gateway is offline. Please make sure the agent-utilities gateway is running at http://localhost:8000."
+        "result": "❌ Gateway is offline. Please make sure the graph-os gateway is running at http://localhost:8000."
     }
 
 
@@ -88,5 +88,5 @@ async def test_stream_copilot_query_falls_back_on_exception() -> None:
     client._sdk.stream = _boom
     result = await client.stream_copilot_query("hi")
     assert result == {
-        "result": "❌ Gateway is offline. Please make sure the agent-utilities gateway is running at http://localhost:8000."
+        "result": "❌ Gateway is offline. Please make sure the graph-os gateway is running at http://localhost:8000."
     }
