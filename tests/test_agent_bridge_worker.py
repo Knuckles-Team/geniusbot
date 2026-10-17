@@ -1,7 +1,7 @@
 """R004: off-thread, non-blocking dispatch.
 
 Direct unit coverage of :class:`AgentBridgeWorker`'s started/finished/error/progress
-signal contract — every Graph OS or backend call reports back to the caller only
+signal contract — every Arbora or backend call reports back to the caller only
 through these typed signals, never a blocking return value on the Qt event-loop
 thread.
 """

@@ -308,7 +308,7 @@ _INTERNAL_ENDPOINT_RE = re.compile(
 # BUG-241: the internal-endpoint pass used to be ``_SOURCE_INTERNAL_URL_RE``,
 # which required a URL scheme (``https?://``) before the host -- so a BARE
 # hostname literal (no ``scheme://`` prefix at all, e.g. a YAML
-# ``ingress_host: example-graph-os.arpa`` value or a Python string literal
+# ``ingress_host: example-arbora.arpa`` value or a Python string literal
 # ``"example-vllm.arpa"``) was structurally invisible to it. A scheme is not
 # what makes a hostname sensitive; the hostname is. This pattern drops the
 # scheme requirement entirely and matches the hostname shape wherever it
@@ -329,7 +329,7 @@ _INTERNAL_ENDPOINT_RE = re.compile(
 # UPPER_SNAKE_CASE enum member access, not a hostname (``DataClassification``
 # is itself a syntactically valid DNS label, so nothing about the identifier
 # shape alone rules it out). Every genuine hostname literal in this corpus,
-# real or synthetic, is written lowercase (``example-graph-os.arpa``,
+# real or synthetic, is written lowercase (``example-arbora.arpa``,
 # ``example-vllm.arpa``, ``example-host.docker.internal``,
 # ``example-model.internal``, ...) -- matching DNS/hostname
 # convention -- while every enum-attribute access in this codebase is

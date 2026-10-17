@@ -8,8 +8,8 @@ This document defines the architecture, standard commands, code design principle
 ## Boundaries
 
 - **Owns:** what a person sees in the desktop and chat client.
-- **Never builds:** data access other than through graph-os, or a decision (route decisions to epistemic-graph). Served operations go to graph-os.
-- **Allowed dependencies:** `graph_os.client` and agent-connector-sdk. It imports no EG or graph-os internals in-process.
+- **Never builds:** data access other than through arbora, or a decision (route decisions to epistemic-graph). Served operations go to arbora.
+- **Allowed dependencies:** `arbora.client` and agent-connector-sdk. It imports no EG or arbora internals in-process.
 
 Route every feature with the [ecosystem boundaries standard](https://github.com/Knuckles-Team/pipelines/blob/main/reference/ecosystem-boundaries.md) before any code. A part this repository does not own goes to its owner's specs.
 

@@ -20,7 +20,7 @@ merged-head commit on the default branch.
 
 | Spec | Requirement family | Scope |
 |---|---|---|
-| [Desktop GraphOS operation client](desktop-client/spec.md) | GENIUSBOT-CLIENT | Desktop cockpit's gateway transport, cockpit/dashboard surfaces, approval boundary and packaging |
+| [Desktop Arbora operation client](desktop-client/spec.md) | GENIUSBOT-CLIENT | Desktop cockpit's gateway transport, cockpit/dashboard surfaces, approval boundary and packaging |
 
 ## State legend
 
@@ -36,9 +36,9 @@ Dupehound and KISS requirements where configured; record a missing command or th
 as a gap rather than a pass. Include exact public revisions and check links when
 updating status. The ecosystem's [spec generator](https://github.com/Knuckles-Team/universal-skills/tree/main/universal_skills/development/spec-generator),
 [spec verifier](https://github.com/Knuckles-Team/universal-skills/tree/main/universal_skills/development/spec-verifier),
-and [Graph OS development skill](https://github.com/Knuckles-Team/graph-os/tree/main/graph_os/skills/graph-os-development)
+and [Arbora development skill](https://github.com/Knuckles-Team/arbora/tree/main/arbora/skills/arbora-development)
 describe the same workflow.
 
-- [`GENIUSBOT-CLIENT`](desktop-client/spec.md) — Desktop GraphOS operation client
+- [`GENIUSBOT-CLIENT`](desktop-client/spec.md) — Desktop Arbora operation client
 
 `GENIUSBOT-CLIENT-R019` includes children `.1` through `.6` for run observation, producer wiring and served refusal evidence.

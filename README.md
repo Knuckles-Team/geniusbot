@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <b>The desktop cockpit for Graph OS.</b><br>
-  <sub>A unified, visual control deck over the Graph OS multi-agent ecosystem.</sub>
+  <b>The desktop cockpit for Arbora.</b><br>
+  <sub>A unified, visual control deck over the Arbora multi-agent ecosystem.</sub>
 </p>
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/stargazers)
@@ -33,7 +33,7 @@
 ## Overview
 
 GeniusBot is the premium, unified cockpit and visual control deck built on top of
-[Graph OS](https://knuckles-team.github.io/graph-os/) and its `agent-utilities`
+[Arbora](https://knuckles-team.github.io/arbora/) and its `agent-utilities`
 control plane. It integrates every specialist agent and MCP package in the fleet
 into a single-pane-of-glass user interface, offering 1-click execution, embedded
 hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware
@@ -48,7 +48,7 @@ Operators can trigger actions, monitor running terminal inputs via the embedded 
 - Dynamic, schema-driven control panels for every specialist agent and MCP package in the fleet.
 - An embedded hybrid terminal (`xterm.js`) for interactive, in-cockpit sessions.
 - A zero-trust Tool-Guard that intercepts and confirms sensitive mutations before execution.
-- Ask-Data (NL→Query), engine metrics/PromQL, and federated search over the Graph OS gateway.
+- Ask-Data (NL→Query), engine metrics/PromQL, and federated search over the Arbora gateway.
 - A fleet supervisory cockpit: worker topology and the ActionPolicy approval inbox.
 
 ## Table of Contents
