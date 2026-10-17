@@ -34,7 +34,6 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,6 +41,7 @@ jobs:
           persist-credentials: false
       - uses: astral-sh/setup-uv@v6
       - name: STE-lite prose lint (advisory, report-only)
+        continue-on-error: true
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: uvx --from pre-commit==4.6.2 pre-commit run ste-staged --config .pre-commit-config.yaml --hook-stage pre-commit --from-ref "$BASE_SHA" --to-ref HEAD
