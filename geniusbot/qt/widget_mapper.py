@@ -35,8 +35,7 @@ class AgentControlPanel(QFrame):
         self.inputs: dict[str, QLineEdit] = {}
 
         # Set up a beautiful space-dark container frame
-        self.setStyleSheet(
-            f"""
+        self.setStyleSheet(f"""
             QFrame#AgentCard {{
                 background-color: {BG_SECONDARY};
                 border: 1px solid {BORDER_COLOR};
@@ -50,8 +49,7 @@ class AgentControlPanel(QFrame):
                 color: {TEXT_MAIN};
                 font-family: "Outfit", sans-serif;
             }}
-        """
-        )
+        """)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
@@ -64,8 +62,7 @@ class AgentControlPanel(QFrame):
         header_layout.addWidget(name_label)
 
         type_badge = QLabel(agent_data.get("type", "specialist").upper())
-        type_badge.setStyleSheet(
-            f"""
+        type_badge.setStyleSheet(f"""
             QLabel {{
                 background-color: {BG_PRIMARY};
                 color: {TEXT_MUTED};
@@ -75,8 +72,7 @@ class AgentControlPanel(QFrame):
                 border-radius: 4px;
                 border: 1px solid {BORDER_COLOR};
             }}
-        """
-        )
+        """)
         header_layout.addWidget(type_badge, 0, Qt.AlignmentFlag.AlignRight)
         layout.addLayout(header_layout)
 
@@ -147,8 +143,7 @@ class AgentControlPanel(QFrame):
 
         line_edit = QLineEdit()
         line_edit.setPlaceholderText(f"Specify input for {cap}...")
-        line_edit.setStyleSheet(
-            f"""
+        line_edit.setStyleSheet(f"""
             QLineEdit {{
                 background-color: {BG_PRIMARY};
                 border: 1px solid {BORDER_COLOR};
@@ -159,8 +154,7 @@ class AgentControlPanel(QFrame):
             QLineEdit:focus {{
                 border: 1px solid {ACCENT_PRIMARY};
             }}
-        """
-        )
+        """)
         cap_layout.addWidget(line_edit)
         layout_obj = form_widget.layout()
         if layout_obj is not None:
@@ -208,14 +202,9 @@ class AgentControlPanel(QFrame):
         async def async_run():
             from geniusbot.services.backend_adapter import backend
 
-            # In a production layout, we can invoke the workspace graph
-            # dynamically on behalf of this specialist via the backend seam.
+            # The workflow runs on arbora (served operation), not in-process.
             try:
-                config = {
-                    "agent_model": "gemini-2.5-flash",
-                    "router_model": "gemini-2.5-flash",
-                }
-                res = await backend.run_workspace_graph(query, config)
+                res = await backend.run_agent_workflow(query)
                 return res
             except Exception:
                 # Fallback to direct specialist response if full graph isn't loaded

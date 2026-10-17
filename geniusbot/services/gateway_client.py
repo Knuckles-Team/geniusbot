@@ -1,25 +1,27 @@
 """
 CONCEPT:AU-GBOT.cockpit.through-gbot
-Service layer for communicating with the agent-utilities gateway.
+Service layer for communicating with the arbora gateway.
 
-Thin geniusbot-facing facade over the shared surface SDK
-(:class:`agent_utilities.gateway_client.GatewayClient`, CONCEPT:AU-ECO.interop.gateway-client-sdk) — the
-single client every surface uses, so transport/auth/retry live in one place. This
+Thin geniusbot-facing facade over the gateway routes in
+:class:`geniusbot.services.gateway_routes.GatewayRoutes`, so transport lives in
+one place. This
 facade preserves geniusbot's graceful-offline contract: every method swallows
 transport errors and returns a safe default so the Qt event loop never sees an
 exception from a missing gateway.
 """
 
+import ipaddress
 import json
 import logging
+import os
 import re
+import ssl
 from typing import Any
 from urllib.parse import urlsplit
 
 import httpx
-from agent_utilities.core.http_client import create_async_http_client, is_local_host
-from agent_utilities.core.transport_security import resolve_tls_profile
-from agent_utilities.gateway_client import GatewayClient as _SdkGatewayClient
+
+from geniusbot.services.gateway_routes import GatewayRoutes
 
 logger = logging.getLogger("geniusbot.gateway")
 
@@ -31,6 +33,23 @@ _SAFE_JOB_ID = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
 _GRAPH_ROUTES = frozenset(
     {"ask-data", "nl-query", "promql", "kvcache", "federated-search", "query"}
 )
+
+
+def is_local_host(host: str) -> bool:
+    """True for loopback hosts, where plaintext HTTP is acceptable."""
+    host = host.lower().rstrip(".")
+    if host == "localhost" or host.endswith(".localhost"):
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def _tls_verify() -> ssl.SSLContext | bool:
+    """Verify gateway TLS, trusting ``GENIUSBOT_GATEWAY_CA_BUNDLE`` when set."""
+    bundle = os.environ.get("GENIUSBOT_GATEWAY_CA_BUNDLE", "").strip()
+    return ssl.create_default_context(cafile=bundle) if bundle else True
 
 
 def _decode_envelope(body: bytes) -> dict[str, Any] | None:
@@ -79,15 +98,11 @@ class GatewayClient:
 
         self.base_url = str(base_url).rstrip("/")
         # One pooled SDK client for the app's lifetime (desktop singleton).
-        self._sdk = _SdkGatewayClient(self.base_url, timeout=15.0)
-        tls = resolve_tls_profile("GENIUSBOT_GATEWAY")
-        self._direct_http = create_async_http_client(
+        self._sdk = GatewayRoutes(self.base_url, timeout=15.0, verify=_tls_verify())
+        self._direct_http = httpx.AsyncClient(
             base_url=self.base_url,
             timeout=httpx.Timeout(120.0, connect=10.0),
-            verify=tls.ssl_context,
-            pin_egress=True,
-            allowed_private_hosts=(host,),
-            allow_loopback=True,
+            verify=_tls_verify(),
             limits=httpx.Limits(max_connections=8, max_keepalive_connections=4),
         )
 
@@ -525,7 +540,7 @@ class GatewayClient:
             async for event in self._sdk.stream(
                 query, mode="ask", topology="basic", timeout=60.0
             ):
-                ev_type = event.get("type")
+                ev_type = str(event.get("type") or "")
                 if ev_type == "final_output":
                     final_output = event.get("content", "")
                 else:
@@ -538,5 +553,5 @@ class GatewayClient:
             )
 
         return {
-            "result": "❌ Gateway is offline. Please make sure the agent-utilities gateway is running at http://localhost:8000."
+            "result": "❌ Gateway is offline. Please make sure the arbora gateway is running at http://localhost:8000."
         }

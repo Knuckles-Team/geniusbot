@@ -3,7 +3,16 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ["architecture", "apps", "design-system", "deployment", "features", "start", "status", "agents"]
+PAGES = [
+    "architecture",
+    "apps",
+    "design-system",
+    "deployment",
+    "features",
+    "start",
+    "status",
+    "agents",
+]
 
 
 @pytest.mark.spec("GENIUSBOT-CLIENT-R017")

@@ -20,8 +20,10 @@ classifiers = [
 ]
 keywords = ["genius", "geniusbot", "desktop", "qt", "agent", "mcp"]
 dependencies = [
-    "PySide6>=6.11.1",
-    "agent-utilities>=2.0.0",
+    "PySide6>=6.12.0",
+    "arbora>=0.1.2",
+    "epistemic-graph>=2.27.3,<3",
+    "platformdirs>=4.3.0",
     "winshell>=0.6; sys_platform == 'win32'",
     "pywin32; sys_platform == 'win32'"
 ]
@@ -32,26 +34,26 @@ email = "maintainers@example.invalid"
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.15.22",
+    "ruff>=0.17.1",
     "pytest>=9.1.1",
     "pytest-qt>=4.5.0",
     "pytest-timeout>=2.4.0",
-    "pytest-asyncio>=1.0.0",
-    "mypy>=2.3.0",
-    "types-requests>=2.33.0.20260712",
-    "types-docker>=7.2.0.20260720",
+    "pytest-asyncio>=1.4.0",
+    "mypy>=2.4.0",
+    "types-requests>=2.33.0.20261006",
+    "types-docker>=7.2.0.20261006",
 ]
 test = [
-    "ruff>=0.15.22",
+    "ruff>=0.17.1",
     "pytest>=9.1.1",
     "pytest-qt>=4.5.0",
     "pytest-timeout>=2.4.0",
-    "pytest-asyncio>=1.0.0",
+    "pytest-asyncio>=1.4.0",
 ]
 types = [
-    "mypy>=2.3.0",
-    "types-requests>=2.33.0.20260712",
-    "types-docker>=7.2.0.20260720",
+    "mypy>=2.4.0",
+    "types-requests>=2.33.0.20261006",
+    "types-docker>=7.2.0.20261006",
 ]
 
 [project.urls]
@@ -60,31 +62,6 @@ Homepage = "https://github.com/Knuckles-Team/geniusbot"
 [project.scripts]
 geniusbot = "geniusbot.geniusbot:main"
 geniusbot-package = "geniusbot.services.packaging_cli:main"
-
-# Development and ecosystem validation use the co-versioned sibling source so
-# the lock cannot silently fall back to a stale published floor: agent-utilities
-# 2.x is not yet published to the index this project resolves from (only
-# <=1.26.4 is available there), so >=2.0.0 above is otherwise unsatisfiable.
-#
-# This is a plain editable PATH dependency, NOT `{ workspace = true }`.
-# agent-utilities became its own self-contained uv WORKSPACE ROOT
-# (D-75-1/D-CIP-19/D-W3BP-4), and uv rejects a workspace member that is
-# itself a workspace root ("Nested workspaces are not supported") -- so
-# declaring agent-utilities as a member of a larger ecosystem workspace (or
-# resolving it via one, as `{ workspace = true }` requires) fails
-# unconditionally, on every checkout, canonical included. agent-webui hit
-# this identical failure (BUG-074) and fixed it the same way (see that
-# repo's `[tool.uv.sources]` for the full precedent) -- path deps have no
-# such nesting restriction, and this repo has no other reason to be a uv
-# workspace itself. `.uv-workspace-siblings/agent-utilities` is a local,
-# untracked symlink to the real sibling checkout (see `.gitignore`'s
-# matching comment); dev/lane-machine-only, materialized once per checkout.
-# This table is uv-only and is not included in the wheel's dependency metadata.
-[tool.uv.workspace]
-members = ["."]
-
-[tool.uv.sources]
-agent-utilities = { path = ".uv-workspace-siblings/agent-utilities", editable = true }
 
 [tool.hatch.build.targets.wheel]
 packages = ["geniusbot"]

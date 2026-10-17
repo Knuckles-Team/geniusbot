@@ -3,7 +3,7 @@
 
 Displays all configured Agent-OS services as interactive cards with
 real-time status, key metrics, and clickable links. Uses the
-agent_utilities.gateway backend for configuration and data fetching.
+arbora.gateway backend for configuration and data fetching.
 
 Concept: AU-019 (GUI Dashboard Panel)
 """
@@ -74,7 +74,7 @@ class _FetchWorker(QThread):
             result = backend.fetch_service_widget_data()
             self.data_ready.emit(result)
         except ImportError:
-            self.error.emit("agent-utilities gateway module not available.")
+            self.error.emit("arbora gateway module not available.")
         except Exception as e:
             self.error.emit(type(e).__name__)
 
@@ -98,8 +98,7 @@ class ServiceCard(QFrame):
         self.url = url
 
         self.setObjectName("ServiceCard")
-        self.setStyleSheet(
-            f"""
+        self.setStyleSheet(f"""
             QFrame#ServiceCard {{
                 background-color: {BG_SECONDARY};
                 border: 1px solid {BORDER_COLOR};
@@ -109,8 +108,7 @@ class ServiceCard(QFrame):
             QFrame#ServiceCard:hover {{
                 border: 1px solid {ACCENT_PRIMARY};
             }}
-        """
-        )
+        """)
         self.setMinimumWidth(220)
         self.setMinimumHeight(120)
         self.setMaximumWidth(350)
@@ -214,7 +212,7 @@ class CategoryHeader(QLabel):
 class ServiceDashboardPanel(QWidget):
     """Homepage-style service dashboard with grouped service cards.
 
-    Integrates with agent_utilities.gateway for:
+    Integrates with arbora.gateway for:
     - XDG-compliant config discovery (services.yaml / MCP auto-detect)
     - Aggregator for concurrent widget data fetching
     - Unified data models (WidgetData, ServiceConfig, DashboardLayout)
@@ -280,7 +278,7 @@ class ServiceDashboardPanel(QWidget):
             layout = backend.load_service_layout()
         except ImportError:
             empty = QLabel(
-                "⚠ agent-utilities gateway not available.\nInstall agent-utilities with: pip install agent-utilities"
+                "⚠ arbora gateway not available.\nInstall arbora with: pip install arbora"
             )
             empty.setStyleSheet(
                 f"color: {TEXT_MUTED}; font-size: 14px; font-style: italic; padding: 40px;"

@@ -10,7 +10,12 @@ from geniusbot.services.packaging_manifest import (
 
 def _complete_targets(version="1.2.3"):
     return [
-        {"name": "console_entry_point", "build_tool": "pip", "output_path": "dist/geniusbot", "version": version},
+        {
+            "name": "console_entry_point",
+            "build_tool": "pip",
+            "output_path": "dist/geniusbot",
+            "version": version,
+        },
         {
             "name": "onefile_executable",
             "build_tool": "pyinstaller",

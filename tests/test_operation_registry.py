@@ -12,7 +12,9 @@ VALID_DIGEST = "a" * 64
 
 
 def test_valid_entry_accepted():
-    entry = OperationRegistryEntry(operation="graph.query", digest=VALID_DIGEST, method="POST")
+    entry = OperationRegistryEntry(
+        operation="graph.query", digest=VALID_DIGEST, method="POST"
+    )
     assert entry.operation == "graph.query"
 
 
@@ -28,7 +30,9 @@ def test_rejects_malformed_digest():
 
 def test_rejects_unsupported_method():
     with pytest.raises(OperationRegistryError):
-        OperationRegistryEntry(operation="graph.query", digest=VALID_DIGEST, method="TRACE")
+        OperationRegistryEntry(
+            operation="graph.query", digest=VALID_DIGEST, method="TRACE"
+        )
 
 
 def test_build_registry_rejects_missing_field():
