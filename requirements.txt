@@ -369,7 +369,7 @@ uncalled-for==0.4.1
     # via fastmcp-slim
 universal-skills==1.3.11
     # via arbora
-urllib3==2.7.0
+urllib3==2.8.0
     # via requests
 uvicorn==0.48.0
     # via
