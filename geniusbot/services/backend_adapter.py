@@ -64,14 +64,6 @@ class BackendAdapter:
         side of the ``graph_query`` MCP tool — like every other backend read in
         this facade.
 
-        It previously did ``from agent_utilities.graph import run_graph_query``,
-        a symbol that does not exist in ``agent_utilities.graph`` (which exports
-        ``run_graph`` / ``run_graph_stream`` / ``validate_graph`` / builder
-        helpers). The ``ImportError`` was caught and logged at DEBUG, so both
-        callers — the Graph Explorer and the temporal-graph panel — silently
-        fell through to their local simulators on *every* run and never once
-        displayed real graph data.
-
         Returns the result rows, or ``None`` when the gateway is unreachable or
         the query produced none (callers fall back to a local simulator then).
         """
