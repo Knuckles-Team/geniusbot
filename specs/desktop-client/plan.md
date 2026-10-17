@@ -133,8 +133,8 @@ It must not add another HTTP stack or call the engine directly.
 ### Model and wire-to-view mapping
 
 [Arbora run reads](https://github.com/Knuckles-Team/arbora/tree/main/specs/hosted-api-operations) own the served projection.
-`GRAPHOS-OPS-R021.4.5` serves per-run fields; `.3` and `.4` define aggregate models and operations.
-`GRAPHOS-OPS-R021.4.6` supplies registration and generated artifacts.
+`ARBORA-OPS-R021.4.5` serves per-run fields; `.3` and `.4` define aggregate models and operations.
+`ARBORA-OPS-R021.4.6` supplies registration and generated artifacts.
 
 | Arbora wire field | View label and behavior |
 |---|---|
@@ -155,7 +155,7 @@ Pair-level rates and configuration-level costs must retain separate group labels
 
 `AU-HARNESS-R014.1` through `.5` own mutable `PlanState` outside stored message history.
 Those rows supply no public snapshot read contract today.
-`GRAPHOS-OPS-R021.4.5` defines the required cross-boundary snapshot and blocks availability until the AU producer exists.
+`ARBORA-OPS-R021.4.5` defines the required cross-boundary snapshot and blocks availability until the AU producer exists.
 The client must not derive a plan from messages, reconstruct state, or add a plan writer.
 An available empty plan must differ from unavailable state.
 Run switches, denied refreshes and expired snapshots must clear protected values from the previous display.
