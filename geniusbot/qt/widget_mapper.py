@@ -208,14 +208,9 @@ class AgentControlPanel(QFrame):
         async def async_run():
             from geniusbot.services.backend_adapter import backend
 
-            # In a production layout, we can invoke the workspace graph
-            # dynamically on behalf of this specialist via the backend seam.
+            # The workflow runs on graph-os (served operation), not in-process.
             try:
-                config = {
-                    "agent_model": "gemini-2.5-flash",
-                    "router_model": "gemini-2.5-flash",
-                }
-                res = await backend.run_workspace_graph(query, config)
+                res = await backend.run_agent_workflow(query)
                 return res
             except Exception:
                 # Fallback to direct specialist response if full graph isn't loaded

@@ -212,7 +212,7 @@
         "34e20c635c6d"
       ],
       "verified_by": [
-        "tests/test_development_skill.py:8"
+        "tests/test_development_skill.py:11"
       ]
     },
     {
@@ -234,7 +234,7 @@
         "34e20c635c6d"
       ],
       "verified_by": [
-        "tests/test_docs_layout.py:9"
+        "tests/test_docs_layout.py:18"
       ]
     },
     {

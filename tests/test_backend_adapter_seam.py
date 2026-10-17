@@ -1,9 +1,8 @@
 """Enforce the backend-adapter seam invariant.
 
-Only ``geniusbot/services/backend_adapter.py`` may import from
-``agent_utilities``. Every other module must route backend access through the
-adapter facade. This test scans the source tree to guarantee the coupling
-stays a single swappable seam.
+GeniusBot is a client of graph-os: no module under ``geniusbot/`` may import
+``agent_utilities``, and the adapter facade exposes the method surface the UI
+relies on.
 """
 
 import re
@@ -12,11 +11,7 @@ from pathlib import Path
 # Repo layout: <repo>/tests/this_file.py  and  <repo>/geniusbot/<package>
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent / "geniusbot"
 
-# Files allowed to import agent_utilities directly (the sanctioned seams).
-# Mirrors the authoritative allowlist in agent-utilities
-# scripts/check_coupling.py (ALLOWLISTED_ADAPTERS): the backend adapter plus the
-# gateway-client transport facade (ECO-4.37) both legitimately wrap the SDK.
-ALLOWED = {"services/backend_adapter.py", "services/gateway_client.py"}
+ALLOWED: set[str] = set()
 
 _IMPORT_RE = re.compile(r"^\s*(from agent_utilities|import agent_utilities)", re.M)
 
@@ -33,19 +28,12 @@ def _offending_files():
     return offenders
 
 
-def test_only_adapter_imports_agent_utilities():
+def test_no_module_imports_agent_utilities():
     offenders = _offending_files()
     assert not offenders, (
-        "These modules import agent_utilities directly and must route through "
-        f"geniusbot.services.backend_adapter instead: {offenders}"
+        "These modules import agent_utilities; geniusbot is a graph-os client: "
+        f"{offenders}"
     )
-
-
-def test_adapter_actually_imports_agent_utilities():
-    """Sanity check that the seam file genuinely owns the coupling."""
-    adapter = PACKAGE_ROOT / "services" / "backend_adapter.py"
-    assert adapter.exists()
-    assert _IMPORT_RE.search(adapter.read_text(encoding="utf-8"))
 
 
 def test_backend_singleton_surface():
@@ -55,8 +43,35 @@ def test_backend_singleton_surface():
     for method in (
         "resolve_log_dir",
         "run_graph_query",
-        "run_workspace_graph",
+        "run_agent_workflow",
         "load_service_layout",
         "fetch_service_widget_data",
     ):
         assert callable(getattr(backend, method)), method
+
+
+def test_agent_workflow_runs_on_graph_os_not_in_process():
+    import asyncio
+
+    from geniusbot.services.backend_adapter import BackendAdapter
+
+    class _Gateway:
+        async def stream_copilot_query(self, query, progress_cb=None):
+            return {"result": f"done: {query}"}
+
+    adapter = BackendAdapter()
+    adapter._gateway_client = _Gateway()
+    result = asyncio.run(adapter.run_agent_workflow("go"))
+    assert result == {"result": "done: go"}
+
+    class _Offline(_Gateway):
+        async def stream_copilot_query(self, query, progress_cb=None):
+            return {"result": "❌ Gateway is offline."}
+
+    adapter._gateway_client = _Offline()
+    try:
+        asyncio.run(adapter.run_agent_workflow("go"))
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("an offline gateway must raise for the caller fallback")

@@ -17,7 +17,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: c4a0b883114b00d8d76b479c820ce7950211c99b # v4.5.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
     hooks:
     - id: check-added-large-files
     - id: check-ast
@@ -32,17 +32,17 @@ repos:
     - id: trailing-whitespace
     - id: end-of-file-fixer
   - repo: https://github.com/psf/black
-    rev: 552baf822992936134cbd31a38f69c8cfe7c0f05 # 24.3.0
+    rev: 258e7dbf348bc23cb70b8cdf693481c04634ebcc # 26.10.1
     hooks:
     - id: black
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 0671d8ab202c4ac093b78433ae5baf74f3fc7246 # v0.15.15
+    rev: 38bfb07c0c64c304f47eb52090f8288150c77730 # v0.17.1
     hooks:
       - id: ruff
         types_or: [ python, pyi, jupyter ]
         args: ["--fix", "--ignore=E402"]
   - repo: https://github.com/codespell-project/codespell
-    rev: 6e41aba91fb32e9feb741a6258eefeb9c6e4a482 # v2.2.6
+    rev: 57b21406f092110c18776e39b0bda50d37c945c8 # v2.4.3
     hooks:
       - id: codespell
         args: ["-L", "ans,linar,nam,tread,ot,"]
@@ -57,7 +57,7 @@ repos:
               notebook/.*
             )$
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: fc0f09a29bb495f4a91f00266155d6282d52485d # v1.20.2
+    rev: 2834ec6639549dd6796205c8f011dedcd587288b # v2.4.0
     hooks:
     - id: mypy
       additional_dependencies: [pydantic==2.13.4, types-PyYAML==6.0.12.20260518, types-requests==2.33.0.20260518, types-setuptools==83.0.0.20260706, PySide6==6.11.1]
@@ -146,7 +146,7 @@ repos:
       always_run: true
       stages: [pre-push]
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 15ef9f32df9026032db2d61d944801358271de69 # 1.8.5
+    rev: d31b7eae1767c43460afb3ba130e0a6602933abe # 1.9.1
     hooks:
       - id: nbqa-black
   - repo: local
