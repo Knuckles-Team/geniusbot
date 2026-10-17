@@ -2,7 +2,7 @@
 
 | Requirement | Layer and fixture | Expected positive result | Required negative proof |
 |---|---|---|---|
-| GENIUSBOT-CLIENT-R001 | Source-tree scan over `geniusbot/` | Only `services/backend_adapter.py` and `services/gateway_client.py` import `agent_utilities` | Any other file importing `agent_utilities` (or `from agent_utilities...`) fails the scan |
+| GENIUSBOT-CLIENT-R001 | Source-tree scan over `geniusbot/` | No file imports `agent_utilities` | Any file importing `agent_utilities` (or `from agent_utilities...`) fails the scan |
 | GENIUSBOT-CLIENT-R002 | Unit test against the gateway facade's operation-invocation path with a fake installed registry | A known, registered operation with valid input produces one request | An unknown operation id, and a registry/digest mismatch, make zero network requests and return a typed unavailable result |
 | GENIUSBOT-CLIENT-R003 | `GatewayClient.__init__` and `_bounded_body` with parametrized URLs and `httpx.Response` streams | A valid `https://` or loopback `http://` endpoint constructs the client; a response under the limit is returned | A URL with embedded credentials, a query/fragment, a non-http(s) scheme, or non-opted-in remote plaintext raises `ValueError`; a streamed or declared-oversize response raises `RuntimeError` |
 | GENIUSBOT-CLIENT-R004 | `AgentBridgeWorker`/`AgentRunnable` signal contract with a fake async callable | `started`, `progress`, and `finished` signals fire in order with the callable's result | An exception raised inside the async callable emits `error` and never raises out of `run()` |

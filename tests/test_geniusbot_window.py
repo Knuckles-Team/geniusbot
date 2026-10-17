@@ -184,25 +184,15 @@ _SWITCH_VIEW_BUTTON_ATTRS = {
 @pytest.mark.unit
 @pytest.mark.concept("GBOT-6.0")
 def test_switch_view_lazily_loads_every_panel_and_styles_sidebar(qapp):
-    """Characterize switch_view: for every index 0..17 except 8, the stack
-    widget's current index tracks the switch, the correct panel attribute
-    gets lazily instantiated exactly once (idempotent on repeat calls),
-    only the active sidebar button loses the 'transparent' styling, and
-    view 1 starts the embedded terminal shell exactly once.
-
-    Index 8 (finance_panel / FinanceCockpitPanel) is deliberately excluded:
-    instantiating it and then letting pytest-qt's autouse app.processEvents()
-    run (as happens after every test) triggers a pre-existing native
-    SIGSEGV inside libQt6Charts.so (AreaChartItem::fixEdgeSeriesDomain) when
-    its charts get laid out under the offscreen QPA platform used in this
-    environment -- unrelated to switch_view's own logic. See the BUGS FOUND
-    section of the wD10-c-misc report. index 8's dispatch entry is
-    structurally identical to every other entry in switch_view's dict
-    table, so exercising 3-7 and 9-17 is sufficient to characterize the
-    dispatch behavior switch_view itself is responsible for."""
+    """Characterize switch_view: for every index 0..17, the stack widget's
+    current index tracks the switch, the correct panel attribute gets lazily
+    instantiated exactly once (idempotent on repeat calls), only the active
+    sidebar button loses the 'transparent' styling, and view 1 starts the
+    embedded terminal shell exactly once. Runs under the offscreen QPA
+    platform (tests/conftest.py)."""
     bot = GeniusBot()
 
-    for index in [i for i in range(18) if i != 8]:
+    for index in range(18):
         bot.switch_view(index)
         assert bot.centralStackWidget.currentIndex() == index
 

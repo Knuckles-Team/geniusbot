@@ -588,6 +588,11 @@ class FinanceCockpitPanel(QWidget):
         ask_area.setColor(QColor(255, 23, 68, 90))  # Translucent red
         ask_area.setBorderColor(QColor(COLOR_DANGER))
 
+        # QAreaSeries only borrows its boundary line series; PySide would free
+        # the locals when this method returns and the chart layout then reads
+        # a dangling pointer (AreaChartItem::fixEdgeSeriesDomain SIGSEGV).
+        self._depth_boundary_lines = (bids_line, asks_line)
+
         self.depth_chart.addSeries(bid_area)
         bid_area.attachAxis(axis_depth_x)
         bid_area.attachAxis(axis_depth_y)
