@@ -29,6 +29,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ste-advisory:
+    name: ste-advisory (report-only)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+      - name: STE-lite prose lint (advisory, report-only)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: uvx --from pre-commit==4.6.2 pre-commit run ste-staged --config .pre-commit-config.yaml --hook-stage pre-commit --from-ref "$BASE_SHA" --to-ref HEAD
+
   gates:
     uses: Knuckles-Team/pipelines/.github/workflows/gates_pipeline.yml@main
     with:
@@ -38,6 +55,8 @@ jobs:
       test-scope: ${{ github.event_name == 'push' && 'tests' || '' }}
       # These hooks run scripts from a sibling agent-utilities checkout that a
       # hosted runner does not have; they stay enforced at local pre-push.
-      skip-hooks: okf-no-legacy-concepts,lane-guard,check-stubs,check-sprawl,check-coupling,check-lockfile-version-mirrors,source-merge-tests,pytest
+      # ste-staged (STE-lite prose lint) is advisory: the ste-advisory job runs it
+      # report-only (operator gate cut).
+      skip-hooks: okf-no-legacy-concepts,lane-guard,check-stubs,check-sprawl,check-coupling,check-lockfile-version-mirrors,source-merge-tests,pytest,ste-staged
       all-files: ${{ github.event_name == 'push' }}
       timeout-minutes: ${{ github.event_name == 'push' && 60 || 15 }}
