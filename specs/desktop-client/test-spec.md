@@ -26,7 +26,7 @@
 - Invalid or hostile transport configuration (credentials embedded in the gateway URL,
   non-loopback plaintext, oversized or truncated responses) is rejected before or during
   the request, never after rendering partial data.
-- A Graph OS operation or specialist invocation with malformed, missing, or oversized input
+- An Arbora operation or specialist invocation with malformed, missing, or oversized input
   is rejected locally before any network effect (mirrors the extraction-request and
   job-id validation already enforced in `gateway_client.py`).
 - An approval or tool-authorization action can be rejected (not only granted); a rejection
@@ -48,24 +48,24 @@
   and live-gateway receipts below.
 - Build and run the packaged artifacts (PyInstaller onefile, Windows installer, Linux
   desktop entry) from a tagged revision and confirm the entry point launches the cockpit
-  window against a reachable and an unreachable Graph OS gateway.
+  window against a reachable and an unreachable Arbora gateway.
 - Record configured CCCC, `jscpd`, and Dupehound ecosystem checks if present in this
   repository's tracked configuration; where absent, record that as an acceptance gap
   rather than an unconfigured pass.
 
-No manual-only proof substitutes for the negative tests above. If a live Graph OS gateway
+No manual-only proof substitutes for the negative tests above. If a live Arbora gateway
 is unavailable, keep the approval and registry-validation requirements' acceptance pending
 rather than requiring private infrastructure to run the baseline tests.
 
 ## Planned run-surface acceptance
 
 These tests are planned, not execution receipts. Each test must bind its exact requirement ID.
-Each case must enter the production UI, existing client, and a served GraphOS operation fixture.
+Each case must enter the production UI, existing client, and a served Arbora operation fixture.
 A mocked widget value alone must not count as served evidence.
 
 | Requirement | Planned test | Positive served requirement | Negative served requirement |
 |---|---|---|---|
-| GENIUSBOT-CLIENT-R019.1 | `tests/test_run_view.py::test_run_read_uses_graphos_operations` | A selected run must render through the served operation and existing client. | Absent registration, timeout or denial must show unavailable without direct engine calls. |
+| GENIUSBOT-CLIENT-R019.1 | `tests/test_run_view.py::test_run_read_uses_arbora_operations` | A selected run must render through the served operation and existing client. | Absent registration, timeout or denial must show unavailable without direct engine calls. |
 | GENIUSBOT-CLIENT-R019.2 | `tests/test_run_view.py::test_harness_config_shown` | A committed configuration must retain its reference and values through the client. | Missing or inaccessible configuration must not use defaults or the latest configuration. |
 | GENIUSBOT-CLIENT-R019.3 | `tests/test_run_view.py::test_context_and_cost_shown` | Measured zero must render as zero; aggregate cost must retain its solved-task label. | Null values must show unavailable; zero-solved abstention must not render zero cost. |
 | GENIUSBOT-CLIENT-R019.4 | `tests/test_run_view.py::test_plan_read_only` | A fresh matching snapshot must preserve item order, revision and AU statuses. | Expired, wrong-run, regressing or unavailable snapshots must reveal no items or edit controls. |

@@ -370,7 +370,7 @@ class GatewayClient:
 
     # ── Epistemic-graph capability surface (W2) ─────────────────────────
     # Thin POSTs to the gateway's action-routed ``/api/graph/*`` twins — the
-    # REST side of the graph-os MCP tools nl_query / ask_data / graph_promql /
+    # REST side of the arbora MCP tools nl_query / ask_data / graph_promql /
     # graph_kvcache / graph_federated_search (backend KG-2.305 / KG-2.308 /
     # KG-2.310). Every call is graceful-offline like the rest of this facade:
     # transport or tool errors collapse to a dict carrying an ``"error"`` key so

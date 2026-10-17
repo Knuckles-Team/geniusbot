@@ -1,6 +1,6 @@
 # Architecture
 
-GeniusBot is a PySide6 (Qt6) desktop cockpit. It talks to Graph OS through the gateway client in `agent-utilities`.
+GeniusBot is a PySide6 (Qt6) desktop cockpit. It talks to Arbora through the gateway client in `agent-utilities`.
 
 ## Layers
 

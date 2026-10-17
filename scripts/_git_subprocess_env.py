@@ -33,7 +33,7 @@ This is the same defect class as D-LGI-1, in a **different, wider** blast
 radius: ~30 ``scripts/*.py`` gate scripts independently reimplement the same
 "prefer git ls-files, fall back to a walk" pattern, each with its own
 unprotected ``subprocess.run(["git", ...])`` call (see BUG-180 in
-``plans/graph-os-completion-program/BUG-LEDGER.md`` for the full audit list).
+``plans/arbora-completion-program/BUG-LEDGER.md`` for the full audit list).
 This module is the reusable primitive so each site can adopt one fix instead
 of copy-pasting the strip logic N times; it currently guards the two sites
 proven to break a real gate (``check_wiring.py``, ``check_current_only_contract.py``).

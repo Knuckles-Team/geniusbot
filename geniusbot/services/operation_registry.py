@@ -1,4 +1,4 @@
-"""Typed model and validator for the installed generated Graph OS operation registry.
+"""Typed model and validator for the installed generated Arbora operation registry.
 
 Implements the `.1` slice of GENIUSBOT-CLIENT-R002: a typed registry-entry model plus a
 validator that refuses a malformed entry or digest before the entry can be used to

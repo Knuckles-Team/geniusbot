@@ -5,7 +5,7 @@
 At the current public main revision, `geniusbot/geniusbot.py` owns the `QMainWindow`
 cockpit shell: a flat sidebar, a central stacked widget of lazily loaded views, a
 right-hand telemetry drawer, and a bottom console. `geniusbot/services/gateway_client.py`
-owns the one HTTP/SDK transport to the Graph OS gateway (a thin facade over the shared
+owns the one HTTP/SDK transport to the Arbora gateway (a thin facade over the shared
 `agent_utilities.gateway_client.GatewayClient` SDK plus a small set of direct
 `/api/graph/*` and `/api/enhanced/*` POSTs). `geniusbot/services/backend_adapter.py` is the
 single sanctioned seam for anything that still needs to reach the underlying engine
@@ -23,7 +23,7 @@ sidebar click / chat input / tray action
     -> AgentBridgeWorker (QThreadPool, one background event loop per task)
     -> GatewayClient facade (TLS-validated, bounded, graceful-offline)
     -> agent_utilities.gateway_client SDK / direct /api/graph|enhanced POST
-    -> Graph OS gateway: registry, authorization, ActionPolicy approval boundary
+    -> Arbora gateway: registry, authorization, ActionPolicy approval boundary
     -> typed result/error -> Qt signal -> existing widgets (chat log, tables, status labels)
 ```
 
@@ -32,9 +32,9 @@ sidebar click / chat input / tray action
 | Boundary | Contract to implement or verify |
 |---|---|
 | Import seam | Only `services/backend_adapter.py` and `services/gateway_client.py` import `agent_utilities`; every `qt/*` panel and `geniusbot.py` route through them. |
-| Operation validation | Before invoking a Graph OS operation (specialist run, slash command, graph/data query), resolve it against the installed generated operation registry; an unknown operation or a registry/digest mismatch produces a typed unavailable result before any network call. |
+| Operation validation | Before invoking an Arbora operation (specialist run, slash command, graph/data query), resolve it against the installed generated operation registry; an unknown operation or a registry/digest mismatch produces a typed unavailable result before any network call. |
 | Transport | `GatewayClient.__init__` rejects a malformed endpoint (credentials in the URL, a query/fragment, a non-http(s) scheme) and plaintext HTTP to a non-loopback host without explicit opt-in; it resolves a TLS profile for the caller's verified credential and pins egress to the configured host. Every response is read through a bounded reader (`_bounded_body`) capped at a fixed byte limit. |
-| Dispatch | Every async Graph OS/backend call runs inside `AgentRunnable.run()` on the global `QThreadPool`, reporting `started`/`finished`/`error`/`progress` back to the UI thread via Qt signals; nothing calls a blocking network or heavy-reasoning routine directly from a slot. |
+| Dispatch | Every async Arbora/backend call runs inside `AgentRunnable.run()` on the global `QThreadPool`, reporting `started`/`finished`/`error`/`progress` back to the UI thread via Qt signals; nothing calls a blocking network or heavy-reasoning routine directly from a slot. |
 | Errors | Every facade method catches its own transport/SDK exceptions and returns a typed `{"result": ...}` / `{"error": ...}` / safe-default value. No exception from `httpx`, the SDK, or a malformed envelope is allowed to propagate into a Qt slot. |
 | Approval | The Fleet Supervisor's approval inbox and any tool-authorization dialog display a pending decision. Granting or rejecting always issues a request to the gateway's server-side approval/`ActionPolicy` endpoint. No code path marks an action authorized by local logic alone. |
 | Terminal | The terminal view's PTY-backed shell starts lazily on first navigation to that view (`switch_view(1)`), not at window construction. |
@@ -46,7 +46,7 @@ sidebar click / chat input / tray action
 `geniusbot()` constructs `GeniusBot`, which wires the tray daemon, the gateway client, and
 a `QTimer.singleShot` specialist-discovery call through `AgentBridgeWorker`. Every sidebar
 button routes through `switch_view`, which lazily instantiates the corresponding panel
-class from `_PANEL_SPECS` and swaps it into the stacked widget. Panels that need Graph OS
+class from `_PANEL_SPECS` and swaps it into the stacked widget. Panels that need Arbora
 data construct their own `GatewayClient` (or receive the shared `AgentBridgeWorker`) and
 call the facade's async methods, which always resolve to a typed success/error value. No
 obsolete transport path currently exists in this repository to retire; the `ToolGuardDialog`
@@ -57,10 +57,10 @@ wired into any execution path — closing that gap, or explicitly scoping it out
 ## Compatibility and migration
 
 Keep `requires-python = ">=3.12, <3.15"` and the single `agent-utilities>=2.0.0` dependency
-as the floor; this client does not need an optional-extra split for the generated Graph OS
+as the floor; this client does not need an optional-extra split for the generated Arbora
 client because `agent-utilities` (which vendors the gateway SDK) is already a hard
 dependency of the desktop package, unlike a thin terminal client that supports a
-no-Graph-OS-client base install. Packaging changes (PyInstaller spec, `setup.iss`, the
+no-Arbora-client base install. Packaging changes (PyInstaller spec, `setup.iss`, the
 Linux desktop entry) must track `pyproject.toml`'s version via the existing
 `.bumpversion.cfg` mirrors rather than drifting independently.
 
@@ -127,16 +127,16 @@ No run panel or run facade exists in current source.
 The implementation must extend the existing facade and lazy panel navigation.
 Network reads must use the existing background worker; Qt updates must return through signals.
 
-The client must use the versioned GraphOS operation transport and its generated envelope.
+The client must use the versioned Arbora operation transport and its generated envelope.
 It must not add another HTTP stack or call the engine directly.
 
 ### Model and wire-to-view mapping
 
-[GraphOS run reads](https://github.com/Knuckles-Team/graph-os/tree/main/specs/hosted-api-operations) own the served projection.
+[Arbora run reads](https://github.com/Knuckles-Team/arbora/tree/main/specs/hosted-api-operations) own the served projection.
 `GRAPHOS-OPS-R021.4.5` serves per-run fields; `.3` and `.4` define aggregate models and operations.
 `GRAPHOS-OPS-R021.4.6` supplies registration and generated artifacts.
 
-| GraphOS wire field | View label and behavior |
+| Arbora wire field | View label and behavior |
 |---|---|
 | `termination_reason` | Distinct final answer, context overflow, stuck, step budget and error labels |
 | `peak_context_tokens`, `context_budget_tokens` | Peak context tokens against run budget; never current occupancy |
@@ -164,7 +164,7 @@ Unknown terminal reasons must display unavailable; the client must never infer s
 
 ### Evidence and implementation order
 
-Implement the GraphOS producer before the consumer wiring, then field rendering and served acceptance.
+Implement the Arbora producer before the consumer wiring, then field rendering and served acceptance.
 The six existing children remain the only client requirement family for this surface.
 The tests in test-spec.md are planned acceptance paths, not proof of implementation.
 Each row requires its own positive and negative served case through the production UI path above.

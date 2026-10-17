@@ -1,6 +1,6 @@
 # GeniusBot — Desktop Cockpit for SI Agents
 
-Super Intelligence (SI) is the Graph OS project term for model-backed agents.
+Super Intelligence (SI) is the Arbora project term for model-backed agents.
 
 Welcome to **GeniusBot**, the premium, unified space cockpit and visual control deck built on top of the `agent-utilities` powerhouse backend.
 

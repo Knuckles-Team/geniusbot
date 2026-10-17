@@ -1,7 +1,7 @@
 """R006: no local approval authority.
 
 A governed or mutating action is never authorized by the desktop process itself;
-the operator's explicit decision is always forwarded to Graph OS's server-side
+the operator's explicit decision is always forwarded to Arbora's server-side
 approval endpoint, which performs the authoritative check.
 """
 
