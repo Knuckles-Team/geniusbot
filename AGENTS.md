@@ -5,6 +5,14 @@
 
 This document defines the architecture, standard commands, code design principles, and strict safety guidelines for maintaining and extending `geniusbot`.
 
+## Boundaries
+
+- **Owns:** what a person sees in the desktop and chat client.
+- **Never builds:** data access other than through graph-os, or a decision (route decisions to epistemic-graph). Served operations go to graph-os.
+- **Allowed dependencies:** `graph_os.client` and agent-connector-sdk. It imports no EG or graph-os internals in-process.
+
+Route every feature with the [ecosystem boundaries standard](https://github.com/Knuckles-Team/pipelines/blob/main/reference/ecosystem-boundaries.md) before any code. A part this repository does not own goes to its owner's specs.
+
 ## 🛠️ Tech Stack & Desktop Architecture
 
 - **Language/Version**: Python 3.11+ (aligned with ecosystem requirements `>=3.11, <3.14`)
