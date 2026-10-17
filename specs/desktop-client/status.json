@@ -38,11 +38,14 @@
     {
       "id": "GENIUSBOT-CLIENT-R001",
       "title": "One backend-adapter import seam",
-      "delivery_state": "LANDED",
+      "delivery_state": "VERIFIED",
       "landed_in": [
+        "891efd8a0733",
         "f979d1e342d9"
       ],
-      "verified_by": []
+      "verified_by": [
+        "tests/test_backend_adapter_seam.py:33"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R002.1",
