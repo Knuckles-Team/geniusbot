@@ -30,7 +30,6 @@ dependencies = [
 
 [[project.authors]]
 name = "Repository Maintainers"
-email = "maintainers@example.invalid"
 
 [project.optional-dependencies]
 dev = [
