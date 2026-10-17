@@ -299,7 +299,7 @@ class ServiceDashboardPanel(QWidget):
 
         if not layout.groups:
             empty = QLabel(
-                "No services configured.\nAdd services to $XDG_CONFIG_HOME/agent-os/services.yaml"
+                "No services configured.\nAdd services to $XDG_CONFIG_HOME/graph-os/services.yaml"
             )
             empty.setStyleSheet(
                 f"color: {TEXT_MUTED}; font-size: 14px; font-style: italic; padding: 40px;"

@@ -259,7 +259,7 @@ class AgentWorker(QRunnable):
 ```
 
 ### Safety and Guardrails
-* **XDG Centralized Configuration**: centralize user credentials, local keys, and safety settings inside `~/.config/agent-utilities/config.json`. **NEVER** save credentials in plain files inside the `geniusbot` directory.
+* **XDG Centralized Configuration**: centralize user credentials, local keys, and safety settings inside the Graph OS platform config `~/.config/graph-os/config.json` (override `GRAPH_OS_CONFIG_DIR`; the legacy `~/.config/agent-utilities/` is read for one release). **NEVER** save credentials in plain files inside the `geniusbot` directory.
 * **Sensitive Pattern Interception**: All plugins must register tool execution pipelines through `agent-utilities`' `ToolGuard` system to guarantee full compliance with local security policies.
 
 ## ⛔ No Scratch or Temporary Files in Repository
