@@ -31,7 +31,7 @@ logger = logging.getLogger("geniusbot.backend")
 
 
 class BackendAdapter:
-    """Facade over the GeniusBot backend (agent-utilities engine + gateway).
+    """Facade over the GeniusBot backend (agent-utilities harness + graph-os gateway).
 
     All methods are defensive: if a backend is unavailable they fall back to a
     safe default (empty result / sentinel) rather than letting an
@@ -132,7 +132,7 @@ class BackendAdapter:
         "gateway not available" placeholder. Other exceptions propagate for
         the caller's error placeholder.
         """
-        from agent_utilities.gateway.config import ConfigManager
+        from graph_os.gateway.config import ConfigManager
 
         return ConfigManager().load()
 
@@ -146,7 +146,7 @@ class BackendAdapter:
         """
         import asyncio
 
-        from agent_utilities.gateway.aggregator import Aggregator
+        from graph_os.gateway.aggregator import Aggregator
 
         aggregator = Aggregator()
         loop = asyncio.new_event_loop()
