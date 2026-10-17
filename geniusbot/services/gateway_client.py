@@ -1,10 +1,10 @@
 """
 CONCEPT:AU-GBOT.cockpit.through-gbot
-Service layer for communicating with the graph-os gateway.
+Service layer for communicating with the arbora gateway.
 
-Thin geniusbot-facing facade over the shared surface SDK
-(:class:`graph_os.client.GatewayClient`, CONCEPT:AU-ECO.interop.gateway-client-sdk) — the
-single client every surface uses, so transport/auth/retry live in one place. This
+Thin geniusbot-facing facade over the gateway routes in
+:class:`geniusbot.services.gateway_routes.GatewayRoutes`, so transport lives in
+one place. This
 facade preserves geniusbot's graceful-offline contract: every method swallows
 transport errors and returns a safe default so the Qt event loop never sees an
 exception from a missing gateway.
@@ -20,7 +20,8 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import httpx
-from graph_os.client import GatewayClient as _SdkGatewayClient
+
+from geniusbot.services.gateway_routes import GatewayRoutes
 
 logger = logging.getLogger("geniusbot.gateway")
 
@@ -97,7 +98,7 @@ class GatewayClient:
 
         self.base_url = str(base_url).rstrip("/")
         # One pooled SDK client for the app's lifetime (desktop singleton).
-        self._sdk = _SdkGatewayClient(self.base_url, timeout=15.0)
+        self._sdk = GatewayRoutes(self.base_url, timeout=15.0, verify=_tls_verify())
         self._direct_http = httpx.AsyncClient(
             base_url=self.base_url,
             timeout=httpx.Timeout(120.0, connect=10.0),
@@ -539,7 +540,7 @@ class GatewayClient:
             async for event in self._sdk.stream(
                 query, mode="ask", topology="basic", timeout=60.0
             ):
-                ev_type = event.get("type")
+                ev_type = str(event.get("type") or "")
                 if ev_type == "final_output":
                     final_output = event.get("content", "")
                 else:
@@ -552,5 +553,5 @@ class GatewayClient:
             )
 
         return {
-            "result": "❌ Gateway is offline. Please make sure the graph-os gateway is running at http://localhost:8000."
+            "result": "❌ Gateway is offline. Please make sure the arbora gateway is running at http://localhost:8000."
         }

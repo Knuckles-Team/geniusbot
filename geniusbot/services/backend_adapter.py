@@ -2,11 +2,11 @@
 CONCEPT:AU-GBOT.cockpit.through-gbot
 Single backend adapter seam for GeniusBot.
 
-GeniusBot is a client of graph-os. Every qt/* widget and ``geniusbot.py``
+GeniusBot is a client of arbora. Every qt/* widget and ``geniusbot.py``
 routes backend access (graph queries, agent workflow execution, gateway
 aggregation/config, centralized log paths) through this facade. Backend calls
-go to graph-os through :class:`geniusbot.services.gateway_client.GatewayClient`
-(built on ``graph_os.client``); nothing here imports ``agent_utilities``, and
+go to arbora through :class:`geniusbot.services.gateway_client.GatewayClient`
+(built on ``geniusbot.services.gateway_routes``); nothing here imports ``agent_utilities``, and
 no agent harness runs in-process.
 """
 
@@ -20,7 +20,7 @@ logger = logging.getLogger("geniusbot.backend")
 
 
 class BackendAdapter:
-    """Facade over the GeniusBot backend (graph-os gateway).
+    """Facade over the GeniusBot backend (arbora gateway).
 
     All methods are defensive: if a backend is unavailable they fall back to a
     safe default (empty result / sentinel) rather than letting an
@@ -83,17 +83,17 @@ class BackendAdapter:
 
     # ── Agent workflow execution ─────────────────────────────────────
     async def run_agent_workflow(self, query: str, progress_cb: Any = None) -> Any:
-        """Run an agent workflow on graph-os and return its result.
+        """Run an agent workflow on arbora and return its result.
 
-        GeniusBot is a client of graph-os: the request is sent to the served
+        GeniusBot is a client of arbora: the request is sent to the served
         ``/stream`` operation through the gateway client, never executed
-        in-process. Raises when graph-os is unreachable or produced no output
+        in-process. Raises when arbora is unreachable or produced no output
         so the caller can apply its specialist-response fallback.
         """
         result = await self._gateway().stream_copilot_query(query, progress_cb)
         text = result.get("result", "") if isinstance(result, dict) else ""
         if not text or text.startswith("\u274c"):
-            raise RuntimeError("graph-os produced no workflow output")
+            raise RuntimeError("arbora produced no workflow output")
         return result
 
     # ── Gateway service dashboard ────────────────────────────────────
@@ -105,7 +105,7 @@ class BackendAdapter:
         "gateway not available" placeholder. Other exceptions propagate for
         the caller's error placeholder.
         """
-        from graph_os.gateway.config import ConfigManager
+        from arbora.gateway.config import ConfigManager
 
         return ConfigManager().load()
 
@@ -119,7 +119,7 @@ class BackendAdapter:
         """
         import asyncio
 
-        from graph_os.gateway.aggregator import Aggregator
+        from arbora.gateway.aggregator import Aggregator
 
         aggregator = Aggregator()
         loop = asyncio.new_event_loop()

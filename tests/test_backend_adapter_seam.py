@@ -1,12 +1,14 @@
 """Enforce the backend-adapter seam invariant.
 
-GeniusBot is a client of graph-os: no module under ``geniusbot/`` may import
+GeniusBot is a client of Arbora: no module under ``geniusbot/`` may import
 ``agent_utilities``, and the adapter facade exposes the method surface the UI
 relies on.
 """
 
 import re
 from pathlib import Path
+
+import pytest
 
 # Repo layout: <repo>/tests/this_file.py  and  <repo>/geniusbot/<package>
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent / "geniusbot"
@@ -28,10 +30,11 @@ def _offending_files():
     return offenders
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R001")
 def test_no_module_imports_agent_utilities():
     offenders = _offending_files()
     assert not offenders, (
-        "These modules import agent_utilities; geniusbot is a graph-os client: "
+        "These modules import agent_utilities; geniusbot is an arbora client: "
         f"{offenders}"
     )
 
@@ -50,7 +53,7 @@ def test_backend_singleton_surface():
         assert callable(getattr(backend, method)), method
 
 
-def test_agent_workflow_runs_on_graph_os_not_in_process():
+def test_agent_workflow_runs_on_arbora_not_in_process():
     import asyncio
 
     from geniusbot.services.backend_adapter import BackendAdapter

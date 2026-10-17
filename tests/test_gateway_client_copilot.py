@@ -17,6 +17,11 @@ def _client() -> GatewayClient:
     return GatewayClient("http://localhost:8000", allow_insecure_http=True)
 
 
+def _stub_stream(client: GatewayClient, stream) -> None:
+    """Replace the route client's ``stream`` on this instance only."""
+    vars(client._sdk)["stream"] = stream
+
+
 async def _events(*evs):
     for ev in evs:
         yield ev
@@ -25,11 +30,14 @@ async def _events(*evs):
 @pytest.mark.asyncio
 async def test_stream_copilot_query_returns_final_output_and_progress() -> None:
     client = _client()
-    client._sdk.stream = lambda *a, **k: _events(
-        {"type": "thought", "thought": "thinking"},
-        {"type": "call_tool", "tool": "search"},
-        {"type": "custom_event", "message": "doing a thing"},
-        {"type": "final_output", "content": "the answer"},
+    _stub_stream(
+        client,
+        lambda *a, **k: _events(
+            {"type": "thought", "thought": "thinking"},
+            {"type": "call_tool", "tool": "search"},
+            {"type": "custom_event", "message": "doing a thing"},
+            {"type": "final_output", "content": "the answer"},
+        ),
     )
     seen: list[str] = []
     result = await client.stream_copilot_query("hi", progress_cb=seen.append)
@@ -47,8 +55,8 @@ async def test_stream_copilot_query_final_output_event_does_not_call_progress_cb
     None
 ):
     client = _client()
-    client._sdk.stream = lambda *a, **k: _events(
-        {"type": "final_output", "content": "x"}
+    _stub_stream(
+        client, lambda *a, **k: _events({"type": "final_output", "content": "x"})
     )
     seen: list[str] = []
     result = await client.stream_copilot_query("hi", progress_cb=seen.append)
@@ -60,8 +68,12 @@ async def test_stream_copilot_query_final_output_event_does_not_call_progress_cb
 @pytest.mark.asyncio
 async def test_stream_copilot_query_no_progress_cb_does_not_raise() -> None:
     client = _client()
-    client._sdk.stream = lambda *a, **k: _events(
-        {"type": "thought", "thought": "t"}, {"type": "final_output", "content": "y"}
+    _stub_stream(
+        client,
+        lambda *a, **k: _events(
+            {"type": "thought", "thought": "t"},
+            {"type": "final_output", "content": "y"},
+        ),
     )
     result = await client.stream_copilot_query("hi")
     assert result == {"result": "y"}
@@ -70,10 +82,10 @@ async def test_stream_copilot_query_no_progress_cb_does_not_raise() -> None:
 @pytest.mark.asyncio
 async def test_stream_copilot_query_falls_back_when_no_final_output() -> None:
     client = _client()
-    client._sdk.stream = lambda *a, **k: _events({"type": "thought", "thought": "t"})
+    _stub_stream(client, lambda *a, **k: _events({"type": "thought", "thought": "t"}))
     result = await client.stream_copilot_query("hi")
     assert result == {
-        "result": "❌ Gateway is offline. Please make sure the graph-os gateway is running at http://localhost:8000."
+        "result": "❌ Gateway is offline. Please make sure the arbora gateway is running at http://localhost:8000."
     }
 
 
@@ -85,8 +97,8 @@ async def test_stream_copilot_query_falls_back_on_exception() -> None:
         raise RuntimeError("gateway down")
         yield  # pragma: no cover - never reached; keeps this an async generator
 
-    client._sdk.stream = _boom
+    _stub_stream(client, _boom)
     result = await client.stream_copilot_query("hi")
     assert result == {
-        "result": "❌ Gateway is offline. Please make sure the graph-os gateway is running at http://localhost:8000."
+        "result": "❌ Gateway is offline. Please make sure the arbora gateway is running at http://localhost:8000."
     }

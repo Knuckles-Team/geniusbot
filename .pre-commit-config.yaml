@@ -25,7 +25,7 @@ repos:
       args: ["--unsafe"]
     - id: check-toml
     - id: check-json
-    - id: check-byte-order-marker
+    - id: fix-byte-order-marker
       exclude: .gitignore
     - id: check-merge-conflict
     - id: detect-private-key

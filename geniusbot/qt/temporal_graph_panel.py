@@ -13,7 +13,7 @@ suffix (via :func:`with_as_of`) and into an ``expired`` flag per fact (via
 :func:`mark_expired`), then hands facts to the renderer. Query/expiry math are
 pure functions so they are unit-testable without a display, and the only backend
 seam used is ``backend.run_graph_query`` through the worker — keeping the
-backend access goes through ``backend_adapter`` (graph-os client).
+backend access goes through ``backend_adapter`` (arbora client).
 """
 
 from __future__ import annotations
