@@ -31,4 +31,4 @@ jobs:
     permissions:
       contents: write
     with:
-      python-version: '3.12'
+      python-version: '3.14'
