@@ -28,7 +28,7 @@
   <a href="https://knuckles-team.github.io/geniusbot/concepts/">Concepts</a>
 </p>
 
-*Version: 5.2.0*
+*Version: 5.2.1*
 
 ## Overview
 
