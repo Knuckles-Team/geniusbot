@@ -60,3 +60,29 @@ jobs:
       skip-hooks: okf-no-legacy-concepts,lane-guard,check-stubs,check-sprawl,check-coupling,check-lockfile-version-mirrors,source-merge-tests,pytest,ste-staged
       all-files: ${{ github.event_name == 'push' }}
       timeout-minutes: ${{ github.event_name == 'push' && 60 || 15 }}
+
+  backward-python:
+    # The one backward-support leg (pipelines reference/gate-standard.md
+    # "Python version"): the environment is 3.14, requires-python keeps a 3.12
+    # floor, so install the lock on 3.12 and import the package.
+    name: backward-python (3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: '3.12'
+      - name: Qt runtime libraries for a headless import
+        run: sudo apt-get update -q && sudo apt-get install -y -q libegl1 libgl1 libxkbcommon0 libfontconfig1
+      - name: Install and import on the 3.12 floor
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          set -euo pipefail
+          uv sync --frozen --no-dev --python 3.12
+          uv run --frozen --no-sync python -c 'import sys, geniusbot; print(sys.version)'
