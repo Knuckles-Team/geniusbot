@@ -28,7 +28,7 @@
   <a href="https://knuckles-team.github.io/geniusbot/concepts/">Concepts</a>
 </p>
 
-*Version: 5.2.1*
+*Version: 5.2.2*
 
 ## Overview
 
@@ -193,7 +193,7 @@ pyinstaller --name geniusbot `
 ### Windows Setup Installer
 Generate a Windows MSI setup package:
 ```bash
-iscc "./setup.iss"
+iscc "./packaging/windows/setup.iss"
 ```
 
 ---

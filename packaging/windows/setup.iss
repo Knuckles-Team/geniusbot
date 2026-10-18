@@ -23,6 +23,7 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
+SourceDir=..\..
 DisableProgramGroupPage=yes
 LicenseFile=.\LICENSE
 ; Remove the following line to run in administrative install mode (install for all users.)
