@@ -170,3 +170,15 @@ trace.txt
 # CI-materialized shared Pages theme checkout (see pages_pipeline.yml); never tracked.
 .pipeline-theme/
 .pipeline-contract/
+
+# Shared repository hygiene requirements
+*maturin.lock
+.kiss/
+.kissconfig
+.ruff_cache/
+.specify/
+dist-*/
+node_modules/
+reports/
+scratch/
+target-*/

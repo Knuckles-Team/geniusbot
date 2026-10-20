@@ -32,7 +32,49 @@
     "GENIUSBOT-CLIENT-R019.3",
     "GENIUSBOT-CLIENT-R019.4",
     "GENIUSBOT-CLIENT-R019.5",
-    "GENIUSBOT-CLIENT-R019.6"
+    "GENIUSBOT-CLIENT-R019.6",
+    "GENIUSBOT-CLIENT-R020",
+    "GENIUSBOT-CLIENT-R020.1",
+    "GENIUSBOT-CLIENT-R020.2",
+    "GENIUSBOT-CLIENT-R020.3",
+    "GENIUSBOT-CLIENT-R020.4",
+    "GENIUSBOT-CLIENT-R020.5",
+    "GENIUSBOT-CLIENT-R020.6",
+    "GENIUSBOT-CLIENT-R020.7",
+    "GENIUSBOT-CLIENT-R020.8",
+    "GENIUSBOT-CLIENT-R020.9",
+    "GENIUSBOT-CLIENT-R020.10",
+    "GENIUSBOT-CLIENT-R020.11",
+    "GENIUSBOT-CLIENT-R020.12",
+    "GENIUSBOT-CLIENT-R020.13",
+    "GENIUSBOT-CLIENT-R020.14",
+    "GENIUSBOT-CLIENT-R020.15",
+    "GENIUSBOT-CLIENT-R020.16",
+    "GENIUSBOT-CLIENT-R020.17",
+    "GENIUSBOT-CLIENT-R020.18",
+    "GENIUSBOT-CLIENT-R020.19",
+    "GENIUSBOT-CLIENT-R020.20",
+    "GENIUSBOT-CLIENT-R020.21",
+    "GENIUSBOT-CLIENT-R020.22",
+    "GENIUSBOT-CLIENT-R020.23",
+    "GENIUSBOT-CLIENT-R020.24",
+    "GENIUSBOT-CLIENT-R020.25",
+    "GENIUSBOT-CLIENT-R020.26",
+    "GENIUSBOT-CLIENT-R020.27",
+    "GENIUSBOT-CLIENT-R020.28",
+    "GENIUSBOT-CLIENT-R020.29",
+    "GENIUSBOT-CLIENT-R020.30",
+    "GENIUSBOT-CLIENT-R020.31",
+    "GENIUSBOT-CLIENT-R020.32",
+    "GENIUSBOT-CLIENT-R020.33",
+    "GENIUSBOT-CLIENT-R020.34",
+    "GENIUSBOT-CLIENT-R020.35",
+    "GENIUSBOT-CLIENT-R020.36",
+    "GENIUSBOT-CLIENT-R020.37",
+    "GENIUSBOT-CLIENT-R020.38",
+    "GENIUSBOT-CLIENT-R020.39",
+    "GENIUSBOT-CLIENT-R020.40",
+    "GENIUSBOT-CLIENT-R020.41"
   ],
   "requirements": [
     {
@@ -304,6 +346,343 @@
     {
       "id": "GENIUSBOT-CLIENT-R019.6",
       "title": "Served surface proof",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020",
+      "title": "The client must satisfy each source-quality child obligation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": [],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R020.1",
+        "GENIUSBOT-CLIENT-R020.2",
+        "GENIUSBOT-CLIENT-R020.3",
+        "GENIUSBOT-CLIENT-R020.4",
+        "GENIUSBOT-CLIENT-R020.5",
+        "GENIUSBOT-CLIENT-R020.6",
+        "GENIUSBOT-CLIENT-R020.7",
+        "GENIUSBOT-CLIENT-R020.8",
+        "GENIUSBOT-CLIENT-R020.9",
+        "GENIUSBOT-CLIENT-R020.10",
+        "GENIUSBOT-CLIENT-R020.11",
+        "GENIUSBOT-CLIENT-R020.12",
+        "GENIUSBOT-CLIENT-R020.13",
+        "GENIUSBOT-CLIENT-R020.14",
+        "GENIUSBOT-CLIENT-R020.15",
+        "GENIUSBOT-CLIENT-R020.16",
+        "GENIUSBOT-CLIENT-R020.17",
+        "GENIUSBOT-CLIENT-R020.18",
+        "GENIUSBOT-CLIENT-R020.19",
+        "GENIUSBOT-CLIENT-R020.20",
+        "GENIUSBOT-CLIENT-R020.21",
+        "GENIUSBOT-CLIENT-R020.22",
+        "GENIUSBOT-CLIENT-R020.23",
+        "GENIUSBOT-CLIENT-R020.24",
+        "GENIUSBOT-CLIENT-R020.25",
+        "GENIUSBOT-CLIENT-R020.26",
+        "GENIUSBOT-CLIENT-R020.27",
+        "GENIUSBOT-CLIENT-R020.28",
+        "GENIUSBOT-CLIENT-R020.29",
+        "GENIUSBOT-CLIENT-R020.30",
+        "GENIUSBOT-CLIENT-R020.31",
+        "GENIUSBOT-CLIENT-R020.32",
+        "GENIUSBOT-CLIENT-R020.33",
+        "GENIUSBOT-CLIENT-R020.34",
+        "GENIUSBOT-CLIENT-R020.35",
+        "GENIUSBOT-CLIENT-R020.36",
+        "GENIUSBOT-CLIENT-R020.37",
+        "GENIUSBOT-CLIENT-R020.38",
+        "GENIUSBOT-CLIENT-R020.39",
+        "GENIUSBOT-CLIENT-R020.40",
+        "GENIUSBOT-CLIENT-R020.41"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.1",
+      "title": "The desktop test adapter dependency must satisfy the supported test matrix. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.2",
+      "title": "The desktop UI dependency must satisfy the supported platform matrix. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.3",
+      "title": "The desktop dependency contract must use the supported served-client boundary. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.4",
+      "title": "The Windows dependency marker must resolve on supported platforms. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.5",
+      "title": "The formatter dependency must satisfy the supported source-check configuration. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.6",
+      "title": "The main-window initialization must meet the shared function-size checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.7",
+      "title": "The desktop entry module must meet the shared complexity checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.8",
+      "title": "Desktop tests must cover positive, negative and failure behavior. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.9",
+      "title": "Documentation examples must match the tested desktop behavior. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.10",
+      "title": "The README must cover each supported desktop entry point. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.11",
+      "title": "The contributor guide must describe the desktop source structure. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.12",
+      "title": "Documentation file references must resolve to tracked targets. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.13",
+      "title": "Desktop modules must meet the shared module-size checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.14",
+      "title": "The desktop must separate presentation from its served client adapter. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.15",
+      "title": "The desktop must trace each declared concept to its owning implementation. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.16",
+      "title": "The desktop must resolve each orphaned concept reference. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.17",
+      "title": "Desktop tests must bind their owning contract identifiers. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.18",
+      "title": "Significant desktop functions must identify their owning contracts. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.19",
+      "title": "The desktop source must retain a clean configured lint result. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.20",
+      "title": "The desktop source must pass the configured type checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.21",
+      "title": "The repository must validate its pinned formatter hook version. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.22",
+      "title": "The changelog must follow its declared parseable format. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.23",
+      "title": "The changelog must describe each shipped desktop change. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.24",
+      "title": "The changelog validation environment must supply its required parser. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.25",
+      "title": "Desktop tests must parameterize repeated input cases with observable assertions. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.26",
+      "title": "The documentation must cover every supported desktop environment variable. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.27",
+      "title": "The documentation must explain terminal and bundled-runtime environment inputs. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.28",
+      "title": "The environment example must document desktop platform inputs without credentials. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.29",
+      "title": "The desktop analysis command must use supported served interfaces without importing removed graph internals. Touches `geniusbot/`, tests or the named repository documentation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.30",
+      "title": "The desktop must score at least 80 in test coverage. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.31",
+      "title": "The desktop must score at least 80 in architecture & design patterns. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.32",
+      "title": "The desktop must score at least 80 in concept traceability. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.33",
+      "title": "The desktop must score at least 80 in test execution. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.34",
+      "title": "The desktop must score at least 80 in changelog audit. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.35",
+      "title": "The desktop must score at least 80 in environment variables. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.36",
+      "title": "The desktop must score at least 80 in analyze_xdg_kg. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.37",
+      "title": "The desktop must achieve an overall source-quality grade of at least 3.0. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.38",
+      "title": "The desktop must achieve grade B or higher in all 17 source-quality domains. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.39",
+      "title": "The desktop must resolve all 29 actionable source findings. Touches the desktop source and quality checks",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.40",
+      "title": "Source-quality repairs must preserve the installed command path through `geniusbot/geniusbot.py:686`",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R020.41",
+      "title": "A served integration test must launch the installed command and observe client behavior after source-quality repairs. It must distinguish a denied request from an authenticated empty result",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []

@@ -50,3 +50,48 @@
 - [ ] **GENIUSBOT-CLIENT-R019.4:** Read-only current plan; implement the planned positive and negative served tests.
 - [ ] **GENIUSBOT-CLIENT-R019.5:** Distinct terminal reasons; implement the planned positive and negative served tests.
 - [ ] **GENIUSBOT-CLIENT-R019.6:** Served surface proof; implement the planned positive and negative served tests.
+
+## Source quality obligations
+
+- [ ] **GENIUSBOT-CLIENT-R020:** Complete each child with current source and acceptance evidence.
+- [ ] **GENIUSBOT-CLIENT-R020.1:** The desktop test adapter dependency must satisfy the supported test matrix. Source obligation: `T001`.
+- [ ] **GENIUSBOT-CLIENT-R020.2:** The desktop UI dependency must satisfy the supported platform matrix. Source obligation: `T002`.
+- [ ] **GENIUSBOT-CLIENT-R020.3:** The desktop dependency contract must use the supported served-client boundary. Source obligation: `T003`.
+- [ ] **GENIUSBOT-CLIENT-R020.4:** The Windows dependency marker must resolve on supported platforms. Source obligation: `T004`.
+- [ ] **GENIUSBOT-CLIENT-R020.5:** The formatter dependency must satisfy the supported source-check configuration. Source obligation: `T005`.
+- [ ] **GENIUSBOT-CLIENT-R020.6:** The main-window initialization must meet the shared function-size checks. Source obligation: `T006`.
+- [ ] **GENIUSBOT-CLIENT-R020.7:** The desktop entry module must meet the shared complexity checks. Source obligation: `T007`.
+- [ ] **GENIUSBOT-CLIENT-R020.8:** Desktop tests must cover positive, negative and failure behavior. Source obligation: `T008`.
+- [ ] **GENIUSBOT-CLIENT-R020.9:** Documentation examples must match the tested desktop behavior. Source obligation: `T009`.
+- [ ] **GENIUSBOT-CLIENT-R020.10:** The README must cover each supported desktop entry point. Source obligation: `T010`.
+- [ ] **GENIUSBOT-CLIENT-R020.11:** The contributor guide must describe the desktop source structure. Source obligation: `T011`.
+- [ ] **GENIUSBOT-CLIENT-R020.12:** Documentation file references must resolve to tracked targets. Source obligation: `T012`.
+- [ ] **GENIUSBOT-CLIENT-R020.13:** Desktop modules must meet the shared module-size checks. Source obligation: `T013`.
+- [ ] **GENIUSBOT-CLIENT-R020.14:** The desktop must separate presentation from its served client adapter. Source obligation: `T014`.
+- [ ] **GENIUSBOT-CLIENT-R020.15:** The desktop must trace each declared concept to its owning implementation. Source obligation: `T015`.
+- [ ] **GENIUSBOT-CLIENT-R020.16:** The desktop must resolve each orphaned concept reference. Source obligation: `T016`.
+- [ ] **GENIUSBOT-CLIENT-R020.17:** Desktop tests must bind their owning contract identifiers. Source obligation: `T017`.
+- [ ] **GENIUSBOT-CLIENT-R020.18:** Significant desktop functions must identify their owning contracts. Source obligation: `T018`.
+- [ ] **GENIUSBOT-CLIENT-R020.19:** The desktop source must retain a clean configured lint result. Source obligation: `T019`.
+- [ ] **GENIUSBOT-CLIENT-R020.20:** The desktop source must pass the configured type checks. Source obligation: `T020`.
+- [ ] **GENIUSBOT-CLIENT-R020.21:** The repository must validate its pinned formatter hook version. Source obligation: `T021`.
+- [ ] **GENIUSBOT-CLIENT-R020.22:** The changelog must follow its declared parseable format. Source obligation: `T022`.
+- [ ] **GENIUSBOT-CLIENT-R020.23:** The changelog must describe each shipped desktop change. Source obligation: `T023`.
+- [ ] **GENIUSBOT-CLIENT-R020.24:** The changelog validation environment must supply its required parser. Source obligation: `T024`.
+- [ ] **GENIUSBOT-CLIENT-R020.25:** Desktop tests must parameterize repeated input cases with observable assertions. Source obligation: `T025`.
+- [ ] **GENIUSBOT-CLIENT-R020.26:** The documentation must cover every supported desktop environment variable. Source obligation: `T026`.
+- [ ] **GENIUSBOT-CLIENT-R020.27:** The documentation must explain terminal and bundled-runtime environment inputs. Source obligation: `T027`.
+- [ ] **GENIUSBOT-CLIENT-R020.28:** The environment example must document desktop platform inputs without credentials. Source obligation: `T028`.
+- [ ] **GENIUSBOT-CLIENT-R020.29:** The desktop analysis command must use supported served interfaces without importing removed graph internals. Source obligation: `T029`.
+- [ ] **GENIUSBOT-CLIENT-R020.30:** The desktop must score at least 80 in test coverage. Source obligation: `User story 1`.
+- [ ] **GENIUSBOT-CLIENT-R020.31:** The desktop must score at least 80 in architecture & design patterns. Source obligation: `User story 2`.
+- [ ] **GENIUSBOT-CLIENT-R020.32:** The desktop must score at least 80 in concept traceability. Source obligation: `User story 3`.
+- [ ] **GENIUSBOT-CLIENT-R020.33:** The desktop must score at least 80 in test execution. Source obligation: `User story 4`.
+- [ ] **GENIUSBOT-CLIENT-R020.34:** The desktop must score at least 80 in changelog audit. Source obligation: `User story 5`.
+- [ ] **GENIUSBOT-CLIENT-R020.35:** The desktop must score at least 80 in environment variables. Source obligation: `User story 6`.
+- [ ] **GENIUSBOT-CLIENT-R020.36:** The desktop must score at least 80 in analyze_xdg_kg. Source obligation: `User story 7`.
+- [ ] **GENIUSBOT-CLIENT-R020.37:** The desktop must achieve an overall source-quality grade of at least 3.0. Source obligation: `Overall GPA`.
+- [ ] **GENIUSBOT-CLIENT-R020.38:** The desktop must achieve grade B or higher in all 17 source-quality domains. Source obligation: `Domains at B or above`.
+- [ ] **GENIUSBOT-CLIENT-R020.39:** The desktop must resolve all 29 actionable source findings. Source obligation: `Actionable findings`.
+- [ ] **GENIUSBOT-CLIENT-R020.40:** Source-quality repairs must preserve the installed command path through `geniusbot/geniusbot.py:686`.
+- [ ] **GENIUSBOT-CLIENT-R020.41:** A served integration test must launch the installed command and observe client behavior after source-quality repairs. It must distinguish a denied request from an authenticated empty result.

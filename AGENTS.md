@@ -289,9 +289,9 @@ class AgentWorker(QRunnable):
 
 ## ⛔ Keep the Repository Root Pristine
 
-The repository root must contain only canonical project files. The only hidden
-directories allowed at root are `.git/`, `.github/`, `.specify/` (plus a local,
-git-ignored `.venv/`). NEVER write scratch/debug/migration files to the repo —
+The repository root must contain only canonical project files. Tracked root entries and their purposes are declared in `.config/repo-layout.toml`.
+Only `.specify/memory/constitution.md` may remain tracked under `.specify/`.
+Canonical specifications live in `specs/`; historical source records live in `plans/`. NEVER write scratch/debug/migration files to the repo —
 especially the root: no `fix_*.py`/`migrate_*.py`/`refactor_*.py`/root `test_*.py`,
 no `*.db`/`*.log`/scratch `*.txt`/`*.orig`/`*.rej`/`*.bak`, no build artifacts
 (`*.tsbuildinfo`), and no SI scratch dirs (`.agent/`, `.agents/`, `.agent_data/`,
