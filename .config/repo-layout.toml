@@ -1,0 +1,34 @@
+# Every tracked root entry has an explicit purpose.
+
+[dirs]
+".config" = "Shared gate declarations and documentation theme overrides."
+".github" = "GitHub Actions workflows and dashboard source configuration."
+".security" = "Security scanning configuration and reviewed policy inputs."
+"docs" = "Published documentation content."
+"geniusbot" = "Desktop application source."
+"packaging" = "Platform installer and desktop packaging inputs."
+"plans" = "Historical source evidence and complete spec migration path map."
+"screenshots" = "Images used by the public desktop documentation."
+"scripts" = "Repository validation and maintenance commands."
+"specs" = "Canonical requirements, plans, tasks, test contracts and generated status."
+"tests" = "Automated regression and acceptance tests."
+
+[files]
+"AGENTS.md" = "Repository contributor instructions."
+"CHANGELOG.md" = "Release history."
+"CLAUDE.md" = "Claude instruction entry point."
+"LICENSE" = "License terms for this repository."
+"README.md" = "Public installation and project entry point."
+"mkdocs.yml" = "Published documentation navigation and build configuration."
+"pyproject.toml" = "Python package metadata and tool configuration."
+"requirements.txt" = "Exported Python installation requirements."
+"uv.lock" = "Locked Python dependency graph."
+
+[dotfiles]
+".bumpversion.cfg" = "Version mirror configuration."
+".env.example" = "Credential-free example of supported environment settings."
+".gitattributes" = "Git file attributes."
+".gitignore" = "Repository exclusion patterns."
+".mergequeue.yaml" = "Merge queue configuration."
+".pre-commit-config.yaml" = "Blocking pre-commit and push checks."
+".python-version" = "Python interpreter selection."

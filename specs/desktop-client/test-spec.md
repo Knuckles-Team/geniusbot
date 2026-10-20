@@ -71,3 +71,50 @@ A mocked widget value alone must not count as served evidence.
 | GENIUSBOT-CLIENT-R019.4 | `tests/test_run_view.py::test_plan_read_only` | A fresh matching snapshot must preserve item order, revision and AU statuses. | Expired, wrong-run, regressing or unavailable snapshots must reveal no items or edit controls. |
 | GENIUSBOT-CLIENT-R019.5 | `tests/test_run_view.py::test_termination_reasons_distinct` | Each of final_answer, context_overflow, stuck, step_budget and error must have its own label. | Unknown or missing reasons must show unavailable; overflow and stuck must not collapse to generic failure. |
 | GENIUSBOT-CLIENT-R019.6 | `tests/test_run_view.py::test_run_surface_end_to_end` | A served fixture must render summary, configuration, context, cost and an available plan. | Denied reads after success must clear prior protected values; the UI must stay responsive without fabricated data. |
+
+## Source quality acceptance
+
+| ID | Acceptance evidence |
+|---|---|
+| `GENIUSBOT-CLIENT-R020` | All child tests must pass through their owning production or tooling entry points. |
+| `GENIUSBOT-CLIENT-R020.1` | Planned `tests/test_source_quality.py::test_source_quality_1` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.2` | Planned `tests/test_source_quality.py::test_source_quality_2` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.3` | Planned `tests/test_source_quality.py::test_source_quality_3` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.4` | Planned `tests/test_source_quality.py::test_source_quality_4` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.5` | Planned `tests/test_source_quality.py::test_source_quality_5` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.6` | Planned `tests/test_source_quality.py::test_source_quality_6` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.7` | Planned `tests/test_source_quality.py::test_source_quality_7` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.8` | Planned `tests/test_source_quality.py::test_source_quality_8` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.9` | Planned `tests/test_source_quality.py::test_source_quality_9` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.10` | Planned `tests/test_source_quality.py::test_source_quality_10` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.11` | Planned `tests/test_source_quality.py::test_source_quality_11` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.12` | Planned `tests/test_source_quality.py::test_source_quality_12` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.13` | Planned `tests/test_source_quality.py::test_source_quality_13` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.14` | Planned `tests/test_source_quality.py::test_source_quality_14` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.15` | Planned `tests/test_source_quality.py::test_source_quality_15` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.16` | Planned `tests/test_source_quality.py::test_source_quality_16` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.17` | Planned `tests/test_source_quality.py::test_source_quality_17` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.18` | Planned `tests/test_source_quality.py::test_source_quality_18` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.19` | Planned `tests/test_source_quality.py::test_source_quality_19` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.20` | Planned `tests/test_source_quality.py::test_source_quality_20` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.21` | Planned `tests/test_source_quality.py::test_source_quality_21` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.22` | Planned `tests/test_source_quality.py::test_source_quality_22` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.23` | Planned `tests/test_source_quality.py::test_source_quality_23` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.24` | Planned `tests/test_source_quality.py::test_source_quality_24` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.25` | Planned `tests/test_source_quality.py::test_source_quality_25` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.26` | Planned `tests/test_source_quality.py::test_source_quality_26` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.27` | Planned `tests/test_source_quality.py::test_source_quality_27` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.28` | Planned `tests/test_source_quality.py::test_source_quality_28` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.29` | Planned `tests/test_source_quality.py::test_source_quality_29` must enter the owning path and prove the requirement. |
+| `GENIUSBOT-CLIENT-R020.30` | Planned `tests/test_source_quality.py::test_source_quality_30` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.31` | Planned `tests/test_source_quality.py::test_source_quality_31` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.32` | Planned `tests/test_source_quality.py::test_source_quality_32` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.33` | Planned `tests/test_source_quality.py::test_source_quality_33` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.34` | Planned `tests/test_source_quality.py::test_source_quality_34` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.35` | Planned `tests/test_source_quality.py::test_source_quality_35` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.36` | Planned `tests/test_source_quality.py::test_source_quality_36` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.37` | Planned `tests/test_source_quality.py::test_source_quality_37` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.38` | Planned `tests/test_source_quality.py::test_source_quality_38` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.39` | Planned `tests/test_source_quality.py::test_source_quality_39` must measure this criterion through the quality-check entry point. |
+| `GENIUSBOT-CLIENT-R020.40` | Planned `tests/test_source_quality.py::test_source_quality_entry_wiring` must enter the installed command against an authorized served fixture. |
+| `GENIUSBOT-CLIENT-R020.41` | Planned `tests/test_source_quality.py::test_source_quality_served_entry` must enter the installed command against an authorized served fixture. |

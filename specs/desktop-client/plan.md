@@ -172,3 +172,21 @@ Each row requires its own positive and negative served case through the producti
 ## Amendments
 
 - 2026-10-11, rows R013 to R018: the operator required geniusbot to share the exact structure of agent-webui. Old statement: the spec ended at R012. New statement: R013 to R018 close the structural gaps above. Evidence: the gap table in this file.
+
+## Source quality contract
+
+GENIUSBOT-CLIENT-R020 preserves unresolved source-quality obligations in this owning specification.
+Each child retains its source mapping in [source history](../../plans/spec-source-history/README.md).
+The byte-preserved records include original unchecked items and historical completion claims.
+Those claims supply no current acceptance evidence.
+Each repair must name its production or tooling call path before implementation.
+Each repair must bind a positive test and a counterexample to its child identifier.
+The migration introduces no runtime behavior and closes no child obligation.
+The [shared spec standard](https://github.com/Knuckles-Team/pipelines/blob/main/reference/spec-standard.md) governs future changes.
+
+### Source-quality wiring and served proof
+
+The desktop command enters `main`, then `geniusbot` at `geniusbot/geniusbot.py:678`. That function creates `GeniusBot`, displays its window and starts the application event loop.
+Quality repairs attach at the files each child names; they must preserve this production entry path.
+The final two child rows require wiring inspection and a served integration proof.
+Tooling-only children use their configured check entry points and must reject a failing fixture.
