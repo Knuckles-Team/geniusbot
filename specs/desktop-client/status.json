@@ -102,10 +102,17 @@
       "title": "Served backend-adapter seam (rollup)",
       "delivery_state": "VERIFIED",
       "landed_in": [
+        "4f6023e12d45",
         "891efd8a0733",
         "f979d1e342d9"
       ],
-      "verified_by": [],
+      "verified_by": [
+        "tests/test_backend_adapter_seam.py:33",
+        "tests/test_service_dashboard_async.py:16",
+        "tests/test_service_dashboard_async.py:48",
+        "tests/test_service_dashboard_async.py:95",
+        "tests/test_service_dashboard_transport.py:104"
+      ],
       "rollup_of": [
         "GENIUSBOT-CLIENT-R001.1",
         "GENIUSBOT-CLIENT-R001.2",
@@ -374,9 +381,14 @@
       "title": "Documentation and shared guardrails (rollup)",
       "delivery_state": "VERIFIED",
       "landed_in": [
-        "34e20c635c6d"
+        "34e20c635c6d",
+        "50f2a33dab77",
+        "faadc48753ef"
       ],
-      "verified_by": [],
+      "verified_by": [
+        "tests/test_precommit_hooks.py:12",
+        "tests/test_precommit_hooks.py:22"
+      ],
       "rollup_of": [
         "GENIUSBOT-CLIENT-R016.1",
         "GENIUSBOT-CLIENT-R016.2"
@@ -387,6 +399,7 @@
       "title": "Canonical shared guardrails",
       "delivery_state": "VERIFIED",
       "landed_in": [
+        "50f2a33dab77",
         "faadc48753ef"
       ],
       "verified_by": [
