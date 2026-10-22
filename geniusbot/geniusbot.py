@@ -4,8 +4,10 @@ import logging
 import os
 import sys
 import warnings
+import weakref
 
 from PySide6.QtCore import QObject, Qt, QTimer, Signal, Slot
+from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import (
     QApplication,
     QCompleter,
@@ -66,28 +68,49 @@ class OutputWrapper(QObject):
     def __init__(self, parent, stdout=True):
         super().__init__(parent)
         self._stdout = stdout
+        self._active = True
+        self._emitting = False
+        self._stream = sys.stdout if stdout else sys.stderr
+        original = self._stream
+        reference = weakref.ref(self)
+
+        def restore():
+            wrapper = reference()
+            if wrapper is not None:
+                wrapper._active = False
+            current = sys.stdout if stdout else sys.stderr
+            if current is wrapper:
+                target = original
+                while isinstance(target, OutputWrapper) and not target._active:
+                    target = target._stream
+                if stdout:
+                    sys.stdout = target
+                else:
+                    sys.stderr = target
+
+        self.restore = restore
+        self.destroyed.connect(lambda *_: restore())
         if stdout:
-            self._stream = sys.stdout
             sys.stdout = self
         else:
-            self._stream = sys.stderr
             sys.stderr = self
 
     def write(self, text):
         self._stream.write(text)
-        self.outputWritten.emit(text, self._stdout)
+        if self._active and not self._emitting:
+            self._emitting = True
+            try:
+                self.outputWritten.emit(text, self._stdout)
+            finally:
+                self._emitting = False
 
     def __getattr__(self, name):
         return getattr(self._stream, name)
 
     def __del__(self):
-        try:
-            if self._stdout:
-                sys.stdout = self._stream
-            else:
-                sys.stderr = self._stream
-        except AttributeError:
-            pass
+        restore = self.__dict__.get("restore")
+        if restore is not None:
+            restore()
 
 
 class GeniusBot(QMainWindow):
@@ -656,7 +679,7 @@ class GeniusBot(QMainWindow):
 
     @Slot(str, bool)
     def log_to_console(self, text, is_stdout=True):
-        self.console.moveCursor(self.console.textCursor().End)
+        self.console.moveCursor(QTextCursor.MoveOperation.End)
         self.console.insertPlainText(text)
 
     def closeEvent(self, event):
@@ -672,6 +695,12 @@ class GeniusBot(QMainWindow):
             event.ignore()
         else:
             self.daemon.stop()
+            self.stdout_wrapper.restore()
+            self.stderr_wrapper.restore()
+            for panel in self.findChildren(QWidget):
+                cleanup = getattr(panel, "cleanup", None)
+                if callable(cleanup):
+                    cleanup()
             event.accept()
 
 

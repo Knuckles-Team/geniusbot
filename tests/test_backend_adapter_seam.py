@@ -30,7 +30,7 @@ def _offending_files():
     return offenders
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001")
+@pytest.mark.spec("GENIUSBOT-CLIENT-R001.1")
 def test_no_module_imports_agent_utilities():
     offenders = _offending_files()
     assert not offenders, (

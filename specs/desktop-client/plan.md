@@ -5,12 +5,10 @@
 At the current public main revision, `geniusbot/geniusbot.py` owns the `QMainWindow`
 cockpit shell: a flat sidebar, a central stacked widget of lazily loaded views, a
 right-hand telemetry drawer, and a bottom console. `geniusbot/services/gateway_client.py`
-owns the one HTTP/SDK transport to the Arbora gateway (a thin facade over the shared
-`arbora.client.GatewayClient` SDK plus a small set of direct
-`/api/graph/*` and `/api/enhanced/*` POSTs). `geniusbot/services/backend_adapter.py` is the
-single sanctioned seam for anything that still needs to reach the underlying engine
-package directly (log-directory resolution, the workspace graph runner, the gateway
-`ConfigManager`/`Aggregator`); every other module is barred from importing it. The
+owns HTTP transport to Arbora. It uses GatewayRoutes and bounded direct requests for graph, enhanced and dashboard endpoints.
+The presentation adapter is `geniusbot/services/backend_adapter.py`. It handles graph queries, workflows, log paths and service snapshots. Dashboard layout and data must come from the existing served
+`/api/dashboard/layout` and `/api/dashboard/data` endpoints through the same
+GatewayClient transport implementation, not Arbora server imports. The
 `geniusbot/qt/*` panels are presentation consumers built on this facade and worker;
 `geniusbot/utils/agent_bridge.py` (`AgentBridgeWorker`/`AgentRunnable`/`QThreadPool`) is the
 one dispatch path off the Qt UI thread; `geniusbot/utils/daemon.py` owns the system tray.
@@ -190,3 +188,32 @@ The desktop command enters `main`, then `geniusbot` at `geniusbot/geniusbot.py:6
 Quality repairs attach at the files each child names; they must preserve this production entry path.
 The final two child rows require wiring inspection and a served integration proof.
 Tooling-only children use their configured check entry points and must reject a failing fixture.
+
+### Amendment 2026-10-22: shared checker ownership
+
+R016.2 retains all six required checks previously invoked through removed agent-utilities scripts. The immutable pipelines pin owns no-legacy-concepts, stubs, sprawl, coupling and lockfile-version-mirrors; the repository-manager pin owns lane-guard. Coupling scans the actual geniusbot package and forbids engine and sibling UI imports, allowing only arbora.client. No adapter exemption applies. Lockfile version mirrors retains its dependency-file trigger and checks both uv.lock and requirements.txt; uv-lock-check is not a substitute.
+
+
+### Amendment 2026-10-22: served dashboard client seam
+
+R001 forbids server-internal imports even inside BackendAdapter. R004 requires dashboard layout and data reads off the UI thread. A dashboard refresh uses a task-scoped GatewayClient through BackendAdapter. Its HTTP pools open and close on the worker event loop. It preserves endpoint validation, TLS, the proxy environment, bounded reads and redirect refusal. No server endpoint, schema or storage changes are needed. A denied, malformed or unavailable response clears old dashboard values rather than presenting an empty successful dashboard. Cleanup cancels the pending async request without stopping a Qt thread or blocking the UI. Late replies do not repopulate a closed panel.
+
+
+### Amendment 2026-10-22: Qt resource lifetime
+
+R004.2 retains queued worker signals until the UI receives completion or failure. R010.2 restores standard streams on actual window close and QObject destruction, but not on tray minimization. A later window or stderr write must not access a destroyed Qt object. Tests wait for signals with a timed event-loop wait, not a fixed busy-loop count. Regression tests close their windows and stop their resources; exception capture remains active.
+
+
+### Amendment 2026-10-22: bounded dashboard shutdown
+
+R001.3 uses a QRunnable on QThreadPool, with a retained QObject for signals. Normal panel close only requests cancellation. Async cleanup gets 0.5 seconds before repeated cancellation. A 0.1-second loop deadline bounds a stalled coroutine. Application quit waits at most one second for completion. No Qt or operating-system thread is forcibly stopped. A cleanup deadline emits a warning; it is not a successful data response. Separate processes test delayed and stalled cleanup without hiding Qt exceptions.
+
+The shutdown guarantee covers cooperative async cancellation, not synchronous blocking. The stalled fixture accepts the second cancellation; it does not exercise the final loop-stop fallback. Cleanup after the deadline is not guaranteed.
+
+### Canonical ledger generator refresh
+
+The spec-status hook uses pipelines revision a2dd609d494364daf26fdb3b18abbffa10095993.
+It includes the canonical rollup evidence ordering repair.
+The other hooks keep their independently tested revision.
+That preserves the guards and configuration schema absent from the newer revision.
+The configuration regression checks both pins; no gate is removed or skipped.

@@ -3,18 +3,22 @@
 
 Displays all configured Agent-OS services as interactive cards with
 real-time status, key metrics, and clickable links. Uses the
-arbora.gateway backend for configuration and data fetching.
+served Arbora dashboard endpoints for configuration and data fetching.
 
 Concept: AU-019 (GUI Dashboard Panel)
 """
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import threading
 from typing import Any
 
-from PySide6.QtCore import Qt, QThread, QTimer, Signal
+from PySide6.QtCore import QObject, QRunnable, Qt, QThreadPool, QTimer, Signal
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
+    QApplication,
     QFrame,
     QGridLayout,
     QHBoxLayout,
@@ -57,26 +61,91 @@ _STATUS_ICONS = {
 # ── Background Worker Thread ────────────────────────────────────────
 
 
-class _FetchWorker(QThread):
+class _FetchRunnable(QRunnable):
+    def __init__(self, worker):
+        super().__init__()
+        self.worker = worker
+
+    def run(self):
+        self.worker.run()
+
+
+class _FetchWorker(QObject):
     """Background thread that fetches all widget data."""
 
     data_ready = Signal(dict)
     error = Signal(str)
+    finished = Signal()
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self._aggregator = None
+    def __init__(self):
+        # The runnable retains this bridge until bounded async cleanup finishes.
+        super().__init__()
+        self._done = threading.Event()
+        self._shutting_down = threading.Event()
+        self._cancelled = threading.Event()
+        self._lock = threading.Lock()
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._task: asyncio.Task[dict] | None = None
+        self.finished.connect(self.deleteLater)
+        app = QApplication.instance()
+        if app is not None:
+            app.aboutToQuit.connect(self.shutdown)
+
+    def start(self):
+        QThreadPool.globalInstance().start(_FetchRunnable(self))
+
+    def shutdown(self):
+        """Drain cooperative cleanup at process exit without an unbounded wait."""
+        self._shutting_down.set()
+        self.cancel()
+        self._done.wait(timeout=1.0)
+
+    def cancel(self):
+        with self._lock:
+            if self._cancelled.is_set():
+                return
+            self._cancelled.set()
+            if self._loop is not None and self._task is not None:
+                self._loop.call_soon_threadsafe(self._cancel_task)
+
+    def _cancel_task(self):
+        if self._task is not None and self._loop is not None:
+            self._task.cancel()
+            self._loop.call_later(0.5, self._expire_cleanup)
+
+    def _expire_cleanup(self):
+        if self._task is not None and not self._task.done() and self._loop is not None:
+            logger.warning("Dashboard cancellation exceeded cleanup deadline")
+            self._task.cancel()
+            # Stop only this coroutine loop, never a Qt or operating-system thread.
+            self._loop.call_later(0.1, self._loop.stop)
 
     def run(self):
-        try:
-            from geniusbot.services.backend_adapter import backend
+        from geniusbot.services.backend_adapter import backend
 
-            result = backend.fetch_service_widget_data()
-            self.data_ready.emit(result)
-        except ImportError:
-            self.error.emit("arbora gateway module not available.")
-        except Exception as e:
-            self.error.emit(type(e).__name__)
+        loop = asyncio.new_event_loop()
+        try:
+            with self._lock:
+                self._loop = loop
+                self._task = loop.create_task(backend.service_dashboard_snapshot())
+                if self._cancelled.is_set():
+                    self._task.cancel()
+            result = loop.run_until_complete(self._task)
+            if not self._cancelled.is_set():
+                self.data_ready.emit(result)
+        except asyncio.CancelledError:
+            return
+        except Exception as exc:
+            if not self._cancelled.is_set():
+                self.error.emit(type(exc).__name__)
+        finally:
+            with self._lock:
+                self._loop = None
+                self._task = None
+            loop.close()
+            self._done.set()
+            if not self._shutting_down.is_set():
+                self.finished.emit()
 
 
 # ── ServiceCard QFrame ──────────────────────────────────────────────
@@ -212,10 +281,8 @@ class CategoryHeader(QLabel):
 class ServiceDashboardPanel(QWidget):
     """Homepage-style service dashboard with grouped service cards.
 
-    Integrates with arbora.gateway for:
-    - XDG-compliant config discovery (services.yaml / MCP auto-detect)
-    - Aggregator for concurrent widget data fetching
-    - Unified data models (WidgetData, ServiceConfig, DashboardLayout)
+    Reads layout and widget values through BackendAdapter's gateway transport.
+    No configuration or widget aggregation runs in the desktop process.
     """
 
     def __init__(self, worker: Any = None, parent: QWidget | None = None) -> None:
@@ -224,10 +291,14 @@ class ServiceDashboardPanel(QWidget):
         self._cards: dict[str, ServiceCard] = {}
         self._fetch_worker: _FetchWorker | None = None
         self._refresh_timer: QTimer | None = None
+        self._closed = False
 
         self._init_ui()
-        self._populate_dashboard()
+        self._refresh_data()
         self._start_auto_refresh()
+        app = QApplication.instance()
+        if app is not None:
+            app.aboutToQuit.connect(self.cleanup)
 
     def _init_ui(self) -> None:
         """Build the panel layout."""
@@ -270,35 +341,19 @@ class ServiceDashboardPanel(QWidget):
         scroll.setWidget(self.grid_container)
         layout.addWidget(scroll)
 
-    def _populate_dashboard(self) -> None:
-        """Load layout via the backend seam and create cards."""
-        try:
-            from geniusbot.services.backend_adapter import backend
+    def _clear_dashboard(self) -> None:
+        self._cards.clear()
+        while self.grid_layout.count():
+            item = self.grid_layout.takeAt(0)
+            widget = item.widget() if item is not None else None
+            if widget is not None:
+                widget.deleteLater()
 
-            layout = backend.load_service_layout()
-        except ImportError:
-            empty = QLabel(
-                "⚠ arbora gateway not available.\nInstall arbora with: pip install arbora"
-            )
-            empty.setStyleSheet(
-                f"color: {TEXT_MUTED}; font-size: 14px; font-style: italic; padding: 40px;"
-            )
-            empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.grid_layout.addWidget(empty)
-            return
-        except Exception as e:
-            logger.error(
-                "Failed to load dashboard config: error_type=%s", type(e).__name__
-            )
-            error_label = QLabel("⚠ Failed to load config")
-            error_label.setStyleSheet("color: #FF5252; font-size: 14px;")
-            self.grid_layout.addWidget(error_label)
-            return
-
-        if not layout.groups:
-            empty = QLabel(
-                "No services configured.\nAdd services to $XDG_CONFIG_HOME/agent-os/services.yaml"
-            )
+    def _populate_dashboard(self, layout: dict) -> None:
+        """Render an already received layout on the UI thread."""
+        self._clear_dashboard()
+        if not layout["groups"]:
+            empty = QLabel("No services configured on the gateway.")
             empty.setStyleSheet(
                 f"color: {TEXT_MUTED}; font-size: 14px; font-style: italic; padding: 40px;"
             )
@@ -306,9 +361,9 @@ class ServiceDashboardPanel(QWidget):
             self.grid_layout.addWidget(empty)
             return
 
-        for group in layout.groups:
+        for group in layout["groups"]:
             # Category header
-            self.grid_layout.addWidget(CategoryHeader(group.name))
+            self.grid_layout.addWidget(CategoryHeader(group["name"]))
 
             # Card grid (3 columns)
             grid = QGridLayout()
@@ -316,15 +371,15 @@ class ServiceDashboardPanel(QWidget):
 
             col = 0
             row = 0
-            for svc in group.services:
-                if not svc.visible:
+            for svc in group["services"]:
+                if not svc.get("visible", True):
                     continue
                 card = ServiceCard(
-                    service_id=svc.id,
-                    display_name=svc.name,
-                    url=svc.url or "",
+                    service_id=svc["id"],
+                    display_name=svc["name"],
+                    url=svc.get("url", ""),
                 )
-                self._cards[svc.id] = card
+                self._cards[svc["id"]] = card
                 grid.addWidget(card, row, col)
                 col += 1
                 if col >= 3:
@@ -342,18 +397,25 @@ class ServiceDashboardPanel(QWidget):
         total = len(self._cards)
         self.stats_label.setText(f"{total} services  |  Loading data...")
 
-        # Initial data fetch
-        self._refresh_data()
-
     def _refresh_data(self) -> None:
         """Kick off a background data fetch."""
-        if self._fetch_worker and self._fetch_worker.isRunning():
+        if self._closed or self._fetch_worker is not None:
             return
 
-        self._fetch_worker = _FetchWorker(self)
-        self._fetch_worker.data_ready.connect(self._on_data_ready)
+        self._fetch_worker = _FetchWorker()
+        self._fetch_worker.data_ready.connect(self._on_snapshot_ready)
+        self._fetch_worker.finished.connect(self._on_fetch_finished)
         self._fetch_worker.error.connect(self._on_fetch_error)
         self._fetch_worker.start()
+
+    def _on_fetch_finished(self) -> None:
+        self._fetch_worker = None
+
+    def _on_snapshot_ready(self, snapshot: dict) -> None:
+        if self._closed:
+            return
+        self._populate_dashboard(snapshot["layout"])
+        self._on_data_ready(snapshot["data"])
 
     def _on_data_ready(self, data: dict) -> None:
         """Update cards with fetched data."""
@@ -383,6 +445,9 @@ class ServiceDashboardPanel(QWidget):
 
     def _on_fetch_error(self, error_msg: str) -> None:
         """Handle fetch error."""
+        if self._closed:
+            return
+        self._clear_dashboard()
         logger.error("Dashboard fetch failed")
         self.stats_label.setText("⚠ Fetch error")
 
@@ -392,9 +457,14 @@ class ServiceDashboardPanel(QWidget):
         self._refresh_timer.timeout.connect(self._refresh_data)
         self._refresh_timer.start(30_000)
 
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.cleanup()
+        super().closeEvent(event)
+
     def cleanup(self) -> None:
         """Stop timers and threads on cleanup."""
+        self._closed = True
         if self._refresh_timer:
             self._refresh_timer.stop()
-        if self._fetch_worker and self._fetch_worker.isRunning():
-            self._fetch_worker.terminate()
+        if self._fetch_worker is not None:
+            self._fetch_worker.cancel()

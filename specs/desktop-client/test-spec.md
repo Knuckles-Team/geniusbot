@@ -46,9 +46,8 @@
   gateway-client security suite (`tests/security/test_gateway_client_security.py`) as part
   of the same gate; a source test pass alone does not serve acceptance without the packaging
   and live-gateway receipts below.
-- Build and run the packaged artifacts (PyInstaller onefile, Windows installer, Linux
-  desktop entry) from a tagged revision and confirm the entry point launches the cockpit
-  window against a reachable and an unreachable Arbora gateway.
+- Build and run packaged artifacts from a tagged revision: PyInstaller onefile, Windows installer and Linux desktop entry.
+  Confirm that the entry point opens the cockpit with a reachable and an unreachable Arbora gateway.
 - Record configured CCCC, `jscpd`, and Dupehound ecosystem checks if present in this
   repository's tracked configuration; where absent, record that as an acceptance gap
   rather than an unconfigured pass.
@@ -118,3 +117,15 @@ A mocked widget value alone must not count as served evidence.
 | `GENIUSBOT-CLIENT-R020.39` | Planned `tests/test_source_quality.py::test_source_quality_39` must measure this criterion through the quality-check entry point. |
 | `GENIUSBOT-CLIENT-R020.40` | Planned `tests/test_source_quality.py::test_source_quality_entry_wiring` must enter the installed command against an authorized served fixture. |
 | `GENIUSBOT-CLIENT-R020.41` | Planned `tests/test_source_quality.py::test_source_quality_served_entry` must enter the installed command against an authorized served fixture. |
+
+## Served dashboard acceptance
+
+R001.1 retains the original adapter-seam obligation and source scan. R001.2 binds tests/test_service_dashboard_transport.py: exact public routes, headers, widget projection, redirects, status errors, malformed payloads and transport closure on cancellation. R001.3 binds tests/test_service_dashboard_async.py. It checks worker-thread dispatch, single concurrent refresh, refusal clearing, successful retry and cleanup/late-result safety. R016.2 also binds test_canonical_shared_guardrails_preserve_client_boundary. These are controlled fixtures, not a live-server or release receipt.
+
+## Qt lifetime acceptance
+
+R004.2 binds both test_agent_bridge_worker.py tests. R010.2 binds test_output_wrapper_lifecycle.py. They cover queued signal lifetime and stream ownership, not all dispatch or tray behavior. R004.1 and R010.1 retain their original obligations.
+
+R016.1 binds the existing docs-hook regression. R016.2 binds the shared-guardrail regression and requires actual full pre-commit execution.
+
+R001.3 also launches isolated Qt processes that quit during delayed and stalled fetch cleanup. Both must finish the worker and exit without a running-thread abort. The delayed case must finish its finalizer.

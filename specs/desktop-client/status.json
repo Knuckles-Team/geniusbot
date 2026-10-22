@@ -4,18 +4,25 @@
   "owner_repo": "geniusbot",
   "delivery_state": "SPECIFIED",
   "requirement_ids": [
+    "GENIUSBOT-CLIENT-R001.1",
     "GENIUSBOT-CLIENT-R001",
+    "GENIUSBOT-CLIENT-R001.2",
+    "GENIUSBOT-CLIENT-R001.3",
     "GENIUSBOT-CLIENT-R002.1",
     "GENIUSBOT-CLIENT-R002.2",
     "GENIUSBOT-CLIENT-R002",
     "GENIUSBOT-CLIENT-R003",
+    "GENIUSBOT-CLIENT-R004.1",
     "GENIUSBOT-CLIENT-R004",
+    "GENIUSBOT-CLIENT-R004.2",
     "GENIUSBOT-CLIENT-R005",
     "GENIUSBOT-CLIENT-R006",
     "GENIUSBOT-CLIENT-R007",
     "GENIUSBOT-CLIENT-R008",
     "GENIUSBOT-CLIENT-R009",
+    "GENIUSBOT-CLIENT-R010.1",
     "GENIUSBOT-CLIENT-R010",
+    "GENIUSBOT-CLIENT-R010.2",
     "GENIUSBOT-CLIENT-R011",
     "GENIUSBOT-CLIENT-R012.1",
     "GENIUSBOT-CLIENT-R012.2",
@@ -23,7 +30,9 @@
     "GENIUSBOT-CLIENT-R013",
     "GENIUSBOT-CLIENT-R014",
     "GENIUSBOT-CLIENT-R015",
+    "GENIUSBOT-CLIENT-R016.1",
     "GENIUSBOT-CLIENT-R016",
+    "GENIUSBOT-CLIENT-R016.2",
     "GENIUSBOT-CLIENT-R017",
     "GENIUSBOT-CLIENT-R018",
     "GENIUSBOT-CLIENT-R019",
@@ -78,15 +87,64 @@
   ],
   "requirements": [
     {
-      "id": "GENIUSBOT-CLIENT-R001",
+      "id": "GENIUSBOT-CLIENT-R001.1",
       "title": "One backend-adapter import seam",
       "delivery_state": "VERIFIED",
       "landed_in": [
+        "4f6023e12d45"
+      ],
+      "verified_by": [
+        "tests/test_backend_adapter_seam.py:33"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R001",
+      "title": "Served backend-adapter seam (rollup)",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "4f6023e12d45",
         "891efd8a0733",
         "f979d1e342d9"
       ],
       "verified_by": [
-        "tests/test_backend_adapter_seam.py:33"
+        "tests/test_backend_adapter_seam.py:33",
+        "tests/test_service_dashboard_async.py:16",
+        "tests/test_service_dashboard_async.py:48",
+        "tests/test_service_dashboard_async.py:95",
+        "tests/test_service_dashboard_transport.py:104"
+      ],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R001.1",
+        "GENIUSBOT-CLIENT-R001.2",
+        "GENIUSBOT-CLIENT-R001.3"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R001.2",
+      "title": "Served dashboard reads",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "4f6023e12d45"
+      ],
+      "verified_by": [
+        "tests/test_service_dashboard_transport.py:104",
+        "tests/test_service_dashboard_transport.py:12",
+        "tests/test_service_dashboard_transport.py:132",
+        "tests/test_service_dashboard_transport.py:52",
+        "tests/test_service_dashboard_transport.py:78"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R001.3",
+      "title": "Nonblocking dashboard lifecycle",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "4f6023e12d45"
+      ],
+      "verified_by": [
+        "tests/test_service_dashboard_async.py:16",
+        "tests/test_service_dashboard_async.py:48",
+        "tests/test_service_dashboard_async.py:95"
       ]
     },
     {
@@ -131,14 +189,37 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R004",
+      "id": "GENIUSBOT-CLIENT-R004.1",
       "title": "Off-thread, non-blocking dispatch",
-      "delivery_state": "LANDED",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R004",
+      "title": "Queued worker signal lifetime and retained behavior (rollup)",
+      "delivery_state": "SPECIFIED",
       "landed_in": [
         "6c100b813e85",
         "e2227928ace3"
       ],
-      "verified_by": []
+      "verified_by": [],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R004.1",
+        "GENIUSBOT-CLIENT-R004.2"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R004.2",
+      "title": "Queued worker signal lifetime",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "b7a0bdfc5931"
+      ],
+      "verified_by": [
+        "tests/test_agent_bridge_worker.py:14",
+        "tests/test_agent_bridge_worker.py:42"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R005",
@@ -186,13 +267,37 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R010",
+      "id": "GENIUSBOT-CLIENT-R010.1",
       "title": "Background tray residency",
-      "delivery_state": "LANDED",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R010",
+      "title": "Console stream lifetime and retained behavior (rollup)",
+      "delivery_state": "SPECIFIED",
       "landed_in": [
         "e2227928ace3"
       ],
-      "verified_by": []
+      "verified_by": [],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R010.1",
+        "GENIUSBOT-CLIENT-R010.2"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R010.2",
+      "title": "Console stream lifetime",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "b7a0bdfc5931"
+      ],
+      "verified_by": [
+        "tests/test_output_wrapper_lifecycle.py:12",
+        "tests/test_output_wrapper_lifecycle.py:34",
+        "tests/test_output_wrapper_lifecycle.py:50"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R011",
@@ -261,14 +366,44 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R016",
+      "id": "GENIUSBOT-CLIENT-R016.1",
       "title": "Spec and docs hooks in pre-commit",
       "delivery_state": "VERIFIED",
       "landed_in": [
-        "34e20c635c6d"
+        "faadc48753ef"
       ],
       "verified_by": [
-        "tests/test_precommit_hooks.py:10"
+        "tests/test_precommit_hooks.py:12"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R016",
+      "title": "Documentation and shared guardrails (rollup)",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "34e20c635c6d",
+        "50f2a33dab77",
+        "faadc48753ef"
+      ],
+      "verified_by": [
+        "tests/test_precommit_hooks.py:12",
+        "tests/test_precommit_hooks.py:22"
+      ],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R016.1",
+        "GENIUSBOT-CLIENT-R016.2"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R016.2",
+      "title": "Canonical shared guardrails",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "50f2a33dab77",
+        "faadc48753ef"
+      ],
+      "verified_by": [
+        "tests/test_precommit_hooks.py:22"
       ]
     },
     {

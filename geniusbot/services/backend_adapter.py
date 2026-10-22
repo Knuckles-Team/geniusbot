@@ -97,50 +97,36 @@ class BackendAdapter:
         return result
 
     # ── Gateway service dashboard ────────────────────────────────────
-    def load_service_layout(self) -> Any:
-        """Load the service dashboard layout via the gateway ConfigManager.
+    async def load_service_layout(self, client: Any) -> dict:
+        """Read layout through the existing served gateway transport."""
+        return await client.dashboard_layout()
 
-        Returns the layout object (with ``.groups``) or raises ImportError if
-        the gateway config module is unavailable, so the caller can render its
-        "gateway not available" placeholder. Other exceptions propagate for
-        the caller's error placeholder.
-        """
-        from arbora.gateway.config import ConfigManager
-
-        return ConfigManager().load()
-
-    def fetch_service_widget_data(self) -> dict:
-        """Fetch and serialize all service widget data via the aggregator.
-
-        Runs the gateway :class:`Aggregator` to completion and converts the
-        returned ``WidgetData`` objects into plain serializable dicts suitable
-        for emitting across a Qt signal. Raises ImportError when the gateway
-        module is unavailable (caller surfaces a clear message).
-        """
-        import asyncio
-
-        from arbora.gateway.aggregator import Aggregator
-
-        aggregator = Aggregator()
-        loop = asyncio.new_event_loop()
-        try:
-            asyncio.set_event_loop(loop)
-            data = loop.run_until_complete(aggregator.fetch_all())
-        finally:
-            loop.close()
-
-        result: dict = {}
-        for svc_id, wd in data.items():
-            fields = []
-            if wd.fields:
-                for f in wd.fields:
-                    fields.append({"label": f.label, "value": str(f.value)})
-            result[svc_id] = {
-                "status": wd.status,
-                "fields": fields,
-                "error": wd.error,
+    async def fetch_service_widget_data(self, client: Any) -> dict:
+        """Project served widget values into the existing card presentation."""
+        data = await client.dashboard_data()
+        return {
+            service_id: {
+                "status": widget["status"],
+                "fields": [
+                    {"label": label, "value": str(value)}
+                    for label, value in widget.get("fields", {}).items()
+                ],
+                "error": widget.get("error"),
             }
-        return result
+            for service_id, widget in data.items()
+        }
+
+    async def service_dashboard_snapshot(self) -> dict:
+        """Keep each refresh's HTTP pools on its worker loop and close on cancellation."""
+        from geniusbot.services.gateway_client import GatewayClient
+
+        client = GatewayClient(self._gateway_base_url)
+        try:
+            layout = await self.load_service_layout(client)
+            data = await self.fetch_service_widget_data(client)
+            return {"layout": layout, "data": data}
+        finally:
+            await client.aclose()
 
 
 # Module-level singleton — UI code imports this directly.

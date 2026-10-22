@@ -50,6 +50,7 @@ class AgentBridgeWorker:
 
     def __init__(self):
         self.thread_pool = QThreadPool.globalInstance()
+        self._signal_owner = QObject()
 
     def run_agent_task(
         self,
@@ -63,6 +64,8 @@ class AgentBridgeWorker:
     ):
         """Submit an asynchronous task to be run inside the global QThreadPool."""
         runnable = AgentRunnable(async_func, *args, **kwargs)
+        # Keep queued signals alive after QThreadPool auto-deletes the runnable.
+        runnable.signals.setParent(self._signal_owner)
 
         # Connect signals
         if on_started is not None:
@@ -74,4 +77,6 @@ class AgentBridgeWorker:
         if on_progress is not None:
             runnable.signals.progress.connect(on_progress)
 
+        runnable.signals.finished.connect(runnable.signals.deleteLater)
+        runnable.signals.error.connect(runnable.signals.deleteLater)
         self.thread_pool.start(runnable)

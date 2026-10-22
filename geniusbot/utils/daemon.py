@@ -23,8 +23,7 @@ class GeniusBotDaemon(QObject):
 
         # Context Menu
         self.menu = QMenu()
-        self.menu.setStyleSheet(
-            """
+        self.menu.setStyleSheet("""
             QMenu {
                 background-color: #1E1E24;
                 color: #F5F5F7;
@@ -40,8 +39,7 @@ class GeniusBotDaemon(QObject):
                 background-color: #7C4DFF;
                 color: white;
             }
-        """
-        )
+        """)
 
         # Add Actions
         show_action = QAction("🌌 Show Dashboard", self)

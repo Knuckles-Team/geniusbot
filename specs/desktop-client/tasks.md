@@ -95,3 +95,12 @@
 - [ ] **GENIUSBOT-CLIENT-R020.39:** The desktop must resolve all 29 actionable source findings. Source obligation: `Actionable findings`.
 - [ ] **GENIUSBOT-CLIENT-R020.40:** Source-quality repairs must preserve the installed command path through `geniusbot/geniusbot.py:686`.
 - [ ] **GENIUSBOT-CLIENT-R020.41:** A served integration test must launch the installed command and observe client behavior after source-quality repairs. It must distinguish a denied request from an authenticated empty result.
+
+- [x] Implement R001.2 served dashboard transport and R001.3 cancellable off-thread refresh.
+- [x] Preserve R001.1 and migrate six required checks to canonical owners under R016.
+- [ ] Complete full declared-environment, live-gateway and packaging qualification; local transport and Qt fixtures do not establish release acceptance.
+
+- [x] Repair bounded signal lifetime under R004.2 and console stream lifetime under R010.2.
+- [ ] Preserve generic R004.1 and R010.1 acceptance gaps independently of these repairs.
+
+- [x] R016.2 migrates the six required checks to immutable canonical owners. R016.1 retains docs-hook acceptance.

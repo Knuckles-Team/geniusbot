@@ -9,7 +9,6 @@ import re
 import sys
 from pathlib import Path
 
-
 CASES = (
     "on:\n  pull_request_target:\npermissions: {}\n",
     "on: push\npermissions: write-all\n",
