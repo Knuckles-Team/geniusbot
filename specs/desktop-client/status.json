@@ -15,7 +15,10 @@
     "GENIUSBOT-CLIENT-R004.1",
     "GENIUSBOT-CLIENT-R004",
     "GENIUSBOT-CLIENT-R004.2",
+    "GENIUSBOT-CLIENT-R005.3",
     "GENIUSBOT-CLIENT-R005",
+    "GENIUSBOT-CLIENT-R005.1",
+    "GENIUSBOT-CLIENT-R005.2",
     "GENIUSBOT-CLIENT-R006",
     "GENIUSBOT-CLIENT-R007",
     "GENIUSBOT-CLIENT-R008",
@@ -222,13 +225,54 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R005",
-      "title": "Fail-closed, typed errors",
+      "id": "GENIUSBOT-CLIENT-R005.3",
+      "title": "Retained generic facade failure obligation",
       "delivery_state": "LANDED",
       "landed_in": [
         "b68ffd2a3227"
       ],
       "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R005",
+      "title": "Fail-closed, typed errors (rollup)",
+      "delivery_state": "LANDED",
+      "landed_in": [
+        "2fbc60b93d78",
+        "6f2b88b8c365",
+        "b68ffd2a3227"
+      ],
+      "verified_by": [],
+      "rollup_of": [
+        "GENIUSBOT-CLIENT-R005.3",
+        "GENIUSBOT-CLIENT-R005.1",
+        "GENIUSBOT-CLIENT-R005.2"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R005.1",
+      "title": "Preserve typed failed graph responses",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "2fbc60b93d78",
+        "6f2b88b8c365"
+      ],
+      "verified_by": [
+        "tests/test_graph_query_wiring.py:121",
+        "tests/test_graph_query_wiring.py:142"
+      ]
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R005.2",
+      "title": "Refuse graph redirects without following",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "2fbc60b93d78",
+        "6f2b88b8c365"
+      ],
+      "verified_by": [
+        "tests/test_graph_query_wiring.py:151"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R006",

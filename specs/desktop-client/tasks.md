@@ -104,3 +104,8 @@
 - [ ] Preserve generic R004.1 and R010.1 acceptance gaps independently of these repairs.
 
 - [x] R016.2 migrates the six required checks to immutable canonical owners. R016.1 retains docs-hook acceptance.
+
+- [x] Define R005.1 and R005.2 for the client behavior already implemented in #42 and bind its regressions.
+- [ ] Retain generic facade, live-gateway, Qt and release qualification gaps; do not infer those passes from the scoped graph tests.
+
+R005.3 retains the prior generic R005 obligation and its LANDED state with no test evidence. The generated R005 rollup must not promote that unresolved coverage from the two scoped children.

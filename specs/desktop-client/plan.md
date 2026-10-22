@@ -210,6 +210,11 @@ R001.3 uses a QRunnable on QThreadPool, with a retained QObject for signals. Nor
 
 The shutdown guarantee covers cooperative async cancellation, not synchronous blocking. The stalled fixture accepts the second cancellation; it does not exercise the final loop-stop fallback. Cleanup after the deadline is not guaranteed.
 
+### Amendment 2026-10-22: graph-client failure ownership
+
+GENIUSBOT-CLIENT-R005.1 and R005.2 bind the client behavior implemented by #42. Geniusbot owns preservation of the received typed failure and refusal to follow a redirect. Arbora and the SDK retain served error semantics and shared schema authority; this creates no desktop authorization or backend error policy. The generic R005 obligation and its evidence gaps stay unchanged. No live-gateway, Qt event-loop, packaging or release acceptance follows from these HTTP-transport fixture tests.
+
+R005.3 retains the prior generic R005 obligation and its LANDED state with no test evidence. The generated R005 rollup must not promote that unresolved coverage from the two scoped children.
 ### Canonical ledger generator refresh
 
 The spec-status hook uses pipelines revision a2dd609d494364daf26fdb3b18abbffa10095993.
