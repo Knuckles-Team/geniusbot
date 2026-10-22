@@ -63,9 +63,12 @@ repos:
       additional_dependencies: [pydantic==2.13.4, types-PyYAML==6.0.12.20260518, types-requests==2.33.0.20260518, types-setuptools==83.0.0.20260706, PySide6==6.11.1]
       args: ["--ignore-missing-imports"]
   - repo: https://github.com/Knuckles-Team/pipelines
-    rev: 5e8471f4c6e33533ef423cd417a968c9df4b97bf
+    rev: a2dd609d494364daf26fdb3b18abbffa10095993
     hooks:
     - id: spec-status
+  - repo: https://github.com/Knuckles-Team/pipelines
+    rev: 5e8471f4c6e33533ef423cd417a968c9df4b97bf
+    hooks:
     - id: spec-decomposition
     - id: spec-standard
     - id: public-surface

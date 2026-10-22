@@ -209,3 +209,11 @@ R004.2 retains queued worker signals until the UI receives completion or failure
 R001.3 uses a QRunnable on QThreadPool, with a retained QObject for signals. Normal panel close only requests cancellation. Async cleanup gets 0.5 seconds before repeated cancellation. A 0.1-second loop deadline bounds a stalled coroutine. Application quit waits at most one second for completion. No Qt or operating-system thread is forcibly stopped. A cleanup deadline emits a warning; it is not a successful data response. Separate processes test delayed and stalled cleanup without hiding Qt exceptions.
 
 The shutdown guarantee covers cooperative async cancellation, not synchronous blocking. The stalled fixture accepts the second cancellation; it does not exercise the final loop-stop fallback. Cleanup after the deadline is not guaranteed.
+
+### Canonical ledger generator refresh
+
+The spec-status hook uses pipelines revision a2dd609d494364daf26fdb3b18abbffa10095993.
+It includes the canonical rollup evidence ordering repair.
+The other hooks keep their independently tested revision.
+That preserves the guards and configuration schema absent from the newer revision.
+The configuration regression checks both pins; no gate is removed or skipped.
