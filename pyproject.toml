@@ -92,3 +92,10 @@ mcp_server = false
 [tool.pipelines_hooks.ste]
 paths = ["README.md", "AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md", "CHANGELOG.md", "docs", "specs"]
 exempt = ["specs/_template/*"]
+
+[tool.pipelines_hooks]
+packages = ["geniusbot"]
+
+[tool.pipelines_hooks.coupling]
+forbidden = ["agent_utilities", "epistemic_graph", "arbora", "agent_terminal_ui", "agent_webui"]
+allowed = ["arbora.client"]
