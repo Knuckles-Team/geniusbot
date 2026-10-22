@@ -10,7 +10,6 @@ import sys
 import tomllib
 from pathlib import Path
 
-
 MAX_FILES = 16
 MAX_SOURCE_BYTES = 1024 * 1024
 

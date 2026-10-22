@@ -34,8 +34,7 @@ class ToolGuardDialog(QDialog):
         )
 
         # Style the dialog
-        self.setStyleSheet(
-            f"""
+        self.setStyleSheet(f"""
             QDialog {{
                 background-color: {BG_PRIMARY};
                 border: 2px solid {ACCENT_PRIMARY};
@@ -45,8 +44,7 @@ class ToolGuardDialog(QDialog):
                 color: {TEXT_MAIN};
                 font-family: "Outfit", "Inter", sans-serif;
             }}
-        """
-        )
+        """)
 
         # Main Layout
         layout = QVBoxLayout(self)
@@ -75,8 +73,7 @@ class ToolGuardDialog(QDialog):
         except Exception:
             formatted_json = str(arguments)
         self.args_viewer.setPlainText(formatted_json)
-        self.args_viewer.setStyleSheet(
-            f"""
+        self.args_viewer.setStyleSheet(f"""
             QTextEdit {{
                 background-color: {BG_SECONDARY};
                 border: 1px solid {BORDER_COLOR};
@@ -85,8 +82,7 @@ class ToolGuardDialog(QDialog):
                 font-size: 12px;
                 color: #A9B2C3;
             }}
-        """
-        )
+        """)
         layout.addWidget(self.args_viewer)
 
         # Prompt Injection warning if any warning exists in the query/arguments
@@ -102,8 +98,7 @@ class ToolGuardDialog(QDialog):
 
         # Reject button (Red)
         self.btn_reject = QPushButton("Reject Run")
-        self.btn_reject.setStyleSheet(
-            """
+        self.btn_reject.setStyleSheet("""
             QPushButton {
                 background-color: #FF5252;
                 color: white;
@@ -115,15 +110,13 @@ class ToolGuardDialog(QDialog):
             QPushButton:hover {
                 background-color: #D32F2F;
             }
-        """
-        )
+        """)
         self.btn_reject.clicked.connect(self.reject)
         button_layout.addWidget(self.btn_reject)
 
         # Approve button (Success Green)
         self.btn_approve = QPushButton("Authorize Action")
-        self.btn_approve.setStyleSheet(
-            f"""
+        self.btn_approve.setStyleSheet(f"""
             QPushButton {{
                 background-color: {ACCENT_SUCCESS};
                 color: {BG_PRIMARY};
@@ -135,8 +128,7 @@ class ToolGuardDialog(QDialog):
             QPushButton:hover {{
                 background-color: #00C853;
             }}
-        """
-        )
+        """)
         self.btn_approve.clicked.connect(self.accept)
         button_layout.addWidget(self.btn_approve)
 
