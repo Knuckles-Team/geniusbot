@@ -86,7 +86,8 @@
     "GENIUSBOT-CLIENT-R020.38",
     "GENIUSBOT-CLIENT-R020.39",
     "GENIUSBOT-CLIENT-R020.40",
-    "GENIUSBOT-CLIENT-R020.41"
+    "GENIUSBOT-CLIENT-R020.41",
+    "GENIUSBOT-CLIENT-R016.3"
   ],
   "requirements": [
     {
@@ -427,15 +428,18 @@
       "landed_in": [
         "34e20c635c6d",
         "50f2a33dab77",
+        "977b6a8cb9ff",
         "faadc48753ef"
       ],
       "verified_by": [
+        "tests/test_ci_setup.py:11",
         "tests/test_precommit_hooks.py:12",
         "tests/test_precommit_hooks.py:22"
       ],
       "rollup_of": [
         "GENIUSBOT-CLIENT-R016.1",
-        "GENIUSBOT-CLIENT-R016.2"
+        "GENIUSBOT-CLIENT-R016.2",
+        "GENIUSBOT-CLIENT-R016.3"
       ]
     },
     {
@@ -865,6 +869,17 @@
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
+    },
+    {
+      "id": "GENIUSBOT-CLIENT-R016.3",
+      "title": "Locked headless CI test environment",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "977b6a8cb9ff"
+      ],
+      "verified_by": [
+        "tests/test_ci_setup.py:11"
+      ]
     }
   ]
 }
