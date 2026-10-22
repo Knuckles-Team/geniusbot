@@ -215,3 +215,10 @@ The shutdown guarantee covers cooperative async cancellation, not synchronous bl
 GENIUSBOT-CLIENT-R005.1 and R005.2 bind the client behavior implemented by #42. Geniusbot owns preservation of the received typed failure and refusal to follow a redirect. Arbora and the SDK retain served error semantics and shared schema authority; this creates no desktop authorization or backend error policy. The generic R005 obligation and its evidence gaps stay unchanged. No live-gateway, Qt event-loop, packaging or release acceptance follows from these HTTP-transport fixture tests.
 
 R005.3 retains the prior generic R005 obligation and its LANDED state with no test evidence. The generated R005 rollup must not promote that unresolved coverage from the two scoped children.
+### Canonical ledger generator refresh
+
+The spec-status hook uses pipelines revision a2dd609d494364daf26fdb3b18abbffa10095993.
+It includes the canonical rollup evidence ordering repair.
+The other hooks keep their independently tested revision.
+That preserves the guards and configuration schema absent from the newer revision.
+The configuration regression checks both pins; no gate is removed or skipped.

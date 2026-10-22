@@ -31,6 +31,12 @@ def test_canonical_shared_guardrails_preserve_client_boundary():
         "lane-guard",
     ):
         assert f"- id: {hook}\n" in text, hook
+    spec_owner = next(
+        repo
+        for repo in yaml.safe_load(text)["repos"]
+        if any(hook["id"] == "spec-status" for hook in repo["hooks"])
+    )
+    assert spec_owner["rev"] == "a2dd609d494364daf26fdb3b18abbffa10095993"
     owners = {repo["repo"]: repo for repo in yaml.safe_load(text)["repos"]}
     pipelines = owners["https://github.com/Knuckles-Team/pipelines"]
     manager = owners["https://github.com/Knuckles-Team/repository-manager"]
