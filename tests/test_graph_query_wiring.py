@@ -118,6 +118,7 @@ def test_graph_routes_the_client_will_post_to_are_declared(route: str) -> None:
     assert route in gateway_client._GRAPH_ROUTES
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R005.1")
 def test_typed_failed_operation_keeps_its_own_error() -> None:
     """A 403 ``{"status": "failed"}`` envelope is the tool's answer.
 
@@ -138,6 +139,7 @@ def test_typed_failed_operation_keeps_its_own_error() -> None:
     assert asyncio.run(adapter.run_graph_query("MATCH (n) RETURN n")) is None
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R005.1")
 def test_non_envelope_gateway_error_still_reads_as_unavailable() -> None:
     transport = _RecordingTransport({"detail": "bad gateway"}, status_code=502)
     adapter = _adapter_with(transport)
@@ -146,6 +148,7 @@ def test_non_envelope_gateway_error_still_reads_as_unavailable() -> None:
     assert result == {"error": "gateway offline or route unavailable"}
 
 
+@pytest.mark.spec("GENIUSBOT-CLIENT-R005.2")
 @pytest.mark.parametrize("status_code", [301, 302, 303, 307, 308])
 @pytest.mark.parametrize(
     "envelope",

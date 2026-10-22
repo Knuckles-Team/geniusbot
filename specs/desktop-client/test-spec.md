@@ -129,3 +129,9 @@ R004.2 binds both test_agent_bridge_worker.py tests. R010.2 binds test_output_wr
 R016.1 binds the existing docs-hook regression. R016.2 binds the shared-guardrail regression and requires actual full pre-commit execution.
 
 R001.3 also launches isolated Qt processes that quit during delayed and stalled fetch cleanup. Both must finish the worker and exit without a running-thread abort. The delayed case must finish its finalizer.
+
+## Scoped graph-client failure evidence
+
+GENIUSBOT-CLIENT-R005.1 binds `test_typed_failed_operation_keeps_its_own_error` and `test_non_envelope_gateway_error_still_reads_as_unavailable` in `tests/test_graph_query_wiring.py`. GENIUSBOT-CLIENT-R005.2 binds `test_redirect_envelopes_are_rejected_without_following` and its ten cases. These tests use the production client and adapter with a recording HTTP transport, not a live gateway or Qt UI. Other generic R005 failure paths remain separate qualification work.
+
+R005.3 retains the prior generic R005 obligation and its LANDED state with no test evidence. The generated R005 rollup must not promote that unresolved coverage from the two scoped children.
