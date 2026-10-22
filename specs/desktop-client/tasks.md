@@ -109,3 +109,5 @@
 - [ ] Retain generic facade, live-gateway, Qt and release qualification gaps; do not infer those passes from the scoped graph tests.
 
 R005.3 retains the prior generic R005 obligation and its LANDED state with no test evidence. The generated R005 rollup must not promote that unresolved coverage from the two scoped children.
+
+- [ ] `GENIUSBOT-CLIENT-R016.3`: Install the locked test extra and headless Qt prerequisites for full CI tests.

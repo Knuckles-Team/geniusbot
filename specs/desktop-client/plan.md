@@ -222,3 +222,11 @@ It includes the canonical rollup evidence ordering repair.
 The other hooks keep their independently tested revision.
 That preserves the guards and configuration schema absent from the newer revision.
 The configuration regression checks both pins; no gate is removed or skipped.
+
+### Locked headless CI setup
+
+R016.3 adds the declared test extra and Qt runtime libraries to CI setup.
+Both PR and main jobs run the full test suite from the frozen lock.
+The headless run uses offscreen rendering and the supported PulseAudio backend.
+This proves no live audio device or native packaged desktop behavior.
+This repair retains every test and existing guard.

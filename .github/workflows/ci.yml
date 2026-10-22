@@ -1,6 +1,6 @@
 name: CI
 
-# PR: diff-scoped gates. Push to main: full gates (--all-files), no publish.
+# PR and main: full gates (--all-files) and locked headless tests, no publish.
 # Publishing lives only in release.yml (v* tag or workflow_dispatch).
 
 on:
@@ -50,15 +50,19 @@ jobs:
     uses: Knuckles-Team/pipelines/.github/workflows/gates_pipeline.yml@main
     with:
       config: .pre-commit-config.yaml
-      # The suite needs agent-utilities 2.x from PyPI (not published yet), so it
-      # runs on main only; PR gates stay green.
-      test-scope: ${{ github.event_name == 'push' && 'tests' || '' }}
+      test-scope: tests
+      setup-command: |
+        set -euo pipefail
+        sudo apt-get update -q
+        sudo apt-get install -y -q libegl1 libgl1 libxkbcommon0 libfontconfig1 libpulse0
+        uv sync --frozen --extra test
+        printf '%s\n' QT_QPA_PLATFORM=offscreen QT_AUDIO_BACKEND=pulseaudio >> "$GITHUB_ENV"
       # These hooks run scripts from a sibling agent-utilities checkout that a
       # hosted runner does not have; they stay enforced at local pre-push.
       # ste-staged (STE-lite prose lint) is advisory: the ste-advisory job runs it
       # report-only (operator gate cut).
       skip-hooks: okf-no-legacy-concepts,lane-guard,check-stubs,check-sprawl,check-coupling,check-lockfile-version-mirrors,source-merge-tests,pytest,ste-staged
-      all-files: ${{ github.event_name == 'push' }}
+      all-files: true
       timeout-minutes: ${{ github.event_name == 'push' && 60 || 15 }}
 
   backward-python:
