@@ -243,7 +243,7 @@ pydantic==2.14.1
     #   pydantic-ai-slim
     #   pydantic-graph
     #   pydantic-settings
-pydantic-ai-harness==0.57.0
+pydantic-ai-harness==0.59.0
     # via agent-utilities
 pydantic-ai-slim==2.57.0
     # via
