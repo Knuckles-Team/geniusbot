@@ -92,7 +92,7 @@ fastmcp==4.1.0
     # via
     #   agent-connector-sdk
     #   arbora
-fastmcp-slim==4.1.0
+fastmcp-slim==4.1.2
     # via fastmcp
 filelock==4.2.1
     # via arbora
