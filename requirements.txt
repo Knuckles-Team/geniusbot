@@ -88,7 +88,7 @@ fasta2a==0.6.1
     # via agent-connector-sdk
 fastapi==0.143.3
     # via arbora
-fastmcp==4.1.0
+fastmcp==4.1.2
     # via
     #   agent-connector-sdk
     #   arbora
