@@ -16,9 +16,7 @@ class PackagingDisplayIdentityTests(unittest.TestCase):
             self.assertIn(line, entry.splitlines())
         control = (ROOT / "packaging/linux/control").read_text()
         self.assertIn("Package: geniusbot", control.splitlines())
-        self.assertIn(
-            "Description: Axil desktop GUI for Arbora", control.splitlines()
-        )
+        self.assertIn("Description: Axil desktop GUI for Arbora", control.splitlines())
 
     def test_windows_display_name_preserves_installation_identity(self):
         installer = (ROOT / "packaging/windows/setup.iss").read_text()
