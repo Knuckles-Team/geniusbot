@@ -1,7 +1,7 @@
 # Axil Desk
 
 <p align="center">
-  <img src="docs/assets/brands/geniusbot-logo-v1.png" alt="GeniusBot logo" width="220">
+  <img src="docs/assets/brands/geniusbot-logo-v1.png" alt="Axil Desk logo" width="220">
 </p>
 
 <p align="center">
@@ -33,7 +33,7 @@
 ## Overview
 
 The repository, package, imports and executable remain `geniusbot`.
-Existing image assets retain their original branding and provenance.
+Existing icon assets and screenshot provenance are retained.
 
 Axil Desk is a desktop GUI application and visual control deck built on top of
 [Arbora](https://knuckles-team.github.io/arbora/) and its `agent-utilities`
