@@ -2,9 +2,9 @@ INHERIT: .pipeline-theme/templates/mkdocs-theme/base.mkdocs.yml
 
 site_name: "Axil"
 site_description: "Axil: the desktop GUI application and visual control deck for the Arbora multi-agent ecosystem."
-site_url: "https://knuckles-team.github.io/geniusbot/"
-repo_name: "Knuckles-Team/geniusbot"
-repo_url: "https://github.com/Knuckles-Team/geniusbot"
+site_url: "https://knuckles-team.github.io/axil/"
+repo_name: "Knuckles-Team/axil"
+repo_url: "https://github.com/Knuckles-Team/axil"
 edit_uri: "edit/main/docs/"
 copyright: "Copyright &copy; Knuckles-Team — MIT licensed"
 
@@ -41,7 +41,7 @@ extra:
     current: geniusbot
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Knuckles-Team/geniusbot
+      link: https://github.com/Knuckles-Team/axil
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/geniusbot/
 

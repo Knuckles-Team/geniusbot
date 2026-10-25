@@ -9,30 +9,30 @@
   <sub>A unified, visual control deck over the Arbora multi-agent ecosystem.</sub>
 </p>
 
-[![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/forks)
-[![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/graphs/contributors)
-[![GitHub license](https://img.shields.io/github/license/Knuckles-Team/geniusbot)](LICENSE)
-[![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot/issues)
-[![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/geniusbot)](https://github.com/Knuckles-Team/geniusbot)
+[![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil/forks)
+[![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil/graphs/contributors)
+[![GitHub license](https://img.shields.io/github/license/Knuckles-Team/axil)](LICENSE)
+[![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil/issues)
+[![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil)
 [![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)](https://pypi.org/project/geniusbot/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dd/geniusbot)](https://pypi.org/project/geniusbot/)
 [![PyPI - License](https://img.shields.io/pypi/l/geniusbot)](https://pypi.org/project/geniusbot/)
-[![Build](https://github.com/Knuckles-Team/geniusbot/actions/workflows/release.yml/badge.svg)](https://github.com/Knuckles-Team/geniusbot/actions/workflows/release.yml)
-[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://knuckles-team.github.io/geniusbot/)
+[![Build](https://github.com/Knuckles-Team/axil/actions/workflows/release.yml/badge.svg)](https://github.com/Knuckles-Team/axil/actions/workflows/release.yml)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://knuckles-team.github.io/axil/)
 
 <p align="center">
-  <a href="https://knuckles-team.github.io/geniusbot/">Documentation</a> ·
-  <a href="https://knuckles-team.github.io/geniusbot/overview/">Architecture</a> ·
-  <a href="https://knuckles-team.github.io/geniusbot/concepts/">Concepts</a>
+  <a href="https://knuckles-team.github.io/axil/">Documentation</a> ·
+  <a href="https://knuckles-team.github.io/axil/overview/">Architecture</a> ·
+  <a href="https://knuckles-team.github.io/axil/concepts/">Concepts</a>
 </p>
 
 *Version: 5.2.2*
 
 ## Overview
 
-The repository, package, imports and executable remain `geniusbot`.
+The repository is `axil`; the package, imports and executable remain `geniusbot`.
 Existing icon assets and screenshot provenance are retained.
 
 Axil is a desktop GUI application and visual control deck built on top of
@@ -173,7 +173,7 @@ QT_QPA_PLATFORM=offscreen uv run geniusbot
 Compiling Axil as a single standalone executable:
 ```powershell
 python -m pip install --upgrade pyinstaller
-git clone https://github.com/Knuckles-Team/geniusbot.git
+git clone https://github.com/Knuckles-Team/axil.git geniusbot
 cd geniusbot
 python -m venv .venv
 ./.venv/Scripts/activate
@@ -207,7 +207,7 @@ For deep architectural guidelines and code documentation, explore:
 * [docs/overview.md](docs/overview.md) — Detailed Architecture & Security Guardrails.
 * [docs/concepts.md](docs/concepts.md) — Concept Registries (`CONCEPT:GB-GBOT.cockpit.gbot` through `8.0`).
 
-Start at the [Axil documentation](https://knuckles-team.github.io/geniusbot/) for the
+Start at the [Axil documentation](https://knuckles-team.github.io/axil/) for the
 hosted, always-current version of the same material.
 
 ---
