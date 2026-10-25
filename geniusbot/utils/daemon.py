@@ -19,7 +19,7 @@ class GeniusBotDaemon(QObject):
         # PySide6 can load standard theme icons as fallback
         icon = QIcon.fromTheme("system-run", QIcon.fromTheme("utilities-terminal"))
         self.tray_icon.setIcon(icon)
-        self.tray_icon.setToolTip("GeniusBot Multi-Agent Cockpit")
+        self.tray_icon.setToolTip("Axil Desk")
 
         # Context Menu
         self.menu = QMenu()

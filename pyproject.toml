@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "geniusbot"
 version = "5.2.2"
-description = "The Ever-learning and ever-improving tool!"
+description = "Axil Desk: the desktop GUI application for Arbora"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }

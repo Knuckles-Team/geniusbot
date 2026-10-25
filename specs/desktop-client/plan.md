@@ -230,3 +230,10 @@ Both PR and main jobs run the full test suite from the frozen lock.
 The headless run uses offscreen rendering and the supported PulseAudio backend.
 This proves no live audio device or native packaged desktop behavior.
 This repair retains every test and existing guard.
+
+## Amendment 2026-10-25: display name
+
+Use Axil Desk as the client display name in the primary UI, package description,
+and documentation entry points. Keep repository, distribution, import, command,
+protocol and storage identifiers unchanged. Arbora remains the backend and
+ecosystem name. Existing image assets and capture provenance remain unchanged.
