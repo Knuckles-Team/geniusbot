@@ -1,10 +1,10 @@
-# Axil Desk: desktop GUI for Arbora
+# Axil: desktop GUI for Arbora
 
 Super Intelligence (SI) is the Arbora project term for model-backed agents.
 
-**Axil Desk** is the desktop GUI application for Arbora and its `agent-utilities` control plane. The package and executable remain `geniusbot`.
+**Axil** is the desktop GUI application for Arbora and its `agent-utilities` control plane. The package and executable remain `geniusbot`.
 
-Axil Desk integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
+Axil integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
 
 ---
 

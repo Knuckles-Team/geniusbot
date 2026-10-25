@@ -13,7 +13,7 @@ def test_app_startup(qapp):
     bot = GeniusBot()
     assert bot is not None
     # Verify basics
-    assert bot.windowTitle() == "Axil Desk"
+    assert bot.windowTitle() == "Axil"
     assert bot.operation_registry is not None
     bot.close()
 

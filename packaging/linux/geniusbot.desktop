@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=Axil Desk
-Comment=Axil Desk desktop GUI for Arbora
+Name=Axil
+Comment=Axil desktop GUI for Arbora
 Exec=/usr/bin/geniusbot
 Icon=geniusbot
 Terminal=false

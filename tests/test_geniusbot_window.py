@@ -14,7 +14,7 @@ def test_genius_bot_window_instantiation(qapp):
     """Verify that the main GeniusBot cockpit window instantiates successfully."""
     bot = GeniusBot()
     assert bot is not None
-    assert bot.windowTitle() == "Axil Desk"
+    assert bot.windowTitle() == "Axil"
     assert bot.width() == 1200
     assert bot.height() == 800
     bot.close()

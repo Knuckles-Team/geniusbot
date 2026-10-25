@@ -237,3 +237,11 @@ Use Axil Desk as the client display name in the primary UI, package description,
 and documentation entry points. Keep repository, distribution, import, command,
 protocol and storage identifiers unchanged. Arbora remains the backend and
 ecosystem name. Existing image assets and capture provenance remain unchanged.
+
+## Amendment 2026-10-25: shortened Axil display name
+
+The approved product display name is Axil, superseding Axil Desk. Update UI,
+installer display metadata and documentation only. Keep geniusbot distribution,
+imports, executables, Windows install directory/AppId and all protocol/storage
+identities and versions unchanged. Existing icon bytes and capture provenance
+remain unchanged; this does not claim new desktop functionality.
