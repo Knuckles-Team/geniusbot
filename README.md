@@ -1,4 +1,4 @@
-# GeniusBot
+# Axil Desk
 
 <p align="center">
   <img src="docs/assets/brands/geniusbot-logo-v1.png" alt="GeniusBot logo" width="220">
@@ -32,14 +32,17 @@
 
 ## Overview
 
-GeniusBot is the premium, unified cockpit and visual control deck built on top of
+The repository, package, imports and executable remain `geniusbot`.
+Existing image assets retain their original branding and provenance.
+
+Axil Desk is a desktop GUI application and visual control deck built on top of
 [Arbora](https://knuckles-team.github.io/arbora/) and its `agent-utilities`
 control plane. It integrates every specialist agent and MCP package in the fleet
 into a single-pane-of-glass user interface, offering 1-click execution, embedded
 hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware
 protection layer.
 
-GeniusBot provides a centralized graphical cockpit designed to eliminate tedious click-through fatigue. It maps specialist agent parameter schemas directly to custom QSS-themed form widgets on the fly.
+Axil Desk provides a centralized graphical cockpit designed to eliminate tedious click-through fatigue. It maps specialist agent parameter schemas directly to custom QSS-themed form widgets on the fly.
 
 Operators can trigger actions, monitor running terminal inputs via the embedded `agent-terminal-ui`, and secure dangerous CLI calls using the Zero-Trust Tool-Guard interceptor.
 
@@ -80,11 +83,11 @@ Operators can trigger actions, monitor running terminal inputs via the embedded 
 ---
 
 ## 🏛️ Architecture
-GeniusBot is engineered as a lightweight PySide6 GUI client wrapper around the `agent-utilities` logic engine.
+Axil Desk is engineered as a lightweight PySide6 GUI client wrapper around the `agent-utilities` logic engine.
 
 ```mermaid
 graph TD
-    subgraph GUI ["GeniusBot Cockpit (PySide6)"]
+    subgraph GUI ["Axil Desk Cockpit (PySide6)"]
         Sidebar["Left Category Sidebar"]
         GridDeck["Central Dynamic Card Grid"]
         ToolGuard["Tool Guard Modal Interceptor"]
@@ -136,7 +139,7 @@ pip install geniusbot[all]
 
 ## 🌍 Environment Variables
 
-GeniusBot can be configured using environment variables or a `.env` file in the project root:
+Axil Desk can be configured using environment variables or a `.env` file in the project root:
 
 | Variable | Description | Default / Example |
 |----------|-------------|-------------------|
@@ -167,7 +170,7 @@ QT_QPA_PLATFORM=offscreen uv run geniusbot
 ## 📦 Packaging & Executables
 
 ### PyInstaller Compiling
-Compiling GeniusBot as a single standalone executable:
+Compiling Axil Desk as a single standalone executable:
 ```powershell
 python -m pip install --upgrade pyinstaller
 git clone https://github.com/Knuckles-Team/geniusbot.git
@@ -204,7 +207,7 @@ For deep architectural guidelines and code documentation, explore:
 * [docs/overview.md](docs/overview.md) — Detailed Architecture & Security Guardrails.
 * [docs/concepts.md](docs/concepts.md) — Concept Registries (`CONCEPT:GB-GBOT.cockpit.gbot` through `8.0`).
 
-Start at the [GeniusBot documentation](https://knuckles-team.github.io/geniusbot/) for the
+Start at the [Axil Desk documentation](https://knuckles-team.github.io/geniusbot/) for the
 hosted, always-current version of the same material.
 
 ---

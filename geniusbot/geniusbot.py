@@ -207,7 +207,7 @@ class GeniusBot(QMainWindow):
         Initialize the main user interface components.
         Refactored to orchestrate sub-components.
         """
-        self.setWindowTitle("GeniusBot Multi-Agent Cockpit")
+        self.setWindowTitle("Axil Desk")
         self.resize(1200, 800)
         self.setStyleSheet(DARK_COCKPIT_STYLE)
 
@@ -232,7 +232,7 @@ class GeniusBot(QMainWindow):
         sidebar_layout.setSpacing(12)
 
         # Sidebar Title
-        title_label = QLabel("🚀 GENIUSBOT")
+        title_label = QLabel("Axil Desk")
         title_label.setStyleSheet(
             "font-size: 18px; font-weight: bold; color: #7C4DFF; padding-left: 10px; margin-bottom: 10px;"
         )
@@ -687,7 +687,7 @@ class GeniusBot(QMainWindow):
         if self.daemon.tray_icon.isVisible():
             self.hide()
             self.daemon.tray_icon.showMessage(
-                "GeniusBot Cockpit",
+                "Axil Desk",
                 "Application is still running in background tray.",
                 QSystemTrayIcon.Information,
                 2000,

@@ -376,10 +376,13 @@
       "title": "Typed packaging manifest model and validator (rollup of 1, 2)",
       "delivery_state": "LANDED",
       "landed_in": [
+        "66a636e8fbb6",
         "951f65308c5b",
         "a443c69a2a0d"
       ],
-      "verified_by": [],
+      "verified_by": [
+        "tests/test_packaging_display_identity.py:11"
+      ],
       "rollup_of": [
         "GENIUSBOT-CLIENT-R012.1",
         "GENIUSBOT-CLIENT-R012.2"

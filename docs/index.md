@@ -1,10 +1,10 @@
-# GeniusBot — Desktop Cockpit for SI Agents
+# Axil Desk: desktop GUI for Arbora
 
 Super Intelligence (SI) is the Arbora project term for model-backed agents.
 
-Welcome to **GeniusBot**, the premium, unified space cockpit and visual control deck built on top of the `agent-utilities` powerhouse backend.
+**Axil Desk** is the desktop GUI application for Arbora and its `agent-utilities` control plane. The package and executable remain `geniusbot`.
 
-GeniusBot integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
+Axil Desk integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
 
 ---
 
