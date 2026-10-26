@@ -163,11 +163,15 @@
     {
       "id": "GENIUSBOT-CLIENT-R002.2",
       "title": "Operation validated against the installed generated registry at the call site",
-      "delivery_state": "LANDED",
+      "delivery_state": "VERIFIED",
       "landed_in": [
-        "951f65308c5b"
+        "951f65308c5b",
+        "a1c1896d3378"
       ],
-      "verified_by": []
+      "verified_by": [
+        "tests/test_gateway_client_registry.py:42",
+        "tests/test_gateway_client_registry.py:61"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R002",
@@ -175,6 +179,7 @@
       "delivery_state": "LANDED",
       "landed_in": [
         "951f65308c5b",
+        "a1c1896d3378",
         "a443c69a2a0d"
       ],
       "verified_by": [],
