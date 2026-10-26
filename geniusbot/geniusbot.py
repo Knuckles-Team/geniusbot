@@ -191,7 +191,7 @@ class GeniusBot(QMainWindow):
         self.operation_registry = load_installed_registry()
         self.worker = AgentBridgeWorker()
         self.daemon = GeniusBotDaemon(self)
-        self.gateway = GatewayClient()
+        self.gateway = GatewayClient(operation_registry=self.operation_registry)
         self.discovered_specialists = []
         self.active_agent_card = None
 

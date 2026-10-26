@@ -22,6 +22,10 @@ from urllib.parse import urlsplit
 import httpx
 
 from geniusbot.services.gateway_routes import GatewayRoutes
+from geniusbot.services.operation_registry import (
+    OperationRegistry,
+    OperationRegistryError,
+)
 
 logger = logging.getLogger("geniusbot.gateway")
 
@@ -77,6 +81,7 @@ class GatewayClient:
         base_url: str = DEFAULT_BASE_URL,
         *,
         allow_insecure_http: bool = False,
+        operation_registry: OperationRegistry | None = None,
     ):
         parsed = urlsplit(str(base_url).strip())
         if (
@@ -97,6 +102,10 @@ class GatewayClient:
             raise ValueError("Plaintext gateway transport requires explicit opt-in")
 
         self.base_url = str(base_url).rstrip("/")
+        # The application loads the installed generated registry once and injects
+        # the same immutable view into its gateway client. Direct test/utility
+        # clients may omit it until they opt into a registered operation call.
+        self.operation_registry = operation_registry
         # One pooled SDK client for the app's lifetime (desktop singleton).
         self._sdk = GatewayRoutes(self.base_url, timeout=15.0, verify=_tls_verify())
         self._direct_http = httpx.AsyncClient(
@@ -130,7 +139,15 @@ class GatewayClient:
         path: str,
         *,
         payload: dict[str, Any] | None = None,
+        operation: str | None = None,
+        digest: str | None = None,
     ) -> dict[str, Any]:
+        if operation is not None or digest is not None:
+            if operation is None or digest is None:
+                raise OperationRegistryError(
+                    "registered operation calls require an operation and digest"
+                )
+            self._validate_operation(operation, digest, method=method)
         async with self._direct_http.stream(
             method, path, json=payload, follow_redirects=False
         ) as response:
@@ -145,6 +162,54 @@ class GatewayClient:
         if value is None:
             raise RuntimeError("Gateway returned an invalid envelope")
         return value
+
+    def _validate_operation(self, operation: str, digest: str, *, method: str) -> None:
+        """Validate an operation against the injected registry before transport."""
+        if self.operation_registry is None:
+            raise OperationRegistryError("operation registry is unavailable")
+        entry = self.operation_registry.lookup(operation)
+        self.operation_registry.validate_digest(operation, digest)
+        if entry.method.upper() != method.upper():
+            raise OperationRegistryError(
+                f"method mismatch for operation {operation!r}: "
+                f"expected {entry.method.upper()}, got {method.upper()}"
+            )
+
+    async def invoke_operation(
+        self,
+        operation: str,
+        digest: str,
+        *,
+        path: str,
+        method: str = "POST",
+        payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Invoke one registered Arbora operation through the existing transport.
+
+        Registry validation deliberately happens inside ``_json_request`` before
+        opening the HTTP stream. Unknown operations, digest mismatches, missing
+        registry injection, and method mismatches therefore return the same typed
+        unavailable result without any network effect.
+        """
+        try:
+            return await self._json_request(
+                method,
+                path,
+                payload=payload,
+                operation=operation,
+                digest=digest,
+            )
+        except OperationRegistryError as exc:
+            logger.warning(
+                "Arbora operation rejected before transport: "
+                "operation=%s error_type=%s",
+                operation,
+                type(exc).__name__,
+            )
+            return {
+                "error": "Arbora operation unavailable",
+                "code": "CLIENT_UNAVAILABLE",
+            }
 
     async def aclose(self) -> None:
         """Release the direct HTTP pool and the shared SDK when supported."""
