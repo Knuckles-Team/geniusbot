@@ -398,7 +398,10 @@
       "title": "Generated design-token colors",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
-      "verified_by": []
+      "verified_by": [
+        "tests/test_design_tokens.py:23",
+        "tests/test_design_tokens.py:29"
+      ]
     },
     {
       "id": "GENIUSBOT-CLIENT-R014",

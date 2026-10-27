@@ -10,6 +10,9 @@ TEXT_MAIN = "#F5F5F7"
 TEXT_MUTED = "#8A8A93"
 BORDER_COLOR = "#2E2E38"
 EDGE_EXPIRED = "#5A5A66"
+BUTTON_HOVER = "#6C3BEF"
+BUTTON_PRESSED = "#5B2BDE"
+BUTTON_TEXT = "#FFFFFF"
 
 # Premium QSS Stylesheet
 DARK_COCKPIT_STYLE = f"""
@@ -57,7 +60,7 @@ QLineEdit:focus, QTextEdit:focus {{
 /* Push buttons */
 QPushButton {{
     background-color: {ACCENT_PRIMARY};
-    color: white;
+    color: {BUTTON_TEXT};
     font-weight: bold;
     border: none;
     border-radius: 6px;
@@ -65,11 +68,11 @@ QPushButton {{
 }}
 
 QPushButton:hover {{
-    background-color: #6C3BEF;
+    background-color: {BUTTON_HOVER};
 }}
 
 QPushButton:pressed {{
-    background-color: #5B2BDE;
+    background-color: {BUTTON_PRESSED};
 }}
 
 QPushButton#SecondaryButton {{
