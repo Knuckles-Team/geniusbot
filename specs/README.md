@@ -20,7 +20,7 @@ merged-head commit on the default branch.
 
 | Spec | Requirement family | Scope |
 |---|---|---|
-| [Desktop Arbora operation client](desktop-client/spec.md) | GENIUSBOT-CLIENT | Desktop cockpit's gateway transport, cockpit/dashboard surfaces, approval boundary and packaging |
+| [Desktop Arbora operation client](desktop-client/spec.md) | AXIL-CLIENT | Desktop cockpit's gateway transport, cockpit/dashboard surfaces, approval boundary and packaging |
 
 ## State legend
 
@@ -39,6 +39,6 @@ updating status. The ecosystem's [spec generator](https://github.com/Knuckles-Te
 and [Arbora development skill](https://github.com/Knuckles-Team/arbora/tree/main/arbora/skills/arbora-development)
 describe the same workflow.
 
-- [`GENIUSBOT-CLIENT`](desktop-client/spec.md) — Desktop Arbora operation client
+- [`AXIL-CLIENT`](desktop-client/spec.md) — Desktop Arbora operation client
 
-`GENIUSBOT-CLIENT-R019` includes children `.1` through `.6` for run observation, producer wiring and served refusal evidence.
+`AXIL-CLIENT-R019` includes children `.1` through `.6` for run observation, producer wiring and served refusal evidence.

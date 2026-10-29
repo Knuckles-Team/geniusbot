@@ -15,7 +15,7 @@ PAGES = [
 ]
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R017")
+@pytest.mark.spec("AXIL-CLIENT-R017")
 def test_nav_lists_every_page():
     nav = (ROOT / "mkdocs.yml").read_text().split("nav:", 1)[1]
     for page in PAGES:

@@ -1,6 +1,6 @@
 """Console entry point for validating the cross-platform packaging manifest.
 
-Implements the `.2` slice of GENIUSBOT-CLIENT-R012: `geniusbot-package --check` builds
+Implements the `.2` slice of AXIL-CLIENT-R012: `geniusbot-package --check` builds
 the packaging manifest definition with `build_manifest` and prints the build plan if
 it is valid. No PyInstaller, Inno Setup, or desktop-entry build is invoked here.
 """

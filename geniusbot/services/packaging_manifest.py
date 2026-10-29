@@ -1,6 +1,6 @@
 """Typed model and validator for the cross-platform packaging manifest.
 
-Implements the `.1` slice of GENIUSBOT-CLIENT-R012: a typed packaging manifest model
+Implements the `.1` slice of AXIL-CLIENT-R012: a typed packaging manifest model
 plus a validator that refuses an incomplete manifest -- one missing a required build
 target, a target missing a build tool or output path, or a target whose version does
 not match the source tree's declared version. No PyInstaller/Inno Setup/desktop-entry

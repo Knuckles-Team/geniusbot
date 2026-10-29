@@ -1,97 +1,97 @@
 {
   "schema_version": 2,
-  "spec_id": "GENIUSBOT-CLIENT",
+  "spec_id": "AXIL-CLIENT",
   "owner_repo": "axil",
   "delivery_state": "SPECIFIED",
   "requirement_ids": [
-    "GENIUSBOT-CLIENT-R001.1",
-    "GENIUSBOT-CLIENT-R001",
-    "GENIUSBOT-CLIENT-R001.2",
-    "GENIUSBOT-CLIENT-R001.3",
-    "GENIUSBOT-CLIENT-R002.1",
-    "GENIUSBOT-CLIENT-R002.2",
-    "GENIUSBOT-CLIENT-R002",
-    "GENIUSBOT-CLIENT-R003",
-    "GENIUSBOT-CLIENT-R004.1",
-    "GENIUSBOT-CLIENT-R004",
-    "GENIUSBOT-CLIENT-R004.2",
-    "GENIUSBOT-CLIENT-R005.3",
-    "GENIUSBOT-CLIENT-R005",
-    "GENIUSBOT-CLIENT-R005.1",
-    "GENIUSBOT-CLIENT-R005.2",
-    "GENIUSBOT-CLIENT-R006",
-    "GENIUSBOT-CLIENT-R007",
-    "GENIUSBOT-CLIENT-R008",
-    "GENIUSBOT-CLIENT-R009",
-    "GENIUSBOT-CLIENT-R010.1",
-    "GENIUSBOT-CLIENT-R010",
-    "GENIUSBOT-CLIENT-R010.2",
-    "GENIUSBOT-CLIENT-R011",
-    "GENIUSBOT-CLIENT-R012.1",
-    "GENIUSBOT-CLIENT-R012.2",
-    "GENIUSBOT-CLIENT-R012",
-    "GENIUSBOT-CLIENT-R013",
-    "GENIUSBOT-CLIENT-R014",
-    "GENIUSBOT-CLIENT-R015",
-    "GENIUSBOT-CLIENT-R016.1",
-    "GENIUSBOT-CLIENT-R016",
-    "GENIUSBOT-CLIENT-R016.2",
-    "GENIUSBOT-CLIENT-R017",
-    "GENIUSBOT-CLIENT-R018",
-    "GENIUSBOT-CLIENT-R019",
-    "GENIUSBOT-CLIENT-R019.1",
-    "GENIUSBOT-CLIENT-R019.2",
-    "GENIUSBOT-CLIENT-R019.3",
-    "GENIUSBOT-CLIENT-R019.4",
-    "GENIUSBOT-CLIENT-R019.5",
-    "GENIUSBOT-CLIENT-R019.6",
-    "GENIUSBOT-CLIENT-R020",
-    "GENIUSBOT-CLIENT-R020.1",
-    "GENIUSBOT-CLIENT-R020.2",
-    "GENIUSBOT-CLIENT-R020.3",
-    "GENIUSBOT-CLIENT-R020.4",
-    "GENIUSBOT-CLIENT-R020.5",
-    "GENIUSBOT-CLIENT-R020.6",
-    "GENIUSBOT-CLIENT-R020.7",
-    "GENIUSBOT-CLIENT-R020.8",
-    "GENIUSBOT-CLIENT-R020.9",
-    "GENIUSBOT-CLIENT-R020.10",
-    "GENIUSBOT-CLIENT-R020.11",
-    "GENIUSBOT-CLIENT-R020.12",
-    "GENIUSBOT-CLIENT-R020.13",
-    "GENIUSBOT-CLIENT-R020.14",
-    "GENIUSBOT-CLIENT-R020.15",
-    "GENIUSBOT-CLIENT-R020.16",
-    "GENIUSBOT-CLIENT-R020.17",
-    "GENIUSBOT-CLIENT-R020.18",
-    "GENIUSBOT-CLIENT-R020.19",
-    "GENIUSBOT-CLIENT-R020.20",
-    "GENIUSBOT-CLIENT-R020.21",
-    "GENIUSBOT-CLIENT-R020.22",
-    "GENIUSBOT-CLIENT-R020.23",
-    "GENIUSBOT-CLIENT-R020.24",
-    "GENIUSBOT-CLIENT-R020.25",
-    "GENIUSBOT-CLIENT-R020.26",
-    "GENIUSBOT-CLIENT-R020.27",
-    "GENIUSBOT-CLIENT-R020.28",
-    "GENIUSBOT-CLIENT-R020.29",
-    "GENIUSBOT-CLIENT-R020.30",
-    "GENIUSBOT-CLIENT-R020.31",
-    "GENIUSBOT-CLIENT-R020.32",
-    "GENIUSBOT-CLIENT-R020.33",
-    "GENIUSBOT-CLIENT-R020.34",
-    "GENIUSBOT-CLIENT-R020.35",
-    "GENIUSBOT-CLIENT-R020.36",
-    "GENIUSBOT-CLIENT-R020.37",
-    "GENIUSBOT-CLIENT-R020.38",
-    "GENIUSBOT-CLIENT-R020.39",
-    "GENIUSBOT-CLIENT-R020.40",
-    "GENIUSBOT-CLIENT-R020.41",
-    "GENIUSBOT-CLIENT-R016.3"
+    "AXIL-CLIENT-R001.1",
+    "AXIL-CLIENT-R001",
+    "AXIL-CLIENT-R001.2",
+    "AXIL-CLIENT-R001.3",
+    "AXIL-CLIENT-R002.1",
+    "AXIL-CLIENT-R002.2",
+    "AXIL-CLIENT-R002",
+    "AXIL-CLIENT-R003",
+    "AXIL-CLIENT-R004.1",
+    "AXIL-CLIENT-R004",
+    "AXIL-CLIENT-R004.2",
+    "AXIL-CLIENT-R005.3",
+    "AXIL-CLIENT-R005",
+    "AXIL-CLIENT-R005.1",
+    "AXIL-CLIENT-R005.2",
+    "AXIL-CLIENT-R006",
+    "AXIL-CLIENT-R007",
+    "AXIL-CLIENT-R008",
+    "AXIL-CLIENT-R009",
+    "AXIL-CLIENT-R010.1",
+    "AXIL-CLIENT-R010",
+    "AXIL-CLIENT-R010.2",
+    "AXIL-CLIENT-R011",
+    "AXIL-CLIENT-R012.1",
+    "AXIL-CLIENT-R012.2",
+    "AXIL-CLIENT-R012",
+    "AXIL-CLIENT-R013",
+    "AXIL-CLIENT-R014",
+    "AXIL-CLIENT-R015",
+    "AXIL-CLIENT-R016.1",
+    "AXIL-CLIENT-R016",
+    "AXIL-CLIENT-R016.2",
+    "AXIL-CLIENT-R017",
+    "AXIL-CLIENT-R018",
+    "AXIL-CLIENT-R019",
+    "AXIL-CLIENT-R019.1",
+    "AXIL-CLIENT-R019.2",
+    "AXIL-CLIENT-R019.3",
+    "AXIL-CLIENT-R019.4",
+    "AXIL-CLIENT-R019.5",
+    "AXIL-CLIENT-R019.6",
+    "AXIL-CLIENT-R020",
+    "AXIL-CLIENT-R020.1",
+    "AXIL-CLIENT-R020.2",
+    "AXIL-CLIENT-R020.3",
+    "AXIL-CLIENT-R020.4",
+    "AXIL-CLIENT-R020.5",
+    "AXIL-CLIENT-R020.6",
+    "AXIL-CLIENT-R020.7",
+    "AXIL-CLIENT-R020.8",
+    "AXIL-CLIENT-R020.9",
+    "AXIL-CLIENT-R020.10",
+    "AXIL-CLIENT-R020.11",
+    "AXIL-CLIENT-R020.12",
+    "AXIL-CLIENT-R020.13",
+    "AXIL-CLIENT-R020.14",
+    "AXIL-CLIENT-R020.15",
+    "AXIL-CLIENT-R020.16",
+    "AXIL-CLIENT-R020.17",
+    "AXIL-CLIENT-R020.18",
+    "AXIL-CLIENT-R020.19",
+    "AXIL-CLIENT-R020.20",
+    "AXIL-CLIENT-R020.21",
+    "AXIL-CLIENT-R020.22",
+    "AXIL-CLIENT-R020.23",
+    "AXIL-CLIENT-R020.24",
+    "AXIL-CLIENT-R020.25",
+    "AXIL-CLIENT-R020.26",
+    "AXIL-CLIENT-R020.27",
+    "AXIL-CLIENT-R020.28",
+    "AXIL-CLIENT-R020.29",
+    "AXIL-CLIENT-R020.30",
+    "AXIL-CLIENT-R020.31",
+    "AXIL-CLIENT-R020.32",
+    "AXIL-CLIENT-R020.33",
+    "AXIL-CLIENT-R020.34",
+    "AXIL-CLIENT-R020.35",
+    "AXIL-CLIENT-R020.36",
+    "AXIL-CLIENT-R020.37",
+    "AXIL-CLIENT-R020.38",
+    "AXIL-CLIENT-R020.39",
+    "AXIL-CLIENT-R020.40",
+    "AXIL-CLIENT-R020.41",
+    "AXIL-CLIENT-R016.3"
   ],
   "requirements": [
     {
-      "id": "GENIUSBOT-CLIENT-R001.1",
+      "id": "AXIL-CLIENT-R001.1",
       "title": "One backend-adapter import seam",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R001",
+      "id": "AXIL-CLIENT-R001",
       "title": "Served backend-adapter seam (rollup)",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -118,13 +118,13 @@
         "tests/test_service_dashboard_transport.py:104"
       ],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R001.1",
-        "GENIUSBOT-CLIENT-R001.2",
-        "GENIUSBOT-CLIENT-R001.3"
+        "AXIL-CLIENT-R001.1",
+        "AXIL-CLIENT-R001.2",
+        "AXIL-CLIENT-R001.3"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R001.2",
+      "id": "AXIL-CLIENT-R001.2",
       "title": "Served dashboard reads",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -139,7 +139,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R001.3",
+      "id": "AXIL-CLIENT-R001.3",
       "title": "Nonblocking dashboard lifecycle",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -152,7 +152,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R002.1",
+      "id": "AXIL-CLIENT-R002.1",
       "title": "Typed registry-entry model and validator",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -161,7 +161,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R002.2",
+      "id": "AXIL-CLIENT-R002.2",
       "title": "Operation validated against the installed generated registry at the call site",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -174,7 +174,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R002",
+      "id": "AXIL-CLIENT-R002",
       "title": "Typed registry-entry model and validator (rollup of 1, 2)",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -184,12 +184,12 @@
       ],
       "verified_by": [],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R002.1",
-        "GENIUSBOT-CLIENT-R002.2"
+        "AXIL-CLIENT-R002.1",
+        "AXIL-CLIENT-R002.2"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R003",
+      "id": "AXIL-CLIENT-R003",
       "title": "Verified credential over TLS, bounded responses",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -198,14 +198,14 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R004.1",
+      "id": "AXIL-CLIENT-R004.1",
       "title": "Off-thread, non-blocking dispatch",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R004",
+      "id": "AXIL-CLIENT-R004",
       "title": "Queued worker signal lifetime and retained behavior (rollup)",
       "delivery_state": "SPECIFIED",
       "landed_in": [
@@ -214,12 +214,12 @@
       ],
       "verified_by": [],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R004.1",
-        "GENIUSBOT-CLIENT-R004.2"
+        "AXIL-CLIENT-R004.1",
+        "AXIL-CLIENT-R004.2"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R004.2",
+      "id": "AXIL-CLIENT-R004.2",
       "title": "Queued worker signal lifetime",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -231,7 +231,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R005.3",
+      "id": "AXIL-CLIENT-R005.3",
       "title": "Retained generic facade failure obligation",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -240,7 +240,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R005",
+      "id": "AXIL-CLIENT-R005",
       "title": "Fail-closed, typed errors (rollup)",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -250,13 +250,13 @@
       ],
       "verified_by": [],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R005.3",
-        "GENIUSBOT-CLIENT-R005.1",
-        "GENIUSBOT-CLIENT-R005.2"
+        "AXIL-CLIENT-R005.3",
+        "AXIL-CLIENT-R005.1",
+        "AXIL-CLIENT-R005.2"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R005.1",
+      "id": "AXIL-CLIENT-R005.1",
       "title": "Preserve typed failed graph responses",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -269,7 +269,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R005.2",
+      "id": "AXIL-CLIENT-R005.2",
       "title": "Refuse graph redirects without following",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -281,7 +281,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R006",
+      "id": "AXIL-CLIENT-R006",
       "title": "No local approval authority",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -290,7 +290,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R007",
+      "id": "AXIL-CLIENT-R007",
       "title": "Embedded terminal sandbox",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -299,7 +299,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R008",
+      "id": "AXIL-CLIENT-R008",
       "title": "Lazy, on-demand cockpit panel loading",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -308,7 +308,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R009",
+      "id": "AXIL-CLIENT-R009",
       "title": "Honest voice-dictation states",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -317,14 +317,14 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R010.1",
+      "id": "AXIL-CLIENT-R010.1",
       "title": "Background tray residency",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R010",
+      "id": "AXIL-CLIENT-R010",
       "title": "Console stream lifetime and retained behavior (rollup)",
       "delivery_state": "SPECIFIED",
       "landed_in": [
@@ -332,12 +332,12 @@
       ],
       "verified_by": [],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R010.1",
-        "GENIUSBOT-CLIENT-R010.2"
+        "AXIL-CLIENT-R010.1",
+        "AXIL-CLIENT-R010.2"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R010.2",
+      "id": "AXIL-CLIENT-R010.2",
       "title": "Console stream lifetime",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -350,7 +350,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R011",
+      "id": "AXIL-CLIENT-R011",
       "title": "Dynamic specialist discovery and schema-driven execution deck",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -359,7 +359,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R012.1",
+      "id": "AXIL-CLIENT-R012.1",
       "title": "Typed packaging manifest model and validator",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -368,7 +368,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R012.2",
+      "id": "AXIL-CLIENT-R012.2",
       "title": "Cross-platform packaging and distribution",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -377,7 +377,7 @@
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R012",
+      "id": "AXIL-CLIENT-R012",
       "title": "Typed packaging manifest model and validator (rollup of 1, 2)",
       "delivery_state": "LANDED",
       "landed_in": [
@@ -389,12 +389,12 @@
         "tests/test_packaging_display_identity.py:11"
       ],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R012.1",
-        "GENIUSBOT-CLIENT-R012.2"
+        "AXIL-CLIENT-R012.1",
+        "AXIL-CLIENT-R012.2"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R013",
+      "id": "AXIL-CLIENT-R013",
       "title": "Generated design-token colors",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -406,14 +406,14 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R014",
+      "id": "AXIL-CLIENT-R014",
       "title": "Finance cockpit panel contract",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R015",
+      "id": "AXIL-CLIENT-R015",
       "title": "Packaged `geniusbot-development` skill",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -424,7 +424,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R016.1",
+      "id": "AXIL-CLIENT-R016.1",
       "title": "Spec and docs hooks in pre-commit",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -435,7 +435,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R016",
+      "id": "AXIL-CLIENT-R016",
       "title": "Documentation and shared guardrails (rollup)",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -450,13 +450,13 @@
         "tests/test_precommit_hooks.py:22"
       ],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R016.1",
-        "GENIUSBOT-CLIENT-R016.2",
-        "GENIUSBOT-CLIENT-R016.3"
+        "AXIL-CLIENT-R016.1",
+        "AXIL-CLIENT-R016.2",
+        "AXIL-CLIENT-R016.3"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R016.2",
+      "id": "AXIL-CLIENT-R016.2",
       "title": "Canonical shared guardrails",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -468,7 +468,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R017",
+      "id": "AXIL-CLIENT-R017",
       "title": "Docs layout parity",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -479,7 +479,7 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R018",
+      "id": "AXIL-CLIENT-R018",
       "title": "AGENTS.md section parity",
       "delivery_state": "VERIFIED",
       "landed_in": [
@@ -490,401 +490,401 @@
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R019",
+      "id": "AXIL-CLIENT-R019",
       "title": "Run harness surface is read-only and honest",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": [],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R019.1",
-        "GENIUSBOT-CLIENT-R019.2",
-        "GENIUSBOT-CLIENT-R019.3",
-        "GENIUSBOT-CLIENT-R019.4",
-        "GENIUSBOT-CLIENT-R019.5",
-        "GENIUSBOT-CLIENT-R019.6"
+        "AXIL-CLIENT-R019.1",
+        "AXIL-CLIENT-R019.2",
+        "AXIL-CLIENT-R019.3",
+        "AXIL-CLIENT-R019.4",
+        "AXIL-CLIENT-R019.5",
+        "AXIL-CLIENT-R019.6"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R019.1",
+      "id": "AXIL-CLIENT-R019.1",
       "title": "Run operation wiring",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R019.2",
+      "id": "AXIL-CLIENT-R019.2",
       "title": "Applied configuration",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R019.3",
+      "id": "AXIL-CLIENT-R019.3",
       "title": "Context and cost",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R019.4",
+      "id": "AXIL-CLIENT-R019.4",
       "title": "Read-only current plan",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R019.5",
+      "id": "AXIL-CLIENT-R019.5",
       "title": "Distinct terminal reasons",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R019.6",
+      "id": "AXIL-CLIENT-R019.6",
       "title": "Served surface proof",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020",
+      "id": "AXIL-CLIENT-R020",
       "title": "The client must satisfy each source-quality child obligation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": [],
       "rollup_of": [
-        "GENIUSBOT-CLIENT-R020.1",
-        "GENIUSBOT-CLIENT-R020.2",
-        "GENIUSBOT-CLIENT-R020.3",
-        "GENIUSBOT-CLIENT-R020.4",
-        "GENIUSBOT-CLIENT-R020.5",
-        "GENIUSBOT-CLIENT-R020.6",
-        "GENIUSBOT-CLIENT-R020.7",
-        "GENIUSBOT-CLIENT-R020.8",
-        "GENIUSBOT-CLIENT-R020.9",
-        "GENIUSBOT-CLIENT-R020.10",
-        "GENIUSBOT-CLIENT-R020.11",
-        "GENIUSBOT-CLIENT-R020.12",
-        "GENIUSBOT-CLIENT-R020.13",
-        "GENIUSBOT-CLIENT-R020.14",
-        "GENIUSBOT-CLIENT-R020.15",
-        "GENIUSBOT-CLIENT-R020.16",
-        "GENIUSBOT-CLIENT-R020.17",
-        "GENIUSBOT-CLIENT-R020.18",
-        "GENIUSBOT-CLIENT-R020.19",
-        "GENIUSBOT-CLIENT-R020.20",
-        "GENIUSBOT-CLIENT-R020.21",
-        "GENIUSBOT-CLIENT-R020.22",
-        "GENIUSBOT-CLIENT-R020.23",
-        "GENIUSBOT-CLIENT-R020.24",
-        "GENIUSBOT-CLIENT-R020.25",
-        "GENIUSBOT-CLIENT-R020.26",
-        "GENIUSBOT-CLIENT-R020.27",
-        "GENIUSBOT-CLIENT-R020.28",
-        "GENIUSBOT-CLIENT-R020.29",
-        "GENIUSBOT-CLIENT-R020.30",
-        "GENIUSBOT-CLIENT-R020.31",
-        "GENIUSBOT-CLIENT-R020.32",
-        "GENIUSBOT-CLIENT-R020.33",
-        "GENIUSBOT-CLIENT-R020.34",
-        "GENIUSBOT-CLIENT-R020.35",
-        "GENIUSBOT-CLIENT-R020.36",
-        "GENIUSBOT-CLIENT-R020.37",
-        "GENIUSBOT-CLIENT-R020.38",
-        "GENIUSBOT-CLIENT-R020.39",
-        "GENIUSBOT-CLIENT-R020.40",
-        "GENIUSBOT-CLIENT-R020.41"
+        "AXIL-CLIENT-R020.1",
+        "AXIL-CLIENT-R020.2",
+        "AXIL-CLIENT-R020.3",
+        "AXIL-CLIENT-R020.4",
+        "AXIL-CLIENT-R020.5",
+        "AXIL-CLIENT-R020.6",
+        "AXIL-CLIENT-R020.7",
+        "AXIL-CLIENT-R020.8",
+        "AXIL-CLIENT-R020.9",
+        "AXIL-CLIENT-R020.10",
+        "AXIL-CLIENT-R020.11",
+        "AXIL-CLIENT-R020.12",
+        "AXIL-CLIENT-R020.13",
+        "AXIL-CLIENT-R020.14",
+        "AXIL-CLIENT-R020.15",
+        "AXIL-CLIENT-R020.16",
+        "AXIL-CLIENT-R020.17",
+        "AXIL-CLIENT-R020.18",
+        "AXIL-CLIENT-R020.19",
+        "AXIL-CLIENT-R020.20",
+        "AXIL-CLIENT-R020.21",
+        "AXIL-CLIENT-R020.22",
+        "AXIL-CLIENT-R020.23",
+        "AXIL-CLIENT-R020.24",
+        "AXIL-CLIENT-R020.25",
+        "AXIL-CLIENT-R020.26",
+        "AXIL-CLIENT-R020.27",
+        "AXIL-CLIENT-R020.28",
+        "AXIL-CLIENT-R020.29",
+        "AXIL-CLIENT-R020.30",
+        "AXIL-CLIENT-R020.31",
+        "AXIL-CLIENT-R020.32",
+        "AXIL-CLIENT-R020.33",
+        "AXIL-CLIENT-R020.34",
+        "AXIL-CLIENT-R020.35",
+        "AXIL-CLIENT-R020.36",
+        "AXIL-CLIENT-R020.37",
+        "AXIL-CLIENT-R020.38",
+        "AXIL-CLIENT-R020.39",
+        "AXIL-CLIENT-R020.40",
+        "AXIL-CLIENT-R020.41"
       ]
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.1",
+      "id": "AXIL-CLIENT-R020.1",
       "title": "The desktop test adapter dependency must satisfy the supported test matrix. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.2",
+      "id": "AXIL-CLIENT-R020.2",
       "title": "The desktop UI dependency must satisfy the supported platform matrix. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.3",
+      "id": "AXIL-CLIENT-R020.3",
       "title": "The desktop dependency contract must use the supported served-client boundary. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.4",
+      "id": "AXIL-CLIENT-R020.4",
       "title": "The Windows dependency marker must resolve on supported platforms. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.5",
+      "id": "AXIL-CLIENT-R020.5",
       "title": "The formatter dependency must satisfy the supported source-check configuration. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.6",
+      "id": "AXIL-CLIENT-R020.6",
       "title": "The main-window initialization must meet the shared function-size checks. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.7",
+      "id": "AXIL-CLIENT-R020.7",
       "title": "The desktop entry module must meet the shared complexity checks. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.8",
+      "id": "AXIL-CLIENT-R020.8",
       "title": "Desktop tests must cover positive, negative and failure behavior. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.9",
+      "id": "AXIL-CLIENT-R020.9",
       "title": "Documentation examples must match the tested desktop behavior. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.10",
+      "id": "AXIL-CLIENT-R020.10",
       "title": "The README must cover each supported desktop entry point. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.11",
+      "id": "AXIL-CLIENT-R020.11",
       "title": "The contributor guide must describe the desktop source structure. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.12",
+      "id": "AXIL-CLIENT-R020.12",
       "title": "Documentation file references must resolve to tracked targets. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.13",
+      "id": "AXIL-CLIENT-R020.13",
       "title": "Desktop modules must meet the shared module-size checks. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.14",
+      "id": "AXIL-CLIENT-R020.14",
       "title": "The desktop must separate presentation from its served client adapter. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.15",
+      "id": "AXIL-CLIENT-R020.15",
       "title": "The desktop must trace each declared concept to its owning implementation. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.16",
+      "id": "AXIL-CLIENT-R020.16",
       "title": "The desktop must resolve each orphaned concept reference. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.17",
+      "id": "AXIL-CLIENT-R020.17",
       "title": "Desktop tests must bind their owning contract identifiers. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.18",
+      "id": "AXIL-CLIENT-R020.18",
       "title": "Significant desktop functions must identify their owning contracts. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.19",
+      "id": "AXIL-CLIENT-R020.19",
       "title": "The desktop source must retain a clean configured lint result. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.20",
+      "id": "AXIL-CLIENT-R020.20",
       "title": "The desktop source must pass the configured type checks. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.21",
+      "id": "AXIL-CLIENT-R020.21",
       "title": "The repository must validate its pinned formatter hook version. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.22",
+      "id": "AXIL-CLIENT-R020.22",
       "title": "The changelog must follow its declared parseable format. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.23",
+      "id": "AXIL-CLIENT-R020.23",
       "title": "The changelog must describe each shipped desktop change. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.24",
+      "id": "AXIL-CLIENT-R020.24",
       "title": "The changelog validation environment must supply its required parser. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.25",
+      "id": "AXIL-CLIENT-R020.25",
       "title": "Desktop tests must parameterize repeated input cases with observable assertions. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.26",
+      "id": "AXIL-CLIENT-R020.26",
       "title": "The documentation must cover every supported desktop environment variable. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.27",
+      "id": "AXIL-CLIENT-R020.27",
       "title": "The documentation must explain terminal and bundled-runtime environment inputs. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.28",
+      "id": "AXIL-CLIENT-R020.28",
       "title": "The environment example must document desktop platform inputs without credentials. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.29",
+      "id": "AXIL-CLIENT-R020.29",
       "title": "The desktop analysis command must use supported served interfaces without importing removed graph internals. Touches `geniusbot/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.30",
+      "id": "AXIL-CLIENT-R020.30",
       "title": "The desktop must score at least 80 in test coverage. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.31",
+      "id": "AXIL-CLIENT-R020.31",
       "title": "The desktop must score at least 80 in architecture & design patterns. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.32",
+      "id": "AXIL-CLIENT-R020.32",
       "title": "The desktop must score at least 80 in concept traceability. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.33",
+      "id": "AXIL-CLIENT-R020.33",
       "title": "The desktop must score at least 80 in test execution. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.34",
+      "id": "AXIL-CLIENT-R020.34",
       "title": "The desktop must score at least 80 in changelog audit. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.35",
+      "id": "AXIL-CLIENT-R020.35",
       "title": "The desktop must score at least 80 in environment variables. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.36",
+      "id": "AXIL-CLIENT-R020.36",
       "title": "The desktop must score at least 80 in analyze_xdg_kg. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.37",
+      "id": "AXIL-CLIENT-R020.37",
       "title": "The desktop must achieve an overall source-quality grade of at least 3.0. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.38",
+      "id": "AXIL-CLIENT-R020.38",
       "title": "The desktop must achieve grade B or higher in all 17 source-quality domains. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.39",
+      "id": "AXIL-CLIENT-R020.39",
       "title": "The desktop must resolve all 29 actionable source findings. Touches the desktop source and quality checks",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.40",
+      "id": "AXIL-CLIENT-R020.40",
       "title": "Source-quality repairs must preserve the installed command path through `geniusbot/geniusbot.py:686`",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R020.41",
+      "id": "AXIL-CLIENT-R020.41",
       "title": "A served integration test must launch the installed command and observe client behavior after source-quality repairs. It must distinguish a denied request from an authenticated empty result",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
-      "id": "GENIUSBOT-CLIENT-R016.3",
+      "id": "AXIL-CLIENT-R016.3",
       "title": "Locked headless CI test environment",
       "delivery_state": "VERIFIED",
       "landed_in": [

@@ -9,7 +9,7 @@ PYPROJECT = Path(__file__).resolve().parent.parent / "pyproject.toml"
 REQUIRED = ["public-surface", "ste-staged", "ste-staleness-staged", "spec-standard"]
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R016.1")
+@pytest.mark.spec("AXIL-CLIENT-R016.1")
 def test_required_pipelines_hook_ids_present():
     text = CONFIG.read_text()
     for hook in REQUIRED:
@@ -19,7 +19,7 @@ def test_required_pipelines_hook_ids_present():
     assert "[tool.pipelines_hooks.ste]" in py
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R016.2")
+@pytest.mark.spec("AXIL-CLIENT-R016.2")
 def test_canonical_shared_guardrails_preserve_client_boundary():
     text = CONFIG.read_text()
     for hook in (

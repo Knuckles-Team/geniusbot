@@ -1,4 +1,4 @@
-# GENIUSBOT-CLIENT design and integration plan
+# AXIL-CLIENT design and integration plan
 
 ## Existing wiring and architecture
 
@@ -50,7 +50,7 @@ call the facade's async methods, which always resolve to a typed success/error v
 obsolete transport path currently exists in this repository to retire; the `ToolGuardDialog`
 authorization modal exists and is exercised by its own instantiation test but is not yet
 wired into any execution path — closing that gap, or explicitly scoping it out, is a
-`GENIUSBOT-CLIENT-R006` task.
+`AXIL-CLIENT-R006` task.
 
 ## Compatibility and migration
 
@@ -84,7 +84,7 @@ an unconfigured pass.
   as deferred.
 - The Fleet Supervisor's "Grant" action already calls the gateway's `grant_approval`
   endpoint; this plan treats that round trip, not any local state change, as the
-  authorization act, consistent with GENIUSBOT-CLIENT-R006.
+  authorization act, consistent with AXIL-CLIENT-R006.
 
 ## Structure parity with agent-webui (2026-10-11)
 
@@ -114,7 +114,7 @@ Area decisions.
 - App surfaces: R008 and R011 already own the cockpit shell and panels. No change.
 - Identity and access: `git grep` finds no browser identity or elevation surface. Not implemented; no spec.
 
-## Run harness surface (GENIUSBOT-CLIENT-R019)
+## Run harness surface (AXIL-CLIENT-R019)
 
 ### Existing source and planned wiring
 
@@ -145,13 +145,13 @@ It must not add another HTTP stack or call the engine directly.
 
 The client must not accept RDF camelCase fields as alternate wire names.
 The client must preserve null availability and measured zero as different values.
-The engine defines solved tasks and computes aggregates under `EG-ORCH-VOCAB-R010`.
+The engine defines solved tasks and computes aggregates under `MEDULLA-ORCH-VOCAB-R010`.
 Zero-solved cost abstention must display unavailable, never zero or per-run cost.
 Pair-level rates and configuration-level costs must retain separate group labels.
 
 ### Current-plan prerequisite and refusals
 
-`AU-HARNESS-R014.1` through `.5` own mutable `PlanState` outside stored message history.
+`MERISTEM-HARNESS-R014.1` through `.5` own mutable `PlanState` outside stored message history.
 Those rows supply no public snapshot read contract today.
 `ARBORA-OPS-R021.4.5` defines the required cross-boundary snapshot and blocks availability until the AU producer exists.
 The client must not derive a plan from messages, reconstruct state, or add a plan writer.
@@ -173,7 +173,7 @@ Each row requires its own positive and negative served case through the producti
 
 ## Source quality contract
 
-GENIUSBOT-CLIENT-R020 preserves unresolved source-quality obligations in this owning specification.
+AXIL-CLIENT-R020 preserves unresolved source-quality obligations in this owning specification.
 Each child retains its source mapping in [source history](../../plans/spec-source-history/README.md).
 The byte-preserved records include original unchecked items and historical completion claims.
 Those claims supply no current acceptance evidence.
@@ -212,7 +212,7 @@ The shutdown guarantee covers cooperative async cancellation, not synchronous bl
 
 ### Amendment 2026-10-22: graph-client failure ownership
 
-GENIUSBOT-CLIENT-R005.1 and R005.2 bind the client behavior implemented by #42. Geniusbot owns preservation of the received typed failure and refusal to follow a redirect. Arbora and the SDK retain served error semantics and shared schema authority; this creates no desktop authorization or backend error policy. The generic R005 obligation and its evidence gaps stay unchanged. No live-gateway, Qt event-loop, packaging or release acceptance follows from these HTTP-transport fixture tests.
+AXIL-CLIENT-R005.1 and R005.2 bind the client behavior implemented by #42. Geniusbot owns preservation of the received typed failure and refusal to follow a redirect. Arbora and the SDK retain served error semantics and shared schema authority; this creates no desktop authorization or backend error policy. The generic R005 obligation and its evidence gaps stay unchanged. No live-gateway, Qt event-loop, packaging or release acceptance follows from these HTTP-transport fixture tests.
 
 R005.3 retains the prior generic R005 obligation and its LANDED state with no test evidence. The generated R005 rollup must not promote that unresolved coverage from the two scoped children.
 ### Canonical ledger generator refresh

@@ -8,7 +8,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R012")
+@pytest.mark.spec("AXIL-CLIENT-R012")
 class PackagingDisplayIdentityTests(unittest.TestCase):
     def test_linux_display_name_preserves_launcher_identity(self):
         entry = (ROOT / "packaging/linux/geniusbot.desktop").read_text()

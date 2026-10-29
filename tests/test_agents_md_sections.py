@@ -13,7 +13,7 @@ REQUIRED = [
 ]
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R018")
+@pytest.mark.spec("AXIL-CLIENT-R018")
 def test_required_headings_present():
     headings = [
         ln[3:].strip() for ln in AGENTS.read_text().splitlines() if ln.startswith("## ")

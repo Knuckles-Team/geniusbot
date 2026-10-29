@@ -20,13 +20,13 @@ def _generator():
     return module
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R013")
+@pytest.mark.spec("AXIL-CLIENT-R013")
 def test_colors_match_generated_output() -> None:
     """The checked-in module must be byte-identical to generator output."""
     assert COLORS_PATH.read_text(encoding="utf-8") == _generator().render()
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R013")
+@pytest.mark.spec("AXIL-CLIENT-R013")
 def test_hand_edited_color_constant_is_detected() -> None:
     """Changing a generated token makes the checked-in output stale."""
     current = COLORS_PATH.read_text(encoding="utf-8")

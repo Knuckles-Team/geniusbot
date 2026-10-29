@@ -1,4 +1,4 @@
-"""Tests for the typed operation-registry model (GENIUSBOT-CLIENT-R002.1)."""
+"""Tests for the typed operation-registry model (AXIL-CLIENT-R002.1)."""
 
 import pytest
 

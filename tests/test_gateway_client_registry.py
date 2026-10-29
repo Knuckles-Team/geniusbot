@@ -1,4 +1,4 @@
-"""Gateway operation-registry preflight tests (GENIUSBOT-CLIENT-R002.2)."""
+"""Gateway operation-registry preflight tests (AXIL-CLIENT-R002.2)."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def _client(transport: _RecordingTransport) -> GatewayClient:
     return client
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R002.2")
+@pytest.mark.spec("AXIL-CLIENT-R002.2")
 @pytest.mark.asyncio
 async def test_registered_operation_posts_once_after_preflight() -> None:
     transport = _RecordingTransport()
@@ -58,7 +58,7 @@ async def test_registered_operation_posts_once_after_preflight() -> None:
     assert len(transport.requests) == 1
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R002.2")
+@pytest.mark.spec("AXIL-CLIENT-R002.2")
 @pytest.mark.parametrize(
     ("operation", "digest"),
     [

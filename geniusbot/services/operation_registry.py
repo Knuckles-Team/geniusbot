@@ -1,6 +1,6 @@
 """Typed model and validator for the installed generated Arbora operation registry.
 
-Implements the `.1` slice of GENIUSBOT-CLIENT-R002: a typed registry-entry model plus a
+Implements the `.1` slice of AXIL-CLIENT-R002: a typed registry-entry model plus a
 validator that refuses a malformed entry or digest before the entry can be used to
 authorize any network call. The `.2` slice adds `load_installed_registry`, which reads
 the installed generated registry file from disk and refuses to start the application

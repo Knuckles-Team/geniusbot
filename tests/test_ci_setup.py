@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-pytestmark = pytest.mark.spec("GENIUSBOT-CLIENT-R016.3")
+pytestmark = pytest.mark.spec("AXIL-CLIENT-R016.3")
 
 
 def test_ci_setup_installs_locked_tests_and_headless_qt(tmp_path):
