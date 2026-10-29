@@ -279,7 +279,7 @@ class AgentWorker(QRunnable):
 ```
 
 ### Safety and Guardrails
-* **XDG Centralized Configuration**: centralize user credentials, local keys, and safety settings inside `~/.config/agent-utilities/config.json`. **NEVER** save credentials in plain files inside the `geniusbot` directory.
+* **XDG Centralized Configuration**: centralize user credentials, local keys, and safety settings inside `~/.config/arbora/config.json`. **NEVER** save credentials in plain files inside the `geniusbot` directory.
 * **Sensitive Pattern Interception**: All plugins must register tool execution pipelines through `agent-utilities`' `ToolGuard` system to guarantee full compliance with local security policies.
 
 ## ⛔ No Scratch or Temporary Files in Repository
