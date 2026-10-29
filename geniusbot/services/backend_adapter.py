@@ -54,7 +54,7 @@ class BackendAdapter:
         """
         import platformdirs
 
-        return Path(platformdirs.user_log_path("agent-utilities", "knuckles-team"))
+        return Path(platformdirs.user_log_path("axil", "knuckles-team"))
 
     # ── Knowledge Graph query ────────────────────────────────────────
     async def run_graph_query(self, query_text: str) -> Any:

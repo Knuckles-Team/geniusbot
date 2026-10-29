@@ -78,3 +78,10 @@ def test_agent_workflow_runs_on_arbora_not_in_process():
         pass
     else:
         raise AssertionError("an offline gateway must raise for the caller fallback")
+
+
+def test_log_dir_is_axil_owned_not_legacy_agent_utilities():
+    """The log directory is the axil app dir; the legacy app name is gone."""
+    source = (PACKAGE_ROOT / "services" / "backend_adapter.py").read_text("utf-8")
+    assert 'user_log_path("axil"' in source
+    assert 'user_log_path("agent-utilities"' not in source
