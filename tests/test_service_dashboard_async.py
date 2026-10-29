@@ -13,7 +13,7 @@ from geniusbot.qt.service_dashboard import ServiceDashboardPanel
 from geniusbot.services.backend_adapter import backend
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.3")
+@pytest.mark.spec("AXIL-CLIENT-R001.3")
 def test_dashboard_is_nonblocking_cancellable_and_ignores_late_results(
     qtbot, monkeypatch
 ):
@@ -45,7 +45,7 @@ def test_dashboard_is_nonblocking_cancellable_and_ignores_late_results(
     assert panel.stats_label.text() == "Loading..."
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.3")
+@pytest.mark.spec("AXIL-CLIENT-R001.3")
 def test_dashboard_renders_then_clears_on_refusal_and_can_retry(qtbot, monkeypatch):
     responses = [
         {
@@ -92,7 +92,7 @@ def test_dashboard_renders_then_clears_on_refusal_and_can_retry(qtbot, monkeypat
         panel.cleanup()
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.3")
+@pytest.mark.spec("AXIL-CLIENT-R001.3")
 @pytest.mark.parametrize("stalled_cleanup", [False, True])
 def test_application_quit_bounds_fetch_cancellation(stalled_cleanup):
     script = textwrap.dedent("""

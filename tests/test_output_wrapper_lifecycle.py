@@ -9,7 +9,7 @@ from PySide6.QtCore import QCoreApplication, QEvent, QObject
 from geniusbot.geniusbot import GeniusBot, OutputWrapper
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R010.2")
+@pytest.mark.spec("AXIL-CLIENT-R010.2")
 def test_destroyed_wrapper_restores_stream_and_nested_writer_stays_safe(
     qapp, monkeypatch
 ):
@@ -31,7 +31,7 @@ def test_destroyed_wrapper_restores_stream_and_nested_writer_stays_safe(
     assert original.getvalue() == "after first destruction and second destruction"
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R010.2")
+@pytest.mark.spec("AXIL-CLIENT-R010.2")
 def test_real_window_close_restores_streams_before_reopening(qapp, monkeypatch):
     stdout, stderr = sys.stdout, sys.stderr
     for _ in range(2):
@@ -47,7 +47,7 @@ def test_real_window_close_restores_streams_before_reopening(qapp, monkeypatch):
         QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R010.2")
+@pytest.mark.spec("AXIL-CLIENT-R010.2")
 def test_stream_slot_error_is_reported_once_without_recursive_emission(
     qapp, qtbot, monkeypatch
 ):

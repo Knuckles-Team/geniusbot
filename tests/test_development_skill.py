@@ -8,7 +8,7 @@ SKILL = (
 )
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R015")
+@pytest.mark.spec("AXIL-CLIENT-R015")
 def test_skill_packaged_and_valid():
     text = SKILL.read_text()
     assert text.startswith("---\n")

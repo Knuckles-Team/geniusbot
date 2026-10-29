@@ -1,4 +1,4 @@
-"""Tests for the typed packaging-manifest model (GENIUSBOT-CLIENT-R012.1)."""
+"""Tests for the typed packaging-manifest model (AXIL-CLIENT-R012.1)."""
 
 import pytest
 

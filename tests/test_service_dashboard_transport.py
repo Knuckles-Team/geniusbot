@@ -9,7 +9,7 @@ from geniusbot.services.backend_adapter import BackendAdapter
 from geniusbot.services.gateway_client import GatewayClient
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.2")
+@pytest.mark.spec("AXIL-CLIENT-R001.2")
 @pytest.mark.asyncio
 async def test_dashboard_routes_preserve_headers_and_project_served_values():
     seen = []
@@ -49,7 +49,7 @@ async def test_dashboard_routes_preserve_headers_and_project_served_values():
     ]
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.2")
+@pytest.mark.spec("AXIL-CLIENT-R001.2")
 @pytest.mark.parametrize("method", ["dashboard_layout", "dashboard_data"])
 @pytest.mark.parametrize("status", [301, 302, 303, 307, 308, 401, 403, 500])
 @pytest.mark.asyncio
@@ -75,7 +75,7 @@ async def test_dashboard_refuses_redirects_and_http_errors(method, status):
     assert len(requests) == 1
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.2")
+@pytest.mark.spec("AXIL-CLIENT-R001.2")
 @pytest.mark.parametrize(
     "method, body",
     [
@@ -101,7 +101,7 @@ async def test_dashboard_refuses_malformed_shapes(method, body):
         await client.aclose()
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.2")
+@pytest.mark.spec("AXIL-CLIENT-R001.2")
 @pytest.mark.asyncio
 async def test_snapshot_closes_transport_when_cancelled(monkeypatch):
     entered = asyncio.Event()
@@ -129,7 +129,7 @@ async def test_snapshot_closes_transport_when_cancelled(monkeypatch):
     assert closed == [True]
 
 
-@pytest.mark.spec("GENIUSBOT-CLIENT-R001.2")
+@pytest.mark.spec("AXIL-CLIENT-R001.2")
 @pytest.mark.parametrize("method", ["dashboard_layout", "dashboard_data"])
 @pytest.mark.parametrize("response_kind", ["oversize", "invalid-json", "typed-failure"])
 @pytest.mark.asyncio

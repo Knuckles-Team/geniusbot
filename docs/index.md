@@ -58,5 +58,5 @@ individual requirements and pull requests do not count as completed specificatio
 
 ## Planned run observation
 
-[GENIUSBOT-CLIENT-R019](https://github.com/Knuckles-Team/geniusbot/tree/main/specs/desktop-client) defines planned run reads and served acceptance.
+[AXIL-CLIENT-R019](https://github.com/Knuckles-Team/geniusbot/tree/main/specs/desktop-client) defines planned run reads and served acceptance.
 The specification does not establish runtime availability.
