@@ -1,31 +1,23 @@
 name: CI
 
-# PR and main: full gates (--all-files) and locked headless tests, no publish.
-# Publishing lives only in release.yml (v* tag or workflow_dispatch).
+# PR: fast gates (Python 3.14 only). Main and nightly: full suite plus the 3.12
+# backward-support leg. Publishing lives only in release.yml (v* tag or
+# workflow_dispatch). The one required check is `CI required` (reference/ci-standard.md).
 
 on:
   pull_request:
     branches: [main]
-    paths-ignore:
-      - specs/**
-      - docs/**
-      - '**/*.md'
-      - plans/**
-      - LICENSE
   push:
     branches: [main]
-    paths-ignore:
-      - specs/**
-      - docs/**
-      - '**/*.md'
-      - plans/**
-      - LICENSE
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.workflow, github.event.pull_request.number) || format('main-{0}', github.workflow) }}
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.workflow, github.event.pull_request.number) || format('main-{0}-{1}', github.workflow, github.ref) }}
   cancel-in-progress: true
 
 jobs:
@@ -47,6 +39,9 @@ jobs:
         run: uvx --from pre-commit==4.6.2 pre-commit run ste-staged --config .pre-commit-config.yaml --hook-stage pre-commit --from-ref "$BASE_SHA" --to-ref HEAD
 
   gates:
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     uses: Knuckles-Team/pipelines/.github/workflows/gates_pipeline.yml@main
     with:
       config: .pre-commit-config.yaml
@@ -63,30 +58,38 @@ jobs:
       # report-only (operator gate cut).
       skip-hooks: okf-no-legacy-concepts,lane-guard,check-stubs,check-sprawl,check-coupling,check-lockfile-version-mirrors,source-merge-tests,pytest,ste-staged
       all-files: true
-      timeout-minutes: ${{ github.event_name == 'push' && 60 || 15 }}
+      docs-only-paths: 'specs/** docs/** plans/** *.md **/*.md LICENSE'
+      timeout-minutes: 15
 
-  backward-python:
-    # The one backward-support leg (pipelines reference/gate-standard.md
-    # "Python version"): the environment is 3.14, requires-python keeps a 3.12
-    # floor, so install the lock on 3.12 and import the package.
-    name: backward-python (3.12)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+
+  full:
+    if: github.event_name != 'pull_request'
     permissions:
       contents: read
+    uses: Knuckles-Team/pipelines/.github/workflows/main_pipeline.yml@main
+    with:
+      backward-python: "3.12"
+      backward-module: geniusbot
+      timeout-minutes: 60
+      setup-command: |
+        set -euo pipefail
+        sudo apt-get update -q
+        sudo apt-get install -y -q libegl1 libgl1 libxkbcommon0 libfontconfig1 libpulse0
+        uv sync --frozen --extra test
+        printf '%s\n' QT_QPA_PLATFORM=offscreen QT_AUDIO_BACKEND=pulseaudio >> "$GITHUB_ENV"
+
+  ci-required:
+    name: CI required
+    if: always()
+    needs: [gates, full]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
-        with:
-          python-version: '3.12'
-      - name: Qt runtime libraries for a headless import
-        run: sudo apt-get update -q && sudo apt-get install -y -q libegl1 libgl1 libxkbcommon0 libfontconfig1
-      - name: Install and import on the 3.12 floor
+      - name: Fail on any failed or cancelled job (skipped is fine)
         env:
-          QT_QPA_PLATFORM: offscreen
+          RESULTS: ${{ join(needs.*.result, ' ') }}
         run: |
-          set -euo pipefail
-          uv sync --frozen --no-dev --python 3.12
-          uv run --frozen --no-sync python -c 'import sys, geniusbot; print(sys.version)'
+          echo "needed job results: $RESULTS"
+          for r in $RESULTS; do
+            case "$r" in failure|cancelled) echo "::error::a required job ended $r"; exit 1;; esac
+          done
