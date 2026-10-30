@@ -2,7 +2,7 @@
 
 import pytest
 
-from geniusbot.services.packaging_manifest import (
+from axil.services.packaging_manifest import (
     PackagingManifestError,
     build_manifest,
 )
@@ -13,25 +13,25 @@ def _complete_targets(version="1.2.3"):
         {
             "name": "console_entry_point",
             "build_tool": "pip",
-            "output_path": "dist/geniusbot",
+            "output_path": "dist/axil",
             "version": version,
         },
         {
             "name": "onefile_executable",
             "build_tool": "pyinstaller",
-            "output_path": "dist/geniusbot.exe",
+            "output_path": "dist/axil.exe",
             "version": version,
         },
         {
             "name": "windows_installer",
             "build_tool": "inno-setup",
-            "output_path": "dist/geniusbot-setup.exe",
+            "output_path": "dist/axil-setup.exe",
             "version": version,
         },
         {
             "name": "linux_desktop_entry",
             "build_tool": "desktop-file-utils",
-            "output_path": "dist/geniusbot.desktop",
+            "output_path": "dist/axil.desktop",
             "version": version,
         },
     ]

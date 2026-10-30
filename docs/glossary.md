@@ -8,7 +8,7 @@ The browser operator experience for working with agents and their runtime. Arbor
 
 The terminal and headless client for Arbora REST operations.
 
-## Geniusbot
+## Axil
 
 The desktop cockpit for chat, graph, fleet, health, and operator workflows. Its primary panels use the governed Arbora gateway.
 

@@ -7,9 +7,9 @@ import pytest
 from PySide6.QtCore import QThreadPool
 from PySide6.QtWidgets import QLabel, QWidget
 
-from geniusbot.geniusbot import GeniusBot
-from geniusbot.qt.widget_mapper import WidgetSchemaMapper
-from geniusbot.utils.agent_bridge import AgentBridgeWorker
+from axil.axil import Axil
+from axil.qt.widget_mapper import WidgetSchemaMapper
+from axil.utils.agent_bridge import AgentBridgeWorker
 
 
 @pytest.mark.parametrize(
@@ -27,7 +27,7 @@ def test_specialist_list_survives_worker_signal(qapp, monkeypatch, specialists):
         populate_specialist_deck=Mock(),
     )
 
-    GeniusBot.async_load_specialists(bot)
+    Axil.async_load_specialists(bot)
 
     assert bot.discovered_specialists == specialists
     assert bot.lbl_status.text() == f"{len(specialists)} specialists loaded."
@@ -50,7 +50,7 @@ def test_specialist_discovery_error_remains_offline(qapp, monkeypatch):
         populate_specialist_deck=Mock(),
     )
 
-    GeniusBot.async_load_specialists(bot)
+    Axil.async_load_specialists(bot)
 
     assert bot.lbl_status.text() == "Graph offline."
     assert bot.discovered_specialists == []

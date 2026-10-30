@@ -1,4 +1,4 @@
-"""Tests for the geniusbot voice dictation panel (CONCEPT:GB-GBOT.cockpit.voice-dictation-cockpit).
+"""Tests for the axil voice dictation panel (CONCEPT:GB-GBOT.cockpit.voice-dictation-cockpit).
 
 Qt runs offscreen (conftest's ``qapp`` fixture). Pure response-shaping logic
 is tested without touching the audio backend at all; the panel's honest
@@ -15,7 +15,7 @@ from unittest.mock import MagicMock
 
 from PySide6.QtMultimedia import QMediaRecorder
 
-from geniusbot.qt.voice_panel import (
+from axil.qt.voice_panel import (
     VoicePanel,
     extract_transcript,
     status_for_recorder_error,

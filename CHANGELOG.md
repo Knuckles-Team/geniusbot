@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Rename cutover geniusbot -> axil (hard cutover, no shims)**: dist `geniusbot` -> `axil`, import package `geniusbot` -> `axil`, CLIs `geniusbot`/`geniusbot-package` -> `axil`/`axil-package`, env vars `GENIUSBOT_*` -> `AXIL_*` (old names no longer read), packaging desktop file/icons/installer renamed; docs reference `meristem` and `tuig` by their new names.
+
 ### Added
 - **KG extraction cockpit with native force graph (`CONCEPT:AU-ECO.connector.git-task-resolver`)**: `extraction_cockpit.py` (`ExtractionCockpitPanel`) brings the document→KG experience to the Qt cockpit over the real gateway with live SSE — text/URL input streams extracted facts onto `force_graph.py`, a native `QGraphicsView` force-directed widget (pure, unit-testable Fruchterman-Reingold `relax_layout`) where each fact is a clickable directed edge and node keys are normalized to mirror the backend.
 - **Usage & Cost cockpit (`CONCEPT:AU-ECO.mcp.usage-cost-observability-surface`)**: `UsageCockpitPanel` (sidebar 💰 Usage & Cost) with agentsview parity — KPI cards, cost-by-model, tool/skill/db-call metrics, a day×hour heatmap, top-sessions browser, and Langfuse links, all over the shared SDK facade via the `QThreadPool` worker (never blocks the Qt loop, graceful-offline).

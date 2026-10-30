@@ -4,7 +4,7 @@ import importlib
 
 import pytest
 
-PKG_NAME = "geniusbot"
+PKG_NAME = "axil"
 
 
 @pytest.fixture

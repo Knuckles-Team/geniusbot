@@ -2,22 +2,22 @@
 
 ## Existing wiring and architecture
 
-At the current public main revision, `geniusbot/geniusbot.py` owns the `QMainWindow`
+At the current public main revision, `axil/axil.py` owns the `QMainWindow`
 cockpit shell: a flat sidebar, a central stacked widget of lazily loaded views, a
-right-hand telemetry drawer, and a bottom console. `geniusbot/services/gateway_client.py`
+right-hand telemetry drawer, and a bottom console. `axil/services/gateway_client.py`
 owns HTTP transport to Arbora. It uses GatewayRoutes and bounded direct requests for graph, enhanced and dashboard endpoints.
-The presentation adapter is `geniusbot/services/backend_adapter.py`. It handles graph queries, workflows, log paths and service snapshots. Dashboard layout and data must come from the existing served
+The presentation adapter is `axil/services/backend_adapter.py`. It handles graph queries, workflows, log paths and service snapshots. Dashboard layout and data must come from the existing served
 `/api/dashboard/layout` and `/api/dashboard/data` endpoints through the same
 GatewayClient transport implementation, not Arbora server imports. The
-`geniusbot/qt/*` panels are presentation consumers built on this facade and worker;
-`geniusbot/utils/agent_bridge.py` (`AgentBridgeWorker`/`AgentRunnable`/`QThreadPool`) is the
-one dispatch path off the Qt UI thread; `geniusbot/utils/daemon.py` owns the system tray.
+`axil/qt/*` panels are presentation consumers built on this facade and worker;
+`axil/utils/agent_bridge.py` (`AgentBridgeWorker`/`AgentRunnable`/`QThreadPool`) is the
+one dispatch path off the Qt UI thread; `axil/utils/daemon.py` owns the system tray.
 This is the path to extend. No panel should open a second gateway client.
 No panel should add a second import of the engine package or a second thread-dispatch mechanism.
 
 ```text
 sidebar click / chat input / tray action
-    -> GeniusBot (QMainWindow) / panel
+    -> Axil (QMainWindow) / panel
     -> AgentBridgeWorker (QThreadPool, one background event loop per task)
     -> GatewayClient facade (TLS-validated, bounded, graceful-offline)
     -> arbora.client SDK / direct /api/graph|enhanced POST
@@ -29,7 +29,7 @@ sidebar click / chat input / tray action
 
 | Boundary | Contract to implement or verify |
 |---|---|
-| Import seam | No module imports `agent_utilities`; every `qt/*` panel and `geniusbot.py` route through `services/backend_adapter.py` and `services/gateway_client.py`, which call arbora (`arbora.client`). |
+| Import seam | No module imports `meristem`; every `qt/*` panel and `axil.py` route through `services/backend_adapter.py` and `services/gateway_client.py`, which call arbora (`arbora.client`). |
 | Operation validation | Before invoking an Arbora operation (specialist run, slash command, graph/data query), resolve it against the installed generated operation registry; an unknown operation or a registry/digest mismatch produces a typed unavailable result before any network call. |
 | Transport | `GatewayClient.__init__` rejects a malformed endpoint (credentials in the URL, a query/fragment, a non-http(s) scheme) and plaintext HTTP to a non-loopback host without explicit opt-in; it resolves a TLS profile for the caller's verified credential and pins egress to the configured host. Every response is read through a bounded reader (`_bounded_body`) capped at a fixed byte limit. |
 | Dispatch | Every async Arbora/backend call runs inside `AgentRunnable.run()` on the global `QThreadPool`, reporting `started`/`finished`/`error`/`progress` back to the UI thread via Qt signals; nothing calls a blocking network or heavy-reasoning routine directly from a slot. |
@@ -37,11 +37,11 @@ sidebar click / chat input / tray action
 | Approval | The Fleet Supervisor's approval inbox and any tool-authorization dialog display a pending decision. Granting or rejecting always issues a request to the gateway's server-side approval/`ActionPolicy` endpoint. No code path marks an action authorized by local logic alone. |
 | Terminal | The terminal view's PTY-backed shell starts lazily on first navigation to that view (`switch_view(1)`), not at window construction. |
 | Panel loading | `_PANEL_SPECS` drives lazy import + instantiate + placeholder-swap for every secondary view index; a panel is constructed at most once per window lifetime and shares the one `AgentBridgeWorker`. |
-| Packaging | The same versioned source tree produces the pip-installable package (`pyproject.toml` console script `geniusbot`), a PyInstaller onefile/windowed build, a `setup.iss`-driven Windows installer, and the `packaging/linux/` desktop-entry and control file. |
+| Packaging | The same versioned source tree produces the pip-installable package (`pyproject.toml` console script `axil`), a PyInstaller onefile/windowed build, a `setup.iss`-driven Windows installer, and the `packaging/linux/` desktop-entry and control file. |
 
 ## Live integration path
 
-`geniusbot()` constructs `GeniusBot`, which wires the tray daemon, the gateway client, and
+`axil()` constructs `Axil`, which wires the tray daemon, the gateway client, and
 a `QTimer.singleShot` specialist-discovery call through `AgentBridgeWorker`. Every sidebar
 button routes through `switch_view`, which lazily instantiates the corresponding panel
 class from `_PANEL_SPECS` and swaps it into the stacked widget. Panels that need Arbora
@@ -90,9 +90,9 @@ an unconfigured pass.
 
 Gap table. Reference: `agent-webui` branch `spec-standard-conform`.
 
-| Structural element | agent-webui | geniusbot | Action |
+| Structural element | agent-webui | axil | Action |
 |---|---|---|---|
-| Root layout | App, `agent/`, `e2e/`, `docker/`, `CONTRIBUTING.md` | Flat `geniusbot/` package, `packaging/`, `setup.iss` | Differs by product type; no action |
+| Root layout | App, `agent/`, `e2e/`, `docker/`, `CONTRIBUTING.md` | Flat `axil/` package, `packaging/`, `setup.iss` | Differs by product type; no action |
 | Specs by area | Six specs | One spec, `desktop-client` | Area decisions below; rows R013, R014 |
 | Spec files | Standard file set, `_template/` | Standard file set, `_template/` | Same |
 | Docs | `agents`, `apps`, `architecture`, `deployment`, `design-system`, `features`, `start`, `status` and more | `index`, `overview`, `concepts`, `glossary`, `kg-extraction` | Missing pages; row R017 |
@@ -107,10 +107,10 @@ Gap table. Reference: `agent-webui` branch `spec-standard-conform`.
 
 Area decisions.
 
-- Design system: the desktop client has `geniusbot/qt/colors.py`, generated from tokens. Extend `desktop-client` with R013. The generator and token files are not in the repository, so R013 adds them.
+- Design system: the desktop client has `axil/qt/colors.py`, generated from tokens. Extend `desktop-client` with R013. The generator and token files are not in the repository, so R013 adds them.
 - Decision evidence: `git grep` finds no decision or calibration surface. Not implemented; no spec.
-- Finance asset manager: `geniusbot/qt/finance_cockpit.py` has 606 lines and R008 already owns its lazy loading. It is a panel, not a distinct capability. Extend with R014; no new directory.
-- API consumer: `geniusbot/services/operation_registry.py` and R002 already own the generated registry. No change.
+- Finance asset manager: `axil/qt/finance_cockpit.py` has 606 lines and R008 already owns its lazy loading. It is a panel, not a distinct capability. Extend with R014; no new directory.
+- API consumer: `axil/services/operation_registry.py` and R002 already own the generated registry. No change.
 - App surfaces: R008 and R011 already own the cockpit shell and panels. No change.
 - Identity and access: `git grep` finds no browser identity or elevation surface. Not implemented; no spec.
 
@@ -118,7 +118,7 @@ Area decisions.
 
 ### Existing source and planned wiring
 
-`GeniusBot.switch_view` (`geniusbot/geniusbot.py:500`) → the lazy run panel → a background gateway worker → `GatewayClient` (`geniusbot/services/gateway_client.py:55`).
+`Axil.switch_view` (`axil/axil.py:500`) → the lazy run panel → a background gateway worker → `GatewayClient` (`axil/services/gateway_client.py:55`).
 
 No run panel or run facade exists in current source.
 `GatewayClient.fetch_usage_traces` at `gateway_client.py:255` serves usage traces, not a run-summary contract.
@@ -169,7 +169,7 @@ Each row requires its own positive and negative served case through the producti
 
 ## Amendments
 
-- 2026-10-11, rows R013 to R018: the operator required geniusbot to share the exact structure of agent-webui. Old statement: the spec ended at R012. New statement: R013 to R018 close the structural gaps above. Evidence: the gap table in this file.
+- 2026-10-11, rows R013 to R018: the operator required axil to share the exact structure of agent-webui. Old statement: the spec ended at R012. New statement: R013 to R018 close the structural gaps above. Evidence: the gap table in this file.
 
 ## Source quality contract
 
@@ -184,14 +184,14 @@ The [shared spec standard](https://github.com/Knuckles-Team/pipelines/blob/main/
 
 ### Source-quality wiring and served proof
 
-The desktop command enters `main`, then `geniusbot` at `geniusbot/geniusbot.py:678`. That function creates `GeniusBot`, displays its window and starts the application event loop.
+The desktop command enters `main`, then `axil` at `axil/axil.py:678`. That function creates `Axil`, displays its window and starts the application event loop.
 Quality repairs attach at the files each child names; they must preserve this production entry path.
 The final two child rows require wiring inspection and a served integration proof.
 Tooling-only children use their configured check entry points and must reject a failing fixture.
 
 ### Amendment 2026-10-22: shared checker ownership
 
-R016.2 retains all six required checks previously invoked through removed agent-utilities scripts. The immutable pipelines pin owns no-legacy-concepts, stubs, sprawl, coupling and lockfile-version-mirrors; the repository-manager pin owns lane-guard. Coupling scans the actual geniusbot package and forbids engine and sibling UI imports, allowing only arbora.client. No adapter exemption applies. Lockfile version mirrors retains its dependency-file trigger and checks both uv.lock and requirements.txt; uv-lock-check is not a substitute.
+R016.2 retains all six required checks previously invoked through removed meristem scripts. The immutable pipelines pin owns no-legacy-concepts, stubs, sprawl, coupling and lockfile-version-mirrors; the repository-manager pin owns lane-guard. Coupling scans the actual axil package and forbids engine and sibling UI imports, allowing only arbora.client. No adapter exemption applies. Lockfile version mirrors retains its dependency-file trigger and checks both uv.lock and requirements.txt; uv-lock-check is not a substitute.
 
 
 ### Amendment 2026-10-22: served dashboard client seam
@@ -212,7 +212,7 @@ The shutdown guarantee covers cooperative async cancellation, not synchronous bl
 
 ### Amendment 2026-10-22: graph-client failure ownership
 
-AXIL-CLIENT-R005.1 and R005.2 bind the client behavior implemented by #42. Geniusbot owns preservation of the received typed failure and refusal to follow a redirect. Arbora and the SDK retain served error semantics and shared schema authority; this creates no desktop authorization or backend error policy. The generic R005 obligation and its evidence gaps stay unchanged. No live-gateway, Qt event-loop, packaging or release acceptance follows from these HTTP-transport fixture tests.
+AXIL-CLIENT-R005.1 and R005.2 bind the client behavior implemented by #42. Axil owns preservation of the received typed failure and refusal to follow a redirect. Arbora and the SDK retain served error semantics and shared schema authority; this creates no desktop authorization or backend error policy. The generic R005 obligation and its evidence gaps stay unchanged. No live-gateway, Qt event-loop, packaging or release acceptance follows from these HTTP-transport fixture tests.
 
 R005.3 retains the prior generic R005 obligation and its LANDED state with no test evidence. The generated R005 rollup must not promote that unresolved coverage from the two scoped children.
 ### Canonical ledger generator refresh
@@ -241,7 +241,7 @@ ecosystem name. Existing image assets and capture provenance remain unchanged.
 ## Amendment 2026-10-25: shortened Axil display name
 
 The approved product display name is Axil, superseding Axil Desk. Update UI,
-installer display metadata and documentation only. Keep geniusbot distribution,
+installer display metadata and documentation only. Keep axil distribution,
 imports, executables, Windows install directory/AppId and all protocol/storage
 identities and versions unchanged. Existing icon bytes and capture provenance
 remain unchanged; this does not claim new desktop functionality.

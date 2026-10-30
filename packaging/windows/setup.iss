@@ -8,8 +8,8 @@
   #define MyAppVersion "3.40.0"
 #endif
 #define MyAppPublisher "Knuckles-Team"
-#define MyAppURL "https://github.com/Knuckles-Team/geniusbot"
-#define MyAppExeName "geniusbot.exe"
+#define MyAppURL "https://github.com/Knuckles-Team/axil"
+#define MyAppExeName "axil.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -23,7 +23,7 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 ; Preserve the existing installation directory across the display-name change.
-DefaultDirName={autopf}\Geniusbot
+DefaultDirName={autopf}\Axil
 SourceDir=..\..
 DisableProgramGroupPage=yes
 LicenseFile=.\LICENSE
@@ -31,8 +31,8 @@ LicenseFile=.\LICENSE
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=.\dist
-OutputBaseFilename=geniusbot-setup-x64
-SetupIconFile=.\geniusbot\img\geniusbot.ico
+OutputBaseFilename=axil-setup-x64
+SetupIconFile=.\axil\img\axil.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from geniusbot.services.gateway_client import GatewayClient
+from axil.services.gateway_client import GatewayClient
 
 
 def _client() -> GatewayClient:

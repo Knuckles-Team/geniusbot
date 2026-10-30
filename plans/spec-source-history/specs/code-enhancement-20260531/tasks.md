@@ -1,4 +1,4 @@
-# Tasks: Code Enhancement: geniusbot
+# Tasks: Code Enhancement: axil
 
 Generated: 2026-05-31T06:00:13.130884+00:00
 Skipped informational: 9
@@ -7,7 +7,7 @@ Skipped informational: 9
   - Priority: P3-Low | Effort: Small
 - [ ] [P] **T002** [Dependency Audit] Minor update: PySide6 6.6.1 (constraint — not installed) -> 6.11.1
   - Priority: P3-Low | Effort: Small
-- [ ] [P] **T003** [Dependency Audit] Minor update: agent-utilities 0.2.40 (installed) -> 0.16.0
+- [ ] [P] **T003** [Dependency Audit] Minor update: meristem 0.2.40 (installed) -> 0.16.0
   - Priority: P3-Low | Effort: Small
 - [ ] [P] **T004** [Dependency Audit] Package not found on PyPI: pypiwin32; sys_platform
   - Priority: P3-Low | Effort: Large
@@ -15,7 +15,7 @@ Skipped informational: 9
   - Priority: P3-Low | Effort: Small
 - [ ] [P] **T006** [Codebase Optimization] 1 functions exceed 200 lines (actionable refactoring targets): initialize_user_i
   - Priority: P2-Medium | Effort: Large
-- [ ] [P] **T007** [Codebase Optimization] Needs attention: geniusbot.py (699L) — 3 functions with high complexity (worst:
+- [ ] [P] **T007** [Codebase Optimization] Needs attention: axil.py (699L) — 3 functions with high complexity (worst:
   - Priority: P2-Medium | Effort: Medium
 - [ ] [P] **T008** [Test Coverage] Test suite lacks intent diversity (only one type)
   - Priority: P2-Medium | Effort: Medium
@@ -59,5 +59,5 @@ Skipped informational: 9
   - Priority: P2-Medium | Effort: Medium
 - [ ] [P] **T028** [Environment Variables] 4 Python env vars not in .env.example: QT_QPA_PLATFORM, TERM, _MEIPASS, _MEIPASS
   - Priority: P2-Medium | Effort: Medium
-- [ ] [P] **T029** [analyze_xdg_kg] Analysis error: No module named 'agent_utilities.knowledge_graph'
+- [ ] [P] **T029** [analyze_xdg_kg] Analysis error: No module named 'meristem.knowledge_graph'
   - Priority: P1-High | Effort: Medium

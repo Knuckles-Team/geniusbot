@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "geniusbot"
+name = "axil"
 version = "5.2.2"
 description = "Axil: the desktop GUI application for Arbora"
 readme = "README.md"
@@ -20,7 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-keywords = ["genius", "geniusbot", "desktop", "qt", "agent", "mcp"]
+keywords = ["genius", "axil", "desktop", "qt", "agent", "mcp"]
 dependencies = [
     "PySide6>=6.12.0",
     "arbora>=0.1.2",
@@ -58,14 +58,14 @@ types = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Knuckles-Team/geniusbot"
+Homepage = "https://github.com/Knuckles-Team/axil"
 
 [project.scripts]
-geniusbot = "geniusbot.geniusbot:main"
-geniusbot-package = "geniusbot.services.packaging_cli:main"
+axil = "axil.axil:main"
+axil-package = "axil.services.packaging_cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["geniusbot"]
+packages = ["axil"]
 
 [tool.ruff]
 line-length = 120
@@ -84,9 +84,9 @@ markers = [
 ]
 
 [tool.pipelines_hooks.public_surface]
-repository = "Knuckles-Team/geniusbot"
-distribution = "geniusbot"
-pages_url = "https://knuckles-team.github.io/geniusbot/"
+repository = "Knuckles-Team/axil"
+distribution = "axil"
+pages_url = "https://knuckles-team.github.io/axil/"
 mcp_server = false
 
 [tool.pipelines_hooks.ste]
@@ -94,8 +94,8 @@ paths = ["README.md", "AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md", "CHANGELOG.md
 exempt = ["specs/_template/*"]
 
 [tool.pipelines_hooks]
-packages = ["geniusbot"]
+packages = ["axil"]
 
 [tool.pipelines_hooks.coupling]
-forbidden = ["agent_utilities", "epistemic_graph", "arbora", "agent_terminal_ui", "agent_webui"]
+forbidden = ["agent_utilities", "meristem", "epistemic_graph", "arbora", "agent_terminal_ui", "tuig", "agent_webui"]
 allowed = ["arbora.client"]

@@ -9,8 +9,8 @@ import threading
 import pytest
 from PySide6.QtCore import QThread
 
-from geniusbot.qt.service_dashboard import ServiceDashboardPanel
-from geniusbot.services.backend_adapter import backend
+from axil.qt.service_dashboard import ServiceDashboardPanel
+from axil.services.backend_adapter import backend
 
 
 @pytest.mark.spec("AXIL-CLIENT-R001.3")
@@ -102,8 +102,8 @@ def test_application_quit_bounds_fetch_cancellation(stalled_cleanup):
         import time
         from PySide6.QtCore import QTimer
         from PySide6.QtWidgets import QApplication
-        from geniusbot.qt.service_dashboard import ServiceDashboardPanel
-        from geniusbot.services.backend_adapter import backend
+        from axil.qt.service_dashboard import ServiceDashboardPanel
+        from axil.services.backend_adapter import backend
 
         entered = threading.Event()
         cleaned = threading.Event()

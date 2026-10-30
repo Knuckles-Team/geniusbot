@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TOKENS_PATH = Path(__file__).with_name("tokens.json")
-OUTPUT_PATH = ROOT / "geniusbot" / "qt" / "colors.py"
+OUTPUT_PATH = ROOT / "axil" / "qt" / "colors.py"
 
 QSS_TEMPLATE = """QMainWindow {{
     background-color: @BG_PRIMARY@;

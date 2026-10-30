@@ -1,19 +1,19 @@
-# Merge-queue gate declaration for `geniusbot` (a PYTHON repository).
+# Merge-queue gate declaration for `axil` (a PYTHON repository).
 #
-# Bootstrapped directly onto `main` the same way agent-utilities'/epistemic-graph's/
-# agent-webui's/agent-terminal-ui's own `.mergequeue.yaml` were (D-MQR-1's
+# Bootstrapped directly onto `main` the same way meristem'/epistemic-graph's/
+# agent-webui's/tuig's own `.mergequeue.yaml` were (D-MQR-1's
 # "chore(merge-queue): bootstrap .mergequeue.yaml" pattern) -- a direct commit, not
 # landed through the queue itself, because a repo with no queue declaration cannot
 # enqueue the declaration through its own queue. Every change to this file AFTER this
 # bootstrap goes through the queue like any other candidate.
 #
 # ★ w6-true-green (2026-08-07): this repo had NO `.mergequeue.yaml` at all -- same gap,
-# same fix, as agent-terminal-ui's sibling file landed alongside this one. See that
+# same fix, as tuig's sibling file landed alongside this one. See that
 # file's header for the full "why this is a structural true-green gap" rationale
 # (03-true-green-not-baselined-green.md).
 #
 # Same "never rely on a per-worktree .venv, never bare `uv run`" discipline as
-# agent-webui's/agent-terminal-ui's own files: every gate self-provisions an isolated
+# agent-webui's/tuig's own files: every gate self-provisions an isolated
 # `.venv-mq` and then invokes that venv's `python` binary directly by path -- never
 # `uv run`, which silently falls back to the system interpreter when workspace-root
 # discovery fails (D-UVR-1).

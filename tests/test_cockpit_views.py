@@ -5,16 +5,16 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from geniusbot.qt.data_query_panel import DataQueryPanel
-from geniusbot.qt.federated_search_panel import FederatedSearchPanel
-from geniusbot.qt.finance_cockpit import FinanceCockpitPanel
-from geniusbot.qt.graph_explorer import GraphExplorerPanel
-from geniusbot.qt.infra_cockpit import InfrastructureCockpitPanel
-from geniusbot.qt.metrics_panel import MetricsPanel
-from geniusbot.qt.security_policy import SecurityPolicyPanel
-from geniusbot.qt.telemetry_dashboard import TelemetryDashboardPanel
-from geniusbot.qt.temporal_graph_panel import TemporalGraphPanel
-from geniusbot.qt.workflow_builder import WorkflowBuilderPanel
+from axil.qt.data_query_panel import DataQueryPanel
+from axil.qt.federated_search_panel import FederatedSearchPanel
+from axil.qt.finance_cockpit import FinanceCockpitPanel
+from axil.qt.graph_explorer import GraphExplorerPanel
+from axil.qt.infra_cockpit import InfrastructureCockpitPanel
+from axil.qt.metrics_panel import MetricsPanel
+from axil.qt.security_policy import SecurityPolicyPanel
+from axil.qt.telemetry_dashboard import TelemetryDashboardPanel
+from axil.qt.temporal_graph_panel import TemporalGraphPanel
+from axil.qt.workflow_builder import WorkflowBuilderPanel
 
 
 @pytest.mark.unit

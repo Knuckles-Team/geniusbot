@@ -52,7 +52,7 @@ jobs:
         sudo apt-get install -y -q libegl1 libgl1 libxkbcommon0 libfontconfig1 libpulse0
         uv sync --frozen --extra test
         printf '%s\n' QT_QPA_PLATFORM=offscreen QT_AUDIO_BACKEND=pulseaudio >> "$GITHUB_ENV"
-      # These hooks run scripts from a sibling agent-utilities checkout that a
+      # These hooks run scripts from a sibling meristem checkout that a
       # hosted runner does not have; they stay enforced at local pre-push.
       # ste-staged (STE-lite prose lint) is advisory: the ste-advisory job runs it
       # report-only (operator gate cut).
@@ -69,7 +69,7 @@ jobs:
     uses: Knuckles-Team/pipelines/.github/workflows/main_pipeline.yml@main
     with:
       backward-python: "3.12"
-      backward-module: geniusbot
+      backward-module: axil
       timeout-minutes: 60
       setup-command: |
         set -euo pipefail

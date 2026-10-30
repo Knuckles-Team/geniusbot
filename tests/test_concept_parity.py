@@ -6,7 +6,7 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TEST_DIR)
 WORKSPACE_DIR = os.path.dirname(ROOT_DIR)
 MASTER_OVERVIEW_PATH = os.path.join(
-    WORKSPACE_DIR, "agent-utilities", "docs", "overview.md"
+    WORKSPACE_DIR, "meristem", "docs", "overview.md"
 )
 
 
@@ -63,26 +63,26 @@ def extract_concepts_from_codebase(directory):
 @pytest.mark.concept("AU-GBOT.cockpit.through-gbot")
 def test_concept_parity():
     """
-    Enforces that all concepts documented or used in geniusbot
-    exist in the master agent-utilities registry.
+    Enforces that all concepts documented or used in axil
+    exist in the master meristem registry.
     """
     master_concepts = extract_concepts_from_overview(MASTER_OVERVIEW_PATH)
 
     # Extract concepts from this project
     local_codebase_concepts = extract_concepts_from_codebase(ROOT_DIR)
 
-    # Only enforce parity for agent-utilities 5-Pillar concepts
+    # Only enforce parity for meristem 5-Pillar concepts
     # Project-specific concepts (GBOT-*, SX-*, etc.) are excluded
-    agent_utilities_pillars = ("ORCH-", "KG-", "AHE-", "ECO-", "OS-")
+    meristem_pillars = ("ORCH-", "KG-", "AHE-", "ECO-", "OS-")
     local_codebase_concepts = {
-        c for c in local_codebase_concepts if c.startswith(agent_utilities_pillars)
+        c for c in local_codebase_concepts if c.startswith(meristem_pillars)
     }
 
     # Ensure every concept used locally is registered in the master overview.md
     unregistered_concepts = local_codebase_concepts - master_concepts
 
     assert not unregistered_concepts, (
-        f"The following concepts are used in geniusbot but are NOT registered "
-        f"in the master agent-utilities/docs/overview.md registry: {unregistered_concepts}. "
+        f"The following concepts are used in axil but are NOT registered "
+        f"in the master meristem/docs/overview.md registry: {unregistered_concepts}. "
         f"Please register them first."
     )

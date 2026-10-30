@@ -69,12 +69,14 @@ def test_canonical_shared_guardrails_preserve_client_boundary():
     ):
         assert script not in text
     policy = tomllib.loads(PYPROJECT.read_text())["tool"]["pipelines_hooks"]
-    assert policy["packages"] == ["geniusbot"]
+    assert policy["packages"] == ["axil"]
     assert set(policy["coupling"]["forbidden"]) == {
         "agent_utilities",
+        "meristem",
         "epistemic_graph",
         "arbora",
         "agent_terminal_ui",
+        "tuig",
         "agent_webui",
     }
     assert policy["coupling"]["allowed"] == ["arbora.client"]

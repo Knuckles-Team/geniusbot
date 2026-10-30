@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Axil
+Comment=Axil desktop GUI for Arbora
+Exec=/usr/bin/axil
+Icon=axil
+Terminal=false
+Type=Application
+Categories=Utility;Development;
+StartupNotify=true

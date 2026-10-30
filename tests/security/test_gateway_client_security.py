@@ -8,7 +8,7 @@ import httpx
 import pytest
 
 _MODULE_PATH = (
-    Path(__file__).resolve().parents[2] / "geniusbot" / "services" / "gateway_client.py"
+    Path(__file__).resolve().parents[2] / "axil" / "services" / "gateway_client.py"
 )
 _SPEC = importlib.util.spec_from_file_location(
     "gateway_client_security_target", _MODULE_PATH

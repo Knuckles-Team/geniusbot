@@ -1,13 +1,13 @@
 # Architecture
 
-GeniusBot is a PySide6 (Qt6) desktop cockpit. It talks to Arbora through the gateway client in `agent-utilities`.
+Axil is a PySide6 (Qt6) desktop cockpit. It talks to Arbora through the gateway client in `meristem`.
 
 ## Layers
 
-- `geniusbot/geniusbot.py` builds the main window and the system tray.
-- `geniusbot/qt/` holds the cockpit panels, the terminal widget and the tool guard.
-- `geniusbot/services/` holds the packaging commands and backend adapters.
-- `geniusbot/utils/` holds the agent bridge and the background daemon.
+- `axil/axil.py` builds the main window and the system tray.
+- `axil/qt/` holds the cockpit panels, the terminal widget and the tool guard.
+- `axil/services/` holds the packaging commands and backend adapters.
+- `axil/utils/` holds the agent bridge and the background daemon.
 
 ## Rules
 

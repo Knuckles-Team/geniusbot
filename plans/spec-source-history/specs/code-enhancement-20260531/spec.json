@@ -1,8 +1,8 @@
 {
   "feature_id": "code-enhancement-20260531",
-  "title": "Code Enhancement: geniusbot",
+  "title": "Code Enhancement: axil",
   "created": "2026-05-31T06:00:13.130884+00:00",
-  "overview": "Automated code enhancement review for geniusbot. Covers 17 analysis domains.",
+  "overview": "Automated code enhancement review for axil. Covers 17 analysis domains.",
   "user_stories": [
     {
       "role": "developer",
@@ -53,7 +53,7 @@
     },
     {
       "id": "FR-003",
-      "description": "Minor update: agent-utilities 0.2.40 (installed) -> 0.16.0",
+      "description": "Minor update: meristem 0.2.40 (installed) -> 0.16.0",
       "testable": true
     },
     {
@@ -73,7 +73,7 @@
     },
     {
       "id": "FR-007",
-      "description": "Needs attention: geniusbot.py (699L) \u2014 3 functions with high complexity (worst: GeniusBot.initialize_user_interface at 217L, CC=2)",
+      "description": "Needs attention: axil.py (699L) \u2014 3 functions with high complexity (worst: Axil.initialize_user_interface at 217L, CC=2)",
       "testable": true
     },
     {
@@ -183,7 +183,7 @@
     },
     {
       "id": "FR-029",
-      "description": "Analysis error: No module named 'agent_utilities.knowledge_graph'",
+      "description": "Analysis error: No module named 'meristem.knowledge_graph'",
       "testable": true
     }
   ],

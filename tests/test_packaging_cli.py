@@ -2,8 +2,8 @@
 
 import pytest
 
-from geniusbot.services.packaging_cli import check, main
-from geniusbot.services.packaging_manifest import PackagingManifestError
+from axil.services.packaging_cli import check, main
+from axil.services.packaging_manifest import PackagingManifestError
 
 
 @pytest.mark.unit
@@ -24,7 +24,7 @@ def test_check_rejects_incomplete_targets():
                 {
                     "name": "console_entry_point",
                     "build_tool": "setuptools",
-                    "output_path": "dist/geniusbot",
+                    "output_path": "dist/axil",
                 }
             ]
         )

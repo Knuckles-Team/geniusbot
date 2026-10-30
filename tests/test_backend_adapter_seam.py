@@ -1,7 +1,7 @@
 """Enforce the backend-adapter seam invariant.
 
-GeniusBot is a client of Arbora: no module under ``geniusbot/`` may import
-``agent_utilities``, and the adapter facade exposes the method surface the UI
+Axil is a client of Arbora: no module under ``axil/`` may import
+``meristem``, and the adapter facade exposes the method surface the UI
 relies on.
 """
 
@@ -10,8 +10,8 @@ from pathlib import Path
 
 import pytest
 
-# Repo layout: <repo>/tests/this_file.py  and  <repo>/geniusbot/<package>
-PACKAGE_ROOT = Path(__file__).resolve().parent.parent / "geniusbot"
+# Repo layout: <repo>/tests/this_file.py  and  <repo>/axil/<package>
+PACKAGE_ROOT = Path(__file__).resolve().parent.parent / "axil"
 
 ALLOWED: set[str] = set()
 
@@ -31,17 +31,17 @@ def _offending_files():
 
 
 @pytest.mark.spec("AXIL-CLIENT-R001.1")
-def test_no_module_imports_agent_utilities():
+def test_no_module_imports_meristem():
     offenders = _offending_files()
     assert not offenders, (
-        "These modules import agent_utilities; geniusbot is an arbora client: "
+        "These modules import agent_utilities; axil is an arbora client: "
         f"{offenders}"
     )
 
 
 def test_backend_singleton_surface():
     """The adapter exposes the method surface the UI relies on."""
-    from geniusbot.services.backend_adapter import backend
+    from axil.services.backend_adapter import backend
 
     for method in (
         "resolve_log_dir",
@@ -56,7 +56,7 @@ def test_backend_singleton_surface():
 def test_agent_workflow_runs_on_arbora_not_in_process():
     import asyncio
 
-    from geniusbot.services.backend_adapter import BackendAdapter
+    from axil.services.backend_adapter import BackendAdapter
 
     class _Gateway:
         async def stream_copilot_query(self, query, progress_cb=None):
@@ -80,8 +80,8 @@ def test_agent_workflow_runs_on_arbora_not_in_process():
         raise AssertionError("an offline gateway must raise for the caller fallback")
 
 
-def test_log_dir_is_axil_owned_not_legacy_agent_utilities():
+def test_log_dir_is_axil_owned_not_legacy_meristem():
     """The log directory is the axil app dir; the legacy app name is gone."""
     source = (PACKAGE_ROOT / "services" / "backend_adapter.py").read_text("utf-8")
     assert 'user_log_path("axil"' in source
-    assert 'user_log_path("agent-utilities"' not in source
+    assert 'user_log_path("meristem"' not in source

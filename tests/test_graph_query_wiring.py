@@ -3,7 +3,7 @@
 CONCEPT:AU-GBOT.cockpit.through-gbot
 
 ``BackendAdapter.run_graph_query`` used to import ``run_graph_query`` from
-``agent_utilities.graph`` — a symbol that does not exist there — and swallow the
+``meristem.graph`` — a symbol that does not exist there — and swallow the
 resulting ``ImportError``, so the Graph Explorer and the temporal-graph panel
 always fell through to their local simulators. These tests drive the real path:
 an HTTP request must actually leave the client, hit ``/api/graph/query``, and
@@ -21,20 +21,20 @@ from typing import Any
 import httpx
 import pytest
 
-# Import the two service modules without executing ``geniusbot/__init__.py``,
+# Import the two service modules without executing ``axil/__init__.py``,
 # which pulls in the whole Qt application. Same intent as
 # ``tests/security/test_gateway_client_security.py``'s file-path import: these
 # tests exercise the backend seam, not the UI.
 _ROOT = Path(__file__).resolve().parents[1]
-if "geniusbot" not in sys.modules:
-    _pkg = types.ModuleType("geniusbot")
-    _pkg.__path__ = [str(_ROOT / "geniusbot")]
-    sys.modules["geniusbot"] = _pkg
-    _services = types.ModuleType("geniusbot.services")
-    _services.__path__ = [str(_ROOT / "geniusbot" / "services")]
-    sys.modules["geniusbot.services"] = _services
+if "axil" not in sys.modules:
+    _pkg = types.ModuleType("axil")
+    _pkg.__path__ = [str(_ROOT / "axil")]
+    sys.modules["axil"] = _pkg
+    _services = types.ModuleType("axil.services")
+    _services.__path__ = [str(_ROOT / "axil" / "services")]
+    sys.modules["axil.services"] = _services
 
-from geniusbot.services.backend_adapter import BackendAdapter  # noqa: E402
+from axil.services.backend_adapter import BackendAdapter  # noqa: E402
 
 
 class _RecordingTransport(httpx.AsyncBaseTransport):
@@ -113,7 +113,7 @@ def test_run_graph_query_returns_none_for_an_empty_result() -> None:
 @pytest.mark.parametrize("route", ["query", "ask-data", "nl-query"])
 def test_graph_routes_the_client_will_post_to_are_declared(route: str) -> None:
     """``_graph_post`` refuses any route not in the declared set."""
-    from geniusbot.services import gateway_client
+    from axil.services import gateway_client
 
     assert route in gateway_client._GRAPH_ROUTES
 

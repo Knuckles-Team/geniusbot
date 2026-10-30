@@ -2,7 +2,7 @@
 
 Super Intelligence (SI) is the Arbora project term for model-backed agents.
 
-**Axil** is the desktop GUI application for Arbora and its `agent-utilities` control plane. The package and executable remain `geniusbot`.
+**Axil** is the desktop GUI application for Arbora and its `meristem` control plane. The package and executable remain `axil`.
 
 Axil integrates all 37+ specialist agent and MCP packages from our multi-agent ecosystem into a single-pane-of-glass user interface, offering 1-click execution, embedded hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware protection layer.
 
@@ -12,7 +12,7 @@ Axil integrates all 37+ specialist agent and MCP packages from our multi-agent e
 
 * **Zero-Nesting Dynamic UI**: Avoid deep click-through menus with flat left sidebar navigation and dynamic agent grid decks.
 * **Asynchronous Execution Threading**: Main Qt event loops remain highly responsive utilizing custom `QRunnable` worker pools.
-* **Embedded xterm.js Hybrid Terminal**: Direct terminal window launching for `agent-terminal-ui` inside the main GUI tab.
+* **Embedded xterm.js Hybrid Terminal**: Direct terminal window launching for `tuig` inside the main GUI tab.
 * **Tool-Guard Authorization Modal**: A strict interceptor boundary protecting user systems from dangerous agent mutations.
 * **Automated Package Parity**: Auto-maps specialist tool schemas into QSS-themed form widgets on the fly.
 
@@ -23,14 +23,14 @@ Axil integrates all 37+ specialist agent and MCP packages from our multi-agent e
 ### Prerequisites
 * Python 3.10+
 * [uv](https://github.com/astral-sh/uv) (recommended)
-* Active `agent-utilities` backend environment
+* Active `meristem` backend environment
 
 ### Installation
 Install dependencies and build with `uv`:
 ```bash
 # Clone the repository
-git clone https://github.com/Knuckles-Team/geniusbot.git
-cd geniusbot
+git clone https://github.com/Knuckles-Team/axil.git
+cd axil
 
 # Setup virtual environment and sync
 uv venv
@@ -40,12 +40,12 @@ uv pip sync requirements.txt
 ### Launch
 To start the cockpit in desktop mode:
 ```bash
-uv run geniusbot
+uv run axil
 ```
 
 To run in headless or virtual environments (CI/CD):
 ```bash
-QT_QPA_PLATFORM=offscreen uv run geniusbot
+QT_QPA_PLATFORM=offscreen uv run axil
 ```
 
 ## Specification delivery
@@ -58,5 +58,5 @@ individual requirements and pull requests do not count as completed specificatio
 
 ## Planned run observation
 
-[AXIL-CLIENT-R019](https://github.com/Knuckles-Team/geniusbot/tree/main/specs/desktop-client) defines planned run reads and served acceptance.
+[AXIL-CLIENT-R019](https://github.com/Knuckles-Team/axil/tree/main/specs/desktop-client) defines planned run reads and served acceptance.
 The specification does not establish runtime availability.
