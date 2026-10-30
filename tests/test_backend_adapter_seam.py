@@ -15,7 +15,7 @@ PACKAGE_ROOT = Path(__file__).resolve().parent.parent / "axil"
 
 ALLOWED: set[str] = set()
 
-_IMPORT_RE = re.compile(r"^\s*(from agent_utilities|import agent_utilities)", re.M)
+_IMPORT_RE = re.compile(r"^\s*(from meristem|import meristem)", re.M)
 
 
 def _offending_files():
@@ -34,8 +34,7 @@ def _offending_files():
 def test_no_module_imports_meristem():
     offenders = _offending_files()
     assert not offenders, (
-        "These modules import agent_utilities; axil is an arbora client: "
-        f"{offenders}"
+        "These modules import meristem; axil is an arbora client: " f"{offenders}"
     )
 
 
