@@ -37,7 +37,7 @@ Specs are already designed. The work is implementation, delivered in very small,
 - Before any new spec text, extend the owning spec: a child row (`R012.4`), a new rollup at the end of that spec, or a dated entry in the `plan.md` section "Amendments". Create a new spec only for a capability that no spec owns, and record the search in "Why a new spec".
 - Audits, reviews, gap analyses and carry-overs never get a spec directory. Their findings land in the spec that owns the row; a finding against another repository lands in that repository's spec.
 - Before any new function, module, planner, selector or store, search for the existing one and reuse it. A second implementation of an owned capability is a defect, not a delivery.
-- The rules are in `specs/README.md`. The `spec-standard` gate enforces the names, file set, title and index.
+- The rules are in `specs/README.md`. The `spec` gate enforces the names, file set, title and index.
 
 **Time and size**
 - One agent delivers one PR in 5 minutes or less. No agent or sub-agent runs longer than 5 minutes; an orchestrator dispatches the next slice to a fresh agent.
@@ -59,10 +59,10 @@ Specs are already designed. The work is implementation, delivered in very small,
 **Specs update themselves (land VERIFIED, not just LANDED)**
 - Every commit that delivers a requirement ends with the trailer `Spec: <ID>[, <ID>...]`. A commit that touches code without delivering one says `Spec: none (ci|deps|refactor|fix-forward)`.
 - Every delivered ID gets at least one test bound to it in the same PR. Python: `@pytest.mark.spec("<ID>")`. Rust/TypeScript: a `// spec: <ID>` line directly above the test.
-- Never hand-edit `status.json`; it is generated (`spec-status`). Never write placeholder SHAs. If the work is only part of a requirement, decompose it into `<ID>.<n>` children first and deliver whole children.
+- Never hand-edit `status.json`; it is generated (`spec`). Never write placeholder SHAs. If the work is only part of a requirement, decompose it into `<ID>.<n>` children first and deliver whole children.
 - Write the marker with the literal ID, never a variable. Put `Spec:` and `Co-Authored-By:` on consecutive lines in the last paragraph of the commit message, or `Spec:` is not read as a trailer.
-- Generated status depends on the commit: run `pipelines-hook spec-status --write` again after committing and commit the result.
-- The generator applies the rules. Run `pipelines-hook spec-status` to see each row's state.
+- Generated status depends on the commit: run `pipelines-hook spec --write` again after committing and commit the result.
+- The generator applies the rules. Run `pipelines-hook spec` to see each row's state.
 
 **Delivered means the row's acceptance is met**
 - Never delete or stub out behaviour whose replacement is not wired. Never make a caller "fail closed" in place of repointing it. Never substitute a scope, weaken an assertion or add an allowlist entry to pass a gate.
