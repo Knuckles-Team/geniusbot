@@ -420,7 +420,7 @@
         "34e20c635c6d"
       ],
       "verified_by": [
-        "tests/test_development_skill.py:11"
+        "tests/test_development_skill.py:8"
       ]
     },
     {
