@@ -2,10 +2,7 @@ from pathlib import Path
 
 import pytest
 
-SKILL = (
-    Path(__file__).resolve().parent.parent
-    / "axil/skills/axil-development/SKILL.md"
-)
+SKILL = Path(__file__).resolve().parent.parent / "axil/skills/axil-development/SKILL.md"
 
 
 @pytest.mark.spec("AXIL-CLIENT-R015")
