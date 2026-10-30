@@ -159,9 +159,7 @@ class VoicePanel(QWidget):
             self.btn_record.setEnabled(False)
             return
 
-        fd, path = tempfile.mkstemp(
-            prefix="axil-voice-", suffix=".wav", dir="/var/tmp"
-        )
+        fd, path = tempfile.mkstemp(prefix="axil-voice-", suffix=".wav", dir="/var/tmp")
         os.close(fd)
         self._output_path = Path(path)
 
