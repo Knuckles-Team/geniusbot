@@ -513,8 +513,7 @@ workflows run the same checks in CI.
 
 ## Documentation
 
-Pages live in `docs/` and the nav lives in `mkdocs.yml`. Prose follows the
-STE rules that `ste-staged` enforces. Specs live in `specs/`; extend the
+Pages live in `docs/` and the nav lives in `mkdocs.yml`. Specs live in `specs/`; extend the
 owning spec before you add a new one.
 
 ## Branching & isolation

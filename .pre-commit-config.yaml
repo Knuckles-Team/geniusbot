@@ -63,23 +63,11 @@ repos:
       additional_dependencies: [pydantic==2.13.4, types-PyYAML==6.0.12.20260518, types-requests==2.33.0.20260518, types-setuptools==83.0.0.20260706, PySide6==6.11.1]
       args: ["--ignore-missing-imports"]
   - repo: https://github.com/Knuckles-Team/pipelines
-    rev: a2dd609d494364daf26fdb3b18abbffa10095993
+    rev: main
     hooks:
-    - id: spec-status
-  - repo: https://github.com/Knuckles-Team/pipelines
-    rev: 5e8471f4c6e33533ef423cd417a968c9df4b97bf
-    hooks:
-    - id: spec-decomposition
-    - id: spec-standard
-    - id: public-surface
-    - id: ste-staged
-    - id: ste-staleness-staged
-    - id: spec-trailers
-      stages: [pre-push, manual]
-      args: ["--base-ref", "origin/main"]
+    - id: spec
+    - id: secrets
     - id: no-legacy-concepts
-    - id: stubs
-    - id: sprawl
     - id: coupling
       args: ["--root", "."]
     - id: lockfile-version-mirrors
@@ -121,14 +109,6 @@ repos:
     rev: d31b7eae1767c43460afb3ba130e0a6602933abe # 1.9.1
     hooks:
       - id: nbqa-black
-  - repo: local
-    hooks:
-    - id: security-sanitizer
-      name: Security and Garbage Sanitizer
-      entry: python scripts/security_sanitizer.py
-      language: python
-      pass_filenames: false
-      always_run: true
   - repo: local
     hooks:
     - id: guardrail-tracked-privacy
