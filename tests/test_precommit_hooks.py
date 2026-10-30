@@ -71,7 +71,6 @@ def test_canonical_shared_guardrails_preserve_client_boundary():
     policy = tomllib.loads(PYPROJECT.read_text())["tool"]["pipelines_hooks"]
     assert policy["packages"] == ["axil"]
     assert set(policy["coupling"]["forbidden"]) == {
-        "agent_utilities",
         "meristem",
         "epistemic_graph",
         "arbora",

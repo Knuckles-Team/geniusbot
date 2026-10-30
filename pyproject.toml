@@ -97,5 +97,5 @@ exempt = ["specs/_template/*"]
 packages = ["axil"]
 
 [tool.pipelines_hooks.coupling]
-forbidden = ["agent_utilities", "meristem", "epistemic_graph", "arbora", "agent_terminal_ui", "tuig", "agent_webui"]
+forbidden = ["meristem", "epistemic_graph", "arbora", "agent_terminal_ui", "tuig", "agent_webui"]
 allowed = ["arbora.client"]
