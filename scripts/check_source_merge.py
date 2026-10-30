@@ -10,8 +10,8 @@ import tempfile
 from pathlib import Path
 
 SOURCE_SCOPE = {
-    "geniusbot/services/gateway_client.py",
-    "geniusbot/geniusbot.py",
+    "axil/services/gateway_client.py",
+    "axil/axil.py",
     "tests/test_specialist_discovery.py",
     "tests/test_extraction_cockpit.py",
     "tests/test_graph_query_wiring.py",

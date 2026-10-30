@@ -5,7 +5,7 @@
 ".github" = "GitHub Actions workflows and dashboard source configuration."
 ".security" = "Security scanning configuration and reviewed policy inputs."
 "docs" = "Published documentation content."
-"geniusbot" = "Desktop application source."
+"axil" = "Desktop application source."
 "packaging" = "Platform installer and desktop packaging inputs."
 "plans" = "Historical source evidence and complete spec migration path map."
 "screenshots" = "Images used by the public desktop documentation."

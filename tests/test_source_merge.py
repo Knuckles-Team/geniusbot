@@ -23,7 +23,7 @@ def _gate(monkeypatch, changed: str, *, remote: str = "base"):
     return gate
 
 
-@pytest.mark.parametrize("changed", ["pyproject.toml", "geniusbot/qt/tool_guard.py"])
+@pytest.mark.parametrize("changed", ["pyproject.toml", "axil/qt/tool_guard.py"])
 def test_changes_outside_gateway_scope_require_full_pytest(monkeypatch, changed):
     gate = _gate(monkeypatch, changed)
     calls = []
@@ -35,7 +35,7 @@ def test_changes_outside_gateway_scope_require_full_pytest(monkeypatch, changed)
 
 
 def test_dirty_candidate_is_rejected_before_test_selection(monkeypatch):
-    gate = _gate(monkeypatch, "geniusbot/services/gateway_client.py")
+    gate = _gate(monkeypatch, "axil/services/gateway_client.py")
 
     def reject(command, **kwargs):
         raise subprocess.CalledProcessError(1, command)
@@ -46,7 +46,7 @@ def test_dirty_candidate_is_rejected_before_test_selection(monkeypatch):
 
 
 def test_changed_remote_main_fails_closed(monkeypatch):
-    gate = _gate(monkeypatch, "geniusbot/services/gateway_client.py", remote="new-main")
+    gate = _gate(monkeypatch, "axil/services/gateway_client.py", remote="new-main")
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: None)
 
     with pytest.raises(RuntimeError, match="Remote main changed"):
@@ -54,7 +54,7 @@ def test_changed_remote_main_fails_closed(monkeypatch):
 
 
 def test_missing_qualified_environment_fails_closed(monkeypatch):
-    gate = _gate(monkeypatch, "geniusbot/services/gateway_client.py")
+    gate = _gate(monkeypatch, "axil/services/gateway_client.py")
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: None)
 
     with pytest.raises(RuntimeError, match="environment is unavailable"):

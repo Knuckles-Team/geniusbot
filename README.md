@@ -1,7 +1,7 @@
 # Axil
 
 <p align="center">
-  <img src="docs/assets/brands/geniusbot-logo-v1.png" alt="Axil logo" width="220">
+  <img src="docs/assets/brands/axil-logo-v1.png" alt="Axil logo" width="220">
 </p>
 
 <p align="center">
@@ -16,9 +16,9 @@
 [![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil/commits/main)
 [![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil/issues)
 [![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/axil)](https://github.com/Knuckles-Team/axil)
-[![PyPI - Version](https://img.shields.io/pypi/v/geniusbot)](https://pypi.org/project/geniusbot/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dd/geniusbot)](https://pypi.org/project/geniusbot/)
-[![PyPI - License](https://img.shields.io/pypi/l/geniusbot)](https://pypi.org/project/geniusbot/)
+[![PyPI - Version](https://img.shields.io/pypi/v/axil)](https://pypi.org/project/axil/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dd/axil)](https://pypi.org/project/axil/)
+[![PyPI - License](https://img.shields.io/pypi/l/axil)](https://pypi.org/project/axil/)
 [![Build](https://github.com/Knuckles-Team/axil/actions/workflows/release.yml/badge.svg)](https://github.com/Knuckles-Team/axil/actions/workflows/release.yml)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://knuckles-team.github.io/axil/)
 
@@ -32,11 +32,11 @@
 
 ## Overview
 
-The repository is `axil`; the package, imports and executable remain `geniusbot`.
+The repository is `axil`; the package, imports and executable remain `axil`.
 Existing icon assets and screenshot provenance are retained.
 
 Axil is a desktop GUI application and visual control deck built on top of
-[Arbora](https://knuckles-team.github.io/arbora/) and its `agent-utilities`
+[Arbora](https://knuckles-team.github.io/arbora/) and its `meristem`
 control plane. It integrates every specialist agent and MCP package in the fleet
 into a single-pane-of-glass user interface, offering 1-click execution, embedded
 hybrid terminals, zero-nesting visual layouts, and a zero-trust hardware
@@ -44,7 +44,7 @@ protection layer.
 
 Axil provides a centralized graphical cockpit designed to eliminate tedious click-through fatigue. It maps specialist agent parameter schemas directly to custom QSS-themed form widgets on the fly.
 
-Operators can trigger actions, monitor running terminal inputs via the embedded `agent-terminal-ui`, and secure dangerous CLI calls using the Zero-Trust Tool-Guard interceptor.
+Operators can trigger actions, monitor running terminal inputs via the embedded `tuig`, and secure dangerous CLI calls using the Zero-Trust Tool-Guard interceptor.
 
 ## Key Capabilities
 
@@ -83,7 +83,7 @@ Operators can trigger actions, monitor running terminal inputs via the embedded 
 ---
 
 ## 🏛️ Architecture
-Axil is engineered as a lightweight PySide6 GUI client wrapper around the `agent-utilities` logic engine.
+Axil is engineered as a lightweight PySide6 GUI client wrapper around the `meristem` logic engine.
 
 ```mermaid
 graph TD
@@ -94,7 +94,7 @@ graph TD
         TerminalPanel["xterm.js WebEngine Panel"]
     end
 
-    subgraph Backend ["agent-utilities Powerhouse"]
+    subgraph Backend ["meristem Powerhouse"]
         Discovery["Agent Specialist Discovery"]
         Executor["Background Agent Worker Loop"]
         KG["Epistemic Knowledge Graph"]
@@ -127,12 +127,12 @@ uv pip sync requirements.txt
 ### 2. Standard pip
 Install standard stable packages:
 ```bash
-pip install geniusbot
+pip install axil
 ```
 
 Install with all ecosystem plugins:
 ```bash
-pip install geniusbot[all]
+pip install axil[all]
 ```
 
 ---
@@ -157,12 +157,12 @@ Axil can be configured using environment variables or a `.env` file in the proje
 
 Launch the desktop cockpit:
 ```bash
-uv run geniusbot
+uv run axil
 ```
 
 To run in headless or virtual Linux environments (CI/CD):
 ```bash
-QT_QPA_PLATFORM=offscreen uv run geniusbot
+QT_QPA_PLATFORM=offscreen uv run axil
 ```
 
 ---
@@ -173,24 +173,24 @@ QT_QPA_PLATFORM=offscreen uv run geniusbot
 Compiling Axil as a single standalone executable:
 ```powershell
 python -m pip install --upgrade pyinstaller
-git clone https://github.com/Knuckles-Team/axil.git geniusbot
-cd geniusbot
+git clone https://github.com/Knuckles-Team/axil.git axil
+cd axil
 python -m venv .venv
 ./.venv/Scripts/activate
 python -m pip install -r ./requirements.txt
 python -m pip install -r ./build-requirements.txt
 python -m pip install --upgrade pandas scipy numpy pydantic
-pyinstaller --name geniusbot `
+pyinstaller --name axil `
   --log-level DEBUG `
   --onefile --windowed `
-  --paths "./geniusbot" `
-  --icon='./geniusbot/img/geniusbot.ico' `
+  --paths "./axil" `
+  --icon='./axil/img/axil.ico' `
   --recursive-copy-metadata=opentelemetry_api `
   --recursive-copy-metadata=opentelemetry_sdk `
   --recursive-copy-metadata=opentelemetry_exporter_otlp_proto_grpc `
   --exclude-module pygame `
   --exclude-module tkinter `
-   ./geniusbot/geniusbot.py
+   ./axil/axil.py
 ```
 
 ### Windows Setup Installer

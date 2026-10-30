@@ -4,15 +4,15 @@
 
 - Python 3.12 through 3.14
 - [uv](https://github.com/astral-sh/uv)
-- A reachable `agent-utilities` backend
+- A reachable `meristem` backend
 
 ## Install and run
 
 ```bash
-git clone https://github.com/Knuckles-Team/geniusbot.git
-cd geniusbot
+git clone https://github.com/Knuckles-Team/axil.git
+cd axil
 uv sync --all-extras
-uv run geniusbot
+uv run axil
 ```
 
 The cockpit window opens on the Dashboard category.

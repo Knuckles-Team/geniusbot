@@ -1,11 +1,11 @@
-# AGENTS.md — GeniusBot Desktop Cockpit Developer Guide
+# AGENTS.md — Axil Desktop Cockpit Developer Guide
 
 <!-- agent-contract:start -->
 ## Agent contract
 
 Tool-neutral rules for any AI agent or human working in this repository. This block is maintained by the fleet standard; edit outside the markers.
 
-- **Owner boundary:** this repository owns the desktop experience a person sees; data reaches it only through arbora (spec prefix `GENIUSBOT-`). Feature routing across repositories: [ecosystem boundaries](https://github.com/Knuckles-Team/pipelines/blob/main/reference/ecosystem-boundaries.md).
+- **Owner boundary:** this repository owns the desktop experience a person sees; data reaches it only through arbora (spec prefix `AXIL-`). Feature routing across repositories: [ecosystem boundaries](https://github.com/Knuckles-Team/pipelines/blob/main/reference/ecosystem-boundaries.md).
 - **Setup:** run `scripts/bootstrap.sh`. It is idempotent and non-interactive: it pins uv and Python, syncs the locked environment, installs the git hooks and prints the gate command.
 - **Gates:** `uvx pre-commit run --all-files` must pass before you push. Do not bypass hooks to get green.
 - **Commits:** one logical change per commit with a `Spec: <ID>` trailer (or `Spec: none (<reason>)`), plus a `Co-Authored-By:` trailer naming the assisting agent. Stage explicit paths only; never `git add -A` or `git add .`. Use your own configured Git identity, never a tool or bot name.
@@ -15,7 +15,7 @@ Tool-neutral rules for any AI agent or human working in this repository. This bl
 > Claude Code loads this file via `CLAUDE.md` (`@AGENTS.md` import) — the two stay in sync. Edit this file, not `CLAUDE.md`.
 
 
-This document defines the architecture, standard commands, code design principles, and strict safety guidelines for maintaining and extending `geniusbot`.
+This document defines the architecture, standard commands, code design principles, and strict safety guidelines for maintaining and extending `axil`.
 
 ## Boundaries
 
@@ -31,29 +31,29 @@ Route every feature with the [ecosystem boundaries standard](https://github.com/
 - **UI Engine**: **PySide6** (Qt6) — Standard dynamic desktop layout, asynchronous thread dispatching.
 - **Embedded Terminal**: **`xterm.js`** inside a headless **`QWebEngineView`** (Chromium core) communicating over a thread-safe **`QWebChannel`** bridge. Abstracts POSIX `pty` (Unix/macOS) and `winpty`/`conpty` (Windows) for 100% platform-independent terminal rendering.
 - **Navigation Model**: **Flat Single-Pane Cockpit Layout (Zero-Nesting UX)** — 5 high-level flat categories (Dashboard, Infra, Media, Productivity, Research) populating an interactive Grid Deck of Instant Action Cards with 0-to-1 click operations.
-- **Backend Powerhouse**: `agent-utilities` — CENTRALIZED orchestration, graph memory (LadybugDB/Cypher), and tool guard policies.
+- **Backend Powerhouse**: `meristem` — CENTRALIZED orchestration, graph memory (LadybugDB/Cypher), and tool guard policies.
 - **Agent Server Link**: Direct IPC and native binding to the `genius-agent` workspace agent.
 
 ---
 
-## 🗺️ Concept ID Registry (GeniusBot Core Pillars)
+## 🗺️ Concept ID Registry (Axil Core Pillars)
 
-`geniusbot` uses **GBOT-6** concept identifiers to catalog and trace its desktop capabilities in our unified Knowledge Graph.
+`axil` uses **GBOT-6** concept identifiers to catalog and trace its desktop capabilities in our unified Knowledge Graph.
 
 | Concept ID | Name | Focus | Core Code Paths |
 | :--- | :--- | :--- | :--- |
-| **AU-GBOT.cockpit.through-gbot** | **Desktop Cockpit Orchestrator** | PySide6 window loops, async `QThreadPool` dispatching, central system tray, and styling. **(Must strictly adhere to CONCEPT-HIG)** | `geniusbot/geniusbot.py` |
-| **AU-GBOT.cockpit.pillar-overview** | **Ecosystem Dynamic Tab Matrix** | Scans `agent-packages/agents/*` and dynamically injects Qt control widgets for each discovered agent. | `geniusbot/plugins/` |
-| **AU-GBOT.cockpit.concept-2** | **Embedded Terminal Sandbox** | PTY process execution streaming `agent-terminal-ui` inside a custom text widget. | `geniusbot/qt/terminal_widget.py` |
-| **AU-GBOT.cockpit.concept-3** | **Universal Tool Approval Gate** | Desktop modal prompt that intercepts critical commands triggered by backend agents. **(Must use glassmorphic depth/CONCEPT-HIG)** | `geniusbot/qt/tool_guard.py` |
-| **AU-GBOT.cockpit.concept-4** | **Topological Cockpit Memory** | In-memory configuration syncing and local graph-store caching. | `geniusbot/utils/agent_bridge.py` |
-| **AU-GBOT.cockpit.concept-5** | **Multi-Tenant Daemon & Tray** | Background system tray icon running scheduler loops for long-running agent tasks. | `geniusbot/utils/daemon.py` |
-| **AU-GBOT.cockpit.concept-6** | **Fleet Supervisory Cockpit** | Surfaces the agent-utilities fleet autonomy control plane (AU-OS.safety.ontological-guardrail/5.15/5.24) — worker placement topology and the ActionPolicy approval inbox — via the shared gateway SDK (AU-ECO.interop.gateway-client-sdk). | `geniusbot/qt/fleet_cockpit.py` |
-| **GB-GBOT.cockpit.gbot-7** | **Temporal Graph Scrubber** | Bi-temporal graph scrubber panel — replays the Knowledge Graph as-of any point in time. | `geniusbot/qt/temporal_graph_panel.py` |
-| **GB-GBOT.cockpit.ask-data-nl-query** | **Ask-Data / NL→Query Cockpit** | Ask the KG a data question in plain English → auditable generated query + rows + citations, over the gateway `/api/graph/ask-data` (KG-2.308) and `/api/graph/nl-query` (KG-2.305) twins. | `geniusbot/qt/data_query_panel.py` |
-| **GB-GBOT.cockpit.metrics-status-cockpit** | **Engine Metrics & Status Cockpit** | PromQL metric queries + shared content-addressed KV-cache stats over `/api/graph/promql` and `/api/graph/kvcache` (KG-2.310). | `geniusbot/qt/metrics_panel.py` |
-| **GB-GBOT.cockpit.federated-search-cockpit** | **Federated Search Cockpit** | One query fanned across every registered external graph over `/api/graph/federated-search` (KG-2.310). | `geniusbot/qt/federated_search_panel.py` |
-| **GB-GBOT.cockpit.voice-dictation-cockpit** | **Voice Dictation Cockpit** | Desktop mic capture (QtMultimedia) transcribed through the SAME governed audio-transcriber-mcp sidecar the webui's dictation control uses, over `POST /api/enhanced/voice/transcribe` (backend AU-ECO.mcp.webui-voice-transcription-delegation). Honest states: no device, recorder/permission failure, backend unavailable, and a genuine error are each shown distinctly. TTS/playback not implemented (no backend route). | `geniusbot/qt/voice_panel.py` |
+| **AU-GBOT.cockpit.through-gbot** | **Desktop Cockpit Orchestrator** | PySide6 window loops, async `QThreadPool` dispatching, central system tray, and styling. **(Must strictly adhere to CONCEPT-HIG)** | `axil/axil.py` |
+| **AU-GBOT.cockpit.pillar-overview** | **Ecosystem Dynamic Tab Matrix** | Scans `agent-packages/agents/*` and dynamically injects Qt control widgets for each discovered agent. | `axil/plugins/` |
+| **AU-GBOT.cockpit.concept-2** | **Embedded Terminal Sandbox** | PTY process execution streaming `tuig` inside a custom text widget. | `axil/qt/terminal_widget.py` |
+| **AU-GBOT.cockpit.concept-3** | **Universal Tool Approval Gate** | Desktop modal prompt that intercepts critical commands triggered by backend agents. **(Must use glassmorphic depth/CONCEPT-HIG)** | `axil/qt/tool_guard.py` |
+| **AU-GBOT.cockpit.concept-4** | **Topological Cockpit Memory** | In-memory configuration syncing and local graph-store caching. | `axil/utils/agent_bridge.py` |
+| **AU-GBOT.cockpit.concept-5** | **Multi-Tenant Daemon & Tray** | Background system tray icon running scheduler loops for long-running agent tasks. | `axil/utils/daemon.py` |
+| **AU-GBOT.cockpit.concept-6** | **Fleet Supervisory Cockpit** | Surfaces the meristem fleet autonomy control plane (AU-OS.safety.ontological-guardrail/5.15/5.24) — worker placement topology and the ActionPolicy approval inbox — via the shared gateway SDK (AU-ECO.interop.gateway-client-sdk). | `axil/qt/fleet_cockpit.py` |
+| **GB-GBOT.cockpit.gbot-7** | **Temporal Graph Scrubber** | Bi-temporal graph scrubber panel — replays the Knowledge Graph as-of any point in time. | `axil/qt/temporal_graph_panel.py` |
+| **GB-GBOT.cockpit.ask-data-nl-query** | **Ask-Data / NL→Query Cockpit** | Ask the KG a data question in plain English → auditable generated query + rows + citations, over the gateway `/api/graph/ask-data` (KG-2.308) and `/api/graph/nl-query` (KG-2.305) twins. | `axil/qt/data_query_panel.py` |
+| **GB-GBOT.cockpit.metrics-status-cockpit** | **Engine Metrics & Status Cockpit** | PromQL metric queries + shared content-addressed KV-cache stats over `/api/graph/promql` and `/api/graph/kvcache` (KG-2.310). | `axil/qt/metrics_panel.py` |
+| **GB-GBOT.cockpit.federated-search-cockpit** | **Federated Search Cockpit** | One query fanned across every registered external graph over `/api/graph/federated-search` (KG-2.310). | `axil/qt/federated_search_panel.py` |
+| **GB-GBOT.cockpit.voice-dictation-cockpit** | **Voice Dictation Cockpit** | Desktop mic capture (QtMultimedia) transcribed through the SAME governed audio-transcriber-mcp sidecar the webui's dictation control uses, over `POST /api/enhanced/voice/transcribe` (backend AU-ECO.mcp.webui-voice-transcription-delegation). Honest states: no device, recorder/permission failure, backend unavailable, and a genuine error are each shown distinctly. TTS/playback not implemented (no backend route). | `axil/qt/voice_panel.py` |
 
 > **Note on UI Cohesion (`CONCEPT-HIG`)**: All PySide6 UI elements implemented under AU-GBOT.cockpit.through-gbot and AU-GBOT.cockpit.concept-3 must adhere to the ecosystem-wide **Human Interface Guidelines**. This includes supporting dynamic QPalette/stylesheet brand theming, rail-navigation sidebars (via QPropertyAnimation), and depth-aware/glassmorphic modals for disruptive prompts.
 
@@ -85,7 +85,7 @@ graph TD
 ### Desktop Container Architecture
 ```mermaid
 graph TD
-    subgraph UI ["GeniusBot UI Layer (PySide6)"]
+    subgraph UI ["Axil UI Layer (PySide6)"]
         MainWindow["QMainWindow (Host Window)"]
         TabWidget["QTabWidget (Dynamic Tabs)"]
         TerminalPanel["TerminalPanel (xterm.js / QWebEngineView)"]
@@ -93,7 +93,7 @@ graph TD
     end
 
     subgraph Core ["Core Orchestration Backend"]
-        AgentUtilities["agent-utilities (Backend Engine)"]
+        AgentUtilities["meristem (Backend Engine)"]
         AgentFactory["AgentFactory (Dynamic Routing)"]
         KG["Epistemic Knowledge Graph (LadybugDB)"]
     end
@@ -101,7 +101,7 @@ graph TD
     subgraph Agents ["Agent Packages"]
         GeniusAgent["genius-agent (Reasoning Hub)"]
         OtherAgents["Ecosystem Agents (Media, Systems, etc.)"]
-        TerminalUI["agent-terminal-ui (Textual App)"]
+        TerminalUI["tuig (Textual App)"]
     end
 
     MainWindow --> TabWidget
@@ -134,13 +134,13 @@ sequenceDiagram
     participant User as User
     participant UI as PySide6 Event Loop
     participant Bridge as AgentBridge (QRunnable)
-    participant Agent as Genius Agent (agent-utilities)
+    participant Agent as Genius Agent (meristem)
     participant Guard as ToolGuard (OS-5.1)
 
     User->>UI: Prompt entered in Chat Tab
     UI->>UI: Show spinning loading indicator
     UI->>Bridge: Spawn background worker thread
-    Bridge->>Agent: Query agent-utilities backend
+    Bridge->>Agent: Query meristem backend
     Agent->>Guard: Evaluate tool list for execution
     Guard-->>UI: Intercept! Trigger desktop approval modal
     UI-->>User: Visual pop-up (Approve/Deny)
@@ -165,7 +165,7 @@ uv sync --all-extras
 ### Execution
 Run the modern PySide6 cockpit:
 ```bash
-uv run geniusbot
+uv run axil
 ```
 
 ### Quality & Standards Enforcement
@@ -181,7 +181,7 @@ uv run ruff format .
 ### Packaging & Executable Compilation
 Compile the standalone executable for desktop distribution:
 ```bash
-uv run pyinstaller --clean geniusbot.spec
+uv run pyinstaller --clean axil.spec
 ```
 
 ---
@@ -191,7 +191,7 @@ uv run pyinstaller --clean geniusbot.spec
 To align with modern packaging standards, the modernized repository should follow the layout below:
 
 ```text
-geniusbot/
+axil/
 ├── .github/
 │   └── workflows/
 │       └── pipeline.yml         # Standard CI pipeline
@@ -199,13 +199,13 @@ geniusbot/
 │   ├── index.md                 # Home page for documentation
 │   └── pillars/
 │       └── desktop_cockpit.md   # GBOT-6 Architecture Deep-Dive
-├── geniusbot/
+├── axil/
 │   ├── __init__.py
 │   ├── __main__.py
-│   ├── geniusbot.py             # PySide6 application bootloader
+│   ├── axil.py             # PySide6 application bootloader
 │   ├── img/
-│   │   ├── geniusbot.ico
-│   │   └── geniusbot.png
+│   │   ├── axil.ico
+│   │   └── axil.png
 │   ├── qt/                      # 13 modules (4 are cockpits/dashboards, marked ★)
 │   │   ├── __init__.py          # Public re-exports for the qt package
 │   │   ├── colors.py            # AUTO-GENERATED color tokens + DARK_COCKPIT_STYLE QSS
@@ -230,7 +230,7 @@ geniusbot/
 │   ├── test_ui_bootstrap.py     # PyQt6/PySide6 window tests
 │   └── test_terminal_pty.py     # POSIX terminal harness tests
 ├── pyproject.toml               # Hatchling PEP-517 configuration
-├── geniusbot.spec               # Modern PyInstaller build spec
+├── axil.spec               # Modern PyInstaller build spec
 ├── AGENTS.md                    # Developer guidelines (This file)
 ├── LICENSE                      # MIT license
 └── README.md                    # Public user documentation
@@ -279,8 +279,8 @@ class AgentWorker(QRunnable):
 ```
 
 ### Safety and Guardrails
-* **XDG Centralized Configuration**: centralize user credentials, local keys, and safety settings inside `~/.config/arbora/config.json`. **NEVER** save credentials in plain files inside the `geniusbot` directory.
-* **Sensitive Pattern Interception**: All plugins must register tool execution pipelines through `agent-utilities`' `ToolGuard` system to guarantee full compliance with local security policies.
+* **XDG Centralized Configuration**: centralize user credentials, local keys, and safety settings inside `~/.config/arbora/config.json`. **NEVER** save credentials in plain files inside the `axil` directory.
+* **Sensitive Pattern Interception**: All plugins must register tool execution pipelines through `meristem`' `ToolGuard` system to guarantee full compliance with local security policies.
 
 ## ⛔ No Scratch or Temporary Files in Repository
 
@@ -414,7 +414,7 @@ compile`/`uv export` output some repos ship for a plain `pip install -r requirem
 consumer, is a second lockfile in every way that matters here, even though nothing
 text-registers it in `.bumpversion.cfg`) — plus any other such artifact a repo adds later. Naming
 `uv.lock` only, as this edict once did, is how this repo's own `requirements.txt` shipped pinning
-an unpublishable `agent-utilities==1.0.0` (a full major version stale) with nothing catching it
+an unpublishable `meristem==1.0.0` (a full major version stale) with nothing catching it
 (C2) — see `scripts/check_lockfile_version_mirrors.py`'s `check-lockfile-version-mirrors`
 pre-commit hook, added for exactly that gap. Rules:
 
@@ -435,16 +435,16 @@ pre-commit hook, added for exactly that gap. Rules:
    graph-wide, so a lower-bound in the extra that pulls a dependency raises it for the whole lock
    — and for every generated lock artifact derived from it.
 
-### Known, unavoidable limitation — `agent-utilities` resolves via a local sibling checkout, not the index (D-FE-1)
+### Known, unavoidable limitation — `meristem` resolves via a local sibling checkout, not the index (D-FE-1)
 
-`agent-utilities>=2.0.0` (declared in `[project.dependencies]`) is **not yet published** to the
+`meristem>=2.0.0` (declared in `[project.dependencies]`) is **not yet published** to the
 index this project otherwise resolves against (only `<=1.26.4` is there), so `pyproject.toml`
-carries `[tool.uv.sources] agent-utilities = { path = ".uv-workspace-siblings/agent-utilities",
+carries `[tool.uv.sources] meristem = { path = ".uv-workspace-siblings/meristem",
 editable = true }` — the agent-webui BUG-074 pattern (superseding an earlier `{ workspace = true }`
 attempt this section used to document; `{ workspace = true }` never actually worked for a
 standalone-clonable repo like this one, since it requires the ambient ecosystem monorepo to be
 present at all) — to satisfy it from the co-versioned sibling checkout
-(`agent-packages/agent-utilities`) via a local, untracked, gitignored symlink instead.
+(`agent-packages/meristem`) via a local, untracked, gitignored symlink instead.
 
 Two consequences follow:
 
@@ -453,23 +453,23 @@ Two consequences follow:
   has no workspace-membership requirement, so it works identically whether the checkout is
   canonical or a worktree, and whether or not the ambient `${WORKSPACE_ROOT}` ecosystem
   workspace is even present. The only remaining requirement is materializing
-  `.uv-workspace-siblings/agent-utilities` (a symlink to the sibling checkout) once per checkout —
+  `.uv-workspace-siblings/meristem` (a symlink to the sibling checkout) once per checkout —
   see `.gitignore`'s matching entry. (Running `uv lock` from this repo's canonical, *ecosystem*-nested
   location, as opposed to an isolated worktree, can still fail with a `Nested workspaces are not
   supported` error — that is a separate, pre-existing fact about `${WORKSPACE_ROOT}`'s own
-  layout (agent-utilities is itself a nested workspace root there), not something this repo's own
+  layout (meristem is itself a nested workspace root there), not something this repo's own
   `pyproject.toml` can fix; it is exactly why this program's standing convention is to do all work
   from a `git worktree add` outside `${WORKSPACE_ROOT}` in the first place.)
 - **A fully re-locked, portable `requirements.txt` (pinned versions resolvable by plain `pip`, no
   local paths) is still blocked on the same external fact** — the original `uv pip compile
   --no-sources pyproject.toml` invocation deliberately ignores `[tool.uv.sources]` so the output
   represents what a consumer *without* the sibling checkout would resolve, and that consumer still
-  hits the unpublished `agent-utilities>=2.0.0` floor. `uv export` against the local, `{path=...}`-resolved
-  lock instead is possible today, but produces `-e ./.uv-workspace-siblings/agent-utilities` entries
+  hits the unpublished `meristem>=2.0.0` floor. `uv export` against the local, `{path=...}`-resolved
+  lock instead is possible today, but produces `-e ./.uv-workspace-siblings/meristem` entries
   that are not portable outside this exact checkout layout — a change in the file's semantics, not
   a fix, so it is intentionally NOT what `check-lockfile-version-mirrors` regenerates automatically.
   `requirements.txt` stays pinned at the last version the index actually offered until
-  `agent-utilities` 2.x is published, at which point a plain `uv pip compile --no-sources
+  `meristem` 2.x is published, at which point a plain `uv pip compile --no-sources
   pyproject.toml -o requirements.txt` will pick up the published floor directly.
 
 ## Specs: extend first
@@ -478,20 +478,20 @@ Find the spec row that owns the behavior before any code change. Search with `gi
 
 ## What this repository owns
 
-The GeniusBot desktop cockpit: a PySide6 (Qt6) application with an embedded
+The Axil desktop cockpit: a PySide6 (Qt6) application with an embedded
 xterm.js terminal, the cockpit panels, and the packaging commands for the
 standalone executable. Agent orchestration, graph memory and tool-guard
-policy belong to `agent-utilities`. Reuse its clients and do not add a second
+policy belong to `meristem`. Reuse its clients and do not add a second
 implementation here.
 
 ## Commands
 
 ```bash
 uv sync --all-extras                        # install the locked environment
-uv run geniusbot                            # run the cockpit
+uv run axil                            # run the cockpit
 uv run ruff check . --fix                   # lint
 uv run ruff format .                        # format
-uv run pyinstaller --clean geniusbot.spec   # build the executable
+uv run pyinstaller --clean axil.spec   # build the executable
 QT_QPA_PLATFORM=offscreen uv run --all-extras pytest tests -q -m "not slow and not integration" --timeout=60
 ```
 

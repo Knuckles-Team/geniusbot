@@ -23,7 +23,7 @@
 - [ ] Build and smoke-test each packaged artifact (PyInstaller onefile, Windows installer,
       Linux desktop entry) from a tagged revision against both a reachable and an
       unreachable Arbora gateway (closes `AXIL-CLIENT-R012.2`).
-- [ ] Reconcile the `pip install geniusbot[all]` instruction in `README.md` with
+- [ ] Reconcile the `pip install axil[all]` instruction in `README.md` with
       `pyproject.toml`'s actual optional-dependency groups (`dev`, `test`, `types`; no `all`
       group is currently defined), and reconcile the supported Python range stated in
       `AGENTS.md` (`>=3.11, <3.14`) with `pyproject.toml`'s `requires-python`
@@ -34,7 +34,7 @@
 
 - [ ] Generated design-token colors. (closes `AXIL-CLIENT-R013`; proof `tests/test_design_tokens.py::test_colors_match_generated_output`).
 - [ ] Finance cockpit panel contract. (closes `AXIL-CLIENT-R014`; proof `tests/test_finance_cockpit.py::test_panel_unavailable_state`).
-- [ ] Packaged `geniusbot-development` skill. (closes `AXIL-CLIENT-R015`; proof `tests/test_development_skill.py::test_skill_packaged_and_valid`).
+- [ ] Packaged `axil-development` skill. (closes `AXIL-CLIENT-R015`; proof `tests/test_development_skill.py::test_skill_packaged_and_valid`).
 - [ ] Spec and docs hooks in pre-commit. (closes `AXIL-CLIENT-R016`; proof `tests/test_precommit_hooks.py::test_required_pipelines_hook_ids_present`).
 - [ ] Docs layout parity. (closes `AXIL-CLIENT-R017`; proof `tests/test_docs_layout.py::test_nav_lists_every_page`).
 - [ ] AGENTS.md section parity. (closes `AXIL-CLIENT-R018`; proof `tests/test_agents_md_sections.py::test_required_headings_present`).
@@ -93,7 +93,7 @@
 - [ ] **AXIL-CLIENT-R020.37:** The desktop must achieve an overall source-quality grade of at least 3.0. Source obligation: `Overall GPA`.
 - [ ] **AXIL-CLIENT-R020.38:** The desktop must achieve grade B or higher in all 17 source-quality domains. Source obligation: `Domains at B or above`.
 - [ ] **AXIL-CLIENT-R020.39:** The desktop must resolve all 29 actionable source findings. Source obligation: `Actionable findings`.
-- [ ] **AXIL-CLIENT-R020.40:** Source-quality repairs must preserve the installed command path through `geniusbot/geniusbot.py:686`.
+- [ ] **AXIL-CLIENT-R020.40:** Source-quality repairs must preserve the installed command path through `axil/axil.py:686`.
 - [ ] **AXIL-CLIENT-R020.41:** A served integration test must launch the installed command and observe client behavior after source-quality repairs. It must distinguish a denied request from an authenticated empty result.
 
 - [x] Implement R001.2 served dashboard transport and R001.3 cancellable off-thread refresh.

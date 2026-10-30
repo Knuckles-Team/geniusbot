@@ -5,8 +5,8 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from geniusbot.services.gateway_client import GatewayClient
-from geniusbot.services.operation_registry import build_registry
+from axil.services.gateway_client import GatewayClient
+from axil.services.operation_registry import build_registry
 
 VALID_DIGEST = "a" * 64
 

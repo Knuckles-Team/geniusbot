@@ -8,7 +8,7 @@ thread.
 
 import pytest
 
-from geniusbot.utils.agent_bridge import AgentBridgeWorker
+from axil.utils.agent_bridge import AgentBridgeWorker
 
 
 @pytest.mark.spec("AXIL-CLIENT-R004.2")

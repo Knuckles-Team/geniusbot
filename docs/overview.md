@@ -1,16 +1,16 @@
 # Technical Architecture Overview
 
-GeniusBot acts as the premium visual cockpit wrapper shell of the agent-utilities ecosystem. It connects the human operator directly with the dynamic planning models, the Epistemic Knowledge Graph, and the specialist agent toolsets.
+Axil acts as the premium visual cockpit wrapper shell of the meristem ecosystem. It connects the human operator directly with the dynamic planning models, the Epistemic Knowledge Graph, and the specialist agent toolsets.
 
 ---
 
 ## 🏛️ Application Architecture
 
-GeniusBot is designed with a **Flat Single-Pane Layout** (Zero-Nesting UX) that splits components into focused, thread-safe spaces:
+Axil is designed with a **Flat Single-Pane Layout** (Zero-Nesting UX) that splits components into focused, thread-safe spaces:
 
 ```mermaid
 graph TD
-    subgraph UI ["GeniusBot UI Shell (PySide6)"]
+    subgraph UI ["Axil UI Shell (PySide6)"]
         Sidebar["Left Category Sidebar"]
         GridDeck["Central Dynamic Card Grid"]
         DetailDrawer["Right Detail Drawer (35%)"]
@@ -18,7 +18,7 @@ graph TD
         ToolGuard["Tool Guard Dialog Interceptor"]
     end
 
-    subgraph Engine ["Unified Backend (agent-utilities)"]
+    subgraph Engine ["Unified Backend (meristem)"]
         Discovery["Specialist Schema Discovery"]
         Registry["Concept Registry Database"]
         Executor["Background Agent Execution Loop"]
@@ -36,13 +36,13 @@ graph TD
 * **Left Category Sidebar**: Provides 5 flat navigation buttons: Dashboard, Infra & Network, Media & Files, Productivity, and Research & Data. Clicking a category swaps the view instantly.
 * **Central Grid Deck**: Displays agents as visual cards. Tools are populated with fields that map directly to parameters using a dynamic schema mapper.
 * **Right Detail Drawer**: Slides out to host long-running console output and advanced settings without causing the operator to lose active context.
-* **Retractable Console Panel**: Swings from the bottom on a `Ctrl+~` key-trigger to expose the running `agent-terminal-ui` inside an embedded `QWebEngineView`.
+* **Retractable Console Panel**: Swings from the bottom on a `Ctrl+~` key-trigger to expose the running `tuig` inside an embedded `QWebEngineView`.
 
 ---
 
 ## 🔒 Security boundary: Tool-Guard Interceptor
 
-To prevent the agent from executing dangerous mutations or running destructive shell commands behind the user's back, GeniusBot implements a **Zero-Trust Tool Guard**:
+To prevent the agent from executing dangerous mutations or running destructive shell commands behind the user's back, Axil implements a **Zero-Trust Tool Guard**:
 1. When a tool action is triggered by the core reasoning planner, the event loop catches the command signature.
 2. If the tool is flagged as sensitive (e.g. system packages, file deletion, network tunnel creation), a native modal pops up.
 3. The modal highlights the JSON arguments, the exact CLI command to be run, and the risk explanation.

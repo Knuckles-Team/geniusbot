@@ -1,6 +1,6 @@
-# Code Enhancement: geniusbot
+# Code Enhancement: axil
 
-> Automated code enhancement review for geniusbot. Covers 17 analysis domains.
+> Automated code enhancement review for axil. Covers 17 analysis domains.
 
 ## User Stories
 
@@ -16,11 +16,11 @@
 
 - **FR-001**: Minor update: pytest-qt 4.4.0 (constraint — not installed) -> 4.5.0
 - **FR-002**: Minor update: PySide6 6.6.1 (constraint — not installed) -> 6.11.1
-- **FR-003**: Minor update: agent-utilities 0.2.40 (installed) -> 0.16.0
+- **FR-003**: Minor update: meristem 0.2.40 (installed) -> 0.16.0
 - **FR-004**: Package not found on PyPI: pypiwin32; sys_platform
 - **FR-005**: Minor update: ruff 0.2.0 (constraint — not installed) -> 0.15.15
 - **FR-006**: 1 functions exceed 200 lines (actionable refactoring targets): initialize_user_interface (217L)
-- **FR-007**: Needs attention: geniusbot.py (699L) — 3 functions with high complexity (worst: GeniusBot.initialize_user_interface at 217L, CC=2)
+- **FR-007**: Needs attention: axil.py (699L) — 3 functions with high complexity (worst: Axil.initialize_user_interface at 217L, CC=2)
 - **FR-008**: Test suite lacks intent diversity (only one type)
 - **FR-009**: 12 potential doc-test drift items
 - **FR-010**: README.md is short (157 lines) — consider expanding
@@ -42,7 +42,7 @@
 - **FR-026**: Only 25% of env vars documented in README.md
 - **FR-027**: Undocumented env vars: TERM, _MEIPASS, _MEIPASS2
 - **FR-028**: 4 Python env vars not in .env.example: QT_QPA_PLATFORM, TERM, _MEIPASS, _MEIPASS2
-- **FR-029**: Analysis error: No module named 'agent_utilities.knowledge_graph'
+- **FR-029**: Analysis error: No module named 'meristem.knowledge_graph'
 
 ## Success Criteria
 

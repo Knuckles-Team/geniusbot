@@ -2,7 +2,7 @@
 
 import pytest
 
-from geniusbot.services.operation_registry import (
+from axil.services.operation_registry import (
     OperationRegistryEntry,
     OperationRegistryError,
     build_registry,

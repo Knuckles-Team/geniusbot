@@ -5,8 +5,8 @@ import asyncio
 import httpx
 import pytest
 
-from geniusbot.services.backend_adapter import BackendAdapter
-from geniusbot.services.gateway_client import GatewayClient
+from axil.services.backend_adapter import BackendAdapter
+from axil.services.gateway_client import GatewayClient
 
 
 @pytest.mark.spec("AXIL-CLIENT-R001.2")
@@ -118,7 +118,7 @@ async def test_snapshot_closes_transport_when_cancelled(monkeypatch):
         async def aclose(self):
             closed.append(True)
 
-    monkeypatch.setattr("geniusbot.services.gateway_client.GatewayClient", Client)
+    monkeypatch.setattr("axil.services.gateway_client.GatewayClient", Client)
     task = asyncio.create_task(
         BackendAdapter("http://localhost:8123").service_dashboard_snapshot()
     )

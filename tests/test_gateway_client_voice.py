@@ -12,7 +12,7 @@ import json
 import httpx
 import pytest
 
-from geniusbot.services.gateway_client import GatewayClient
+from axil.services.gateway_client import GatewayClient
 
 
 def _client_with_transport(handler) -> GatewayClient:

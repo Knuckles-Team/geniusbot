@@ -414,7 +414,7 @@
     },
     {
       "id": "AXIL-CLIENT-R015",
-      "title": "Packaged `geniusbot-development` skill",
+      "title": "Packaged `axil-development` skill",
       "delivery_state": "VERIFIED",
       "landed_in": [
         "34e20c635c6d"
@@ -598,203 +598,203 @@
     },
     {
       "id": "AXIL-CLIENT-R020.1",
-      "title": "The desktop test adapter dependency must satisfy the supported test matrix. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop test adapter dependency must satisfy the supported test matrix. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.2",
-      "title": "The desktop UI dependency must satisfy the supported platform matrix. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop UI dependency must satisfy the supported platform matrix. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.3",
-      "title": "The desktop dependency contract must use the supported served-client boundary. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop dependency contract must use the supported served-client boundary. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.4",
-      "title": "The Windows dependency marker must resolve on supported platforms. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The Windows dependency marker must resolve on supported platforms. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.5",
-      "title": "The formatter dependency must satisfy the supported source-check configuration. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The formatter dependency must satisfy the supported source-check configuration. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.6",
-      "title": "The main-window initialization must meet the shared function-size checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The main-window initialization must meet the shared function-size checks. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.7",
-      "title": "The desktop entry module must meet the shared complexity checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop entry module must meet the shared complexity checks. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.8",
-      "title": "Desktop tests must cover positive, negative and failure behavior. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "Desktop tests must cover positive, negative and failure behavior. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.9",
-      "title": "Documentation examples must match the tested desktop behavior. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "Documentation examples must match the tested desktop behavior. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.10",
-      "title": "The README must cover each supported desktop entry point. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The README must cover each supported desktop entry point. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.11",
-      "title": "The contributor guide must describe the desktop source structure. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The contributor guide must describe the desktop source structure. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.12",
-      "title": "Documentation file references must resolve to tracked targets. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "Documentation file references must resolve to tracked targets. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.13",
-      "title": "Desktop modules must meet the shared module-size checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "Desktop modules must meet the shared module-size checks. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.14",
-      "title": "The desktop must separate presentation from its served client adapter. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop must separate presentation from its served client adapter. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.15",
-      "title": "The desktop must trace each declared concept to its owning implementation. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop must trace each declared concept to its owning implementation. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.16",
-      "title": "The desktop must resolve each orphaned concept reference. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop must resolve each orphaned concept reference. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.17",
-      "title": "Desktop tests must bind their owning contract identifiers. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "Desktop tests must bind their owning contract identifiers. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.18",
-      "title": "Significant desktop functions must identify their owning contracts. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "Significant desktop functions must identify their owning contracts. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.19",
-      "title": "The desktop source must retain a clean configured lint result. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop source must retain a clean configured lint result. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.20",
-      "title": "The desktop source must pass the configured type checks. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop source must pass the configured type checks. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.21",
-      "title": "The repository must validate its pinned formatter hook version. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The repository must validate its pinned formatter hook version. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.22",
-      "title": "The changelog must follow its declared parseable format. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The changelog must follow its declared parseable format. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.23",
-      "title": "The changelog must describe each shipped desktop change. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The changelog must describe each shipped desktop change. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.24",
-      "title": "The changelog validation environment must supply its required parser. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The changelog validation environment must supply its required parser. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.25",
-      "title": "Desktop tests must parameterize repeated input cases with observable assertions. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "Desktop tests must parameterize repeated input cases with observable assertions. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.26",
-      "title": "The documentation must cover every supported desktop environment variable. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The documentation must cover every supported desktop environment variable. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.27",
-      "title": "The documentation must explain terminal and bundled-runtime environment inputs. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The documentation must explain terminal and bundled-runtime environment inputs. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.28",
-      "title": "The environment example must document desktop platform inputs without credentials. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The environment example must document desktop platform inputs without credentials. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
     },
     {
       "id": "AXIL-CLIENT-R020.29",
-      "title": "The desktop analysis command must use supported served interfaces without importing removed graph internals. Touches `geniusbot/`, tests or the named repository documentation",
+      "title": "The desktop analysis command must use supported served interfaces without importing removed graph internals. Touches `axil/`, tests or the named repository documentation",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
@@ -871,7 +871,7 @@
     },
     {
       "id": "AXIL-CLIENT-R020.40",
-      "title": "Source-quality repairs must preserve the installed command path through `geniusbot/geniusbot.py:686`",
+      "title": "Source-quality repairs must preserve the installed command path through `axil/axil.py:686`",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []

@@ -9,7 +9,7 @@ import pytest
 
 ROOT = Path(__file__).parents[1]
 GENERATOR_PATH = ROOT / "design-system" / "gen_qss.py"
-COLORS_PATH = ROOT / "geniusbot" / "qt" / "colors.py"
+COLORS_PATH = ROOT / "axil" / "qt" / "colors.py"
 
 
 def _generator():

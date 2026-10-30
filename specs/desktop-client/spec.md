@@ -1,6 +1,6 @@
 # AXIL-CLIENT — Desktop Arbora operation client
 
-**Owner:** geniusbot
+**Owner:** axil
 
 **Delivery:** specified; implementation and acceptance require separate evidence.
 
@@ -12,8 +12,8 @@ delivery and acceptance state.
 
 **Related public owners:** the [Arbora hosted operation service](https://github.com/Knuckles-Team/arbora/tree/main/specs/hosted-api-operations)
 supplies the operation registry, generated client and authorization boundary consumed by
-every Arbora surface. The [terminal Arbora operation client](https://github.com/Knuckles-Team/agent-terminal-ui/tree/main/specs/terminal-runtime)
-states the same shared wire contract for the terminal surface; geniusbot owns its own
+every Arbora surface. The [terminal Arbora operation client](https://github.com/Knuckles-Team/tuig/tree/main/specs/terminal-runtime)
+states the same shared wire contract for the terminal surface; axil owns its own
 consumer implementation and states its own desktop-specific requirements here.
 
 ## Purpose and user stories
@@ -82,7 +82,7 @@ acceptance evidence, and a packaged, launchable build on each target platform. A
 commit or a unit-test pass alone is not acceptance; a served end-to-end approval receipt is
 required before AXIL-CLIENT-R006 can be marked accepted. This specification does not
 own Arbora's operation registry, generated client, or server-side authorization boundary,
-the `agent-terminal-ui` client's own requirements, or the Knowledge Graph's persistence or
+the `tuig` client's own requirements, or the Knowledge Graph's persistence or
 reasoning behavior.
 
 ## Traceability
@@ -92,7 +92,7 @@ Current delivery and acceptance state for each requirement ID above is recorded 
 
 | Local ownership | Other owner contract |
 |---|---|
-| This cockpit's gateway facade, backend-adapter seam, cockpit/dashboard views, tray daemon and packaging (`AXIL-CLIENT-R001`-`R012`) | Arbora's generated operation client, versioned HTTP envelope and server-side authorization/approval boundary (see the links above); `agent-terminal-ui` implements its own consumer |
+| This cockpit's gateway facade, backend-adapter seam, cockpit/dashboard views, tray daemon and packaging (`AXIL-CLIENT-R001`-`R012`) | Arbora's generated operation client, versioned HTTP envelope and server-side authorization/approval boundary (see the links above); `tuig` implements its own consumer |
 | Displaying and forwarding an approval decision, never deciding it locally | Arbora's signed approval authority and durable human identity, proven end to end before an approval action can be accepted |
 
 ## Run observation

@@ -10,7 +10,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from geniusbot.qt.fleet_cockpit import FleetCockpitPanel
+from axil.qt.fleet_cockpit import FleetCockpitPanel
 
 
 class _RecordingWorker:

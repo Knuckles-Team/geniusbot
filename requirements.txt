@@ -31,7 +31,7 @@ anyio==4.15.1
     #   starlette
     #   watchfiles
 arbora==0.1.2
-    # via geniusbot (pyproject.toml)
+    # via axil (pyproject.toml)
 attrs==26.1.0
     # via
     #   aiohttp
@@ -75,7 +75,7 @@ email-validator==2.3.0
     # via pydantic
 epistemic-graph==2.27.3
     # via
-    #   geniusbot (pyproject.toml)
+    #   axil (pyproject.toml)
     #   agent-connector-sdk
     #   arbora
 epistemic-graph-server==2.27.3
@@ -212,7 +212,7 @@ pathable==0.6.0
     # via jsonschema-path
 platformdirs==4.13.4
     # via
-    #   geniusbot (pyproject.toml)
+    #   axil (pyproject.toml)
     #   agent-utilities
     #   fastmcp-slim
 prometheus-client==0.26.0
@@ -272,7 +272,7 @@ pyoxigraph==0.5.11
 pyperclip==1.11.0
     # via fastmcp-slim
 pyside6==6.12.0
-    # via geniusbot (pyproject.toml)
+    # via axil (pyproject.toml)
 pyside6-addons==6.12.0
     # via
     #   pyside6

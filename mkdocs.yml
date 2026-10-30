@@ -38,12 +38,12 @@ markdown_extensions:
 
 extra:
   ecosystem:
-    current: geniusbot
+    current: axil
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Knuckles-Team/axil
     - icon: fontawesome/brands/python
-      link: https://pypi.org/project/geniusbot/
+      link: https://pypi.org/project/axil/
 
 nav:
   - Home: index.md

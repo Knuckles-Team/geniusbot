@@ -1,4 +1,4 @@
-"""Tests for the geniusbot KG extraction cockpit (CONCEPT:AU-ECO.connector.git-task-resolver).
+"""Tests for the axil KG extraction cockpit (CONCEPT:AU-ECO.connector.git-task-resolver).
 
 Qt runs offscreen (conftest). The pure layout math is tested without a display;
 the panel is exercised by feeding it streamed events directly.
@@ -11,7 +11,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from geniusbot.qt.force_graph import ForceGraphWidget, normalize_key, relax_layout
+from axil.qt.force_graph import ForceGraphWidget, normalize_key, relax_layout
 
 
 def test_normalize_key_merges_variants() -> None:
@@ -97,7 +97,7 @@ def test_panel_shows_fact_card_on_edge_click(qapp) -> None:
 
 @pytest.mark.asyncio
 async def test_gateway_submit_and_stream(monkeypatch) -> None:
-    from geniusbot.services.gateway_client import GatewayClient
+    from axil.services.gateway_client import GatewayClient
 
     # `GatewayClient.__init__` builds its pooled `self._direct_http` eagerly
     # (one client for the app's lifetime), so `httpx.AsyncClient` must be
@@ -157,7 +157,7 @@ async def test_gateway_submit_and_stream(monkeypatch) -> None:
 
 
 def _make_panel():
-    from geniusbot.qt.extraction_cockpit import ExtractionCockpitPanel
+    from axil.qt.extraction_cockpit import ExtractionCockpitPanel
 
     worker = MagicMock()
     gateway = MagicMock()
